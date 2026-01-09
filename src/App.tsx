@@ -6,6 +6,7 @@ import { Section } from '@/components/Section'
 import { FileTreeSection } from '@/components/FileTree'
 import { PrimitiveCardsSection } from '@/components/PrimitiveCards'
 import { WorkTypeRecipesSection } from '@/components/WorkTypeRecipes'
+import { ProviderComparisonSection } from '@/components/ProviderComparison'
 
 export function App(): ReactNode {
   return (
@@ -46,30 +47,16 @@ export function App(): ReactNode {
             description="Compare how primitives are implemented across GitHub Copilot and Claude Code side by side."
             className="bg-muted/30"
           >
-            <PlaceholderContent>
-              Comparison matrix coming soon...
-            </PlaceholderContent>
+            <ProviderComparisonSection />
           </Section>
         </main>
 
         <footer className="border-t border-border py-8">
           <div className="container mx-auto px-4 text-center text-muted-foreground">
-            <p>Built to help developers configure AI coding assistants.</p>
+            <p>Built to help you master AI coding assistants.</p>
           </div>
         </footer>
       </div>
     </ThemeProvider>
-  )
-}
-
-interface PlaceholderContentProps {
-  children: ReactNode
-}
-
-function PlaceholderContent({ children }: PlaceholderContentProps): ReactNode {
-  return (
-    <div className="rounded-lg border border-dashed border-border p-12 text-center text-muted-foreground">
-      {children}
-    </div>
   )
 }
