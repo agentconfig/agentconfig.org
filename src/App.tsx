@@ -1,39 +1,78 @@
-import { type ReactNode, useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { type ReactNode } from 'react'
+import { ThemeProvider } from '@/components/ThemeProvider'
+import { Navigation } from '@/components/Navigation'
+import { Hero } from '@/components/Hero'
+import { Section } from '@/components/Section'
 
 export function App(): ReactNode {
-  const [count, setCount] = useState(0)
-
-  const handleClick = (): void => {
-    setCount((c) => c + 1)
-  }
-
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-8">
-      <div className="flex gap-8 mb-8">
-        <a href="https://vitejs.dev" target="_blank" rel="noreferrer" className="transition-transform hover:scale-110">
-          <img src={viteLogo} className="h-24 w-24" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank" rel="noreferrer" className="transition-transform hover:scale-110">
-          <img src={reactLogo} className="h-24 w-24 animate-spin" style={{ animationDuration: '20s' }} alt="React logo" />
-        </a>
+    <ThemeProvider>
+      <div className="min-h-screen bg-background text-foreground">
+        <Navigation />
+        <main>
+          <Hero />
+
+          <Section
+            id="file-tree"
+            title="Interactive File Tree"
+            description="See exactly where AI primitive files live in your project. Click on any file to learn more about its purpose and how to configure it."
+          >
+            <PlaceholderContent>
+              File Tree visualization coming soon...
+            </PlaceholderContent>
+          </Section>
+
+          <Section
+            id="primitives"
+            title="AI Primitives"
+            description="Explore the 11 core primitives that power AI coding assistants. Each primitive serves a specific purpose in customizing AI behavior."
+            className="bg-muted/30"
+          >
+            <PlaceholderContent>
+              Primitive cards coming soon...
+            </PlaceholderContent>
+          </Section>
+
+          <Section
+            id="recipes"
+            title="Work Type Recipes"
+            description="Not sure which primitives to use? Start with your task and we'll recommend the right combination of primitives."
+          >
+            <PlaceholderContent>
+              Recipe cards coming soon...
+            </PlaceholderContent>
+          </Section>
+
+          <Section
+            id="comparison"
+            title="Provider Comparison"
+            description="Compare how primitives are implemented across GitHub Copilot and Claude Code side by side."
+            className="bg-muted/30"
+          >
+            <PlaceholderContent>
+              Comparison matrix coming soon...
+            </PlaceholderContent>
+          </Section>
+        </main>
+
+        <footer className="border-t border-border py-8">
+          <div className="container mx-auto px-4 text-center text-muted-foreground">
+            <p>Built to help developers configure AI coding assistants.</p>
+          </div>
+        </footer>
       </div>
-      <h1 className="text-4xl font-bold mb-8">Vite + React</h1>
-      <div className="p-8 rounded-lg bg-card text-card-foreground mb-4">
-        <button
-          onClick={handleClick}
-          className="px-6 py-3 rounded-lg bg-primary text-primary-foreground font-medium hover:opacity-90 transition-opacity"
-        >
-          count is {count}
-        </button>
-        <p className="mt-4 text-muted-foreground">
-          Edit <code className="font-mono bg-muted px-1 rounded">src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="text-muted-foreground">
-        Click on the Vite and React logos to learn more
-      </p>
+    </ThemeProvider>
+  )
+}
+
+interface PlaceholderContentProps {
+  children: ReactNode
+}
+
+function PlaceholderContent({ children }: PlaceholderContentProps): ReactNode {
+  return (
+    <div className="rounded-lg border border-dashed border-border p-12 text-center text-muted-foreground">
+      {children}
     </div>
   )
 }
