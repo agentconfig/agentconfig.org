@@ -4,6 +4,7 @@ import { Navigation } from '@/components/Navigation'
 import { Hero } from '@/components/Hero'
 import { Section } from '@/components/Section'
 import { FileTreeSection } from '@/components/FileTree'
+import { PrimitiveCardsSection } from '@/components/PrimitiveCards'
 
 export function App(): ReactNode {
   return (
@@ -24,12 +25,10 @@ export function App(): ReactNode {
           <Section
             id="primitives"
             title="AI Primitives"
-            description="Explore the 11 core primitives that power AI coding assistants. Each primitive serves a specific purpose in customizing AI behavior."
+            description="Explore the 12 core primitives that power AI coding assistants. Each primitive serves a specific purpose in customizing AI behavior."
             className="bg-muted/30"
           >
-            <PlaceholderContent>
-              Primitive cards coming soon...
-            </PlaceholderContent>
+            <PrimitiveCardsSection />
           </Section>
 
           <Section
