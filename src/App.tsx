@@ -5,6 +5,7 @@ import { Hero } from '@/components/Hero'
 import { Section } from '@/components/Section'
 import { FileTreeSection } from '@/components/FileTree'
 import { PrimitiveCardsSection } from '@/components/PrimitiveCards'
+import { WorkTypeRecipesSection } from '@/components/WorkTypeRecipes'
 
 export function App(): ReactNode {
   return (
@@ -36,9 +37,7 @@ export function App(): ReactNode {
             title="Work Type Recipes"
             description="Not sure which primitives to use? Start with your task and we'll recommend the right combination of primitives."
           >
-            <PlaceholderContent>
-              Recipe cards coming soon...
-            </PlaceholderContent>
+            <WorkTypeRecipesSection />
           </Section>
 
           <Section
