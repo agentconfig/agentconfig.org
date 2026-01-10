@@ -18,7 +18,7 @@ export function App(): ReactNode {
           <Section
             id="primitives"
             title="AI Primitives"
-            description="Explore the 12 core primitives that power AI coding assistants. Each primitive serves a specific purpose in customizing AI behavior."
+            description="Explore the 9 core primitives that power AI coding assistants. Each primitive serves a specific purpose in customizing AI behavior."
           >
             <PrimitiveCardsSection />
           </Section>

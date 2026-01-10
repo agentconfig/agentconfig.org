@@ -21,6 +21,50 @@ export interface ComparisonRow {
 }
 
 export const comparisonData: ComparisonRow[] = [
+  // === CAPABILITY ===
+  {
+    primitiveId: 'agent-mode',
+    primitiveName: 'Agent Mode',
+    copilot: {
+      level: 'full',
+      implementation: 'Agent mode in Copilot Chat',
+      location: 'VS Code Copilot Chat',
+    },
+    claude: {
+      level: 'full',
+      implementation: 'Agentic workflows in Claude Code',
+      location: 'Claude Code CLI',
+    },
+  },
+  {
+    primitiveId: 'skills',
+    primitiveName: 'Skills / Workflows',
+    copilot: {
+      level: 'full',
+      implementation: 'Skill modules in skills directory',
+      location: '.github/skills/*/SKILL.md',
+    },
+    claude: {
+      level: 'full',
+      implementation: 'Skill modules in .claude directory',
+      location: '.claude/skills/*/SKILL.md',
+    },
+  },
+  {
+    primitiveId: 'tool-integrations',
+    primitiveName: 'Tool Integrations',
+    copilot: {
+      level: 'full',
+      implementation: 'MCP servers and tool calling',
+      location: 'VS Code MCP settings',
+    },
+    claude: {
+      level: 'full',
+      implementation: 'MCP servers and tool calling',
+      location: '.claude/settings.json',
+    },
+  },
+  // === CUSTOMIZATION ===
   {
     primitiveId: 'persistent-instructions',
     primitiveName: 'Persistent Instructions',
@@ -63,48 +107,7 @@ export const comparisonData: ComparisonRow[] = [
       location: 'Built-in slash commands',
     },
   },
-  {
-    primitiveId: 'structured-output',
-    primitiveName: 'Structured Output',
-    copilot: {
-      level: 'full',
-      implementation: 'Format rules in prompts and instructions',
-      location: 'Prompt files + instructions',
-    },
-    claude: {
-      level: 'full',
-      implementation: 'Format rules in prompts and memory',
-      location: 'CLAUDE.md + prompts',
-    },
-  },
-  {
-    primitiveId: 'agent-mode',
-    primitiveName: 'Agent Mode',
-    copilot: {
-      level: 'full',
-      implementation: 'Agent mode in Copilot Chat',
-      location: 'VS Code Copilot Chat',
-    },
-    claude: {
-      level: 'full',
-      implementation: 'Agentic workflows in Claude Code',
-      location: 'Claude Code CLI',
-    },
-  },
-  {
-    primitiveId: 'skills',
-    primitiveName: 'Skills / Workflows',
-    copilot: {
-      level: 'full',
-      implementation: 'Skill modules in skills directory',
-      location: '.github/skills/*/SKILL.md',
-    },
-    claude: {
-      level: 'full',
-      implementation: 'Skill modules in .claude directory',
-      location: '.claude/skills/*/SKILL.md',
-    },
-  },
+  // === CONTROL ===
   {
     primitiveId: 'custom-agents',
     primitiveName: 'Custom Agents',
@@ -117,48 +120,6 @@ export const comparisonData: ComparisonRow[] = [
       level: 'partial',
       implementation: 'Use skills to achieve similar behavior',
       location: '.claude/skills/',
-    },
-  },
-  {
-    primitiveId: 'tool-integrations',
-    primitiveName: 'Tool Integrations',
-    copilot: {
-      level: 'full',
-      implementation: 'MCP servers and tool calling',
-      location: 'VS Code MCP settings',
-    },
-    claude: {
-      level: 'full',
-      implementation: 'MCP servers and tool calling',
-      location: '.claude/settings.json',
-    },
-  },
-  {
-    primitiveId: 'memory',
-    primitiveName: 'Memory',
-    copilot: {
-      level: 'full',
-      implementation: 'Repo instructions and AGENTS.md files',
-      location: 'AGENTS.md + instructions',
-    },
-    claude: {
-      level: 'full',
-      implementation: 'CLAUDE.md memory files at any level',
-      location: 'CLAUDE.md files',
-    },
-  },
-  {
-    primitiveId: 'retrieval',
-    primitiveName: 'Retrieval (RAG)',
-    copilot: {
-      level: 'full',
-      implementation: 'Via MCP tools and workspace search',
-      location: 'MCP server tools',
-    },
-    claude: {
-      level: 'full',
-      implementation: 'Via MCP tools and file search',
-      location: 'MCP server tools',
     },
   },
   {
