@@ -5,7 +5,6 @@ import { Hero } from '@/components/Hero'
 import { Section } from '@/components/Section'
 import { FileTreeSection } from '@/components/FileTree'
 import { PrimitiveCardsSection } from '@/components/PrimitiveCards'
-import { WorkTypeRecipesSection } from '@/components/WorkTypeRecipes'
 import { ProviderComparisonSection } from '@/components/ProviderComparison'
 
 export function App(): ReactNode {
@@ -34,18 +33,9 @@ export function App(): ReactNode {
           </Section>
 
           <Section
-            id="recipes"
-            title="Work Type Recipes"
-            description="Not sure which primitives to use? Start with your task and we'll recommend the right combination of primitives."
-          >
-            <WorkTypeRecipesSection />
-          </Section>
-
-          <Section
             id="comparison"
             title="Provider Comparison"
             description="Compare how primitives are implemented across GitHub Copilot and Claude Code side by side."
-            className="bg-muted/30"
           >
             <ProviderComparisonSection />
           </Section>

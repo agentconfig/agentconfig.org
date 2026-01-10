@@ -24,7 +24,6 @@ export function Hero({ className }: HeroProps): ReactNode {
         <div className="flex flex-wrap justify-center gap-3">
           <NavPill href="#primitives">Primitives</NavPill>
           <NavPill href="#file-tree">File Tree</NavPill>
-          <NavPill href="#recipes">Recipes</NavPill>
           <NavPill href="#comparison">Comparison</NavPill>
         </div>
       </div>

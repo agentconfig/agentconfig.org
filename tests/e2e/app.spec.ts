@@ -13,12 +13,11 @@ test.describe('App', () => {
     await expect(page.getByRole('heading', { name: 'Master AI Assistants' })).toBeVisible()
   })
 
-  test('should display all four section placeholders', async ({ page }) => {
+  test('should display all three section placeholders', async ({ page }) => {
     await page.goto('/')
 
-    await expect(page.getByRole('heading', { name: 'Interactive File Tree' })).toBeVisible()
     await expect(page.getByRole('heading', { name: 'AI Primitives', exact: true })).toBeVisible()
-    await expect(page.getByRole('heading', { name: 'Work Type Recipes' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Interactive File Tree' })).toBeVisible()
     await expect(page.getByRole('heading', { name: 'Provider Comparison' })).toBeVisible()
   })
 })

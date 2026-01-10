@@ -14,9 +14,8 @@ test.describe('Navigation', () => {
 
     test('should display all navigation links', async ({ page }) => {
       const nav = page.getByLabel('Main navigation')
-      await expect(nav.getByRole('link', { name: 'File Tree' })).toBeVisible()
       await expect(nav.getByRole('link', { name: 'Primitives' })).toBeVisible()
-      await expect(nav.getByRole('link', { name: 'Recipes' })).toBeVisible()
+      await expect(nav.getByRole('link', { name: 'File Tree' })).toBeVisible()
       await expect(nav.getByRole('link', { name: 'Comparison' })).toBeVisible()
     })
 
@@ -52,7 +51,7 @@ test.describe('Navigation', () => {
       const menuButton = page.getByRole('button', { name: 'Open menu' })
       await menuButton.click()
 
-      const navLink = page.getByRole('menuitem', { name: 'Recipes' })
+      const navLink = page.getByRole('menuitem', { name: 'Comparison' })
       await navLink.click()
 
       // Menu should close
