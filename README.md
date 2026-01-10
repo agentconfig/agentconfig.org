@@ -1,6 +1,37 @@
 # agentconfig.org
 
-A visual guide to AI primitives for GitHub Copilot and Claude Code.
+A reference guide for configuring AI coding assistants. Learn where config files go, what primitives each tool supports, and how to structure your projects for maximum AI effectiveness.
+
+**Live site:** [agentconfig.org](https://agentconfig.org)
+
+## What's Here
+
+- **AI Primitives** — The 9 core configuration primitives (instructions, skills, agents, commands, etc.) that power AI coding assistants
+- **Interactive File Tree** — Visual guide to where config files live, for both global (user home) and project-level configuration
+- **Provider Comparison** — Side-by-side comparison of GitHub Copilot and Claude Code support for each primitive
+
+## Key Paths
+
+### GitHub Copilot
+
+| Type | Path |
+|------|------|
+| Global skills | `~/.copilot/skills/` or `~/.github/skills/` |
+| Project instructions | `.github/copilot-instructions.md` |
+| Project skills | `.github/skills/<skill-name>/SKILL.md` |
+| Project agents | `.github/agents/<name>.agent.md` |
+
+### Claude Code
+
+| Type | Path |
+|------|------|
+| Global config | `~/.claude/` |
+| Global memory | `~/.claude/CLAUDE.md` |
+| Global commands | `~/.claude/commands/<name>.md` |
+| Project memory | `./CLAUDE.md` or `.claude/CLAUDE.md` |
+| Project settings | `.claude/settings.json` |
+
+See the [llms.txt](https://agentconfig.org/llms.txt) for a machine-readable summary.
 
 ## Development
 
@@ -20,3 +51,20 @@ bun run test
 ```bash
 bun run build
 ```
+
+## Tech Stack
+
+- React 18 + TypeScript
+- Vite
+- Tailwind CSS v4
+- Playwright for E2E tests
+
+## Contributing
+
+Contributions welcome! This project does not use GitHub Issues — if you notice incorrect or outdated information about Copilot or Claude configuration paths, please open a pull request directly.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
+
+## License
+
+[ISC](LICENSE)
