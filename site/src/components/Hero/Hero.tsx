@@ -20,7 +20,10 @@ export function Hero({ className }: HeroProps): VNode {
         </h1>
         <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
           Configure GitHub Copilot and Claude Code for any role or workflow.
-          Explore the primitives that unlock their full potential.
+          Explore the primitives that unlock their full potential, then learn how to{' '}
+          <a href="https://thisistheway.to/ai" className="underline hover:text-foreground transition-colors">
+            improve AI agents through systematic failure analysis
+          </a>.
         </p>
         <div className="flex flex-wrap justify-center gap-3">
           <NavPill href="#primitives">Primitives</NavPill>
