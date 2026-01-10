@@ -1,11 +1,12 @@
-import { type ReactNode } from 'react'
+import type { VNode, ComponentChildren } from 'preact'
+import type { JSX } from 'preact'
 import { cn } from '@/lib/utils'
 
 export interface HeroProps {
   className?: string
 }
 
-export function Hero({ className }: HeroProps): ReactNode {
+export function Hero({ className }: HeroProps): VNode {
   return (
     <div
       className={cn(
@@ -33,11 +34,11 @@ export function Hero({ className }: HeroProps): ReactNode {
 
 interface NavPillProps {
   href: string
-  children: ReactNode
+  children: ComponentChildren
 }
 
-function NavPill({ href, children }: NavPillProps): ReactNode {
-  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>): void => {
+function NavPill({ href, children }: NavPillProps): VNode {
+  const handleClick = (e: JSX.TargetedMouseEvent<HTMLAnchorElement>): void => {
     e.preventDefault()
     const id = href.replace('#', '')
     const element = document.getElementById(id)

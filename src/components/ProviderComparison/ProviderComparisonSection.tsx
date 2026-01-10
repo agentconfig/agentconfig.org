@@ -1,7 +1,7 @@
-import { type ReactNode } from 'react'
+import type { VNode } from 'preact'
 import { ComparisonTable } from './ComparisonTable'
 
-export function ProviderComparisonSection(): ReactNode {
+export function ProviderComparisonSection(): VNode {
   return (
     <div>
       {/* Legend */}

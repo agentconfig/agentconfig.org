@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react'
+import type { VNode, ComponentChildren } from 'preact'
 import { cn } from '@/lib/utils'
 
 export interface SectionProps {
@@ -9,7 +9,7 @@ export interface SectionProps {
   /** Section description */
   description: string
   /** Section content */
-  children: ReactNode
+  children: ComponentChildren
   /** Additional CSS classes */
   className?: string
 }
@@ -20,7 +20,7 @@ export function Section({
   description,
   children,
   className,
-}: SectionProps): ReactNode {
+}: SectionProps): VNode {
   return (
     <section
       id={id}

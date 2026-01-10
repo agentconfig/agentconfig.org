@@ -1,4 +1,4 @@
-import { createContext } from 'react'
+import { createContext } from 'preact'
 
 type Theme = 'light' | 'dark' | 'system'
 

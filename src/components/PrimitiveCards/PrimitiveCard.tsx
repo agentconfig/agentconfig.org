@@ -1,5 +1,6 @@
-import { useState, type ReactNode } from 'react'
-import { ChevronDown, Copy, Check, Shield, Zap, Wrench, FileText } from 'lucide-react'
+import { useState } from 'preact/hooks'
+import type { VNode } from 'preact'
+import { ChevronDown, Copy, Check, Shield, Zap, Wrench, FileText } from 'lucide-preact'
 import { cn } from '@/lib/utils'
 import { type Primitive, type Provider } from '@/data/primitives'
 
@@ -35,7 +36,7 @@ const providerLabels: Record<Provider, string> = {
   claude: 'Claude Code',
 }
 
-export function PrimitiveCard({ primitive, className }: PrimitiveCardProps): ReactNode {
+export function PrimitiveCard({ primitive, className }: PrimitiveCardProps): VNode {
   const [isExpanded, setIsExpanded] = useState(false)
   const [copiedProvider, setCopiedProvider] = useState<Provider | null>(null)
 

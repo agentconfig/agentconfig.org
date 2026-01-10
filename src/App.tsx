@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react'
+import type { VNode } from 'preact'
 import { ThemeProvider } from '@/components/ThemeProvider'
 import { Navigation } from '@/components/Navigation'
 import { Hero } from '@/components/Hero'
@@ -7,7 +7,7 @@ import { FileTreeSection } from '@/components/FileTree'
 import { PrimitiveCardsSection } from '@/components/PrimitiveCards'
 import { ProviderComparisonSection } from '@/components/ProviderComparison'
 
-export function App(): ReactNode {
+export function App(): VNode {
   return (
     <ThemeProvider>
       <div className="min-h-screen bg-background text-foreground">

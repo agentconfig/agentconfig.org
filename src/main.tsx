@@ -1,5 +1,4 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
+import { render } from 'preact'
 import { App } from './App'
 import './index.css'
 
@@ -8,8 +7,4 @@ if (!rootElement) {
   throw new Error('Root element not found')
 }
 
-ReactDOM.createRoot(rootElement).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-)
+render(<App />, rootElement)

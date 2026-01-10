@@ -1,9 +1,10 @@
-import { useState, type ReactNode } from 'react'
+import { useState } from 'preact/hooks'
+import type { VNode } from 'preact'
 import { type FileNode } from '@/data/fileTree'
 import { FileTree } from './FileTree'
 import { FileDetail } from './FileDetail'
 
-export function FileTreeSection(): ReactNode {
+export function FileTreeSection(): VNode {
   const [selectedFile, setSelectedFile] = useState<FileNode | null>(null)
 
   const handleFileClick = (node: FileNode) => {

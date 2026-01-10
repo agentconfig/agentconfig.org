@@ -1,5 +1,7 @@
-import { type ReactNode, useState } from 'react'
-import { Menu, X, Github } from 'lucide-react'
+import { useState } from 'preact/hooks'
+import type { VNode } from 'preact'
+import type { JSX } from 'preact'
+import { Menu, X, Github } from 'lucide-preact'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { cn } from '@/lib/utils'
 
@@ -13,10 +15,10 @@ export interface NavigationProps {
   className?: string | undefined
 }
 
-export function Navigation({ className }: NavigationProps): ReactNode {
+export function Navigation({ className }: NavigationProps): VNode {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
-  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string): void => {
+  const handleNavClick = (e: JSX.TargetedMouseEvent<HTMLAnchorElement>, id: string): void => {
     e.preventDefault()
     setIsMenuOpen(false)
     const element = document.getElementById(id)

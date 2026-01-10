@@ -1,5 +1,7 @@
-import { useState, type ReactNode } from 'react'
-import { ChevronRight, Folder, FolderOpen, FileText } from 'lucide-react'
+import { useState } from 'preact/hooks'
+import type { VNode } from 'preact'
+import type { JSX } from 'preact'
+import { ChevronRight, Folder, FolderOpen, FileText } from 'lucide-preact'
 import { cn } from '@/lib/utils'
 import { type FileNode } from '@/data/fileTree'
 
@@ -19,7 +21,7 @@ export function TreeNode({
   depth = 0,
   selectedId,
   onFileClick,
-}: TreeNodeProps): ReactNode {
+}: TreeNodeProps): VNode {
   const [isExpanded, setIsExpanded] = useState(depth < 2)
   const isFolder = node.type === 'folder'
   const isSelected = selectedId === node.id
@@ -33,7 +35,7 @@ export function TreeNode({
     }
   }
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: JSX.TargetedKeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault()
       handleClick()

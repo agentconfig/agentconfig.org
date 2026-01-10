@@ -1,5 +1,5 @@
-import { type ReactNode } from 'react'
-import { Moon, Sun } from 'lucide-react'
+import type { VNode } from 'preact'
+import { Moon, Sun } from 'lucide-preact'
 import { useTheme } from '@/components/ThemeProvider'
 import { cn } from '@/lib/utils'
 
@@ -7,7 +7,7 @@ export interface ThemeToggleProps {
   className?: string
 }
 
-export function ThemeToggle({ className }: ThemeToggleProps): ReactNode {
+export function ThemeToggle({ className }: ThemeToggleProps): VNode {
   const { resolvedTheme, setTheme } = useTheme()
 
   const toggleTheme = (): void => {

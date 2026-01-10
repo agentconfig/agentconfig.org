@@ -1,8 +1,9 @@
-import { useRef, useEffect, type ReactNode } from 'react'
-import { Copy, Check, FileCode, Clock, Layers } from 'lucide-react'
+import { useRef, useEffect } from 'preact/hooks'
+import { useState } from 'preact/hooks'
+import type { VNode } from 'preact'
+import { Copy, Check, FileCode, Clock, Layers } from 'lucide-preact'
 import { cn } from '@/lib/utils'
 import { type FileNode } from '@/data/fileTree'
-import { useState } from 'react'
 
 export interface FileDetailProps {
   /** The file node to display details for */
@@ -11,7 +12,7 @@ export interface FileDetailProps {
   className?: string | undefined
 }
 
-export function FileDetail({ node, className }: FileDetailProps): ReactNode {
+export function FileDetail({ node, className }: FileDetailProps): VNode {
   const containerRef = useRef<HTMLDivElement>(null)
   const [copied, setCopied] = useState(false)
 

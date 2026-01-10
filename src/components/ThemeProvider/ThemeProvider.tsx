@@ -1,4 +1,5 @@
-import { useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useState } from 'preact/hooks'
+import type { VNode, ComponentChildren } from 'preact'
 import { ThemeContext } from './ThemeContext'
 
 type Theme = 'light' | 'dark' | 'system'
@@ -18,11 +19,11 @@ function getStoredTheme(): Theme {
 }
 
 export interface ThemeProviderProps {
-  children: ReactNode
+  children: ComponentChildren
   defaultTheme?: Theme
 }
 
-export function ThemeProvider({ children, defaultTheme = 'system' }: ThemeProviderProps): ReactNode {
+export function ThemeProvider({ children, defaultTheme = 'system' }: ThemeProviderProps): VNode {
   const [theme, setThemeState] = useState<Theme>(() => {
     if (typeof window === 'undefined') return defaultTheme
     return getStoredTheme()

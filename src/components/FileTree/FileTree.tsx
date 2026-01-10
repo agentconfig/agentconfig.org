@@ -1,4 +1,5 @@
-import { useState, type ReactNode } from 'react'
+import { useState } from 'preact/hooks'
+import type { VNode } from 'preact'
 import { cn } from '@/lib/utils'
 import { trees, globalTrees, type Provider, type FileNode } from '@/data/fileTree'
 import { TreeNode } from './TreeNode'
@@ -21,7 +22,7 @@ export function FileTree({
   selectedId,
   onFileClick,
   className,
-}: FileTreeProps): ReactNode {
+}: FileTreeProps): VNode {
   const [activeProvider, setActiveProvider] = useState<Provider>('copilot')
   const tree = trees[activeProvider]
   const globalTree = globalTrees[activeProvider]

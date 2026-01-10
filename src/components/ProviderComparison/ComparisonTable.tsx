@@ -1,5 +1,6 @@
-import { useState, type ReactNode } from 'react'
-import { ChevronDown, Copy, Check } from 'lucide-react'
+import { useState } from 'preact/hooks'
+import type { VNode } from 'preact'
+import { ChevronDown, Copy, Check } from 'lucide-preact'
 import { cn } from '@/lib/utils'
 import {
   comparisonData,
@@ -10,7 +11,7 @@ import {
   type SupportLevel,
 } from '@/data/comparison'
 
-function SupportBadge({ level }: { level: SupportLevel }): ReactNode {
+function SupportBadge({ level }: { level: SupportLevel }): VNode {
   return (
     <span
       className={cn(
@@ -28,7 +29,7 @@ interface ExpandedRowProps {
   row: ComparisonRow
 }
 
-function ExpandedRow({ row }: ExpandedRowProps): ReactNode {
+function ExpandedRow({ row }: ExpandedRowProps): VNode {
   const [copiedLocation, setCopiedLocation] = useState<'copilot' | 'claude' | null>(null)
 
   const handleCopy = async (provider: 'copilot' | 'claude', location: string) => {
@@ -106,7 +107,7 @@ function ExpandedRow({ row }: ExpandedRowProps): ReactNode {
   )
 }
 
-export function ComparisonTable(): ReactNode {
+export function ComparisonTable(): VNode {
   const [expandedRow, setExpandedRow] = useState<string | null>(null)
 
   const toggleRow = (primitiveId: string) => {

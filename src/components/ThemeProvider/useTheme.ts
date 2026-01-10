@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext } from 'preact/hooks'
 import { ThemeContext, type ThemeContextValue } from './ThemeContext'
 
 export function useTheme(): ThemeContextValue {

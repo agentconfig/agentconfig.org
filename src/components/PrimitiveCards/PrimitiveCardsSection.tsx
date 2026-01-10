@@ -1,9 +1,10 @@
-import { useState, type ReactNode } from 'react'
+import { useState } from 'preact/hooks'
+import type { VNode } from 'preact'
 import { cn } from '@/lib/utils'
 import { primitives, categories, type CategoryId } from '@/data/primitives'
 import { PrimitiveCard } from './PrimitiveCard'
 
-export function PrimitiveCardsSection(): ReactNode {
+export function PrimitiveCardsSection(): VNode {
   const [activeCategory, setActiveCategory] = useState<CategoryId>('all')
 
   const filteredPrimitives = activeCategory === 'all'
