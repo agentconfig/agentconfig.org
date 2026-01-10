@@ -1,5 +1,5 @@
 import { type ReactNode, useState } from 'react'
-import { Menu, X } from 'lucide-react'
+import { Menu, X, Github } from 'lucide-react'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { cn } from '@/lib/utils'
 
@@ -62,11 +62,35 @@ export function Navigation({ className }: NavigationProps): ReactNode {
               {item.label}
             </a>
           ))}
-          <ThemeToggle className="ml-2" />
+          <a
+            href="https://github.com/jonmagic/agentconfig.org"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={cn(
+              'p-2 rounded-lg transition-colors',
+              'hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
+            )}
+            aria-label="View on GitHub"
+          >
+            <Github className="h-5 w-5" aria-hidden="true" />
+          </a>
+          <ThemeToggle className="ml-1" />
         </div>
 
         {/* Mobile menu button */}
-        <div className="flex md:hidden items-center gap-2">
+        <div className="flex md:hidden items-center gap-1">
+          <a
+            href="https://github.com/jonmagic/agentconfig.org"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={cn(
+              'p-2 rounded-lg transition-colors',
+              'hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
+            )}
+            aria-label="View on GitHub"
+          >
+            <Github className="h-5 w-5" aria-hidden="true" />
+          </a>
           <ThemeToggle />
           <button
             onClick={toggleMenu}
