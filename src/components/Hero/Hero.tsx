@@ -22,8 +22,8 @@ export function Hero({ className }: HeroProps): ReactNode {
           Explore the primitives that unlock their full potential.
         </p>
         <div className="flex flex-wrap justify-center gap-3">
-          <NavPill href="#file-tree">File Tree</NavPill>
           <NavPill href="#primitives">Primitives</NavPill>
+          <NavPill href="#file-tree">File Tree</NavPill>
           <NavPill href="#recipes">Recipes</NavPill>
           <NavPill href="#comparison">Comparison</NavPill>
         </div>

@@ -17,20 +17,20 @@ export function App(): ReactNode {
           <Hero />
 
           <Section
-            id="file-tree"
-            title="Interactive File Tree"
-            description="See exactly where AI primitive files live in your project. Click on any file to learn more about its purpose and how to configure it."
-          >
-            <FileTreeSection />
-          </Section>
-
-          <Section
             id="primitives"
             title="AI Primitives"
             description="Explore the 12 core primitives that power AI coding assistants. Each primitive serves a specific purpose in customizing AI behavior."
-            className="bg-muted/30"
           >
             <PrimitiveCardsSection />
+          </Section>
+
+          <Section
+            id="file-tree"
+            title="Interactive File Tree"
+            description="See exactly where AI primitive files live in your project. Click on any file to learn more about its purpose and how to configure it."
+            className="bg-muted/30"
+          >
+            <FileTreeSection />
           </Section>
 
           <Section

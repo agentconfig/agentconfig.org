@@ -4,8 +4,8 @@ import { ThemeToggle } from '@/components/ThemeToggle'
 import { cn } from '@/lib/utils'
 
 const navItems = [
-  { id: 'file-tree', label: 'File Tree' },
   { id: 'primitives', label: 'Primitives' },
+  { id: 'file-tree', label: 'File Tree' },
   { id: 'recipes', label: 'Recipes' },
   { id: 'comparison', label: 'Comparison' },
 ] as const
