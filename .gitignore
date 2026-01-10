@@ -7,9 +7,10 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
+# Dependencies and build output (in site/)
+site/node_modules
+site/dist
+site/dist-ssr
 *.local
 
 # Editor directories and files
@@ -26,9 +27,9 @@ dist-ssr
 # Research files (not part of site)
 research/
 
-# Playwright
-test-results/
-playwright-report/
+# Playwright (in site/)
+site/test-results/
+site/playwright-report/
 
 # Claude local settings
 .claude/
