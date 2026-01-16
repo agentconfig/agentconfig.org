@@ -4,6 +4,7 @@ import { CodeBlock } from '@/components/CodeBlock'
 import { CodeTabs } from '@/components/CodeBlock/CodeTabs'
 import { TableOfContents } from '@/components/TableOfContents'
 import { tocItems, furtherReadingLinks, codeSamples } from '@/data/mcpTutorial'
+import { MCPFeatureTable, ScopesTable } from './tables'
 
 export function MCPPage(): VNode {
   return (
@@ -282,12 +283,7 @@ export function MCPPage(): VNode {
                 </p>
 
                 <h3 className="text-xl font-semibold mt-8 mb-4">Claude Code Scopes</h3>
-                <CodeBlock 
-                  code={codeSamples.claudeScopes ?? ''}
-                  language="text"
-                  filename="Claude Code Scopes"
-                  className="my-6"
-                />
+                <ScopesTable provider="claude" />
 
                 <p>
                   Project-scoped servers are stored in <code>.mcp.json</code> at your project root and can be
@@ -303,12 +299,7 @@ export function MCPPage(): VNode {
                 />
 
                 <h3 className="text-xl font-semibold mt-8 mb-4">VS Code + Copilot Scopes</h3>
-                <CodeBlock 
-                  code={codeSamples.vscodeScopes ?? ''}
-                  language="text"
-                  filename="VS Code Scopes"
-                  className="my-6"
-                />
+                <ScopesTable provider="vscode" />
 
                 <p>
                   VS Code also supports MCP configuration in Dev Containers, ensuring consistent server
@@ -330,12 +321,7 @@ export function MCPPage(): VNode {
                   Both Claude Code and VS Code + Copilot support MCP, but with different feature sets.
                 </p>
 
-                <CodeBlock 
-                  code={codeSamples.providerComparison ?? ''}
-                  language="text"
-                  filename="Feature Comparison"
-                  className="my-6"
-                />
+                <MCPFeatureTable />
 
                 <h3 className="text-xl font-semibold mt-8 mb-4">Key Differences</h3>
                 <ul className="my-6 space-y-3">
