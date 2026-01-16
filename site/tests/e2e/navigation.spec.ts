@@ -25,7 +25,7 @@ test.describe('Navigation', () => {
 
       // Should navigate to /skills/
       await expect(page).toHaveURL(/\/skills\/?/)
-      await expect(page.getByRole('heading', { name: 'Skills' })).toBeVisible()
+      await expect(page.getByRole('heading', { name: 'Building Agent Skills' })).toBeVisible()
     })
 
     test('should navigate to Agents page', async ({ page }) => {
