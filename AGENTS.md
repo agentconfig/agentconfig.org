@@ -24,8 +24,8 @@ The site presents the same information in 4 different ways:
 
 ## Tech Decisions (Already Made)
 
-- Bun + Vite + React + TypeScript
-- Tailwind CSS + shadcn/ui
+- Bun + Vite + Preact + TypeScript
+- Tailwind CSS 4 + shadcn/ui
 - Playwright for testing
 - GitHub Pages for hosting
 - Light/dark theme support
