@@ -54,7 +54,7 @@ bun run build
 
 ## Tech Stack
 
-- React 18 + TypeScript
+- Preact + TypeScript
 - Vite
 - Tailwind CSS v4
 - Playwright for E2E tests
