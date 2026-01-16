@@ -504,18 +504,120 @@ export const claudeTree: FileNode = {
             description: 'Configuration for Claude Code behavior including model selection and tool permissions.',
             whatGoesHere: [
               'Model preferences',
-              'Tool permissions',
+              'Tool permissions (allow/deny lists)',
               'MCP server configurations',
+              'Sandbox settings',
             ],
             whenLoaded: 'Always loaded. Configures Claude\'s capabilities.',
             loadOrder: 3,
             example: `{
   "model": "claude-sonnet-4-20250514",
   "permissions": {
-    "allow": ["read", "write", "bash"]
+    "allow": ["Read", "Edit", "Bash(npm test)", "Bash(git commit:*)"],
+    "deny": ["Bash(rm -rf /*)"]
   }
 }`,
           },
+        },
+        {
+          id: 'claude-agents-folder',
+          name: 'agents',
+          type: 'folder',
+          children: [
+            {
+              id: 'claude-agent-reviewer',
+              name: 'code-reviewer.md',
+              type: 'file',
+              details: {
+                label: 'Custom Agent',
+                description: 'Defines a specialized subagent with specific roles, behaviors, and tool permissions.',
+                whatGoesHere: [
+                  'Agent name and description (in frontmatter)',
+                  'Allowed tools (comma-separated, optional - inherits all if omitted)',
+                  'Behavioral instructions in body',
+                ],
+                whenLoaded: 'Loaded when Claude delegates to this subagent based on task matching.',
+                loadOrder: 5,
+                example: `---
+name: code-reviewer
+description: Expert code review specialist. Proactively reviews code for quality, security, and maintainability.
+tools: Read, Grep, Glob, Bash
+---
+
+You are a code reviewer. When invoked:
+1. Identify bugs and potential issues
+2. Check adherence to project conventions
+3. Suggest improvements (but don't make changes)`,
+              },
+            },
+          ],
+        },
+        {
+          id: 'claude-commands-folder',
+          name: 'commands',
+          type: 'folder',
+          children: [
+            {
+              id: 'claude-command-commit',
+              name: 'commit.md',
+              type: 'file',
+              details: {
+                label: 'Slash Command',
+                description: 'Custom slash command invoked with /commit. Supports arguments, bash execution, and file references.',
+                whatGoesHere: [
+                  'Command frontmatter (allowed-tools, description, model)',
+                  'Bash commands with ! prefix',
+                  'File references with @ prefix',
+                  '$ARGUMENTS or $1, $2 for arguments',
+                ],
+                whenLoaded: 'User-invoked with /commit. Not automatically loaded.',
+                loadOrder: 7,
+                example: `---
+allowed-tools: Bash(git add:*), Bash(git status:*), Bash(git commit:*)
+description: Create a git commit with conventional format
+---
+
+## Context
+- Current git status: !\`git status\`
+
+## Your task
+Based on the staged changes, create a commit with conventional commit format.`,
+              },
+            },
+          ],
+        },
+        {
+          id: 'claude-rules-folder',
+          name: 'rules',
+          type: 'folder',
+          children: [
+            {
+              id: 'claude-rule-api',
+              name: 'api-guidelines.md',
+              type: 'file',
+              details: {
+                label: 'Modular Rule',
+                description: 'Topic-specific instructions that can be scoped to specific paths using glob patterns.',
+                whatGoesHere: [
+                  'Glob patterns in frontmatter (optional)',
+                  'Focused, topic-specific instructions',
+                  'Rules that apply to matching files only',
+                ],
+                whenLoaded: 'Loaded when working on files matching the globs pattern, or always if no globs specified.',
+                loadOrder: 4,
+                example: `---
+globs:
+  - "src/api/**/*.ts"
+---
+
+# API Development Rules
+
+- All API endpoints must include input validation
+- Use the standard error response format
+- Document endpoints with JSDoc comments`,
+              },
+            },
+          ],
         },
         {
           id: 'claude-skills-folder',
@@ -540,7 +642,7 @@ export const claudeTree: FileNode = {
                       'Tool usage patterns',
                     ],
                     whenLoaded: 'Auto-selected based on task matching.',
-                    loadOrder: 4,
+                    loadOrder: 6,
                     example: `---
 name: "Safe Refactor"
 description: "Refactor code while maintaining tests"
@@ -558,6 +660,45 @@ description: "Refactor code while maintaining tests"
             },
           ],
         },
+        {
+          id: 'claude-hooks-folder',
+          name: 'hooks',
+          type: 'folder',
+          children: [
+            {
+              id: 'claude-hooks-json',
+              name: 'hooks.json',
+              type: 'file',
+              details: {
+                label: 'Hooks Config',
+                description: 'Defines lifecycle hooks that run before/after tool execution or on notifications.',
+                whatGoesHere: [
+                  'Hook event types (PreToolUse, PostToolUse, Stop, etc.)',
+                  'Matcher patterns for specific tools (regex)',
+                  'Commands to execute with optional timeout',
+                ],
+                whenLoaded: 'Hooks execute at their defined lifecycle points.',
+                loadOrder: 0,
+                example: `{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/validate-edit.sh",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}`,
+              },
+            },
+          ],
+        },
       ],
     },
     {
@@ -566,12 +707,12 @@ description: "Refactor code while maintaining tests"
       type: 'file',
       details: {
         label: 'Project Memory',
-        description: 'Claude\'s primary file for project context. Claude reads this automatically to understand the project.',
+        description: 'Claude\'s primary file for project context. Supports @path imports for modular organization.',
         whatGoesHere: [
           'Project overview and conventions',
           'Key commands (build, test, run)',
           'Architecture notes',
-          'Anything you want Claude to "remember"',
+          '@path/to/file imports for additional context',
         ],
         whenLoaded: 'Always loaded first. Forms the baseline context for all Claude interactions.',
         loadOrder: 1,
@@ -588,7 +729,32 @@ A web application built with React and Node.js.
 ## Conventions
 - Use TypeScript strict mode
 - Prefer functional patterns
-- Write tests for new features`,
+
+@.claude/rules/api-guidelines.md`,
+      },
+    },
+    {
+      id: 'claude-local-md',
+      name: 'CLAUDE.local.md',
+      type: 'file',
+      details: {
+        label: 'Local Memory (Deprecated)',
+        description: 'Personal project-specific preferences. Deprecated in favor of hierarchical CLAUDE.md loading from parent directories.',
+        whatGoesHere: [
+          'Your sandbox/dev environment URLs',
+          'Personal testing preferences',
+          'Local-only conventions',
+        ],
+        whenLoaded: 'Always loaded if present. Consider using parent directory CLAUDE.md files instead.',
+        loadOrder: 2,
+        example: `# My Local Preferences (Deprecated)
+
+# Prefer using ~/.claude/CLAUDE.md for personal global preferences
+# or CLAUDE.md in parent directories for hierarchical config.
+
+## Dev Environment
+- Local API: http://localhost:3000
+- Test database: my_dev_db`,
       },
     },
     {
@@ -729,6 +895,41 @@ export const claudeGlobalTree: FileNode = {
           },
         },
         {
+          id: 'claude-global-agents',
+          name: 'agents',
+          type: 'folder',
+          children: [
+            {
+              id: 'claude-global-agent-planner',
+              name: 'planner.md',
+              type: 'file',
+              details: {
+                label: 'Global Agent',
+                description: 'A personal subagent available across all your projects.',
+                whatGoesHere: [
+                  'Agent name and description',
+                  'Allowed tools (comma-separated, optional)',
+                  'Behavioral instructions',
+                ],
+                whenLoaded: 'Loaded when Claude delegates to this subagent.',
+                loadOrder: 3,
+                example: `---
+name: planner
+description: Plans implementation approach before coding. Use proactively before starting complex tasks.
+tools: Read, Grep, Glob
+---
+
+# Implementation Planner
+
+Before writing any code, help the user:
+1. Break down the task into steps
+2. Identify potential challenges
+3. Suggest the best approach`,
+              },
+            },
+          ],
+        },
+        {
           id: 'claude-global-commands',
           name: 'commands',
           type: 'folder',
@@ -746,7 +947,7 @@ export const claudeGlobalTree: FileNode = {
                   'Output format preferences',
                 ],
                 whenLoaded: 'User-invoked with /pr. Available globally.',
-                loadOrder: 3,
+                loadOrder: 4,
                 example: `# Create Pull Request
 
 Create a well-formed pull request:
@@ -758,6 +959,35 @@ Create a well-formed pull request:
    - Testing done
    - Any breaking changes
 4. Create the PR using gh cli`,
+              },
+            },
+          ],
+        },
+        {
+          id: 'claude-global-rules',
+          name: 'rules',
+          type: 'folder',
+          children: [
+            {
+              id: 'claude-global-rule-security',
+              name: 'security.md',
+              type: 'file',
+              details: {
+                label: 'Global Rule',
+                description: 'Personal rules that apply across all your projects.',
+                whatGoesHere: [
+                  'Security best practices',
+                  'Personal coding standards',
+                  'Common patterns to follow',
+                ],
+                whenLoaded: 'Always loaded with global context.',
+                loadOrder: 3,
+                example: `# Security Rules
+
+- Never commit secrets or credentials
+- Always validate user input
+- Use parameterized queries for databases
+- Sanitize output to prevent XSS`,
               },
             },
           ],
@@ -785,7 +1015,7 @@ Create a well-formed pull request:
                       'Common patterns to look for',
                     ],
                     whenLoaded: 'Auto-selected when code review tasks are detected.',
-                    loadOrder: 4,
+                    loadOrder: 5,
                     example: `---
 name: "code-review"
 description: "Thorough code review following best practices. Use when reviewing code changes, PRs, or asking for feedback on implementations."

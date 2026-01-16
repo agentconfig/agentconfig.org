@@ -102,9 +102,9 @@ export const comparisonData: ComparisonRow[] = [
       location: '.github/prompts/*.prompt.md',
     },
     claude: {
-      level: 'partial',
-      implementation: 'Slash commands or manual prompts',
-      location: 'Built-in slash commands',
+      level: 'full',
+      implementation: 'Slash commands with full frontmatter support',
+      location: '.claude/commands/*.md',
     },
   },
   // === CONTROL ===
@@ -117,9 +117,9 @@ export const comparisonData: ComparisonRow[] = [
       location: '.github/agents/*.agent.md',
     },
     claude: {
-      level: 'partial',
-      implementation: 'Use skills to achieve similar behavior',
-      location: '.claude/skills/',
+      level: 'full',
+      implementation: 'Custom subagents with roles and tool permissions',
+      location: '.claude/agents/*.md',
     },
   },
   {
@@ -131,8 +131,8 @@ export const comparisonData: ComparisonRow[] = [
       location: 'VS Code settings + org policies',
     },
     claude: {
-      level: 'partial',
-      implementation: 'Tool permissions in settings',
+      level: 'full',
+      implementation: 'Permission system with allow/deny lists and sandbox',
       location: '.claude/settings.json',
     },
   },

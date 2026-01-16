@@ -33,10 +33,11 @@ test.describe('Provider Comparison', () => {
 
   test('should display support level badges', async ({ page }) => {
     const table = page.getByRole('table')
-    // Check for Full Support badges
+    // Check for Full Support badges (all primitives now have full support)
     await expect(table.getByText('Full Support').first()).toBeVisible()
-    // Check for Partial badges (some primitives have partial support)
-    await expect(table.getByText('Partial').first()).toBeVisible()
+    // Verify multiple Full Support badges exist (one per provider per primitive)
+    const fullSupportBadges = table.getByText('Full Support')
+    await expect(fullSupportBadges).toHaveCount(18) // 9 primitives × 2 providers
   })
 
   test('should expand row on click to show details', async ({ page }) => {
