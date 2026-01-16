@@ -1,0 +1,1350 @@
+# agentconfig.org - Complete Site Content
+
+> This file contains the complete content of agentconfig.org for AI agents.
+> It includes all AI primitives, provider comparisons, config file locations,
+> skills tutorial, and agent definitions tutorial.
+
+## Site Overview
+
+agentconfig.org is a reference site for configuring AI coding assistants like GitHub Copilot
+and Claude Code. The site helps developers understand and implement AI configuration primitives
+to get consistent, high-quality assistance from AI tools.
+
+**Key Topics:**
+- 10 AI primitives for configuring agent behavior
+- Provider comparison (GitHub Copilot vs Claude Code)
+- Config file locations and hierarchy
+- Skills tutorial (agentskills.io specification)
+- Agent definitions tutorial (AGENTS.md, CLAUDE.md, etc.)
+
+---
+
+# Part 1: AI Primitives
+
+The site documents 10 AI primitives organized into 3 categories:
+- **Capability (Execution)**: What the AI can do
+- **Customization (Instructions)**: How to shape AI behavior
+- **Control (Safety)**: How to constrain AI actions
+
+## Capability Primitives (Execution)
+
+These primitives define what the AI can do.
+
+### Agent Mode
+
+Multi-step execution with planning and tool use.
+
+**What it is:** A mode where the AI can plan and execute over multiple steps, often with tools (file edits, searches, running tests). Works until done, not just answers.
+
+**Use when:**
+- The task spans multiple files
+- You need iterative debugging
+- You want the system to keep working until done
+
+**Prevents:** "One-shot" incomplete solutions that require manual follow-up
+
+**Combine with:** Skills, Tools, Verification
+
+**Provider Implementations:**
+
+| Provider | Implementation | Location | Support |
+|----------|---------------|----------|---------|
+| GitHub Copilot | Agent mode in Copilot Chat | VS Code Copilot Chat | full |
+| Claude Code | Agentic workflows in Claude Code | Claude Code CLI | full |
+
+---
+
+### Skills / Workflows
+
+Reusable multi-step procedures for common tasks.
+
+**What it is:** A packaged procedure the agent can follow ("triage incident", "fix failing CI", "refactor module safely"). Encodes best practices into repeatable workflows.
+
+**Use when:**
+- You want reliability and repeatability across runs
+- The work has a known process with good best practices
+- You want to encode expert knowledge
+
+**Prevents:** Ad-hoc flailing and missed steps in complex tasks
+
+**Combine with:** Agent Mode, Tools
+
+**Provider Implementations:**
+
+| Provider | Implementation | Location | Support |
+|----------|---------------|----------|---------|
+| GitHub Copilot | Skill modules in skills directory | .github/skills/*/SKILL.md | full |
+| Claude Code | Skill modules in .claude directory | .claude/skills/*/SKILL.md | full |
+
+---
+
+### Tool Integrations (MCP)
+
+External tools for retrieving facts and taking actions.
+
+**What it is:** The AI calling tools to retrieve facts or perform actions (search, DB query, GitHub, CI, observability). Grounds the AI in reality.
+
+**Use when:**
+- "Correct" depends on reality outside the model's weights
+- You need actions: create PRs, comment on issues, run tests
+- You want to query current state (logs, incidents)
+
+**Prevents:** Hallucinated facts and stale guidance
+
+**Combine with:** Guardrails, Verification
+
+**Provider Implementations:**
+
+| Provider | Implementation | Location | Support |
+|----------|---------------|----------|---------|
+| GitHub Copilot | MCP servers and tool calling | VS Code MCP settings | full |
+| Claude Code | MCP servers and tool calling | .claude/settings.json | full |
+
+---
+
+## Customization Primitives (Instructions)
+
+These primitives shape how the AI behaves.
+
+### Persistent Instructions
+
+A durable set of norms that define "good" for your project.
+
+**What it is:** A durable set of norms: tone, coding standards, constraints, safety rules, and "definition of done." These form the behavioral contract that governs all AI interactions.
+
+**Use when:**
+- You want consistent behavior across many tasks
+- You want the AI to honor repo conventions without re-learning
+- You need a "definition of done" for your project
+
+**Prevents:** Stylistic drift and rework from inconsistent outputs
+
+**Combine with:** Prompt Templates, Scope-Specific Instructions
+
+**Provider Implementations:**
+
+| Provider | Implementation | Location | Support |
+|----------|---------------|----------|---------|
+| GitHub Copilot | Repository-level instructions file | .github/copilot-instructions.md | full |
+| Claude Code | Project memory file with @imports | CLAUDE.md | full |
+
+---
+
+### Global Instructions
+
+User-level preferences that apply across all projects.
+
+**What it is:** Personal preferences and standards that follow you across all projects. Defines your individual coding style, preferred patterns, and global behaviors.
+
+**Use when:**
+- You want consistent personal preferences across projects
+- You have coding standards you always follow
+- You want global slash commands or agents available everywhere
+
+**Prevents:** Repeating the same preferences in every project
+
+**Combine with:** Persistent Instructions, Custom Agents
+
+**Provider Implementations:**
+
+| Provider | Implementation | Location | Support |
+|----------|---------------|----------|---------|
+| GitHub Copilot | User-level settings in VS Code | VS Code settings.json | full |
+| Claude Code | User-level memory and config | ~/.claude/CLAUDE.md | full |
+
+---
+
+### Path-Scoped Rules
+
+Instructions that apply only to specific file paths.
+
+**What it is:** Instructions that apply only within a scope boundary defined by glob patterns. Enables "policy close to the code" where different parts of a system can have different conventions.
+
+**Use when:**
+- Different parts of a system have different conventions
+- Frontend and backend need different rules
+- You want policy close to the code it governs
+
+**Prevents:** Accidental cross-domain assumptions (backend rules applied to frontend)
+
+**Combine with:** Persistent Instructions, Custom Agents
+
+**Provider Implementations:**
+
+| Provider | Implementation | Location | Support |
+|----------|---------------|----------|---------|
+| GitHub Copilot | Instruction files with applyTo glob patterns | .github/instructions/*.instructions.md | full |
+| Claude Code | Rule files with globs frontmatter | .claude/rules/*.md | full |
+
+---
+
+### Slash Commands
+
+Repeatable prompts invoked via / commands.
+
+**What it is:** Reusable prompts for recurring tasks like "write tests", "summarize this ADR", or "generate migration plan". Invoked via slash commands for quick access.
+
+**Use when:**
+- You notice yourself rewriting the same prompt
+- A team wants consistent inputs/outputs
+- You have a repeatable task pattern
+
+**Prevents:** Prompt drift and inconsistent outputs across team members
+
+**Combine with:** Persistent Instructions, Skills
+
+**Provider Implementations:**
+
+| Provider | Implementation | Location | Support |
+|----------|---------------|----------|---------|
+| GitHub Copilot | Prompt files invoked via / commands | .github/prompts/*.prompt.md | full |
+| Claude Code | Command files with frontmatter and $ARGUMENTS | .claude/commands/*.md | full |
+
+---
+
+## Control Primitives (Safety)
+
+These primitives constrain what the AI is allowed to do.
+
+### Custom Agents
+
+Specialized agent personas with specific roles and permissions.
+
+**What it is:** Defines specialized agent personas with specific roles, behaviors, and tool permissions. Allows switching between different "modes" of AI assistance.
+
+**Use when:**
+- You need different AI behaviors for different tasks
+- You want to restrict tools for certain workflows
+- You want role-specific expertise (reviewer, planner, etc.)
+
+**Prevents:** One-size-fits-all behavior that misses context
+
+**Combine with:** Skills, Guardrails
+
+**Provider Implementations:**
+
+| Provider | Implementation | Location | Support |
+|----------|---------------|----------|---------|
+| GitHub Copilot | Agent definition files | .github/agents/*.agent.md | full |
+| Claude Code | Custom subagents with roles and tool permissions | .claude/agents/*.md | full |
+
+---
+
+### Permissions & Guardrails
+
+Explicit constraints on what the AI can do.
+
+**What it is:** Explicit constraints on what the AI is allowed to do (no prod writes, require approvals, redact secrets). Essential for safe tool use.
+
+**Use when:**
+- Tools can make changes or access sensitive systems
+- You're scaling usage to a team
+- You need audit trails and approvals
+
+**Prevents:** Accidental harmful actions and unauthorized access
+
+**Combine with:** Agent Mode, Tool Integrations
+
+**Provider Implementations:**
+
+| Provider | Implementation | Location | Support |
+|----------|---------------|----------|---------|
+| GitHub Copilot | Org policies and tool permissions | VS Code settings + org policies | full |
+| Claude Code | Allow/deny lists with pattern matching and sandbox | .claude/settings.json | full |
+
+---
+
+### Lifecycle Hooks
+
+Code that runs before/after AI tool execution.
+
+**What it is:** Custom scripts or commands that run at specific points in the AI workflow: before tool use, after tool use, or when the agent stops. Enables validation, logging, and custom behaviors.
+
+**Use when:**
+- You need to validate or transform tool inputs/outputs
+- You want custom logging or audit trails
+- You need to enforce policies programmatically
+
+**Prevents:** Unvalidated tool execution and missed policy enforcement
+
+**Combine with:** Guardrails, Verification
+
+**Provider Implementations:**
+
+| Provider | Implementation | Location | Support |
+|----------|---------------|----------|---------|
+| GitHub Copilot | Not available | N/A | diy |
+| Claude Code | PreToolUse, PostToolUse, Stop hooks with matchers | .claude/hooks/hooks.json | full |
+
+---
+
+### Verification / Evals
+
+Checks that validate AI outputs before shipping.
+
+**What it is:** Checks that validate outputs: tests, lint, typecheck, static analysis, golden answers, human review. Reduces "confidence debt."
+
+**Use when:**
+- The cost of being wrong is high
+- You're generating code or operational advice
+- You want to catch errors before they ship
+
+**Prevents:** Plausible-but-wrong output shipping to production
+
+**Combine with:** Agent Mode, Tool Integrations
+
+**Provider Implementations:**
+
+| Provider | Implementation | Location | Support |
+|----------|---------------|----------|---------|
+| GitHub Copilot | Run tests/lint via terminal tools | Terminal tools in agent mode | full |
+| Claude Code | Run tests/lint via Bash tool with hooks | Bash tool + hooks | full |
+
+---
+
+---
+
+# Part 2: Provider Comparison
+
+Support matrix comparing GitHub Copilot and Claude Code:
+
+| Primitive | Copilot | Claude |
+|-----------|---------|--------|
+| Agent Mode | ✓ Agent mode in Copilot Chat | ✓ Agentic workflows in Claude Code |
+| Skills / Workflows | ✓ Skill modules in skills directory | ✓ Skill modules in .claude directory |
+| Tool Integrations (MCP) | ✓ MCP servers and tool calling | ✓ MCP servers and tool calling |
+| Persistent Instructions | ✓ Repo instructions file | ✓ Project memory file with @imports |
+| Global Instructions | ✓ User-level settings in VS Code | ✓ User-level memory and config |
+| Path-Scoped Rules | ✓ Instruction files with applyTo glob patterns | ✓ Rule files with globs frontmatter |
+| Slash Commands | ✓ Prompt files invoked via / commands | ✓ Command files with frontmatter and $ARGUMENTS |
+| Custom Agents | ✓ Agent definition files with roles and tool permissions | ✓ Subagent files with tools restrictions |
+| Permissions & Guardrails | ✓ Org policies and tool permissions | ✓ Allow/deny lists with pattern matching and sandbox |
+| Lifecycle Hooks | — Not available | ✓ PreToolUse, PostToolUse, Stop hooks with matchers |
+| Verification / Evals | ✓ Run tests/lint via terminal tools | ✓ Run tests/lint via Bash tool with hooks |
+
+### Config File Locations
+
+**GitHub Copilot:**
+- Persistent Instructions: `.github/copilot-instructions.md`
+- Path-Scoped Rules: `.github/instructions/*.instructions.md`
+- Slash Commands: `.github/prompts/*.prompt.md`
+- Custom Agents: `.github/agents/*.agent.md`
+- Skills: `.github/skills/*/SKILL.md`
+
+**Claude Code:**
+- Persistent Instructions: `CLAUDE.md` (root) or `.claude/CLAUDE.md`
+- Global Instructions: `~/.claude/CLAUDE.md`
+- Path-Scoped Rules: `.claude/rules/*.md`
+- Slash Commands: `.claude/commands/*.md`
+- Custom Agents: `.claude/agents/*.md`
+- Skills: `.claude/skills/*/SKILL.md`
+- Lifecycle Hooks: `.claude/hooks/hooks.json`
+- MCP Settings: `.claude/settings.json`
+
+---
+
+# Part 3: Skills Tutorial
+
+## Tutorial Sections
+
+### Understanding the Spec
+
+The structure and constraints of a SKILL.md file.
+
+Agent Skills follow the [agentskills.io specification](https://agentskills.io/specification). Each skill lives in its own directory with a **SKILL.md** file that defines its behavior.
+
+**Key constraints:**
+- **name**: Maximum 64 characters, lowercase with hyphens, must match the directory name
+- **description**: Maximum 1024 characters—this is what triggers the skill
+- **Body**: Recommended under 500 lines to keep skills focused
+
+```markdown
+---
+name: semantic-commit
+description: Generate semantic commit messages from staged changes
+---
+
+# Semantic Commit
+
+When the user asks to commit changes, follow these steps:
+
+1. Run `git diff --cached` to see staged changes
+2. Analyze the changes to determine the commit type
+3. Generate a message following conventional commits format
+```
+
+The frontmatter tells the agent *when* to use this skill. The body tells it *how*.
+
+---
+
+### Progressive Disclosure
+
+Load information only when needed.
+
+Skills use progressive disclosure to stay token-efficient. The agent doesn't load your skill's full instructions until it's actually needed.
+
+**The loading sequence:**
+1. Agent sees only the **description** (from frontmatter)
+2. If description matches the task → agent loads the **body**
+3. If body references files → agent loads **references/** and **assets/**
+4. If body needs tools → agent loads **scripts/**
+
+This means a skill with 50KB of reference documentation costs almost nothing until it's invoked. Write descriptions that accurately trigger loading—no more, no less.
+
+**Good description:**
+```
+description: Generate semantic commit messages from staged changes. Use when committing code.
+```
+
+**Bad description:**
+```
+description: A skill for commits.
+```
+
+The good description tells the agent exactly when to load this skill.
+
+---
+
+### Composability
+
+Skills that reference other skills.
+
+Skills can reference other skills to build complex workflows from simple building blocks.
+
+**Using `## Related Skills`:**
+```markdown
+## Related Skills
+
+This skill works well with:
+- **voice-and-tone**: Apply when generating any written content
+- **semantic-commit**: Use after completing implementation work
+```
+
+When the agent sees this section, it knows to consider loading those skills for the current workflow.
+
+**Referencing skill files directly:**
+```markdown
+For writing style guidelines, see the voice-and-tone skill at:
+`.github/skills/voice-and-tone/SKILL.md`
+```
+
+**Benefits of composability:**
+- Keep individual skills small and focused
+- Reuse common patterns (voice, commit style, testing)
+- Build sophisticated workflows from simple pieces
+- Update one skill and all dependent workflows improve
+
+---
+
+### When to Use What
+
+Scripts vs references vs assets—a decision tree.
+
+Skills have three optional directories for additional content:
+
+| Directory | Purpose | Example |
+|-----------|---------|---------|
+| **scripts/** | Executable code the agent can run | CLI tools, validators, formatters |
+| **references/** | Documentation to read | API docs, style guides, examples |
+| **assets/** | Static resources | Templates, images, config files |
+
+**Decision tree:**
+
+```
+Is it documentation the agent should read?
+  → references/
+
+Is it a file the agent should use as-is?
+  → assets/
+
+Is it code the agent should execute?
+  → scripts/
+```
+
+**Example skill structure:**
+```
+executive-summary/
+├── SKILL.md           # Core instructions
+├── references/
+│   └── format-guide.md  # How to structure summaries
+├── scripts/
+│   └── fetch-github.sh  # CLI to fetch issue/PR data
+└── assets/
+    └── template.md      # Output template
+```
+
+The agent loads these progressively—only when the SKILL.md body references them.
+
+---
+
+### Keeping Skills Lean
+
+Under 500 lines and why it matters.
+
+The spec recommends keeping SKILL.md files under 500 lines. Here's why:
+
+**Token efficiency**: Every line in SKILL.md is loaded when the skill activates. Large files burn through context unnecessarily.
+
+**Cognitive load**: Both humans and agents understand focused skills better than sprawling ones.
+
+**Composability**: Smaller skills are easier to combine and reuse.
+
+**How to stay lean:**
+
+1. **Move reference material** → Put style guides, examples, and documentation in `references/`
+2. **Extract executable logic** → CLI tools and validators go in `scripts/`
+3. **Split large skills** → If a skill does 5 things, maybe it's 5 skills
+4. **Use progressive loading** → Reference external files instead of embedding content
+
+**Before (500+ lines in SKILL.md):**
+```markdown
+# Weekly Snippets
+
+[... 200 lines of format instructions ...]
+[... 150 lines of examples ...]
+[... 100 lines of source-gathering logic ...]
+```
+
+**After (focused SKILL.md):**
+```markdown
+# Weekly Snippets
+
+For format guidelines, see `references/format-guide.md`.
+For examples, see `references/examples.md`.
+
+When gathering sources, run `scripts/gather-sources.sh`.
+```
+
+---
+
+## Example Skills
+
+Five example skills demonstrating different complexity levels and patterns:
+
+### Who Am I
+
+**Complexity:** minimal
+**Demonstrates:** Pure documentation skill (~20 lines)
+
+Identity context skill—pure documentation with no external dependencies.
+
+**SKILL.md:**
+```markdown
+---
+name: who-am-i
+description: Identity context for the user. Use when writing on their behalf or when context about who they are would help.
+---
+
+# Who Am I
+
+## Name
+Jonathan Hoyt (jonmagic)
+
+## Role
+Principal Engineer at GitHub, Safety & Integrity team
+
+## About
+I build systems that protect GitHub's platform from abuse while preserving developer experience. I care deeply about:
+- Pragmatic engineering over theoretical perfection
+- Clear communication and documentation
+- Mentoring and teaching others
+
+## Writing Context
+When writing on my behalf, use first-person perspective with a thoughtful, principal-engineer voice.
+```
+
+**Key Takeaways:**
+- Skills can be pure documentation with no code
+- The description determines when the skill loads
+- Keep it focused—this skill does one thing well
+
+---
+
+### Voice & Tone
+
+**Complexity:** low
+**Demonstrates:** Documentation with references/ for progressive disclosure
+
+Writing style guide with reference documentation.
+
+**SKILL.md:**
+```markdown
+---
+name: voice-and-tone
+description: Writing style guide with authentic voice patterns. Use when generating any prose content—blog posts, documentation, reflections, or feedback.
+---
+
+# Voice & Tone
+
+## Core Principles
+
+1. **First-person narratives** with introspective framing
+2. **Concrete examples** over abstract concepts
+3. **Thoughtful perspective** of a principal engineer
+
+## When Writing
+
+- Start with context, then insight
+- Use "I" statements for personal reflection
+- Include specific details that ground the writing
+
+For detailed patterns and examples, see `references/patterns.md`.
+```
+
+**references/patterns.md:**
+```markdown
+# Voice Patterns
+
+## Opening Lines
+Start with context that draws readers in:
+- "Last week, our team shipped a feature that..."
+- "I've been thinking about how we approach..."
+- "There's a pattern I keep seeing in..."
+
+## Transitions
+Move between ideas naturally:
+- "This connects to something I learned..."
+- "The interesting part is..."
+- "What surprised me was..."
+
+## Closings
+End with reflection or forward-looking thought:
+- "Looking back, the key insight was..."
+- "Next time, I'll remember to..."
+- "This changed how I think about..."
+```
+
+**Key Takeaways:**
+- Use references/ for content that supports but isn't essential
+- The main SKILL.md stays focused and under 500 lines
+- Progressive disclosure: references load only when needed
+
+---
+
+### Executive Summary
+
+**Complexity:** medium
+**Demonstrates:** Scripts for external tool integration
+
+Creates formal summaries from GitHub conversations with CLI tools.
+
+**SKILL.md:**
+```markdown
+---
+name: executive-summary
+description: Create formal executive summaries from GitHub conversations or meeting transcripts. Use when generating leadership-ready summaries.
+---
+
+# Executive Summary
+
+Generate summaries that distill key decisions, alternatives, outcomes, and next steps from complex conversations.
+
+## Supported Sources
+
+- GitHub issues and pull requests
+- Meeting transcripts (Zoom, Teams)
+
+## Process
+
+1. **Fetch source data**
+   - For GitHub: Run `scripts/fetch-github.sh <url>`
+   - For transcripts: Read from provided path
+
+2. **Extract key elements**
+   - Decisions made
+   - Alternatives considered
+   - Outcomes and results
+   - Action items and owners
+
+3. **Generate summary**
+   - Use template from `assets/template.md`
+   - Follow format guide in `references/format-guide.md`
+
+4. **Save output**
+   - Save to `Executive Summaries/` with date prefix
+```
+
+**scripts/fetch-github.sh:**
+```bash
+#!/bin/bash
+# Fetch GitHub issue or PR data including all comments
+# Usage: fetch-github.sh <github-url>
+
+URL="$1"
+
+if [[ -z "$URL" ]]; then
+  echo "Usage: fetch-github.sh <github-url>"
+  exit 1
+fi
+
+# Extract owner, repo, type, and number from URL
+if [[ "$URL" =~ github.com/([^/]+)/([^/]+)/(issues|pull)/([0-9]+) ]]; then
+  OWNER="${BASH_REMATCH[1]}"
+  REPO="${BASH_REMATCH[2]}"
+  TYPE="${BASH_REMATCH[3]}"
+  NUMBER="${BASH_REMATCH[4]}"
+else
+  echo "Invalid GitHub URL format"
+  exit 1
+fi
+
+# Fetch using gh CLI
+if [[ "$TYPE" == "issues" ]]; then
+  gh issue view "$NUMBER" -R "$OWNER/$REPO" --comments
+else
+  gh pr view "$NUMBER" -R "$OWNER/$REPO" --comments
+fi
+```
+
+**assets/template.md:**
+```markdown
+# Executive Summary: {{TITLE}}
+
+**Date:** {{DATE}}
+**Source:** {{SOURCE_URL}}
+
+## Summary
+
+{{BRIEF_SUMMARY}}
+
+## Key Decisions
+
+{{DECISIONS}}
+
+## Alternatives Considered
+
+{{ALTERNATIVES}}
+
+## Next Steps
+
+{{ACTION_ITEMS}}
+
+---
+*Generated from {{SOURCE_TYPE}}*
+```
+
+**Key Takeaways:**
+- Scripts enable skills to interact with external systems
+- Keep scripts simple and focused on data retrieval
+- Use assets for templates the agent should use verbatim
+
+---
+
+### Weekly Snippets
+
+**Complexity:** medium
+**Demonstrates:** Skill composition—references other skills
+
+Interactive snippets builder that composes multiple skills.
+
+**SKILL.md:**
+```markdown
+---
+name: weekly-snippets
+description: Interactive weekly snippets builder for gathering and drafting accomplishment summaries. Use when creating weekly status updates.
+---
+
+# Weekly Snippets
+
+Build weekly accomplishment summaries by gathering from multiple sources.
+
+## Related Skills
+
+This skill works best with:
+- **voice-and-tone**: Apply when drafting snippet prose
+- **who-am-i**: Use for context about role and team
+
+## Process
+
+1. **Identify time range**
+   - Friday through Thursday (standard snippet week)
+
+2. **Gather from sources** (in order)
+   - Weekly Notes file
+   - GitHub PRs and issues (via `gh` CLI)
+   - Meeting Notes folder
+
+3. **Draft sections**
+   - Ships: What you delivered
+   - Risks: What might block progress
+   - Blockers: What's currently blocking
+   - Ideas: Improvements or proposals
+   - Collaborations: Cross-team work
+   - Shoutouts: Recognition for others
+
+4. **Apply voice-and-tone**
+   - Lead with business impact
+   - Use active voice
+   - Include specific metrics where possible
+
+## Format Guide
+
+See `references/format-guide.md` for section templates and examples.
+```
+
+**references/format-guide.md:**
+```markdown
+# Snippets Format Guide
+
+## Section Templates
+
+### Ships
+```
+- **[Project Name]**: Brief description of impact
+  - Specific metric or outcome
+  - Link to PR/issue if relevant
+```
+
+### Risks
+```
+- **[Risk]**: Description and mitigation plan
+```
+
+### Shoutouts
+```
+- **@username**: What they did and why it mattered
+```
+
+## Writing Tips
+
+1. Start with the impact, not the activity
+2. Use numbers when you have them
+3. Link to artifacts for context
+4. Keep bullets to 1-2 lines each
+```
+
+**Key Takeaways:**
+- Use "Related Skills" to compose workflows
+- Skills can be interactive, guiding the user through steps
+- Reference other skills for consistent voice and context
+
+---
+
+### Visual UI QA
+
+**Complexity:** high
+**Demonstrates:** Most sophisticated—multimodal input and complex decision trees
+
+Multimodal skill that analyzes screenshots for visual testing.
+
+**SKILL.md:**
+```markdown
+---
+name: visual-ui-qa
+description: Analyze UI screenshots for visual defects, accessibility issues, and design consistency. Use when testing visual elements or reviewing UI changes.
+---
+
+# Visual UI QA
+
+Perform visual quality assurance on UI screenshots using multimodal analysis.
+
+## Requirements
+
+This skill requires multimodal (vision) capability. If your agent doesn't support image analysis natively, use the `scripts/analyze-screenshot.sh` script which calls a vision model via the `llm` CLI.
+
+If analysis fails, inform the user:
+> "I'm unable to analyze this screenshot. To enable visual analysis, install the llm CLI (https://llm.datasette.io) and run: `scripts/analyze-screenshot.sh <image-path>`"
+
+## Capabilities
+
+- Detect visual regressions between baseline and current
+- Identify accessibility issues (contrast, touch targets)
+- Check design consistency (spacing, alignment, colors)
+- Verify responsive behavior across breakpoints
+
+## Process
+
+### 1. Capture or Receive Screenshot
+Use `scripts/capture-screenshot.js <url>` or accept an image path from the user.
+
+### 2. Analyze Visual Elements
+
+**Layout Analysis:**
+- Check alignment and spacing consistency
+- Verify responsive breakpoint behavior
+- Identify overflow or clipping issues
+
+**Color & Contrast:**
+- Verify WCAG contrast ratios (AA minimum)
+- Check color consistency with design tokens
+- Identify color blindness accessibility issues
+
+**Typography:**
+- Check font sizes meet minimum requirements
+- Verify line height and letter spacing
+- Identify truncation or overflow issues
+
+### 3. Compare with Baseline (if provided)
+- Pixel-level diff analysis
+- Highlight changed regions
+- Classify changes: intentional vs regression
+
+### 4. Generate Report
+
+Use template from `assets/report-template.md`:
+- Summary of findings
+- Severity classification (critical/major/minor)
+- Screenshots with annotations
+- Recommended fixes
+
+## Severity Definitions
+
+See `references/severity-guide.md` for classification criteria.
+```
+
+**references/severity-guide.md:**
+```markdown
+# Severity Classification
+
+## Critical
+- Prevents user from completing task
+- WCAG AAA contrast failure on essential content
+- Broken layout that hides content
+- Incorrect data display
+
+## Major
+- Significant visual regression
+- WCAG AA contrast failure
+- Misaligned elements that confuse flow
+- Missing visual feedback for interactions
+
+## Minor
+- Small spacing inconsistencies
+- Slight color variations from design
+- Non-essential decorative issues
+- Pixel-level differences unlikely to notice
+```
+
+**scripts/capture-screenshot.js:**
+```javascript
+#!/usr/bin/env node
+/**
+ * Capture consistent screenshots for visual testing
+ * Usage: capture-screenshot.js <url> [--viewport=1280x720] [--output=screenshot.png]
+ */
+
+const { chromium } = require('playwright')
+
+async function captureScreenshot(url, options = {}) {
+  const viewport = options.viewport || { width: 1280, height: 720 }
+  const output = options.output || 'screenshot.png'
+
+  const browser = await chromium.launch()
+  const page = await browser.newPage({ viewport })
+
+  await page.goto(url, { waitUntil: 'networkidle' })
+
+  // Wait for fonts to load
+  await page.evaluate(() => document.fonts.ready)
+
+  await page.screenshot({
+    path: output,
+    fullPage: false
+  })
+
+  await browser.close()
+  console.log(`Screenshot saved to ${output}`)
+}
+
+// Parse args and run
+const [,, url, ...args] = process.argv
+if (!url) {
+  console.error('Usage: capture-screenshot.js <url>')
+  process.exit(1)
+}
+
+captureScreenshot(url)
+```
+
+**scripts/analyze-screenshot.sh:**
+```bash
+#!/bin/bash
+# Analyze a screenshot using a vision model via the llm CLI
+# Usage: analyze-screenshot.sh <image-path> [prompt]
+# Requires: llm CLI (https://llm.datasette.io) with a vision model configured
+
+IMAGE="$1"
+PROMPT="${2:-Analyze this UI screenshot for visual defects, accessibility issues, and design consistency. Report findings by severity (critical, major, minor).}"
+
+if [[ -z "$IMAGE" ]]; then
+  echo "Usage: analyze-screenshot.sh <image-path> [prompt]"
+  exit 1
+fi
+
+if ! command -v llm &> /dev/null; then
+  echo "Error: llm CLI not found. Install from https://llm.datasette.io"
+  exit 1
+fi
+
+# Use llm with attachment flag for image input
+llm -m gpt-4o "$PROMPT" -a "$IMAGE"
+```
+
+**assets/report-template.md:**
+```markdown
+# Visual QA Report
+
+**URL:** {{URL}}
+**Date:** {{DATE}}
+**Viewport:** {{VIEWPORT}}
+
+## Summary
+
+{{SUMMARY}}
+
+## Findings
+
+### Critical ({{CRITICAL_COUNT}})
+
+{{CRITICAL_FINDINGS}}
+
+### Major ({{MAJOR_COUNT}})
+
+{{MAJOR_FINDINGS}}
+
+### Minor ({{MINOR_COUNT}})
+
+{{MINOR_FINDINGS}}
+
+## Recommendations
+
+{{RECOMMENDATIONS}}
+
+---
+*Report generated by visual-ui-qa skill*
+```
+
+**Key Takeaways:**
+- Skills can accept multimodal input (images)
+- Gracefully degrade when capabilities are missing
+- Use CLI tools like llm to add vision to any agent
+- Scripts can integrate with external tools (Playwright, llm)
+
+---
+
+
+---
+
+# Part 4: Agent Definitions Tutorial
+
+## Tutorial Sections
+
+- 1. What Are Agent Definitions? (beginner)
+- 2. Your First Definition (beginner)
+- 3. The Six Core Sections (beginner)
+- 4. Provider-Specific Formats (intermediate)
+- 5. Path-Scoped Instructions (intermediate)
+- 6. Custom Agent Personas (intermediate)
+- 7. File Hierarchy (advanced)
+- 8. Monorepo Strategies (advanced)
+- 9. Further Reading
+
+## Section Details
+
+### 1. What Are Agent Definitions?
+
+Agent definitions are markdown files that teach AI coding assistants about your project.
+They provide context about how to build, what conventions to follow, and where things live.
+
+**Why Markdown?**
+- Human readable: Team members can review and update easily
+- Version controlled: Instructions evolve with your codebase
+- Tool agnostic: Many AI tools read the same formats
+- No runtime cost: Instructions load at session start
+
+### 2. Your First Agent Definition
+
+Minimal example that works with any AI coding assistant:
+
+```markdown
+# AGENTS.md
+
+## Setup
+- Install dependencies: `npm install`
+- Start dev server: `npm run dev`
+- Run tests: `npm test`
+
+## Code Style
+- TypeScript strict mode
+- Use functional components
+- Single quotes, no semicolons
+```
+
+### 3. The Six Sections That Matter
+
+Analysis of 2,500+ repositories shows effective agent definitions cover:
+
+1. **Commands**: Build, test, lint with full flags
+2. **Testing**: Framework, locations, how to run
+3. **Project Structure**: Key directories mapped
+4. **Code Style**: Actual code examples, not descriptions
+5. **Git Workflow**: Branch naming, commit format, PR process
+6. **Boundaries**: What the AI should NOT do
+
+```markdown
+# AGENTS.md
+
+## Commands
+- Build: `npm run build`
+- Test: `npm test -- --coverage`
+- Lint: `npm run lint --fix`
+
+## Testing
+- Framework: Vitest
+- Location: `tests/` directory
+- Run all: `npm test`
+- Run one: `npm test -- -t "test name"`
+
+## Project Structure
+- `src/` - Application source code
+- `tests/` - Test files (mirror src/ structure)
+- `docs/` - Documentation
+- `.github/` - CI/CD and GitHub config
+
+## Code Style
+- TypeScript strict mode
+- Functional components with hooks
+- Example:
+  ```typescript
+  // ✅ Good
+  export function UserCard({ user }: Props): JSX.Element {
+    return <div className="card">{user.name}</div>
+  }
+  
+  // ❌ Bad  
+  export default function(props: any) {
+    return <div class="card">{props.user.name}</div>
+  }
+  ```
+
+## Git Workflow
+- Commit format: `type(scope): description`
+- Types: feat, fix, docs, refactor, test
+- Always run tests before committing
+
+## Boundaries
+- ✅ Always: Run tests, follow code style, use TypeScript
+- ⚠️ Ask first: Database schema changes, new dependencies
+- 🚫 Never: Commit secrets, modify node_modules, skip tests
+```
+
+### 4. Provider-Specific Formats
+
+**AGENTS.md** (Open standard, 60k+ projects):
+```markdown
+# AGENTS.md
+
+## Commands
+- Build: `npm run build`
+- Test: `npm test`
+
+## Code Style
+- TypeScript strict mode
+- Use Prettier for formatting
+
+## Testing
+- Framework: Vitest
+- Run: `npm test`
+```
+
+**CLAUDE.md** (Claude Code):
+```markdown
+# CLAUDE.md
+
+See @README.md for project overview.
+See @package.json for available npm commands.
+
+## Code Style
+Follow @docs/code-style.md for conventions.
+
+## Testing
+Run tests with `npm test` before every commit.
+
+## Important Files
+- @src/config.ts - Application configuration
+- @src/types/index.ts - Shared TypeScript types
+```
+
+**copilot-instructions.md** (GitHub Copilot):
+```markdown
+# .github/copilot-instructions.md
+
+This is a React 18 project using TypeScript and Vite.
+
+When writing components:
+- Use functional components with hooks
+- Export named functions, not default exports
+- Place tests in __tests__ directories
+- Use Tailwind CSS for styling
+
+When writing tests:
+- Use Vitest and React Testing Library
+- Test behavior, not implementation
+- Include accessibility checks
+```
+
+| Feature | AGENTS.md | CLAUDE.md | copilot-instructions |
+|---------|-----------|-----------|---------------------|
+| Location | Project root | Root or .claude/ | .github/ |
+| Path rules | ✗ | ✓ .claude/rules/ | ✓ .instructions.md |
+| File imports | ✗ | ✓ @file syntax | ✗ |
+| Agent personas | ✗ | ✗ | ✓ .agent.md |
+| Cross-tool support | Wide | Claude only | Copilot only |
+
+### 5. Path-Scoped Rules
+
+Claude (.claude/rules/api.md):
+```markdown
+---
+paths:
+  - "src/api/**"
+  - "src/routes/**"
+---
+
+# API Development Rules
+
+When working in the API layer:
+- All endpoints must have OpenAPI annotations
+- Use zod for request/response validation
+- Return proper HTTP status codes
+- Log all errors with context
+```
+
+Copilot (.github/instructions/api.instructions.md):
+```markdown
+---
+applyTo: "src/api/**"
+---
+
+# API Development Instructions
+
+When modifying API endpoints:
+- Follow REST naming conventions
+- Include request validation
+- Document all endpoints
+- Write integration tests
+```
+
+### 6. Agent Personas (Copilot)
+
+```markdown
+---
+name: security-reviewer
+description: Reviews code for security vulnerabilities and best practices
+---
+
+You are a security-focused code reviewer. Your job is to:
+
+1. Identify potential security vulnerabilities
+2. Check for OWASP Top 10 issues
+3. Verify input validation and sanitization
+4. Review authentication and authorization logic
+5. Flag hardcoded secrets or credentials
+
+When reviewing, be thorough but not alarmist. Explain why 
+something is a concern and suggest specific fixes.
+```
+
+### 7. File Hierarchy & Precedence
+
+**Claude Code:**
+```
+Precedence (highest to lowest):
+
+1. Subtree CLAUDE.md (closest to working file)
+2. Path-specific rules (.claude/rules/*.md)
+3. Project CLAUDE.md (repository root)
+4. User CLAUDE.md (~/.claude/CLAUDE.md)
+5. Enterprise settings
+
+More specific always wins. A rule in packages/api/CLAUDE.md
+overrides the root CLAUDE.md for files in that package.
+```
+
+**GitHub Copilot:**
+```
+Precedence (highest to lowest):
+
+1. Agent-specific (.agent.md instructions)
+2. Path-specific (.instructions.md with applyTo)
+3. Repository-wide (copilot-instructions.md)
+4. Organization settings
+5. User settings
+
+Path rules are additive—they combine with repository
+instructions rather than replacing them.
+```
+
+### 8. Monorepo Strategies
+
+```
+monorepo/
+├── AGENTS.md           # Shared instructions (all packages)
+├── .claude/
+│   └── rules/
+│       └── shared.md   # Shared Claude rules
+├── packages/
+│   ├── api/
+│   │   ├── AGENTS.md   # API-specific overrides
+│   │   └── CLAUDE.md   # Claude-specific for API
+│   ├── web/
+│   │   └── CLAUDE.md   # Claude-specific for web
+│   └── shared/
+│       └── AGENTS.md   # Shared library conventions
+```
+
+Root AGENTS.md:
+```markdown
+# AGENTS.md (monorepo root)
+
+## Shared Commands
+- Install all: `pnpm install`
+- Build all: `pnpm build`
+- Test all: `pnpm test`
+
+## Workspace Commands
+- Build one: `pnpm --filter <package> build`
+- Test one: `pnpm --filter <package> test`
+
+## Code Style (applies to all packages)
+- TypeScript strict mode
+- ESLint + Prettier
+- Conventional commits
+
+## Git Workflow
+- Branch from main
+- PR required for all changes
+- CI must pass before merge
+```
+
+Package-specific:
+```markdown
+# packages/api/AGENTS.md
+
+## Package Info
+This is the REST API package built with Express + TypeScript.
+
+## Commands
+- Start dev: `pnpm dev`
+- Run tests: `pnpm test`
+- Build: `pnpm build`
+
+## Structure
+- `src/routes/` - API route handlers
+- `src/middleware/` - Express middleware
+- `src/services/` - Business logic
+- `tests/` - API tests
+
+## API Conventions
+- All endpoints require authentication middleware
+- Use zod schemas for request validation
+- Log all errors to the structured logger
+```
+
+## Further Reading
+
+- [AGENTS.md Specification](https://agents.md): The open format for guiding coding agents, used by 60k+ open-source projects.
+- [Claude Code Memory](https://docs.anthropic.com/en/docs/claude-code/memory): Official documentation for CLAUDE.md, rules, imports, and memory hierarchy.
+- [Copilot Customization](https://docs.github.com/en/copilot/customizing-copilot/adding-repository-custom-instructions-for-github-copilot): How to configure copilot-instructions.md, path-specific rules, and agent files.
+- [How to write a great agents.md](https://github.blog/ai-and-ml/github-copilot/how-to-write-a-great-agents-md-lessons-from-over-2500-repositories/): Lessons from analyzing 2,500+ repositories on effective agent configuration.
+- [OpenAI AGENTS.md Repository](https://github.com/agentsmd/agents.md): The official specification and tools for the AGENTS.md open format.

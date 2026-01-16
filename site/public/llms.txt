@@ -1,44 +1,26 @@
 # agentconfig.org
 
-> A reference guide for configuring AI coding assistants like GitHub Copilot and Claude Code. Learn where config files go, what primitives each tool supports, and how to structure your projects for maximum AI effectiveness.
+> A reference site for configuring AI coding assistants like GitHub Copilot and Claude Code.
+> Covers 10 AI primitives, provider comparison, config file locations, and tutorials for
+> skills and agent definitions.
 
-This site helps developers understand:
+This file provides a table of contents. For complete content, see /llms-full.txt.
 
-- The "magic paths" where AI coding assistants look for configuration files
-- Which configuration primitives (instructions, skills, agents, commands) each tool supports
-- The difference between global (user home) and project-level configuration
-- How to write effective instructions, skills, and custom commands
+## Pages
+
+- [Homepage](https://agentconfig.org/): AI primitives reference, interactive file tree, provider comparison matrix
+- [Skills Tutorial](https://agentconfig.org/skills): How to create agent skills following the agentskills.io specification
+- [Agents Tutorial](https://agentconfig.org/agents): Agent definition files (AGENTS.md, CLAUDE.md, copilot-instructions.md)
 
 ## Docs
 
-- [GitHub Copilot Agent Skills](https://code.visualstudio.com/docs/copilot/customization/agent-skills): Official VS Code docs on creating agent skills for Copilot
-- [Claude Code Memory](https://docs.anthropic.com/en/docs/claude-code/memory): How Claude Code uses CLAUDE.md and other memory files
-- [Claude Code Settings](https://docs.anthropic.com/en/docs/claude-code/settings): Claude Code configuration options and paths
-
-## Key Paths
-
-### GitHub Copilot
-
-- Global skills: `~/.copilot/skills/` or `~/.github/skills/`
-- Project instructions: `.github/copilot-instructions.md`
-- Project skills: `.github/skills/<skill-name>/SKILL.md`
-- Project agents: `.github/agents/<name>.agent.md`
-- Path-specific instructions: `.github/instructions/<name>.instructions.md`
-- Prompt templates: `.github/prompts/<name>.prompt.md`
-
-### Claude Code
-
-- Global config: `~/.claude/`
-- Global settings: `~/.claude/settings.json`
-- Global memory: `~/.claude/CLAUDE.md`
-- Global commands: `~/.claude/commands/<name>.md`
-- Global skills: `~/.claude/skills/<skill-name>/SKILL.md`
-- MCP servers: `~/.claude.json`
-- Project memory: `./CLAUDE.md` or `.claude/CLAUDE.md`
-- Project settings: `.claude/settings.json`
-- Project commands: `.claude/commands/<name>.md`
+- [Full site content](/llms-full.txt): Complete content for deep context (recommended for agents)
+- [Skills page content](/skills.md): Skills tutorial with 5 example skills
+- [Agents page content](/agents.md): Agents tutorial with code samples
 
 ## Optional
 
-- [Agent Skills Spec](https://agentskills.io): Community standard specification for agent skills
-- [awesome-copilot](https://github.com/github/awesome-copilot): Community-curated Copilot resources
+- [agentskills.io specification](https://agentskills.io/specification): The skills format specification
+- [AGENTS.md specification](https://agents.md): Open format for guiding coding agents
+- [Claude Code Memory docs](https://docs.anthropic.com/en/docs/claude-code/memory): Official CLAUDE.md documentation
+- [Copilot customization docs](https://docs.github.com/en/copilot/customizing-copilot): GitHub Copilot instructions documentation
