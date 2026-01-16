@@ -8,8 +8,8 @@ This is a single-page React site explaining AI primitives for GitHub Copilot and
 
 - **Runtime**: Bun (not npm)
 - **Build**: Vite
-- **Framework**: React 18+ with functional components and hooks
-- **Styling**: Tailwind CSS + shadcn/ui
+- **Framework**: Preact 10+ with functional components and hooks
+- **Styling**: Tailwind CSS 4 + shadcn/ui
 - **Language**: TypeScript (strict mode)
 - **Testing**: Playwright for E2E tests
 - **Linting**: ESLint with strict config
@@ -34,12 +34,12 @@ This is a single-page React site explaining AI primitives for GitHub Copilot and
 
 ### File Organization
 
-- Components live in `src/components/{ComponentName}/`
-- Each component folder contains: `index.tsx`, `{ComponentName}.tsx`, and optionally `{ComponentName}.test.tsx`
-- Shared UI components (shadcn) live in `src/components/ui/`
-- Data/content lives in `src/data/`
-- Hooks live in `src/hooks/`
-- E2E tests live in `tests/e2e/`
+- Source code lives in `site/` subdirectory
+- Components live in `site/src/components/{ComponentName}/`
+- Each component folder contains: `index.ts`, `{ComponentName}.tsx`, and optionally `{ComponentName}.test.tsx`
+- Data/content lives in `site/src/data/`
+- Hooks live in `site/src/hooks/`
+- E2E tests live in `site/tests/e2e/`
 
 ### Styling
 
@@ -128,10 +128,10 @@ Before considering any task complete, verify:
 ## File References
 
 Key files to understand the project:
-- `src/App.tsx` - Main application component
-- `src/data/` - Content data (primitives, file trees, recipes)
-- `tests/e2e/` - Playwright test files
-- `tailwind.config.ts` - Theme configuration
+- `site/src/App.tsx` - Main application component
+- `site/src/data/` - Content data (primitives, file trees, comparison)
+- `site/tests/e2e/` - Playwright test files
+- `site/src/index.css` - Tailwind CSS 4 theme configuration
 
 ## Contributors
 
