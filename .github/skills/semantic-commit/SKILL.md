@@ -5,6 +5,8 @@ description: Generate semantic commit messages following conventional commit for
 
 # Semantic Commit
 
+Create clean, semantic git commits following strict commit discipline.
+
 ## Commit Format
 
 ```
@@ -17,15 +19,15 @@ description: Generate semantic commit messages following conventional commit for
 
 ## Types
 
-| Type | Description |
+| Type | When to Use |
 |------|-------------|
-| `feat` | New feature |
+| `feat` | New feature or functionality |
 | `fix` | Bug fix |
-| `docs` | Documentation only |
-| `style` | Formatting, no code change |
-| `refactor` | Code restructuring, no behavior change |
+| `docs` | Documentation changes only |
+| `style` | Formatting, whitespace (no code logic change) |
+| `refactor` | Code restructuring without behavior change |
 | `test` | Adding or updating tests |
-| `chore` | Maintenance, config, dependencies |
+| `chore` | Maintenance, configs, dependencies |
 
 ## Scopes (Project-Specific)
 
@@ -38,41 +40,75 @@ Common scopes for agentconfig.org:
 - `theme` - ThemeProvider, ThemeToggle, dark/light mode
 - `data` - Data files in site/src/data/
 - `e2e` - Playwright tests
-- `agents` - Agent instruction files (AGENTS.md, etc.)
-- `copilot` - Copilot-specific instructions
-- `claude` - Claude-specific instructions
+- `skills` - Skill files in .github/skills/
 
 ## Rules
 
-1. **Atomic commits** - One logical change per commit
-2. **Minimize files** - Prefer multiple small commits over one large commit
-3. **Clear descriptions** - Should complete: "This commit will..."
-4. **Always include scope** when applicable
-5. **Use imperative mood** - "add feature" not "added feature"
+### 1. Atomic Commits
+Each commit must represent ONE logical change. If you're tempted to use "and" in your description, split it into multiple commits.
+
+```
+# Bad
+feat(ui): add file tree component and update navigation
+
+# Good - Two separate commits
+feat(file-tree): add collapsible tree node component
+fix(navigation): update scroll offset for new header
+```
+
+### 2. Minimize Files
+Prefer multiple small commits over one large commit. Ask: "Can this be split further?"
+
+### 3. Clear Descriptions
+The description should complete: "This commit will..."
+- Use imperative mood: "add", "fix", "update" (not "added", "fixes")
+- Be specific but concise
+- No period at the end
+
+### 4. Pre-Commit Verification
+
+Before committing, verify:
+1. `bun run lint` passes
+2. `bun run typecheck` passes
+3. `bun run test` passes
+4. Only intended files are staged
+5. No debug code or console.logs (unless intentional)
+
+## Workflow
+
+When asked to commit:
+
+1. **Review changes** with `git status` and `git diff --staged`
+2. **Assess scope** - Determine if this should be one or multiple commits
+3. **Unstage if needed** - If changes span multiple features, commit separately
+4. **Write message** following the format
+5. **Verify** - Run lint, typecheck, and tests
+6. **Commit** only after verification passes
 
 ## Good Examples
 
 ```
-feat(file-tree): add collapsible tree node component
-test(navigation): add smooth scroll behavior tests
-fix(theme): correct dark mode background color
-docs(agents): update tech stack to Preact
-refactor(cards): extract card layout to separate component
-chore(deps): update playwright to v1.40
+feat(file-tree): add TreeNode component with expand/collapse
+chore(deps): add @radix-ui/react-collapsible
+test(navigation): verify smooth scroll to sections
+fix(theme): use correct tan background in light mode
+refactor(hooks): extract theme logic to useTheme hook
+docs(readme): add development setup instructions
 ```
 
 ## Bad Examples
 
 ```
-update stuff                              # Too vague
-feat: add file tree and cards and recipes # Too many changes
-WIP                                       # Incomplete
-Fixed the bug                             # Past tense, no scope
+update stuff                           # Too vague
+feat: add everything                   # Too broad
+WIP                                    # Incomplete work
+fix(ui): fixed the bug                 # Past tense, vague
+feat(tree): Add tree. And cards.       # Multiple changes, period
 ```
 
 ## Multi-File Commits
 
-When changes span multiple areas, consider:
+When changes span multiple areas:
 1. Can this be split into separate commits?
 2. If not, use the most significant scope
 3. List additional changes in the commit body

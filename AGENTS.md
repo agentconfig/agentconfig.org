@@ -90,6 +90,19 @@ bun run test         # Run Playwright E2E tests
 - Test both light and dark modes for visual features
 - Test responsive behavior at mobile/tablet/desktop breakpoints
 
+## Skills
+
+Project-specific skills are in `.github/skills/`. These work with both Copilot and Claude Code.
+
+| Skill | When to Use |
+|-------|-------------|
+| [create-component](.github/skills/create-component/SKILL.md) | Adding new UI components |
+| [write-e2e-test](.github/skills/write-e2e-test/SKILL.md) | Creating Playwright tests |
+| [add-primitive](.github/skills/add-primitive/SKILL.md) | Adding/updating primitive definitions |
+| [theme-styling](.github/skills/theme-styling/SKILL.md) | Styling with Tailwind CSS 4 |
+| [semantic-commit](.github/skills/semantic-commit/SKILL.md) | Creating commit messages |
+| [co-author](.github/skills/co-author/SKILL.md) | Co-author attribution |
+
 ## Commit Guidelines
 
 Follow semantic commit conventions. See [semantic-commit skill](.github/skills/semantic-commit/SKILL.md) for complete format, types, scopes, and examples.

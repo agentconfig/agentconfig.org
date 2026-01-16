@@ -1,24 +1,24 @@
 ---
-name: Tester
-description: Creates Playwright E2E tests following project patterns
+name: write-e2e-test
+description: Write Playwright E2E tests following project patterns for components and user interactions. Use when adding tests for new features, testing accessibility, or validating responsive behavior.
 ---
 
-# Tester Agent
+# Write E2E Test
 
-You are a Playwright testing specialist. Your job is to write comprehensive E2E tests that verify user interactions work correctly.
+Create Playwright E2E tests for agentconfig.org following project patterns.
 
 ## Test File Location
 
-All E2E tests live in `tests/e2e/`:
+All E2E tests live in `site/tests/e2e/`:
 
 ```
-tests/
-└── e2e/
-    ├── navigation.spec.ts
-    ├── fileTree.spec.ts
-    ├── primitiveCards.spec.ts
-    ├── recipes.spec.ts
-    └── matrix.spec.ts
+site/tests/e2e/
+├── app.spec.ts
+├── comparison.spec.ts
+├── fileTree.spec.ts
+├── navigation.spec.ts
+├── primitiveCards.spec.ts
+└── theme.spec.ts
 ```
 
 ## Test File Structure
@@ -48,39 +48,38 @@ test.describe('Feature Name', () => {
 
 Use the most resilient locators, in this order of preference:
 
-1. **Role + Name** (most resilient)
-   ```typescript
-   page.getByRole('button', { name: 'Submit' })
-   page.getByRole('heading', { name: 'Welcome' })
-   page.getByRole('navigation')
-   ```
+### 1. Role + Name (most resilient)
+```typescript
+page.getByRole('button', { name: 'Submit' })
+page.getByRole('heading', { name: 'Welcome' })
+page.getByRole('navigation')
+```
 
-2. **Label/Placeholder** (for form elements)
-   ```typescript
-   page.getByLabel('Email address')
-   page.getByPlaceholder('Enter your email')
-   ```
+### 2. Label/Placeholder (for form elements)
+```typescript
+page.getByLabel('Email address')
+page.getByPlaceholder('Enter your email')
+```
 
-3. **Text content** (for static text)
-   ```typescript
-   page.getByText('Learn more')
-   page.getByText(/welcome/i)  // regex for flexible matching
-   ```
+### 3. Text content (for static text)
+```typescript
+page.getByText('Learn more')
+page.getByText(/welcome/i)  // regex for flexible matching
+```
 
-4. **Test ID** (when others don't work)
-   ```typescript
-   page.getByTestId('file-tree-node')
-   ```
+### 4. Test ID (when others don't work)
+```typescript
+page.getByTestId('file-tree-node')
+```
 
-5. **CSS selectors** (last resort)
-   ```typescript
-   page.locator('.custom-component')
-   ```
+### 5. CSS selectors (last resort)
+```typescript
+page.locator('.custom-component')
+```
 
-## Test Patterns
+## Common Test Patterns
 
-### Testing Navigation
-
+### Navigation
 ```typescript
 test('should scroll to section when nav link is clicked', async ({ page }) => {
   const navLink = page.getByRole('link', { name: 'File Tree' })
@@ -92,13 +91,11 @@ test('should scroll to section when nav link is clicked', async ({ page }) => {
 })
 ```
 
-### Testing Theme Toggle
-
+### Theme Toggle
 ```typescript
 test('should toggle between light and dark mode', async ({ page }) => {
   const toggle = page.getByRole('button', { name: /theme/i })
 
-  // Start in light mode (or whatever default)
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light')
 
   await toggle.click()
@@ -107,34 +104,28 @@ test('should toggle between light and dark mode', async ({ page }) => {
 })
 ```
 
-### Testing Expandable Content
-
+### Expandable Content
 ```typescript
 test('should expand tree node on click', async ({ page }) => {
   const treeNode = page.getByRole('button', { name: '.github/' })
   const childNode = page.getByRole('button', { name: 'copilot-instructions.md' })
 
-  // Child should be hidden initially
   await expect(childNode).not.toBeVisible()
 
   await treeNode.click()
 
-  // Child should now be visible
   await expect(childNode).toBeVisible()
 })
 ```
 
-### Testing Copy Functionality
-
+### Copy to Clipboard
 ```typescript
 test('should copy template to clipboard', async ({ page, context }) => {
-  // Grant clipboard permissions
   await context.grantPermissions(['clipboard-read', 'clipboard-write'])
 
   const copyButton = page.getByRole('button', { name: 'Copy template' })
   await copyButton.click()
 
-  // Verify clipboard content
   const clipboardText = await page.evaluate(() => navigator.clipboard.readText())
   expect(clipboardText).toContain('expected content')
 })
@@ -223,7 +214,17 @@ test('tree works', ...)
 test('test 1', ...)
 ```
 
-## Checklist Before Completion
+## Running Tests
+
+```bash
+cd site
+bun run test              # Run all tests
+bun run test:ui           # Interactive test UI
+```
+
+## Checklist
+
+Before considering tests complete:
 
 - [ ] Uses resilient locators (role > text > testid > css)
 - [ ] Each test is independent
