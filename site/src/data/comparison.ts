@@ -52,7 +52,7 @@ export const comparisonData: ComparisonRow[] = [
   },
   {
     primitiveId: 'tool-integrations',
-    primitiveName: 'Tool Integrations',
+    primitiveName: 'Tool Integrations (MCP)',
     copilot: {
       level: 'full',
       implementation: 'MCP servers and tool calling',
@@ -75,27 +75,41 @@ export const comparisonData: ComparisonRow[] = [
     },
     claude: {
       level: 'full',
-      implementation: 'Project memory file',
+      implementation: 'Project memory file with @imports',
       location: 'CLAUDE.md',
     },
   },
   {
-    primitiveId: 'scope-specific-instructions',
-    primitiveName: 'Scope-Specific Instructions',
+    primitiveId: 'global-instructions',
+    primitiveName: 'Global Instructions',
     copilot: {
       level: 'full',
-      implementation: 'Path-specific instruction files with glob patterns',
+      implementation: 'User-level settings in VS Code',
+      location: 'VS Code settings.json',
+    },
+    claude: {
+      level: 'full',
+      implementation: 'User-level memory and config',
+      location: '~/.claude/CLAUDE.md',
+    },
+  },
+  {
+    primitiveId: 'scope-specific-instructions',
+    primitiveName: 'Path-Scoped Rules',
+    copilot: {
+      level: 'full',
+      implementation: 'Instruction files with applyTo glob patterns',
       location: '.github/instructions/*.instructions.md',
     },
     claude: {
       level: 'full',
-      implementation: 'Nested memory files in subdirectories',
-      location: '{directory}/CLAUDE.md',
+      implementation: 'Rule files with globs frontmatter',
+      location: '.claude/rules/*.md',
     },
   },
   {
     primitiveId: 'prompt-templates',
-    primitiveName: 'Prompt Templates',
+    primitiveName: 'Slash Commands',
     copilot: {
       level: 'full',
       implementation: 'Prompt files invoked via / commands',
@@ -103,7 +117,7 @@ export const comparisonData: ComparisonRow[] = [
     },
     claude: {
       level: 'full',
-      implementation: 'Slash commands with full frontmatter support',
+      implementation: 'Command files with frontmatter and $ARGUMENTS',
       location: '.claude/commands/*.md',
     },
   },
@@ -118,13 +132,13 @@ export const comparisonData: ComparisonRow[] = [
     },
     claude: {
       level: 'full',
-      implementation: 'Custom subagents with roles and tool permissions',
+      implementation: 'Subagent files with tools restrictions',
       location: '.claude/agents/*.md',
     },
   },
   {
     primitiveId: 'guardrails',
-    primitiveName: 'Guardrails',
+    primitiveName: 'Permissions & Guardrails',
     copilot: {
       level: 'full',
       implementation: 'Org policies and tool permissions',
@@ -132,8 +146,22 @@ export const comparisonData: ComparisonRow[] = [
     },
     claude: {
       level: 'full',
-      implementation: 'Permission system with allow/deny lists and sandbox',
+      implementation: 'Allow/deny lists with pattern matching and sandbox',
       location: '.claude/settings.json',
+    },
+  },
+  {
+    primitiveId: 'hooks',
+    primitiveName: 'Lifecycle Hooks',
+    copilot: {
+      level: 'none',
+      implementation: 'Not available',
+      location: 'N/A',
+    },
+    claude: {
+      level: 'full',
+      implementation: 'PreToolUse, PostToolUse, Stop hooks with matchers',
+      location: '.claude/hooks/hooks.json',
     },
   },
   {
@@ -146,8 +174,8 @@ export const comparisonData: ComparisonRow[] = [
     },
     claude: {
       level: 'full',
-      implementation: 'Run tests/lint via Bash tool',
-      location: 'Bash tool in Claude Code',
+      implementation: 'Run tests/lint via Bash tool with hooks',
+      location: 'Bash tool + hooks',
     },
   },
 ]

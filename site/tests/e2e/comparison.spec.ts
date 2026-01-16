@@ -22,22 +22,27 @@ test.describe('Provider Comparison', () => {
     const table = page.getByRole('table')
     // Check for primitive names in the table cells
     await expect(table.getByText('Persistent Instructions')).toBeVisible()
-    await expect(table.getByText('Scope-Specific Instructions')).toBeVisible()
-    await expect(table.getByText('Prompt Templates')).toBeVisible()
+    await expect(table.getByText('Global Instructions')).toBeVisible()
+    await expect(table.getByText('Path-Scoped Rules')).toBeVisible()
+    await expect(table.getByText('Slash Commands')).toBeVisible()
     await expect(table.getByText('Agent Mode')).toBeVisible()
     await expect(table.getByText('Skills / Workflows')).toBeVisible()
-    await expect(table.getByText('Tool Integrations')).toBeVisible()
-    await expect(table.getByText('Guardrails')).toBeVisible()
+    await expect(table.getByText('Tool Integrations (MCP)')).toBeVisible()
+    await expect(table.getByText('Custom Agents')).toBeVisible()
+    await expect(table.getByText('Permissions & Guardrails')).toBeVisible()
+    await expect(table.getByText('Lifecycle Hooks')).toBeVisible()
     await expect(table.getByText('Verification / Evals')).toBeVisible()
   })
 
   test('should display support level badges', async ({ page }) => {
     const table = page.getByRole('table')
-    // Check for Full Support badges (all primitives now have full support)
+    // Check for Full Support badges
     await expect(table.getByText('Full Support').first()).toBeVisible()
-    // Verify multiple Full Support badges exist (one per provider per primitive)
+    // 11 primitives: 10 have full support on both providers (20), Hooks has full on Claude only (1) = 21
     const fullSupportBadges = table.getByText('Full Support')
-    await expect(fullSupportBadges).toHaveCount(18) // 9 primitives × 2 providers
+    await expect(fullSupportBadges).toHaveCount(21)
+    // Hooks has "Not Available" on Copilot
+    await expect(table.getByText('Not Available')).toBeVisible()
   })
 
   test('should expand row on click to show details', async ({ page }) => {
@@ -48,7 +53,7 @@ test.describe('Provider Comparison', () => {
 
     // Should show expanded details with implementation info
     await expect(page.getByText('Repo instructions file')).toBeVisible()
-    await expect(page.getByText('Project memory file')).toBeVisible()
+    await expect(page.getByText('Project memory file with @imports')).toBeVisible()
   })
 
   test('should show file locations when expanded', async ({ page }) => {
