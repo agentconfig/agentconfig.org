@@ -2,71 +2,100 @@
 /**
  * Generate llms.txt and llms-full.txt files from site data
  * 
- * Usage: bun .github/skills/generate-llms/scripts/generate-llms-full.ts
+ * Usage: bun .claude/skills/generate-llms/scripts/generate-llms-full.ts
  * 
- * Reads data from site/src/data/*.ts and generates:
+ * Reads from the page registry (site/src/data/pages.ts) and generates:
  * - site/public/llms.txt (table of contents)
  * - site/public/llms-full.txt (complete content)
- * - site/public/skills/llms.txt (skills page)
- * - site/public/agents/llms.txt (agents page)
+ * - site/public/*.md (page-specific markdown files)
  */
 
-import { writeFileSync, mkdirSync } from 'fs'
+import { writeFileSync } from 'fs'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 
-// Get the project root (assuming script is in .github/skills/generate-llms/scripts/)
+// Get the project root (assuming script is in .claude/skills/generate-llms/scripts/)
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const projectRoot = join(__dirname, '../../../..')
 const dataDir = join(projectRoot, 'site/src/data')
 const publicDir = join(projectRoot, 'site/public')
 
+// Types
+interface PageMeta {
+  slug: string
+  title: string
+  description: string
+  features?: string
+  dataFile?: string
+  mdFile?: string
+  partNumber?: number
+}
+
 // Dynamic imports for TypeScript data files
 async function loadData() {
-  // We need to use tsx or ts-node to import these
   const primitives = await import(join(dataDir, 'primitives.ts'))
   const comparison = await import(join(dataDir, 'comparison.ts'))
   const skillsTutorial = await import(join(dataDir, 'skillsTutorial.ts'))
   const skillExamples = await import(join(dataDir, 'skillExamples.ts'))
   const agentsTutorial = await import(join(dataDir, 'agentsTutorial.ts'))
+  const mcpTutorial = await import(join(dataDir, 'mcpTutorial.ts'))
+  const pagesRegistry = await import(join(dataDir, 'pages.ts'))
   
   return {
+    // Page registry
+    pages: pagesRegistry.pages as readonly PageMeta[],
+    // Primitives & comparison (homepage)
     primitives: primitives.primitives,
     categories: primitives.categories,
     comparisonData: comparison.comparisonData,
+    // Skills tutorial
     tutorialSections: skillsTutorial.tutorialSections,
     skillExamples: skillExamples.skillExamples,
-    tocItems: agentsTutorial.tocItems,
-    codeSamples: agentsTutorial.codeSamples,
-    furtherReadingLinks: agentsTutorial.furtherReadingLinks,
+    // Agents tutorial
+    agentsTocItems: agentsTutorial.tocItems,
+    agentsCodeSamples: agentsTutorial.codeSamples,
+    agentsFurtherReadingLinks: agentsTutorial.furtherReadingLinks,
+    // MCP tutorial
+    mcpTocItems: mcpTutorial.tocItems,
+    mcpCodeSamples: mcpTutorial.codeSamples,
+    mcpFurtherReadingLinks: mcpTutorial.furtherReadingLinks,
   }
 }
 
-function generateLlmsTxt(): string {
+function generateLlmsTxt(pages: readonly PageMeta[]): string {
+  // Generate pages list
+  const pagesList = [
+    '- [Homepage](https://agentconfig.org/): AI primitives reference, interactive file tree, provider comparison matrix',
+    ...pages.map(p => `- [${p.title}](https://agentconfig.org/${p.slug}): ${p.description}`)
+  ].join('\n')
+
+  // Generate docs list
+  const docsList = [
+    '- [Full site content](/llms-full.txt): Complete content for deep context (recommended for agents)',
+    ...pages.filter(p => p.mdFile).map(p => `- [${p.title} content](/${p.mdFile}): ${p.features || p.description}`)
+  ].join('\n')
+
   return `# agentconfig.org
 
 > A reference site for configuring AI coding assistants like GitHub Copilot and Claude Code.
 > Covers 10 AI primitives, provider comparison, config file locations, and tutorials for
-> skills and agent definitions.
+> skills, agent definitions, and MCP tool integrations.
 
 This file provides a table of contents. For complete content, see /llms-full.txt.
 
 ## Pages
 
-- [Homepage](https://agentconfig.org/): AI primitives reference, interactive file tree, provider comparison matrix
-- [Skills Tutorial](https://agentconfig.org/skills): How to create agent skills following the agentskills.io specification
-- [Agents Tutorial](https://agentconfig.org/agents): Agent definition files (AGENTS.md, CLAUDE.md, copilot-instructions.md)
+${pagesList}
 
 ## Docs
 
-- [Full site content](/llms-full.txt): Complete content for deep context (recommended for agents)
-- [Skills page content](/skills.md): Skills tutorial with 5 example skills
-- [Agents page content](/agents.md): Agents tutorial with code samples
+${docsList}
 
 ## Optional
 
 - [agentskills.io specification](https://agentskills.io/specification): The skills format specification
 - [AGENTS.md specification](https://agents.md): Open format for guiding coding agents
+- [MCP specification](https://modelcontextprotocol.io/specification/latest): Model Context Protocol specification
 - [Claude Code Memory docs](https://docs.anthropic.com/en/docs/claude-code/memory): Official CLAUDE.md documentation
 - [Copilot customization docs](https://docs.github.com/en/copilot/customizing-copilot): GitHub Copilot instructions documentation
 `
@@ -134,7 +163,7 @@ ${example.keyTakeaways.map(t => `- ${t}`).join('\n')}
 }
 
 function generateAgentsMd(data: Awaited<ReturnType<typeof loadData>>): string {
-  const { tocItems, codeSamples, furtherReadingLinks } = data
+  const { agentsTocItems: tocItems, agentsCodeSamples: codeSamples, agentsFurtherReadingLinks: furtherReadingLinks } = data
   
   let content = `# Agent Definitions Tutorial
 
@@ -261,14 +290,151 @@ ${furtherReadingLinks.map(link => `- [${link.title}](${link.url}): ${link.descri
   return content
 }
 
+function generateMcpMd(data: Awaited<ReturnType<typeof loadData>>): string {
+  const { mcpTocItems, mcpCodeSamples, mcpFurtherReadingLinks } = data
+  
+  let content = `# MCP Tool Integrations Tutorial
+
+Tutorial for connecting AI coding assistants to external tools using the Model Context Protocol (MCP).
+Covers core primitives, server installation, configuration scopes, and provider comparison.
+
+## Tutorial Sections
+
+${mcpTocItems.map((item: any) => `- ${item.label}${item.level ? ` (${item.level})` : ''}`).join('\n')}
+
+## Section Details
+
+### 1. What is MCP?
+
+The Model Context Protocol (MCP) is an open standard that connects AI applications
+to external tools, databases, and APIs. Think of it like a USB-C port for AI—one
+standardized interface that works across different tools.
+
+\`\`\`
+${mcpCodeSamples.mcpConcept}
+\`\`\`
+
+MCP follows a client-server architecture:
+
+\`\`\`
+${mcpCodeSamples.mcpArchitecture}
+\`\`\`
+
+### 2. Why MCP Matters
+
+With MCP servers connected, AI assistants can:
+- Query databases naturally
+- Manage GitHub issues and PRs
+- Analyze monitoring data from Sentry
+- Access files outside the current workspace
+
+### 3. Core Primitives
+
+MCP servers expose three types of capabilities:
+
+**Tools** - Executable functions the AI can invoke:
+\`\`\`json
+${mcpCodeSamples.toolPrimitive}
+\`\`\`
+
+**Resources** - Contextual data the AI can read:
+\`\`\`json
+${mcpCodeSamples.resourcePrimitive}
+\`\`\`
+
+**Prompts** - Reusable templates for interactions:
+\`\`\`json
+${mcpCodeSamples.promptPrimitive}
+\`\`\`
+
+### 4. Installing MCP Servers
+
+**Claude Code (HTTP):**
+\`\`\`bash
+${mcpCodeSamples.claudeHttpServer}
+\`\`\`
+
+**Claude Code (stdio):**
+\`\`\`bash
+${mcpCodeSamples.claudeStdioServer}
+\`\`\`
+
+**VS Code + Copilot:**
+\`\`\`json
+${mcpCodeSamples.vscodeMcpJson}
+\`\`\`
+
+### 5. Configuration Scopes
+
+Both providers support multiple configuration scopes:
+
+| Scope | Claude Code | VS Code |
+|-------|-------------|---------|
+| Local/Workspace | ~/.claude.json | .vscode/mcp.json |
+| Project | .mcp.json | .vscode/mcp.json |
+| User | ~/.claude.json | User profile |
+| Enterprise | managed-mcp.json | Settings + MDM |
+
+### 6. Provider Comparison
+
+| Feature | Claude Code | VS Code/Copilot |
+|---------|-------------|-----------------|
+| Transports | stdio, http, sse | stdio, http, sse |
+| Tools | ✓ | ✓ |
+| Resources | ✓ | ✓ |
+| Prompts | ✓ (/mcp) | ✓ (/mcp.*) |
+| Configuration | CLI + JSON | JSON + UI |
+| Server Discovery | Manual | Gallery + Auto |
+| Tool Search | ✓ (auto 10%+) | Via tool picker |
+| Enterprise Control | managed-mcp.json | Settings + MDM |
+
+### 7. Security Considerations
+
+\`\`\`
+${mcpCodeSamples.securityTrust}
+\`\`\`
+
+Enterprise management with allowlists:
+\`\`\`json
+${mcpCodeSamples.allowDenyLists}
+\`\`\`
+
+### 8. Practical Examples
+
+**GitHub Integration:**
+\`\`\`bash
+${mcpCodeSamples.exampleGitHub}
+\`\`\`
+
+**Database Queries:**
+\`\`\`bash
+${mcpCodeSamples.exampleDatabase}
+\`\`\`
+
+**Error Monitoring (Sentry):**
+\`\`\`bash
+${mcpCodeSamples.exampleSentry}
+\`\`\`
+
+## Further Reading
+
+${mcpFurtherReadingLinks.map((link: any) => `- [${link.title}](${link.url}): ${link.description}`).join('\n')}
+`
+
+  return content
+}
+
 function generateLlmsFullTxt(data: Awaited<ReturnType<typeof loadData>>): string {
-  const { primitives, comparisonData } = data
+  const { primitives, comparisonData, pages } = data
+  
+  // Build list of topics from registry
+  const topicsList = pages.map(p => `- ${p.title}`).join('\n')
   
   let content = `# agentconfig.org - Complete Site Content
 
 > This file contains the complete content of agentconfig.org for AI agents.
 > It includes all AI primitives, provider comparisons, config file locations,
-> skills tutorial, and agent definitions tutorial.
+> and tutorials for skills, agent definitions, and MCP tool integrations.
 
 ## Site Overview
 
@@ -280,8 +446,7 @@ to get consistent, high-quality assistance from AI tools.
 - 10 AI primitives for configuring agent behavior
 - Provider comparison (GitHub Copilot vs Claude Code)
 - Config file locations and hierarchy
-- Skills tutorial (agentskills.io specification)
-- Agent definitions tutorial (AGENTS.md, CLAUDE.md, etc.)
+${topicsList}
 
 ---
 
@@ -384,6 +549,15 @@ Support matrix comparing GitHub Copilot and Claude Code:
 
   content += generateAgentsMd(data).replace(/^# Agent Definitions Tutorial\n\n[^\n]+\n[^\n]+\n[^\n]+\n\n/, '')
 
+  content += `
+---
+
+# Part 5: MCP Tool Integrations Tutorial
+
+`
+
+  content += generateMcpMd(data).replace(/^# MCP Tool Integrations Tutorial\n\n[^\n]+\n[^\n]+\n[^\n]+\n\n/, '')
+
   return content
 }
 
@@ -419,7 +593,7 @@ async function main() {
   const data = await loadData()
   
   console.log('Generating llms.txt...')
-  const llmsTxt = generateLlmsTxt()
+  const llmsTxt = generateLlmsTxt(data.pages)
   writeFileSync(join(publicDir, 'llms.txt'), llmsTxt)
   
   console.log('Generating skills.md...')
@@ -430,6 +604,10 @@ async function main() {
   const agentsMd = generateAgentsMd(data)
   writeFileSync(join(publicDir, 'agents.md'), agentsMd)
   
+  console.log('Generating mcp.md...')
+  const mcpMd = generateMcpMd(data)
+  writeFileSync(join(publicDir, 'mcp.md'), mcpMd)
+  
   console.log('Generating llms-full.txt...')
   const llmsFullTxt = generateLlmsFullTxt(data)
   writeFileSync(join(publicDir, 'llms-full.txt'), llmsFullTxt)
@@ -437,8 +615,11 @@ async function main() {
   console.log('Done! Generated:')
   console.log('  - site/public/llms.txt')
   console.log('  - site/public/llms-full.txt')
-  console.log('  - site/public/skills.md')
-  console.log('  - site/public/agents.md')
+  for (const page of data.pages) {
+    if (page.mdFile) {
+      console.log(`  - site/public/${page.mdFile}`)
+    }
+  }
 }
 
 main().catch(console.error)

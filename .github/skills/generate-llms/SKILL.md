@@ -13,13 +13,32 @@ This skill generates machine-readable documentation files following the [llmstxt
 
 - **`/llms.txt`** — A curated table of contents with links to detailed pages
 - **`/llms-full.txt`** — Comprehensive markdown containing all site content
-- **`/skills/llms.txt`** and **`/agents/llms.txt`** — Page-specific summaries
+- **`/*.md`** — Page-specific markdown files (skills.md, agents.md, mcp.md, etc.)
+
+## Page Registry
+
+Pages are automatically discovered from the **page registry** at `site/src/data/pages.ts`:
+
+```typescript
+export const pages: readonly PageMeta[] = [
+  {
+    slug: 'skills',
+    title: 'Skills Tutorial',
+    description: 'How to create agent skills...',
+    mdFile: 'skills.md',
+    partNumber: 3,
+  },
+  // ... more pages
+]
+```
+
+When creating a new page, add an entry to the registry to include it in the llms files.
 
 ## When to Use
 
 Use this skill when:
 - You've updated content in the data files (`site/src/data/*.ts`)
-- You've added or modified AI primitives, skills tutorial content, or agents tutorial
+- You've added a new page (remember to add it to the page registry!)
 - Before deploying or releasing a new version of the site
 - When an agent needs to understand what content should be in llms files
 
@@ -29,12 +48,13 @@ The llms files are generated from these TypeScript data files:
 
 | File | Content |
 |------|---------|
+| `site/src/data/pages.ts` | **Page registry** - lists all pages for llms generation |
 | `site/src/data/primitives.ts` | 10 AI primitives with descriptions, use cases, and provider implementations |
 | `site/src/data/comparison.ts` | Provider comparison matrix (Copilot vs Claude) |
-| `site/src/data/fileTree.ts` | Config file locations for each provider |
 | `site/src/data/skillsTutorial.ts` | Skills tutorial sections and concepts |
 | `site/src/data/skillExamples.ts` | 5 example skills with full code |
 | `site/src/data/agentsTutorial.ts` | Agent definitions tutorial with code samples |
+| `site/src/data/mcpTutorial.ts` | MCP tutorial sections and code samples |
 
 ## File Structure
 
@@ -43,7 +63,8 @@ site/public/
 ├── llms.txt           # Table of contents (llmstxt.org format)
 ├── llms-full.txt      # Complete site content in one file
 ├── skills.md          # Skills page content (rich markdown)
-└── agents.md          # Agents page content (rich markdown)
+├── agents.md          # Agents page content (rich markdown)
+└── mcp.md             # MCP page content (rich markdown)
 ```
 
 ## Generation Process

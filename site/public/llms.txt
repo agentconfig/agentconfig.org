@@ -2,7 +2,7 @@
 
 > A reference site for configuring AI coding assistants like GitHub Copilot and Claude Code.
 > Covers 10 AI primitives, provider comparison, config file locations, and tutorials for
-> skills and agent definitions.
+> skills, agent definitions, and MCP tool integrations.
 
 This file provides a table of contents. For complete content, see /llms-full.txt.
 
@@ -11,16 +11,19 @@ This file provides a table of contents. For complete content, see /llms-full.txt
 - [Homepage](https://agentconfig.org/): AI primitives reference, interactive file tree, provider comparison matrix
 - [Skills Tutorial](https://agentconfig.org/skills): How to create agent skills following the agentskills.io specification
 - [Agents Tutorial](https://agentconfig.org/agents): Agent definition files (AGENTS.md, CLAUDE.md, copilot-instructions.md)
+- [MCP Tool Integrations](https://agentconfig.org/mcp): Connect AI assistants to external tools via Model Context Protocol
 
 ## Docs
 
 - [Full site content](/llms-full.txt): Complete content for deep context (recommended for agents)
-- [Skills page content](/skills.md): Skills tutorial with 5 example skills
-- [Agents page content](/agents.md): Agents tutorial with code samples
+- [Skills Tutorial content](/skills.md): Skills tutorial with 5 example skills
+- [Agents Tutorial content](/agents.md): Agents tutorial with code samples
+- [MCP Tool Integrations content](/mcp.md): MCP tutorial with configuration examples
 
 ## Optional
 
 - [agentskills.io specification](https://agentskills.io/specification): The skills format specification
 - [AGENTS.md specification](https://agents.md): Open format for guiding coding agents
+- [MCP specification](https://modelcontextprotocol.io/specification/latest): Model Context Protocol specification
 - [Claude Code Memory docs](https://docs.anthropic.com/en/docs/claude-code/memory): Official CLAUDE.md documentation
 - [Copilot customization docs](https://docs.github.com/en/copilot/customizing-copilot): GitHub Copilot instructions documentation
