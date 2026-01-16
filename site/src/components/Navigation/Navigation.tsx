@@ -9,6 +9,7 @@ const navItems = [
   { href: '/', label: 'Overview' },
   { href: '/skills/', label: 'Skills' },
   { href: '/agents/', label: 'Agents' },
+  { href: '/mcp/', label: 'MCP' },
 ] as const
 
 export interface NavigationProps {
