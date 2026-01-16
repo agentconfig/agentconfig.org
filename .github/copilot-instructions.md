@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-This is a single-page React site explaining AI primitives for GitHub Copilot and Claude Code. The site helps developers understand where to place AI configuration files in their projects.
+This is a single-page Preact site explaining AI primitives for GitHub Copilot and Claude Code. The site helps developers understand where to place AI configuration files in their projects.
 
 ## Tech Stack
 
@@ -13,6 +13,20 @@ This is a single-page React site explaining AI primitives for GitHub Copilot and
 - **Language**: TypeScript (strict mode)
 - **Testing**: Playwright for E2E tests
 - **Linting**: ESLint with strict config
+
+## Commands
+
+All commands run from the `site/` directory:
+
+```bash
+bun install          # Install dependencies
+bun run dev          # Start development server (http://localhost:5173)
+bun run build        # Production build
+bun run preview      # Preview production build
+bun run lint         # Run ESLint
+bun run typecheck    # TypeScript type checking
+bun run test         # Run Playwright E2E tests
+```
 
 ## Code Standards
 
