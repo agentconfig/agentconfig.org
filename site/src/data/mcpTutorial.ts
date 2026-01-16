@@ -82,7 +82,7 @@ With MCP: One standard protocol for all tools`,
   mcpArchitecture: `MCP Architecture:
 
 ┌─────────────────────────────────────────────┐
-│                 MCP Host                     │
+│                 MCP Host                    │
 │  (Claude Code, VS Code + Copilot, etc.)     │
 ├─────────────────────────────────────────────┤
 │  ┌─────────────┐  ┌─────────────┐           │
@@ -462,13 +462,13 @@ claude mcp add --transport http sentry https://mcp.sentry.dev/mcp
 claude mcp add --transport stdio filesystem \\
   -- npx -y @modelcontextprotocol/server-filesystem /path/to/allowed/dir
 
-# VS Code (.vscode/mcp.json)  
+# VS Code (.vscode/mcp.json)
 {
   "servers": {
     "filesystem": {
       "command": "npx",
       "args": [
-        "-y", 
+        "-y",
         "@modelcontextprotocol/server-filesystem",
         "\${workspaceFolder}"
       ]
