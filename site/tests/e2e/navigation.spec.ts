@@ -14,21 +14,39 @@ test.describe('Navigation', () => {
 
     test('should display all navigation links', async ({ page }) => {
       const nav = page.getByLabel('Main navigation')
-      await expect(nav.getByRole('link', { name: 'Primitives' })).toBeVisible()
-      await expect(nav.getByRole('link', { name: 'File Tree' })).toBeVisible()
-      await expect(nav.getByRole('link', { name: 'Comparison' })).toBeVisible()
+      await expect(nav.getByRole('link', { name: 'Overview' })).toBeVisible()
+      await expect(nav.getByRole('link', { name: 'Skills' })).toBeVisible()
+      await expect(nav.getByRole('link', { name: 'Agents' })).toBeVisible()
     })
 
-    test('should scroll to section when nav link is clicked', async ({ page }) => {
-      const navLink = page.getByLabel('Main navigation').getByRole('link', { name: 'Primitives' })
+    test('should navigate to Skills page', async ({ page }) => {
+      const navLink = page.getByLabel('Main navigation').getByRole('link', { name: 'Skills' })
       await navLink.click()
 
-      // Wait for scroll to complete
-      await page.waitForTimeout(500)
+      // Should navigate to /skills/
+      await expect(page).toHaveURL(/\/skills\/?/)
+      await expect(page.getByRole('heading', { name: 'Skills' })).toBeVisible()
+    })
 
-      // Check that the section is in view
-      const section = page.locator('#primitives')
-      await expect(section).toBeInViewport()
+    test('should navigate to Agents page', async ({ page }) => {
+      const navLink = page.getByLabel('Main navigation').getByRole('link', { name: 'Agents' })
+      await navLink.click()
+
+      // Should navigate to /agents/
+      await expect(page).toHaveURL(/\/agents\/?/)
+      await expect(page.getByRole('heading', { name: 'Agents' })).toBeVisible()
+    })
+
+    test('should navigate back to Overview from Skills', async ({ page }) => {
+      // Go to Skills page first
+      await page.goto('/skills/')
+
+      // Click Overview link
+      const navLink = page.getByLabel('Main navigation').getByRole('link', { name: 'Overview' })
+      await navLink.click()
+
+      // Should be back on homepage
+      await expect(page).toHaveURL(/\/$/)
     })
   })
 
@@ -43,7 +61,8 @@ test.describe('Navigation', () => {
       const menuButton = page.getByRole('button', { name: 'Open menu' })
       await menuButton.click()
 
-      await expect(page.getByRole('menuitem', { name: 'File Tree' })).toBeVisible()
+      await expect(page.getByRole('menuitem', { name: 'Skills' })).toBeVisible()
+      await expect(page.getByRole('menuitem', { name: 'Agents' })).toBeVisible()
       await expect(page.getByRole('button', { name: 'Close menu' })).toBeVisible()
     })
 
@@ -51,11 +70,11 @@ test.describe('Navigation', () => {
       const menuButton = page.getByRole('button', { name: 'Open menu' })
       await menuButton.click()
 
-      const navLink = page.getByRole('menuitem', { name: 'Comparison' })
+      const navLink = page.getByRole('menuitem', { name: 'Skills' })
       await navLink.click()
 
-      // Menu should close
-      await expect(page.getByRole('button', { name: 'Open menu' })).toBeVisible()
+      // Menu should close and navigate
+      await expect(page).toHaveURL(/\/skills\/?/)
     })
   })
 })

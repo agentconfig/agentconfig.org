@@ -3,8 +3,8 @@ import { test, expect } from '@playwright/test'
 test.describe('Provider Comparison', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/')
-    // Navigate to comparison section using nav link
-    await page.getByLabel('Main navigation').getByRole('link', { name: 'Comparison' }).click()
+    // Scroll to comparison section
+    await page.locator('#comparison').scrollIntoViewIfNeeded()
   })
 
   test('should display comparison table', async ({ page }) => {

@@ -13,4 +13,13 @@ export default defineConfig({
       'react/jsx-runtime': 'preact/jsx-runtime',
     },
   },
+  build: {
+    rollupOptions: {
+      input: {
+        main: path.resolve(__dirname, 'index.html'),
+        skills: path.resolve(__dirname, 'skills/index.html'),
+        agents: path.resolve(__dirname, 'agents/index.html'),
+      },
+    },
+  },
 })

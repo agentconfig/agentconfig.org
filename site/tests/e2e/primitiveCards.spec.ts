@@ -3,8 +3,8 @@ import { test, expect } from '@playwright/test'
 test.describe('Primitive Cards', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/')
-    // Navigate to primitives section using nav link
-    await page.getByLabel('Main navigation').getByRole('link', { name: 'Primitives' }).click()
+    // Scroll to primitives section
+    await page.locator('#primitives').scrollIntoViewIfNeeded()
   })
 
   test('should display category filter tabs', async ({ page }) => {

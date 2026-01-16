@@ -1,14 +1,14 @@
 import { useState } from 'preact/hooks'
 import type { VNode } from 'preact'
-import type { JSX } from 'preact'
 import { Menu, X, Github } from 'lucide-preact'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { cn } from '@/lib/utils'
 
+// Page-based navigation items
 const navItems = [
-  { id: 'primitives', label: 'Primitives' },
-  { id: 'file-tree', label: 'File Tree' },
-  { id: 'comparison', label: 'Comparison' },
+  { href: '/', label: 'Overview' },
+  { href: '/skills/', label: 'Skills' },
+  { href: '/agents/', label: 'Agents' },
 ] as const
 
 export interface NavigationProps {
@@ -17,17 +17,6 @@ export interface NavigationProps {
 
 export function Navigation({ className }: NavigationProps): VNode {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-
-  const handleNavClick = (e: JSX.TargetedMouseEvent<HTMLAnchorElement>, id: string): void => {
-    e.preventDefault()
-    setIsMenuOpen(false)
-    const element = document.getElementById(id)
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' })
-      // Update URL without full navigation
-      window.history.pushState(null, '', `#${id}`)
-    }
-  }
 
   const toggleMenu = (): void => {
     setIsMenuOpen(!isMenuOpen)
@@ -53,9 +42,8 @@ export function Navigation({ className }: NavigationProps): VNode {
         <div className="hidden md:flex items-center gap-1">
           {navItems.map((item) => (
             <a
-              key={item.id}
-              href={`#${item.id}`}
-              onClick={(e) => { handleNavClick(e, item.id) }}
+              key={item.href}
+              href={item.href}
               className={cn(
                 'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
                 'hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
@@ -119,10 +107,10 @@ export function Navigation({ className }: NavigationProps): VNode {
           <div className="container mx-auto px-4 py-4 flex flex-col gap-2">
             {navItems.map((item) => (
               <a
-                key={item.id}
-                href={`#${item.id}`}
+                key={item.href}
+                href={item.href}
                 role="menuitem"
-                onClick={(e) => { handleNavClick(e, item.id) }}
+                onClick={() => { setIsMenuOpen(false) }}
                 className={cn(
                   'px-4 py-3 rounded-lg text-left font-medium transition-colors',
                   'hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
