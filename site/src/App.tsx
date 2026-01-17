@@ -31,7 +31,7 @@ export function App(): VNode {
       <Section
         id="comparison"
         title="Provider Comparison"
-        description="Compare how primitives are implemented across GitHub Copilot and Claude Code side by side."
+        description="Compare how primitives are implemented across GitHub Copilot, Claude Code, and Cursor."
       >
         <ProviderComparisonSection />
       </Section>

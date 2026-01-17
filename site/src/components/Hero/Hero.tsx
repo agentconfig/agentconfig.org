@@ -42,7 +42,7 @@ export function Hero({ className }: HeroProps): VNode {
           Master AI Assistants
         </h1>
         <p className="text-xl text-muted-foreground max-w-2xl mb-6">
-          Configure GitHub Copilot and Claude Code for any role or workflow.
+          Configure GitHub Copilot, Claude Code, and Cursor for any role or workflow.
           Explore the primitives that unlock their full potential, then learn how to{' '}
           <a href="https://thisistheway.to/ai" className="underline hover:text-foreground transition-colors">
             improve AI agents through systematic failure analysis
