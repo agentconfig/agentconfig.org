@@ -30,9 +30,9 @@ interface ExpandedRowProps {
 }
 
 function ExpandedRow({ row }: ExpandedRowProps): VNode {
-  const [copiedLocation, setCopiedLocation] = useState<'copilot' | 'claude' | null>(null)
+  const [copiedLocation, setCopiedLocation] = useState<'copilot' | 'claude' | 'cursor' | null>(null)
 
-  const handleCopy = async (provider: 'copilot' | 'claude', location: string) => {
+  const handleCopy = async (provider: 'copilot' | 'claude' | 'cursor', location: string) => {
     try {
       await navigator.clipboard.writeText(location)
       setCopiedLocation(provider)
@@ -44,8 +44,8 @@ function ExpandedRow({ row }: ExpandedRowProps): VNode {
 
   return (
     <tr className="bg-secondary/30">
-      <td colSpan={3} className="px-4 py-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <td colSpan={4} className="px-4 py-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Copilot details */}
           <div className="space-y-2">
             <h4 className="text-sm font-semibold text-foreground">GitHub Copilot</h4>
@@ -101,6 +101,34 @@ function ExpandedRow({ row }: ExpandedRowProps): VNode {
               </button>
             </div>
           </div>
+
+          {/* Cursor details */}
+          <div className="space-y-2">
+            <h4 className="text-sm font-semibold text-foreground">Cursor</h4>
+            <p className="text-sm text-muted-foreground">{row.cursor.implementation}</p>
+            <div className="flex items-center gap-2">
+              <code className="flex-1 text-xs bg-background px-2 py-1.5 rounded font-mono text-foreground border border-border">
+                {row.cursor.location}
+              </code>
+              <button
+                onClick={() => { void handleCopy('cursor', row.cursor.location) }}
+                className={cn(
+                  'p-1.5 rounded-md transition-colors shrink-0',
+                  'focus:outline-none focus:ring-2 focus:ring-ring',
+                  copiedLocation === 'cursor'
+                    ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                    : 'bg-background border border-border hover:bg-secondary text-muted-foreground'
+                )}
+                aria-label={copiedLocation === 'cursor' ? 'Copied!' : 'Copy location'}
+              >
+                {copiedLocation === 'cursor' ? (
+                  <Check className="h-3.5 w-3.5" aria-hidden="true" />
+                ) : (
+                  <Copy className="h-3.5 w-3.5" aria-hidden="true" />
+                )}
+              </button>
+            </div>
+          </div>
         </div>
       </td>
     </tr>
@@ -133,6 +161,12 @@ export function ComparisonTable(): VNode {
                 <span className="inline-flex items-center gap-2">
                   <span aria-hidden="true">🧠</span>
                   Claude Code
+                </span>
+              </th>
+              <th className="px-4 py-3 text-center text-sm font-semibold text-foreground">
+                <span className="inline-flex items-center gap-2">
+                  <span aria-hidden="true">✨</span>
+                  Cursor
                 </span>
               </th>
             </tr>
@@ -171,6 +205,9 @@ export function ComparisonTable(): VNode {
                   </td>
                   <td className="px-4 py-3 text-center">
                     <SupportBadge level={row.claude.level} />
+                  </td>
+                  <td className="px-4 py-3 text-center">
+                    <SupportBadge level={row.cursor.level} />
                   </td>
                 </tr>
                 {expandedRow === row.primitiveId && (
