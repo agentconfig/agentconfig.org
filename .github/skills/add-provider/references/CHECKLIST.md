@@ -257,6 +257,64 @@ Complete verification steps for all 6 work streams.
 
 ---
 
+## Common Mistakes to Avoid
+
+Based on real-world provider integrations, avoid these pitfalls:
+
+### Documentation & Verification
+- [ ] ❌ **Assumed support levels without checking official docs**
+  - ✅ Always visit provider's official documentation (e.g., cursor.com/docs)
+  - ✅ Verify file locations, not guessing them
+  - ✅ Test support claims or mark as `partial`/`diy`
+  - Real example: Cursor Hooks support was initially missed until official docs were checked
+
+### UI Components
+- [ ] ❌ **Forgot to add provider tab to File Tree component**
+  - ✅ Must add provider to `FileTree.tsx` providers array
+  - ✅ User won't see provider selection without this
+  - ✅ This is in Stream 3.2, easy to skip
+
+- [ ] ❌ **Used inconsistent emoji across comparison and file tree**
+  - ✅ Comparison table and file tree can use different emojis
+  - ✅ Use emoji that makes sense for each context
+  - ✅ See PATTERNS.md emoji reference for guidance
+
+### Data & Testing
+- [ ] ❌ **Badge count assertions outdated after support changes**
+  - ✅ Recalculate full/partial/none badges after changing support levels
+  - ✅ Count: primitives × providers with each support level
+  - ✅ Update E2E test assertions in comparison.spec.ts
+
+- [ ] ❌ **Support levels inconsistent between primitives.ts and comparison.ts**
+  - ✅ Both files must have matching support levels
+  - ✅ Run typecheck after changes to catch mismatches
+  - ✅ Verify in Stream 2 data consistency checks
+
+### LLMs Generation
+- [ ] ❌ **Forgot to regenerate llms-full.txt**
+  - ✅ Must run generation script as final step (Stream 6)
+  - ✅ llms files fall out of sync without this
+  - ✅ AI agents will have outdated documentation
+
+- [ ] ❌ **Provider name mapping missing in generation script**
+  - ✅ Check `.github/skills/generate-llms/scripts/generate-llms-full.ts`
+  - ✅ Add provider to ternary/mapping if needed
+  - ✅ Verify output matches provider display name
+
+### Commits & PR
+- [ ] ❌ **PR description too verbose or unfocused**
+  - ✅ Keep summary to one sentence
+  - ✅ Organize changes by stream
+  - ✅ Link to references instead of inlining details
+  - ✅ Include concrete testing steps
+
+- [ ] ❌ **Missed commits or bundled too many changes**
+  - ✅ One semantic commit per stream
+  - ✅ Easy to review and understand each change
+  - ✅ Easier to debug issues later
+
+---
+
 ## Sign-Off Checklist
 
 Use this to confirm the provider integration is complete and ready for merge:
