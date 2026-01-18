@@ -68,6 +68,43 @@ You'll see errors about missing provider data - this is expected. Continue to St
 
 **Depends on Stream 1 - must have types in place**
 
+### 2.0 Research Phase: Verify Provider Capabilities
+
+⚠️ **CRITICAL**: Before adding implementation data, verify against the provider's official documentation.
+
+**Steps:**
+
+1. **Visit official provider documentation**
+   - Example: cursor.com/docs, claude.ai, github.com/features/copilot
+
+2. **For each of the 11 primitives, research and document:**
+   - Does the provider support this feature natively?
+   - What are the official file locations? (e.g., `.cursor/instructions.md`, not guesses)
+   - Are there any limitations or workarounds?
+   - What version/channel is it available in? (e.g., nightly vs stable)
+   - What does the provider call this feature in their docs?
+
+3. **Document findings before coding**
+   - Create a research summary with answers to the above
+   - This prevents adding outdated or incorrect support levels
+   - Reference official docs in your research notes
+
+**Example research record:**
+```
+Agent Mode: ✓ Full support
+  - Called "Agent mode" in Cursor Editor
+  - Docs: cursor.com/docs/agent/modes
+  - Available in: Stable release
+  - Config: Enabled in editor settings
+  - Limitations: None observed
+
+Tool Integrations (MCP): ✓ Full support
+  - Uses .cursor/mcp.json (project) or ~/.cursor/mcp.json (global)
+  - Docs: cursor.com/docs/context/mcp
+  - Supports: stdio, SSE, HTTP transports
+  - Note: Requires manual configuration
+```
+
 ### 2.1 Add Provider Implementations to All 11 Primitives
 
 Edit `site/src/data/primitives.ts`:
@@ -101,6 +138,20 @@ implementations: [
 1. How does the provider implement this primitive?
 2. Where are the config files? (.cursor/instructions.md, etc.)
 3. Is support native (full), limited (partial), or via custom setup (diy)?
+
+**Support level decision tree** (see [PATTERNS.md](PATTERNS.md#support-levels) for detailed explanations):
+
+```
+Does provider natively support this?
+├─ Yes, well-documented, core feature
+│  └─ support: 'full'
+├─ Yes, but limited or with workarounds
+│  └─ support: 'partial'
+├─ No, but achievable with custom setup
+│  └─ support: 'diy'
+└─ No, impossible
+   └─ support: 'none' (rare)
+```
 
 All 11 primitives:
 - Agent Mode
@@ -266,6 +317,27 @@ Update `ExpandedRow` to show provider details:
 </tr>
 ```
 
+### 3.2 Add Provider Tab to Interactive File Tree
+
+Edit `site/src/components/FileTree/FileTree.tsx`:
+
+Add provider to the providers array at the top of the component:
+
+```typescript
+const providers: { id: Provider; label: string; icon: string }[] = [
+  { id: 'copilot', label: 'GitHub Copilot', icon: '🤖' },
+  { id: 'claude', label: 'Claude Code', icon: '🧠' },
+  { id: 'cursor', label: 'Cursor', icon: '➤' },  // Add this line
+]
+```
+
+This allows users to switch between providers in the Interactive File Tree visualization on the homepage. The icon helps distinguish the provider visually.
+
+**Icon suggestions** (if different from above):
+- Arrow: ➤, ▶, →
+- Editor: ✨, 💻, ⚙️
+- Action: ⚡, 🎯, 🚀
+
 ---
 
 ## Stream 4: Testing (3-4 hours)
@@ -393,16 +465,26 @@ const providerName =
   impl.provider;
 ```
 
-### 6.2 Regenerate LLMs Files
+### 6.2 Regenerate Machine-Readable Files (CRITICAL - Final Step)
+
+⚠️ **This must be the final step after all other streams complete.**
+
+Run the generation script to sync all provider data:
 
 ```bash
 bun .github/skills/generate-llms/scripts/generate-llms-full.ts
 ```
 
-This regenerates:
-- `site/public/llms-full.txt` - Complete content
+**Why this is critical:**
+- Pulls data from updated `primitives.ts`, `comparison.ts`, and `fileTree.ts`
+- Generates machine-readable files for AI agents to consume
+- Keeps llms.txt/llms-full.txt in sync with UI data
+- Missing this step = outdated documentation for AI tool consumption
+
+**What gets regenerated:**
+- `site/public/llms-full.txt` - Complete content for all primitives
 - `site/public/llms.txt` - Table of contents
-- `site/public/*.md` - Page-specific markdown
+- `site/public/skills.md`, `site/public/agents.md`, `site/public/mcp.md` - Page-specific markdown
 
 ### 6.3 Verify Output
 
