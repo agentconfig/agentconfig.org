@@ -431,6 +431,50 @@ grep "primitiveId: '" site/src/data/comparison.ts | sed "s/.*primitiveId: '\\([^
 # Compare - should be identical
 ```
 
+### Incorrect Support Levels for Provider
+
+**When**: After implementing all streams, comparing against official docs
+
+**Cause**: Support levels were assumed instead of verified against official provider documentation.
+
+**Solution**:
+1. Visit the provider's official documentation (cursor.com/docs, claude.ai, etc.)
+2. For each of the 11 primitives, verify:
+   - Is this feature officially supported?
+   - Are there any limitations or workarounds?
+   - What version/channel is it available in?
+3. Update support levels based on actual documentation:
+   - `full` - Natively supported, documented, core feature
+   - `partial` - Works with limitations or workarounds
+   - `diy` - Custom setup required
+   - `none` - Not possible (rare)
+4. Update both `primitives.ts` and `comparison.ts`
+5. Regenerate llms-full.txt with updated data
+
+**Real example**: Cursor Hooks support was initially missed. Verification against cursor.com/docs/agent/hooks showed full support was available.
+
+---
+
+### Missing File Tree Provider Tab
+
+**When**: Provider shows in comparison table but not in File Tree component
+
+**Cause**: Forgot to add provider to the `FileTree.tsx` providers array (Stream 3.2).
+
+**Solution**: Edit `site/src/components/FileTree/FileTree.tsx`:
+
+```typescript
+const providers: { id: Provider; label: string; icon: string }[] = [
+  { id: 'copilot', label: 'GitHub Copilot', icon: '🤖' },
+  { id: 'claude', label: 'Claude Code', icon: '🧠' },
+  { id: 'cursor', label: 'Cursor', icon: '➤' },  // Add this line
+]
+```
+
+Without this, users can't switch between providers in the Interactive File Tree visualization.
+
+---
+
 ### Visual test in browser
 
 1. Run `npm run dev`
