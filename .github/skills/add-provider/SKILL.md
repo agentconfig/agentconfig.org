@@ -113,6 +113,24 @@ Update Cursor's support level from partial to full for Tool Integrations in the 
 ✅ Responsive design works
 ✅ Dark mode works
 
+## PR Description Best Practices
+
+When opening your pull request, keep it crisp and focused:
+
+**What to include:**
+- **Summary**: One sentence—what provider, what changed
+- **Changes**: Organized by stream (Types, Data, UI, Tests, Integration, Docs)
+- **Result**: Quick summary of provider's final support coverage
+- **Testing**: Concrete steps to verify (run commands, visit site, click features)
+- **References**: Link to official provider documentation as sources
+
+**What to avoid:**
+- Listing all 11 primitives exhaustively
+- Repetitive narrative about each stream
+- Verbose technical implementation details
+
+**Example**: See [Cursor provider PR](https://github.com/jonmagic/agentconfig.org/pull/3) for a reference implementation.
+
 ## Related Skills
 
 - **[add-primitive](../../add-primitive)** - Add a new AI primitive (expand beyond 11)
