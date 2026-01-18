@@ -369,9 +369,9 @@ export const primitives: Primitive[] = [
       },
       {
         provider: 'cursor',
-        implementation: 'Not available',
-        location: 'N/A',
-        support: 'diy',
+        implementation: 'Session, execution, and file operation hooks',
+        location: '.cursor/hooks.json',
+        support: 'full',
       },
     ],
     category: 'safety',

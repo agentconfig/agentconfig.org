@@ -211,9 +211,9 @@ export const comparisonData: ComparisonRow[] = [
       location: '.claude/hooks/hooks.json',
     },
     cursor: {
-      level: 'none',
-      implementation: 'Not available',
-      location: 'N/A',
+      level: 'full',
+      implementation: 'Session, execution, and file operation hooks',
+      location: '.cursor/hooks.json',
     },
   },
   {
