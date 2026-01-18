@@ -52,6 +52,7 @@ Multi-step execution with planning and tool use.
 |----------|---------------|----------|---------|
 | GitHub Copilot | Agent mode in Copilot Chat | VS Code Copilot Chat | full |
 | Claude Code | Agentic workflows in Claude Code | Claude Code CLI | full |
+| Claude Code | Local coding agent with multi-step execution | Codex CLI / Editor extensions | full |
 
 ---
 
@@ -76,6 +77,7 @@ Reusable multi-step procedures for common tasks.
 |----------|---------------|----------|---------|
 | GitHub Copilot | Skill modules in skills directory | .github/skills/*/SKILL.md | full |
 | Claude Code | Skill modules in .claude directory | .claude/skills/*/SKILL.md | full |
+| Claude Code | Workflow definitions via AGENTS.md | AGENTS.md (project-level) | partial |
 
 ---
 
@@ -100,6 +102,7 @@ External tools for retrieving facts and taking actions.
 |----------|---------------|----------|---------|
 | GitHub Copilot | MCP servers and tool calling | VS Code MCP settings | full |
 | Claude Code | MCP servers and tool calling | .claude/settings.json | full |
+| Claude Code | MCP servers configured in config.toml | ~/.codex/config.toml | full |
 
 ---
 
@@ -128,6 +131,7 @@ A durable set of norms that define "good" for your project.
 |----------|---------------|----------|---------|
 | GitHub Copilot | Repository-level instructions file | .github/copilot-instructions.md | full |
 | Claude Code | Project memory file with @imports | CLAUDE.md | full |
+| Claude Code | Project instructions via AGENTS.md | AGENTS.md (project-level) | full |
 
 ---
 
@@ -152,6 +156,7 @@ User-level preferences that apply across all projects.
 |----------|---------------|----------|---------|
 | GitHub Copilot | User-level settings in VS Code | VS Code settings.json | full |
 | Claude Code | User-level memory and config | ~/.claude/CLAUDE.md | full |
+| Claude Code | Global configuration and settings | ~/.codex/config.toml | full |
 
 ---
 
@@ -176,6 +181,7 @@ Instructions that apply only to specific file paths.
 |----------|---------------|----------|---------|
 | GitHub Copilot | Instruction files with applyTo glob patterns | .github/instructions/*.instructions.md | full |
 | Claude Code | Rule files with globs frontmatter | .claude/rules/*.md | full |
+| Claude Code | Not natively supported | N/A | diy |
 
 ---
 
@@ -200,6 +206,7 @@ Repeatable prompts invoked via / commands.
 |----------|---------------|----------|---------|
 | GitHub Copilot | Prompt files invoked via / commands | .github/prompts/*.prompt.md | full |
 | Claude Code | Command files with frontmatter and $ARGUMENTS | .claude/commands/*.md | full |
+| Claude Code | CLI-based commands and workflows | ~/.codex/config.toml or AGENTS.md | partial |
 
 ---
 
@@ -228,6 +235,7 @@ Specialized agent personas with specific roles and permissions.
 |----------|---------------|----------|---------|
 | GitHub Copilot | Agent definition files | .github/agents/*.agent.md | full |
 | Claude Code | Custom subagents with roles and tool permissions | .claude/agents/*.md | full |
+| Claude Code | Agent role presets and configurations | AGENTS.md with role definitions | partial |
 
 ---
 
@@ -252,6 +260,7 @@ Explicit constraints on what the AI can do.
 |----------|---------------|----------|---------|
 | GitHub Copilot | Org policies and tool permissions | VS Code settings + org policies | full |
 | Claude Code | Allow/deny lists with pattern matching and sandbox | .claude/settings.json | full |
+| Claude Code | Approval policies and sandbox settings | ~/.codex/config.toml | full |
 
 ---
 
@@ -276,6 +285,7 @@ Code that runs before/after AI tool execution.
 |----------|---------------|----------|---------|
 | GitHub Copilot | Not available | N/A | diy |
 | Claude Code | PreToolUse, PostToolUse, Stop hooks with matchers | .claude/hooks/hooks.json | full |
+| Claude Code | MCP server callbacks for tool lifecycle | ~/.codex/config.toml (MCP config) | partial |
 
 ---
 
@@ -300,6 +310,7 @@ Checks that validate AI outputs before shipping.
 |----------|---------------|----------|---------|
 | GitHub Copilot | Run tests/lint via terminal tools | Terminal tools in agent mode | full |
 | Claude Code | Run tests/lint via Bash tool with hooks | Bash tool + hooks | full |
+| Claude Code | Metrics and observability for agent runs | ~/.codex/config.toml (metrics config) | partial |
 
 ---
 
@@ -307,21 +318,21 @@ Checks that validate AI outputs before shipping.
 
 # Part 2: Provider Comparison
 
-Support matrix comparing GitHub Copilot and Claude Code:
+Support matrix comparing GitHub Copilot, Claude Code, and OpenAI Codex:
 
-| Primitive | Copilot | Claude |
-|-----------|---------|--------|
-| Agent Mode | ✓ Agent mode in Copilot Chat | ✓ Agentic workflows in Claude Code |
-| Skills / Workflows | ✓ Skill modules in skills directory | ✓ Skill modules in .claude directory |
-| Tool Integrations (MCP) | ✓ MCP servers and tool calling | ✓ MCP servers and tool calling |
-| Persistent Instructions | ✓ Repo instructions file | ✓ Project memory file with @imports |
-| Global Instructions | ✓ User-level settings in VS Code | ✓ User-level memory and config |
-| Path-Scoped Rules | ✓ Instruction files with applyTo glob patterns | ✓ Rule files with globs frontmatter |
-| Slash Commands | ✓ Prompt files invoked via / commands | ✓ Command files with frontmatter and $ARGUMENTS |
-| Custom Agents | ✓ Agent definition files with roles and tool permissions | ✓ Subagent files with tools restrictions |
-| Permissions & Guardrails | ✓ Org policies and tool permissions | ✓ Allow/deny lists with pattern matching and sandbox |
-| Lifecycle Hooks | — Not available | ✓ PreToolUse, PostToolUse, Stop hooks with matchers |
-| Verification / Evals | ✓ Run tests/lint via terminal tools | ✓ Run tests/lint via Bash tool with hooks |
+| Primitive | Copilot | Claude | Codex |
+|-----------|---------|--------|-------|
+| Agent Mode | ✓ Agent mode in Copilot Chat | ✓ Agentic workflows in Claude Code | ✓ Local coding agent with multi-step execution |
+| Skills / Workflows | ✓ Skill modules in skills directory | ✓ Skill modules in .claude directory | ◐ Workflow definitions via AGENTS.md |
+| Tool Integrations (MCP) | ✓ MCP servers and tool calling | ✓ MCP servers and tool calling | ✓ MCP servers configured in config.toml |
+| Persistent Instructions | ✓ Repo instructions file | ✓ Project memory file with @imports | ✓ Project instructions via AGENTS.md |
+| Global Instructions | ✓ User-level settings in VS Code | ✓ User-level memory and config | ✓ Global configuration and settings |
+| Path-Scoped Rules | ✓ Instruction files with applyTo glob patterns | ✓ Rule files with globs frontmatter | — Not natively supported |
+| Slash Commands | ✓ Prompt files invoked via / commands | ✓ Command files with frontmatter and $ARGUMENTS | ◐ CLI-based commands and workflows |
+| Custom Agents | ✓ Agent definition files with roles and tool permissions | ✓ Subagent files with tools restrictions | ◐ Agent role presets and configurations |
+| Permissions & Guardrails | ✓ Org policies and tool permissions | ✓ Allow/deny lists with pattern matching and sandbox | ✓ Approval policies and sandbox settings |
+| Lifecycle Hooks | — Not available | ✓ PreToolUse, PostToolUse, Stop hooks with matchers | ◐ MCP server callbacks for tool lifecycle |
+| Verification / Evals | ✓ Run tests/lint via terminal tools | ✓ Run tests/lint via Bash tool with hooks | ◐ Metrics and observability for agent runs |
 
 ### Config File Locations
 
@@ -341,6 +352,12 @@ Support matrix comparing GitHub Copilot and Claude Code:
 - Skills: `.claude/skills/*/SKILL.md`
 - Lifecycle Hooks: `.claude/hooks/hooks.json`
 - MCP Settings: `.claude/settings.json`
+
+**OpenAI Codex:**
+- Project Instructions: `AGENTS.md`
+- Global Config: `~/.codex/config.toml`
+- MCP Servers: `~/.codex/config.toml`
+- Approval Policies: `~/.codex/config.toml`
 
 ---
 

@@ -1,4 +1,4 @@
-export type Provider = 'copilot' | 'claude'
+export type Provider = 'copilot' | 'claude' | 'codex'
 
 export interface FileNode {
   /** Unique identifier for the node */
@@ -1071,12 +1071,156 @@ description: "Thorough code review following best practices. Use when reviewing 
   ],
 }
 
+export const codexTree: FileNode = {
+  id: 'codex-root',
+  name: 'my-project',
+  type: 'folder',
+  children: [
+    {
+      id: 'codex-agents-md',
+      name: 'AGENTS.md',
+      type: 'file',
+      details: {
+        label: 'Project Instructions',
+        description: 'Open standard for AI agents. Defines project setup, testing, and structure for Codex and other compatible tools.',
+        whatGoesHere: [
+          'Project overview and tech stack',
+          'How to build and run the project',
+          'How to run tests',
+          'Directory structure overview',
+          'Key commands and conventions',
+        ],
+        whenLoaded: 'Always loaded first. Forms the baseline context for Codex interactions.',
+        loadOrder: 1,
+        example: `# AGENTS.md
+
+## Project Overview
+A TypeScript web application built with React and Node.js.
+
+## Setup
+\`\`\`bash
+npm install
+npm run dev
+\`\`\`
+
+## Testing
+\`\`\`bash
+npm test
+\`\`\`
+
+## Tech Stack
+- TypeScript
+- React 18
+- Node.js 20
+
+## Key Directories
+- \`/src\` — Source code
+- \`/tests\` — Test files
+- \`/public\` — Static assets`,
+      },
+    },
+    {
+      id: 'codex-root-agents-md',
+      name: 'frontend',
+      type: 'folder',
+      children: [
+        {
+          id: 'codex-frontend-agents-md',
+          name: 'AGENTS.md',
+          type: 'file',
+          details: {
+            label: 'Nested Context',
+            description: 'Directory-specific context that adds to root AGENTS.md when working in this area.',
+            whatGoesHere: [
+              'Directory-specific stack info',
+              'Local conventions and patterns',
+              'Relevant build/test commands',
+            ],
+            whenLoaded: 'Loaded when working in this directory. Adds to root context.',
+            loadOrder: 2,
+            example: `# Frontend AGENTS.md
+
+## Stack
+- React 18 with TypeScript
+- Vite for bundling
+- TailwindCSS for styling
+
+## Key Directories
+- \`/src/components\` — UI components
+- \`/src/hooks\` — Custom hooks
+
+## Commands
+- \`npm run dev\` — Start dev server
+- \`npm run test:frontend\` — Run frontend tests`,
+          },
+        },
+      ],
+    },
+  ],
+}
+
+export const codexGlobalTree: FileNode = {
+  id: 'codex-global-root',
+  name: '~',
+  type: 'folder',
+  children: [
+    {
+      id: 'codex-global-dotcodex',
+      name: '.codex',
+      type: 'folder',
+      children: [
+        {
+          id: 'codex-global-config-toml',
+          name: 'config.toml',
+          type: 'file',
+          details: {
+            label: 'Global Config',
+            description: 'Codex global configuration that applies across all projects. Controls default model, MCP servers, approval policies, and sandbox settings.',
+            whatGoesHere: [
+              'Default model and provider settings',
+              'MCP server configurations',
+              'Global approval policies',
+              'Sandbox and environment restrictions',
+              'Reasoning effort settings',
+            ],
+            whenLoaded: 'Always loaded. Applies globally to all Codex usage.',
+            loadOrder: 1,
+            example: `# ~/.codex/config.toml
+
+model = "gpt-4"
+model_provider = "openai"
+
+# MCP server configuration
+[[mcp_servers]]
+name = "github"
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-github"]
+
+# Approval and sandbox settings
+[approval]
+require_approval_for = ["Bash"]
+sandbox_mode = true
+
+[env]
+allowed_vars = ["PATH", "HOME", "USER"]
+
+[reasoning]
+effort = "medium"`,
+          },
+        },
+      ],
+    },
+  ],
+}
+
 export const trees: Record<Provider, FileNode> = {
   copilot: copilotTree,
   claude: claudeTree,
+  codex: codexTree,
 }
 
 export const globalTrees: Record<Provider, FileNode> = {
   copilot: copilotGlobalTree,
   claude: claudeGlobalTree,
+  codex: codexGlobalTree,
 }

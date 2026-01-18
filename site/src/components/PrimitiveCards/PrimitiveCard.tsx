@@ -34,6 +34,7 @@ const supportBadgeColors = {
 const providerLabels: Record<Provider, string> = {
   copilot: 'GitHub Copilot',
   claude: 'Claude Code',
+  codex: 'OpenAI Codex',
 }
 
 export function PrimitiveCard({ primitive, className }: PrimitiveCardProps): VNode {

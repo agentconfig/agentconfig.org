@@ -77,8 +77,8 @@ function generateLlmsTxt(pages: readonly PageMeta[]): string {
 
   return `# agentconfig.org
 
-> A reference site for configuring AI coding assistants like GitHub Copilot and Claude Code.
-> Covers 10 AI primitives, provider comparison, config file locations, and tutorials for
+> A reference site for configuring AI coding assistants like GitHub Copilot, Claude Code, and OpenAI Codex.
+> Covers 11 AI primitives, provider comparison, config file locations, and tutorials for
 > skills, agent definitions, and MCP tool integrations.
 
 This file provides a table of contents. For complete content, see /llms-full.txt.
@@ -500,16 +500,17 @@ These primitives constrain what the AI is allowed to do.
 
 # Part 2: Provider Comparison
 
-Support matrix comparing GitHub Copilot and Claude Code:
+Support matrix comparing GitHub Copilot, Claude Code, and OpenAI Codex:
 
-| Primitive | Copilot | Claude |
-|-----------|---------|--------|
+| Primitive | Copilot | Claude | Codex |
+|-----------|---------|--------|-------|
 `
 
   for (const row of comparisonData) {
     const copilotIcon = row.copilot.level === 'full' ? '✓' : row.copilot.level === 'partial' ? '◐' : '—'
     const claudeIcon = row.claude.level === 'full' ? '✓' : row.claude.level === 'partial' ? '◐' : '—'
-    content += `| ${row.primitiveName} | ${copilotIcon} ${row.copilot.implementation} | ${claudeIcon} ${row.claude.implementation} |\n`
+    const codexIcon = row.codex.level === 'full' ? '✓' : row.codex.level === 'partial' ? '◐' : '—'
+    content += `| ${row.primitiveName} | ${copilotIcon} ${row.copilot.implementation} | ${claudeIcon} ${row.claude.implementation} | ${codexIcon} ${row.codex.implementation} |\n`
   }
 
   content += `
@@ -531,6 +532,12 @@ Support matrix comparing GitHub Copilot and Claude Code:
 - Skills: \`.claude/skills/*/SKILL.md\`
 - Lifecycle Hooks: \`.claude/hooks/hooks.json\`
 - MCP Settings: \`.claude/settings.json\`
+
+**OpenAI Codex:**
+- Project Instructions: \`AGENTS.md\`
+- Global Config: \`~/.codex/config.toml\`
+- MCP Servers: \`~/.codex/config.toml\`
+- Approval Policies: \`~/.codex/config.toml\`
 
 ---
 

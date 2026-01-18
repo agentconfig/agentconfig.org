@@ -14,7 +14,7 @@ export function App(): VNode {
       <Section
         id="primitives"
         title="AI Primitives"
-        description="Explore the 9 core primitives that power AI coding assistants. Each primitive serves a specific purpose in customizing AI behavior."
+        description="Explore the 11 core primitives that power AI coding assistants. Each primitive serves a specific purpose in customizing AI behavior."
       >
         <PrimitiveCardsSection />
       </Section>
@@ -31,7 +31,7 @@ export function App(): VNode {
       <Section
         id="comparison"
         title="Provider Comparison"
-        description="Compare how primitives are implemented across GitHub Copilot and Claude Code side by side."
+        description="Compare how primitives are implemented across GitHub Copilot, Claude Code, and OpenAI Codex."
       >
         <ProviderComparisonSection />
       </Section>

@@ -6,9 +6,9 @@ A reference guide for configuring AI coding assistants. Learn where config files
 
 ## What's Here
 
-- **AI Primitives** — The 9 core configuration primitives (instructions, skills, agents, commands, etc.) that power AI coding assistants
+- **AI Primitives** — The 11 core configuration primitives (instructions, skills, agents, commands, etc.) that power AI coding assistants
 - **Interactive File Tree** — Visual guide to where config files live, for both global (user home) and project-level configuration
-- **Provider Comparison** — Side-by-side comparison of GitHub Copilot and Claude Code support for each primitive
+- **Provider Comparison** — Side-by-side comparison of GitHub Copilot, Claude Code, and OpenAI Codex support for each primitive
 
 ## Key Paths
 
@@ -30,6 +30,15 @@ A reference guide for configuring AI coding assistants. Learn where config files
 | Global commands | `~/.claude/commands/<name>.md` |
 | Project memory | `./CLAUDE.md` or `.claude/CLAUDE.md` |
 | Project settings | `.claude/settings.json` |
+
+### OpenAI Codex
+
+| Type | Path |
+|------|------|
+| Global config | `~/.codex/config.toml` |
+| Project instructions | `AGENTS.md` |
+| MCP servers | `~/.codex/config.toml` |
+| Approval policies | `~/.codex/config.toml` |
 
 See the [llms.txt](https://agentconfig.org/llms.txt) for a machine-readable summary.
 

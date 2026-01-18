@@ -16,6 +16,7 @@ test.describe('Provider Comparison', () => {
     await expect(page.getByRole('columnheader', { name: /Primitive/i })).toBeVisible()
     await expect(page.getByRole('columnheader', { name: /GitHub Copilot/i })).toBeVisible()
     await expect(page.getByRole('columnheader', { name: /Claude Code/i })).toBeVisible()
+    await expect(page.getByRole('columnheader', { name: /OpenAI Codex/i })).toBeVisible()
   })
 
   test('should display all primitives in the table', async ({ page }) => {
@@ -38,9 +39,16 @@ test.describe('Provider Comparison', () => {
     const table = page.getByRole('table')
     // Check for Full Support badges
     await expect(table.getByText('Full Support').first()).toBeVisible()
-    // 11 primitives: 10 have full support on both providers (20), Hooks has full on Claude only (1) = 21
+    // 11 primitives x 3 providers with various support levels
+    // Copilot: 8 full, 1 none (Hooks), 2 diy (Path-Scoped, N/A on one)
+    // Claude: 11 full
+    // Codex: 7 full, 4 partial
+    // Total Full Support: 8 + 11 + 7 = 26
     const fullSupportBadges = table.getByText('Full Support')
-    await expect(fullSupportBadges).toHaveCount(21)
+    await expect(fullSupportBadges).toHaveCount(26)
+    // Check for Partial badges (Codex has 4)
+    const partialBadges = table.getByText('Partial')
+    await expect(partialBadges).toHaveCount(4)
     // Hooks has "Not Available" on Copilot
     await expect(table.getByText('Not Available')).toBeVisible()
   })
@@ -54,6 +62,7 @@ test.describe('Provider Comparison', () => {
     // Should show expanded details with implementation info
     await expect(page.getByText('Repo instructions file')).toBeVisible()
     await expect(page.getByText('Project memory file with @imports')).toBeVisible()
+    await expect(page.getByText('Project instructions via AGENTS.md')).toBeVisible()
   })
 
   test('should show file locations when expanded', async ({ page }) => {
@@ -65,6 +74,7 @@ test.describe('Provider Comparison', () => {
     // Should show file locations
     await expect(page.getByText('.github/copilot-instructions.md')).toBeVisible()
     await expect(page.getByText('CLAUDE.md').first()).toBeVisible()
+    await expect(page.getByText('AGENTS.md (project-level)')).toBeVisible()
   })
 
   test('should collapse row on second click', async ({ page }) => {
@@ -101,9 +111,9 @@ test.describe('Provider Comparison', () => {
     // Click to expand
     await row.click()
 
-    // Should have copy buttons
+    // Should have copy buttons (one for each provider: Copilot, Claude, Codex)
     const copyButtons = page.getByRole('button', { name: /Copy location/i })
-    await expect(copyButtons.first()).toBeVisible()
+    await expect(copyButtons).toHaveCount(3)
   })
 
   test('should only expand one row at a time', async ({ page }) => {
