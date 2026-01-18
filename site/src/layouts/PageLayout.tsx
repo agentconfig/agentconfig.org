@@ -21,7 +21,7 @@ export function PageLayout({ children, llmsPath = '/llms.txt' }: PageLayoutProps
 
         <footer className="border-t border-border py-8">
           <div className="container mx-auto px-4 text-center text-muted-foreground">
-            <p>Brought to you by <a href="https://jonmagic.com" className="underline hover:text-foreground transition-colors">jonmagic</a>.</p>
+            <p>Brought to you by <a href="https://jonmagic.com" className="underline hover:text-foreground transition-colors">jonmagic</a> and <a href="https://francisfuzz.com/" className="underline hover:text-foreground transition-colors">francisfuzz</a>.</p>
             <p className="mt-2 text-sm">
               <a href={llmsPath} className="hover:text-foreground transition-colors">{llmsFilename}</a>
               <span className="mx-2 text-muted-foreground">·</span>
