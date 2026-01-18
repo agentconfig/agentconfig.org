@@ -49,11 +49,21 @@ Every provider must map to these primitives:
 
 ## Quick Start
 
-1. **Read the detailed process** → See [PROCESS.md](references/PROCESS.md) for step-by-step instructions
-2. **Review code examples** → See [EXAMPLES.md](references/EXAMPLES.md) for copy-paste templates
-3. **Understand patterns** → See [PATTERNS.md](references/PATTERNS.md) for support levels and naming conventions
-4. **Handle errors** → See [ERRORS.md](references/ERRORS.md) for solutions to common issues
-5. **Verify completion** → See [CHECKLIST.md](references/CHECKLIST.md) for verification steps
+0. **🔍 Research the provider** → See [RESEARCH-GUIDE.md](references/RESEARCH-GUIDE.md) for capability audit template
+   - Visit official documentation
+   - Document support level for each of the 11 primitives
+   - Verify config file locations
+   - **Complete this BEFORE writing any code** (see pre-implementation checklist in [CHECKLIST.md](references/CHECKLIST.md))
+
+1. **📋 Read the detailed process** → See [PROCESS.md](references/PROCESS.md) for step-by-step instructions for all 6 streams
+
+2. **📖 Review code examples** → See [EXAMPLES.md](references/EXAMPLES.md) for copy-paste templates for each stream
+
+3. **🎨 Understand patterns** → See [PATTERNS.md](references/PATTERNS.md) for support levels and naming conventions
+
+4. **🐛 Handle errors** → See [ERRORS.md](references/ERRORS.md) for solutions to common issues (including critical generation script updates)
+
+5. **✅ Verify completion** → See [CHECKLIST.md](references/CHECKLIST.md) for verification steps (includes pre-implementation checklist)
 
 ## 6-Stream Workflow at a Glance
 
@@ -141,8 +151,9 @@ When opening your pull request, keep it crisp and focused:
 
 For detailed information, see:
 
-- [PROCESS.md](references/PROCESS.md) - Complete step-by-step instructions for all 6 streams
-- [EXAMPLES.md](references/EXAMPLES.md) - Copy-paste code examples for each stream
-- [PATTERNS.md](references/PATTERNS.md) - Support levels, file locations, naming conventions
-- [ERRORS.md](references/ERRORS.md) - Common issues and solutions
-- [CHECKLIST.md](references/CHECKLIST.md) - Comprehensive verification checklists
+- **[RESEARCH-GUIDE.md](references/RESEARCH-GUIDE.md)** - How to research a provider before implementation (capability audit template, decision tree, examples)
+- **[PROCESS.md](references/PROCESS.md)** - Complete step-by-step instructions for all 6 streams
+- **[EXAMPLES.md](references/EXAMPLES.md)** - Copy-paste code examples for each stream
+- **[PATTERNS.md](references/PATTERNS.md)** - Support levels, file locations, naming conventions
+- **[ERRORS.md](references/ERRORS.md)** - Common issues and solutions (including critical generation script updates)
+- **[CHECKLIST.md](references/CHECKLIST.md)** - Comprehensive verification checklists (includes pre-implementation checklist)

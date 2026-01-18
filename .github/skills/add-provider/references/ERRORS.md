@@ -280,6 +280,61 @@ export const trees: Record<Provider, FileNode> = {
 
 ## LLMs Generation Issues
 
+### ⚠️ CRITICAL: Generation Script Updates Required (Stream 6)
+
+**When**: After completing Stream 2 (Data Layer)
+
+**Why**: The generation script has hardcoded rendering for only 2 providers (Copilot, Claude).
+Adding a 3rd provider breaks the script without updates.
+
+**Solution**: Update `.github/skills/generate-llms/scripts/generate-llms-full.ts` in TWO places:
+
+**1. Update the provider comparison table rendering:**
+
+```typescript
+// ✗ Old (only 2 providers):
+| Primitive | Copilot | Claude |
+
+// ✓ New (3 providers):
+| Primitive | Copilot | Claude | Cursor |
+```
+
+Find this section (~line 503) and update:
+
+```typescript
+// BEFORE:
+const copilotIcon = row.copilot.level === 'full' ? '✓' : '◐' : '—'
+const claudeIcon = row.claude.level === 'full' ? '✓' : '◐' : '—'
+content += `| ${row.primitiveName} | ${copilotIcon} ... | ${claudeIcon} ... |\n`
+
+// AFTER:
+const copilotIcon = row.copilot.level === 'full' ? '✓' : '◐' : '—'
+const claudeIcon = row.claude.level === 'full' ? '✓' : '◐' : '—'
+const cursorIcon = row.cursor.level === 'full' ? '✓' : '◐' : '—'
+content += `| ${row.primitiveName} | ${copilotIcon} ... | ${claudeIcon} ... | ${cursorIcon} ... |\n`
+```
+
+**2. Add provider config file locations section:**
+
+Find the "Config File Locations" section (~line 516) and add your provider:
+
+```markdown
+**Cursor:**
+- Project Instructions: `.cursor/instructions.md`
+- Global Config: `~/.cursor/settings.json`
+- MCP Servers: `~/.cursor/mcp.json`
+```
+
+Then regenerate:
+
+```bash
+bun .github/skills/generate-llms/scripts/generate-llms-full.ts
+```
+
+**This is NOT optional** - if you skip it, the generated files will be incomplete.
+
+---
+
 ### Problem: Provider name shows as "Claude Code" in llms-full.txt
 
 **Symptoms**: Generated file shows provider as "Claude Code" instead of "Cursor"

@@ -1,6 +1,42 @@
 # Comprehensive Checklists: Provider Integration Verification
 
-Complete verification steps for all 6 work streams.
+Complete verification steps for all 6 work streams, plus pre-implementation research.
+
+---
+
+## ⚠️ PRE-IMPLEMENTATION: Research & Capability Audit
+
+**Do this BEFORE starting Stream 1. This is critical for correct implementation.**
+
+### Research Phase
+- [ ] Read [RESEARCH-GUIDE.md](RESEARCH-GUIDE.md) completely
+- [ ] Visited provider's official documentation site
+- [ ] Identified official config file locations (project-level and global)
+- [ ] Tested config files yourself (if possible)
+
+### Capability Audit (All 11 Primitives)
+- [ ] Agent Mode: support level documented with evidence
+- [ ] Skills / Workflows: support level documented with evidence
+- [ ] Tool Integrations (MCP): support level documented with evidence
+- [ ] Persistent Instructions: support level documented with evidence
+- [ ] Global Instructions: support level documented with evidence
+- [ ] Path-Scoped Rules: support level documented with evidence
+- [ ] Slash Commands: support level documented with evidence
+- [ ] Custom Agents: support level documented with evidence
+- [ ] Permissions & Guardrails: support level documented with evidence
+- [ ] Lifecycle Hooks: support level documented with evidence
+- [ ] Verification / Evals: support level documented with evidence
+
+### Documentation
+- [ ] Created research summary with links to official docs
+- [ ] Each primitive has a support level decision (full/partial/diy/none)
+- [ ] Each support level decision has evidence (link to docs)
+- [ ] All config file locations are from official sources, not guesses
+- [ ] Verified no overlaps or conflicts between primitives
+
+**⚠️ Do NOT proceed to Stream 1 until this section is 100% complete.**
+
+---
 
 ## Stream 1: Type System Verification
 
