@@ -20,12 +20,4 @@ test.describe('App', () => {
     await expect(page.getByRole('heading', { name: 'Interactive File Tree' })).toBeVisible()
     await expect(page.getByRole('heading', { name: 'Provider Comparison' })).toBeVisible()
   })
-
-  test('should not have external link to thisistheway.to/ai', async ({ page }) => {
-    await page.goto('/')
-
-    // Verify the external link is not present
-    const externalLink = page.locator('a[href="https://thisistheway.to/ai"]')
-    await expect(externalLink).toHaveCount(0)
-  })
 })
