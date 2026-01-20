@@ -1087,27 +1087,316 @@ export const cursorTree: FileNode = {
           type: 'file',
           details: {
             label: 'Project Instructions',
-            description: 'Cursor project-level instructions for AI behavior.',
+            description: 'Cursor\'s primary file for project context. Automatically loaded for all AI interactions.',
             whatGoesHere: [
               'Project overview and tech stack',
-              'Coding conventions',
-              'How to build and test',
+              'Coding conventions (naming, formatting, patterns)',
+              'Testing requirements and how to run tests',
+              'Build/deploy commands',
+              'Security constraints',
             ],
-            whenLoaded: 'Always loaded first. Forms the baseline for Cursor interactions.',
+            whenLoaded: 'Always loaded first. Forms the baseline context for all Cursor interactions.',
             loadOrder: 1,
             example: `# Cursor Instructions
 
-## Project Setup
-- Node.js 18+
-- npm install
+## Tech Stack
+- TypeScript, React 18, Node.js 20
+- PostgreSQL with Prisma ORM
 
 ## Conventions
-- TypeScript strict mode
-- Functional components`,
+- Use functional components with hooks
+- Prefer named exports
+- All API endpoints return { data, error } shape
+
+## Testing
+- Run tests: \`npm test\`
+- All PRs must have tests for new functionality`,
           },
         },
         {
-          id: 'cursor-rules',
+          id: 'cursor-mcp',
+          name: 'mcp.json',
+          type: 'file',
+          details: {
+            label: 'MCP Config',
+            description: 'Model Context Protocol server configurations for tool integrations. Supports stdio, SSE, and HTTP transports.',
+            whatGoesHere: [
+              'MCP server definitions',
+              'Command/args for stdio servers',
+              'URLs for remote HTTP/SSE servers',
+              'Environment variables and auth config',
+            ],
+            whenLoaded: 'Loaded at startup. MCP servers provide additional tools to the agent.',
+            loadOrder: 0,
+            example: `{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_TOKEN": "\${env:GITHUB_TOKEN}"
+      }
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "\${workspaceFolder}"]
+    }
+  }
+}`,
+          },
+        },
+        {
+          id: 'cursor-hooks',
+          name: 'hooks.json',
+          type: 'file',
+          details: {
+            label: 'Lifecycle Hooks',
+            description: 'Defines shell commands that run at specific lifecycle events (session start/end, before/after tool execution, etc.).',
+            whatGoesHere: [
+              'Hook event types (sessionStart, sessionEnd, beforeShellExecution, etc.)',
+              'Commands to execute with optional timeout',
+              'Validation and audit workflows',
+            ],
+            whenLoaded: 'Hooks execute at their defined lifecycle points during agent execution.',
+            loadOrder: 0,
+            example: `{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {"command": "./hooks/init.sh"}
+    ],
+    "beforeShellExecution": [
+      {"command": "./hooks/audit.sh"}
+    ],
+    "afterFileEdit": [
+      {"command": "./hooks/format.sh"}
+    ]
+  }
+}`,
+          },
+        },
+        {
+          id: 'cursor-agents-folder',
+          name: 'agents',
+          type: 'folder',
+          children: [
+            {
+              id: 'cursor-agent-reviewer',
+              name: 'code-reviewer.md',
+              type: 'file',
+              details: {
+                label: 'Custom Agent',
+                description: 'Defines a specialized subagent with specific roles, model selection, and context isolation.',
+                whatGoesHere: [
+                  'Agent name and description (in frontmatter)',
+                  'Model selection (fast, inherit, or specific model ID)',
+                  'Readonly flag for write restrictions',
+                  'Behavioral instructions in body',
+                ],
+                whenLoaded: 'Loaded when Cursor delegates to this subagent based on task matching.',
+                loadOrder: 5,
+                example: `---
+name: code-reviewer
+description: Expert code review specialist. Reviews code for quality, security, and maintainability.
+model: fast
+readonly: true
+---
+
+You are a code reviewer. When invoked:
+1. Identify bugs and potential issues
+2. Check adherence to project conventions
+3. Suggest improvements (but don't make changes)
+4. Look for security vulnerabilities`,
+              },
+            },
+            {
+              id: 'cursor-agent-planner',
+              name: 'planner.md',
+              type: 'file',
+              details: {
+                label: 'Custom Agent',
+                description: 'Defines a specialized subagent with specific roles, model selection, and context isolation.',
+                whatGoesHere: [
+                  'Agent name and description (in frontmatter)',
+                  'Model selection (fast, inherit, or specific model ID)',
+                  'Background execution flag for async work',
+                  'Behavioral instructions in body',
+                ],
+                whenLoaded: 'Loaded when Cursor delegates to this subagent based on task matching.',
+                loadOrder: 5,
+                example: `---
+name: planner
+description: Plans implementation approach before coding. Use for complex features requiring architectural decisions.
+model: inherit
+---
+
+# Implementation Planner
+
+Before writing any code, help the user:
+1. Break down the task into steps
+2. Identify potential challenges
+3. Suggest the best approach
+4. Consider edge cases and testing strategy`,
+              },
+            },
+          ],
+        },
+        {
+          id: 'cursor-skills-folder',
+          name: 'skills',
+          type: 'folder',
+          children: [
+            {
+              id: 'cursor-skill-debug-ci',
+              name: 'debug-ci',
+              type: 'folder',
+              children: [
+                {
+                  id: 'cursor-skill-debug-ci-file',
+                  name: 'SKILL.md',
+                  type: 'file',
+                  details: {
+                    label: 'Skill',
+                    description: 'A reusable, multi-step workflow that Cursor can invoke automatically based on task description.',
+                    whatGoesHere: [
+                      'Skill metadata (name, description in frontmatter)',
+                      'When to use this skill',
+                      'Step-by-step instructions',
+                      'Best practices and patterns',
+                    ],
+                    whenLoaded: 'Auto-selected based on task. The description is matched against user requests.',
+                    loadOrder: 6,
+                    example: `---
+name: debug-ci
+description: Diagnose and fix failing CI runs. Use when continuous integration tests fail.
+---
+
+# Debug CI Failures
+
+## When to Use
+- Use when CI/CD pipeline fails
+- When tests pass locally but fail in CI
+
+## Steps
+1. Check CI logs for error message
+2. Identify environment differences (Node version, dependencies, etc.)
+3. Reproduce locally with same environment
+4. Fix and verify in CI`,
+                  },
+                },
+              ],
+            },
+            {
+              id: 'cursor-skill-refactor',
+              name: 'refactor',
+              type: 'folder',
+              children: [
+                {
+                  id: 'cursor-skill-refactor-file',
+                  name: 'SKILL.md',
+                  type: 'file',
+                  details: {
+                    label: 'Skill',
+                    description: 'A reusable, multi-step workflow that Cursor can invoke automatically based on task description.',
+                    whatGoesHere: [
+                      'Skill metadata (name, description in frontmatter)',
+                      'When to use this skill',
+                      'Step-by-step instructions',
+                      'Best practices and patterns',
+                    ],
+                    whenLoaded: 'Auto-selected based on task. The description is matched against user requests.',
+                    loadOrder: 6,
+                    example: `---
+name: refactor
+description: Refactor code while maintaining tests and functionality. Use for code cleanup and improvements.
+---
+
+# Safe Refactoring
+
+## When to Use
+- When improving code structure without changing behavior
+- When code smells are detected
+
+## Instructions
+1. Run existing tests first to establish baseline
+2. Make incremental changes
+3. Run tests after each change
+4. Commit working states
+5. Update documentation if needed`,
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        {
+          id: 'cursor-commands-folder',
+          name: 'commands',
+          type: 'folder',
+          children: [
+            {
+              id: 'cursor-command-commit',
+              name: 'commit.md',
+              type: 'file',
+              details: {
+                label: 'Slash Command',
+                description: 'Custom slash command invoked with /commit. Parameters passed after command name are included in the prompt.',
+                whatGoesHere: [
+                  'Instructions for the command',
+                  'Steps to follow',
+                  'Output format preferences',
+                  'Parameters are passed as text after command name',
+                ],
+                whenLoaded: 'User-invoked with /commit in Cursor chat. Not automatically loaded.',
+                loadOrder: 7,
+                example: `# Create Commit
+
+Create a git commit with conventional format.
+
+## Steps
+1. Review current git status
+2. Analyze staged changes
+3. Generate commit message following conventional commits format
+4. Create the commit
+
+## Format
+- feat: new features
+- fix: bug fixes
+- docs: documentation
+- refactor: code refactoring`,
+              },
+            },
+            {
+              id: 'cursor-command-review-pr',
+              name: 'review-pr.md',
+              type: 'file',
+              details: {
+                label: 'Slash Command',
+                description: 'Custom slash command invoked with /review-pr. Parameters passed after command name are included in the prompt.',
+                whatGoesHere: [
+                  'Instructions for the command',
+                  'Review criteria and checklist',
+                  'Output format',
+                ],
+                whenLoaded: 'User-invoked with /review-pr in Cursor chat. Not automatically loaded.',
+                loadOrder: 7,
+                example: `# Review Pull Request
+
+Review this PR for:
+
+## Checklist
+- [ ] Logic correctness
+- [ ] Error handling
+- [ ] Test coverage
+- [ ] Security considerations
+- [ ] Performance implications
+- [ ] Documentation updates`,
+              },
+            },
+          ],
+        },
+        {
+          id: 'cursor-rules-folder',
           name: 'rules',
           type: 'folder',
           children: [
@@ -1117,20 +1406,146 @@ export const cursorTree: FileNode = {
               type: 'file',
               details: {
                 label: 'Path-Specific Rule',
-                description: 'Rules applying to specific directories.',
+                description: 'Rules that apply to specific directories or file patterns.',
                 whatGoesHere: [
                   'Directory-specific conventions',
-                  'Framework guidance',
+                  'Framework-specific guidance',
+                  'Different rules for frontend vs backend',
                 ],
-                whenLoaded: 'Loaded when working on matching paths.',
-                loadOrder: 2,
+                whenLoaded: 'Loaded when working on files in matching paths.',
+                loadOrder: 4,
                 example: `# Frontend Rules
 
-- Use React hooks
-- Test with React Testing Library`,
+## React Conventions
+- Use functional components only
+- Extract reusable logic into custom hooks
+- Keep components focused and small
+
+## Testing
+- Use React Testing Library
+- Test behavior, not implementation
+- Aim for high coverage on critical paths`,
+              },
+            },
+            {
+              id: 'cursor-rule-backend',
+              name: 'backend.md',
+              type: 'file',
+              details: {
+                label: 'Path-Specific Rule',
+                description: 'Rules that apply to specific directories or file patterns.',
+                whatGoesHere: [
+                  'Directory-specific conventions',
+                  'API design patterns',
+                  'Database interaction guidelines',
+                ],
+                whenLoaded: 'Loaded when working on files in matching paths.',
+                loadOrder: 4,
+                example: `# Backend Rules
+
+## API Conventions
+- RESTful endpoint naming
+- Always validate input
+- Return consistent error shapes
+- Use proper HTTP status codes
+
+## Database
+- Use parameterized queries
+- Handle connection errors gracefully`,
               },
             },
           ],
+        },
+      ],
+    },
+    {
+      id: 'cursor-frontend',
+      name: 'frontend',
+      type: 'folder',
+      children: [
+        {
+          id: 'cursor-frontend-instructions',
+          name: '.cursor',
+          type: 'folder',
+          children: [
+            {
+              id: 'cursor-frontend-instructions-file',
+              name: 'instructions.md',
+              type: 'file',
+              details: {
+                label: 'Nested Instructions',
+                description: 'Additional context for this directory. Cursor reads this when working in this area.',
+                whatGoesHere: [
+                  'Directory-specific stack info',
+                  'Local conventions',
+                  'Relevant commands',
+                ],
+                whenLoaded: 'Loaded when working in this directory. Adds to root context.',
+                loadOrder: 2,
+                example: `# Frontend Instructions
+
+## Stack
+- React 18 with TypeScript
+- Vite for bundling
+- TanStack Query for data fetching
+
+## Key Directories
+- \`/src/components\` — UI components
+- \`/src/hooks\` — Custom hooks`,
+              },
+            },
+          ],
+        },
+        {
+          id: 'cursor-frontend-src',
+          name: 'src',
+          type: 'folder',
+          children: [],
+        },
+      ],
+    },
+    {
+      id: 'cursor-backend',
+      name: 'backend',
+      type: 'folder',
+      children: [
+        {
+          id: 'cursor-backend-instructions',
+          name: '.cursor',
+          type: 'folder',
+          children: [
+            {
+              id: 'cursor-backend-instructions-file',
+              name: 'instructions.md',
+              type: 'file',
+              details: {
+                label: 'Nested Instructions',
+                description: 'Additional context for this directory. Cursor reads this when working in this area.',
+                whatGoesHere: [
+                  'Directory-specific stack info',
+                  'Local conventions',
+                  'Relevant commands',
+                ],
+                whenLoaded: 'Loaded when working in this directory. Adds to root context.',
+                loadOrder: 2,
+                example: `# Backend Instructions
+
+## Stack
+- Node.js with Express
+- PostgreSQL with Prisma
+
+## Key Directories
+- \`/src/routes\` — API routes
+- \`/src/services\` — Business logic`,
+              },
+            },
+          ],
+        },
+        {
+          id: 'cursor-backend-src',
+          name: 'src',
+          type: 'folder',
+          children: [],
         },
       ],
     },
@@ -1148,24 +1563,166 @@ export const cursorGlobalTree: FileNode = {
       type: 'folder',
       children: [
         {
-          id: 'cursor-global-settings',
-          name: 'settings.json',
+          id: 'cursor-global-mcp',
+          name: 'mcp.json',
           type: 'file',
           details: {
-            label: 'Global Settings',
-            description: 'Personal Cursor settings across all projects.',
+            label: 'Global MCP Config',
+            description: 'Personal MCP server configurations available across all your projects.',
             whatGoesHere: [
-              'Default preferences',
-              'Model selection',
-              'Theme settings',
+              'MCP servers you use frequently',
+              'Personal API keys and credentials',
+              'Tool integrations (GitHub, filesystem, databases, etc.)',
             ],
-            whenLoaded: 'Always loaded. Applies globally.',
+            whenLoaded: 'Always loaded. Available in all projects unless overridden by project-level config.',
             loadOrder: 1,
             example: `{
-  "theme": "dark",
-  "fontSize": 14
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_TOKEN": "\${env:GITHUB_TOKEN}"
+      }
+    }
+  }
 }`,
           },
+        },
+        {
+          id: 'cursor-global-agents',
+          name: 'agents',
+          type: 'folder',
+          children: [
+            {
+              id: 'cursor-global-agent-verifier',
+              name: 'verifier.md',
+              type: 'file',
+              details: {
+                label: 'Global Agent',
+                description: 'A personal subagent available across all your projects.',
+                whatGoesHere: [
+                  'Agent name and description (in frontmatter)',
+                  'Model selection (fast, inherit, specific ID)',
+                  'Behavioral instructions',
+                  'Personal workflows you use everywhere',
+                ],
+                whenLoaded: 'Available globally. Loaded when delegated to by Cursor.',
+                loadOrder: 3,
+                example: `---
+name: verifier
+description: Validates completed work after tasks are marked done. Use to confirm implementations match requirements.
+model: fast
+---
+
+# Verification Agent
+
+You are a skeptical validator verifying claimed work completion.
+
+When invoked:
+1. Identify what was claimed to be completed
+2. Check implementation exists and functions properly
+3. Run relevant tests or verification steps
+4. Look for edge cases that might have been missed
+
+Report findings clearly, distinguishing verified work from incomplete items.`,
+              },
+            },
+          ],
+        },
+        {
+          id: 'cursor-global-skills',
+          name: 'skills',
+          type: 'folder',
+          children: [
+            {
+              id: 'cursor-global-skill-pr',
+              name: 'git-pr-workflow',
+              type: 'folder',
+              children: [
+                {
+                  id: 'cursor-global-skill-pr-file',
+                  name: 'SKILL.md',
+                  type: 'file',
+                  details: {
+                    label: 'Global Skill',
+                    description: 'A personal skill available across all your projects. Great for workflows you use everywhere.',
+                    whatGoesHere: [
+                      'Skill metadata (name, description)',
+                      'Step-by-step instructions',
+                      'Tool usage patterns',
+                      'Common workflows you repeat across repos',
+                    ],
+                    whenLoaded: 'Auto-selected based on task. Available globally regardless of which project you\'re in.',
+                    loadOrder: 4,
+                    example: `---
+name: git-pr-workflow
+description: Create well-formed PRs with conventional commits, proper descriptions, and linked issues. Use when creating or preparing pull requests.
+---
+
+# Git PR Workflow
+
+## When to Use
+- When preparing to create a pull request
+- When reviewing PR readiness
+
+## Before Creating PR
+1. Ensure all commits follow conventional commit format
+2. Rebase on latest main if needed
+3. Run tests locally
+
+## PR Description Template
+- Summary of changes
+- Link to related issue(s)
+- Testing done
+- Screenshots if UI changes
+
+## Checklist
+- [ ] Tests pass
+- [ ] No console.log statements
+- [ ] Documentation updated if needed`,
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        {
+          id: 'cursor-global-commands',
+          name: 'commands',
+          type: 'folder',
+          children: [
+            {
+              id: 'cursor-global-command-explain',
+              name: 'explain.md',
+              type: 'file',
+              details: {
+                label: 'Global Command',
+                description: 'A personal slash command available in all projects. Invoke with /explain in Cursor.',
+                whatGoesHere: [
+                  'Command instructions',
+                  'Steps to follow',
+                  'Output format preferences',
+                ],
+                whenLoaded: 'User-invoked with /explain. Available globally across all projects.',
+                loadOrder: 5,
+                example: `# Explain Code
+
+Provide a clear explanation of the selected code:
+
+## What to Cover
+1. What does this code do? (high-level purpose)
+2. How does it work? (step-by-step breakdown)
+3. Why is it implemented this way? (design decisions)
+4. Any potential issues or improvements?
+
+## Format
+- Use clear, simple language
+- Include examples where helpful
+- Highlight any non-obvious behavior`,
+              },
+            },
+          ],
         },
       ],
     },
