@@ -9,6 +9,7 @@ lerna-debug.log*
 
 # Dependencies and build output (in site/)
 site/node_modules
+site/package-lock.json
 site/dist
 site/dist-ssr
 *.local

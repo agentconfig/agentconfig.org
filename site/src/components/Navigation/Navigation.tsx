@@ -54,7 +54,7 @@ export function Navigation({ className }: NavigationProps): VNode {
             </a>
           ))}
           <a
-            href="https://github.com/jonmagic/agentconfig.org"
+            href="https://github.com/agentconfig/agentconfig.org"
             target="_blank"
             rel="noopener noreferrer"
             className={cn(
@@ -71,7 +71,7 @@ export function Navigation({ className }: NavigationProps): VNode {
         {/* Mobile menu button */}
         <div className="flex md:hidden items-center gap-1">
           <a
-            href="https://github.com/jonmagic/agentconfig.org"
+            href="https://github.com/agentconfig/agentconfig.org"
             target="_blank"
             rel="noopener noreferrer"
             className={cn(
