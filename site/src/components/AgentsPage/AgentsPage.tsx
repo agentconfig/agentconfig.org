@@ -43,7 +43,7 @@ export function AgentsPage(): VNode {
           </aside>
 
           {/* Main Content */}
-          <main className="flex-1 min-w-0 max-w-3xl">
+          <div className="flex-1 min-w-0 max-w-3xl">
             <article className="prose prose-neutral dark:prose-invert max-w-none">
               
               {/* Section 1: What Are Agent Definitions? */}
@@ -484,7 +484,7 @@ export function AgentsPage(): VNode {
               </section>
 
             </article>
-          </main>
+          </div>
         </div>
       </div>
     </PageLayout>

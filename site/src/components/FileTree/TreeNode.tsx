@@ -36,7 +36,8 @@ export function TreeNode({
       })
     : []
 
-  const handleClick = () => {
+  const handleClick = (e: JSX.TargetedMouseEvent<HTMLDivElement>) => {
+    e.stopPropagation()
     if (isFolder) {
       setIsExpanded(!isExpanded)
     } else if (onFileClick) {
@@ -47,19 +48,26 @@ export function TreeNode({
   const handleKeyDown = (e: JSX.TargetedKeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault()
-      handleClick()
+      e.stopPropagation()
+      if (isFolder) {
+        setIsExpanded(!isExpanded)
+      } else if (onFileClick) {
+        onFileClick(node)
+      }
     }
   }
 
   return (
-    <div className="select-none">
+    <div
+      role="treeitem"
+      aria-expanded={isFolder ? isExpanded : undefined}
+      aria-selected={isSelected}
+      tabIndex={0}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      className="select-none"
+    >
       <div
-        role={isFolder ? 'treeitem' : 'button'}
-        aria-expanded={isFolder ? isExpanded : undefined}
-        aria-selected={isSelected}
-        tabIndex={0}
-        onClick={handleClick}
-        onKeyDown={handleKeyDown}
         className={cn(
           'flex items-center gap-1.5 py-1.5 px-2 rounded-md cursor-pointer',
           'transition-colors duration-150',

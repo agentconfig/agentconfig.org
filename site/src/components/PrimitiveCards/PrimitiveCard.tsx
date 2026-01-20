@@ -26,9 +26,9 @@ const categoryColors = {
 }
 
 const supportBadgeColors = {
-  full: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
-  partial: 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
-  diy: 'bg-gray-500/10 text-gray-600 dark:text-gray-400',
+  full: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-200',
+  partial: 'bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-200',
+  diy: 'bg-gray-100 text-gray-700 dark:bg-gray-800/50 dark:text-gray-200',
 }
 
 const providerLabels: Record<Provider, string> = {
@@ -194,7 +194,7 @@ export function PrimitiveCard({ primitive, className }: PrimitiveCardProps): VNo
                         'p-1.5 rounded-md transition-colors',
                         'focus:outline-none focus:ring-2 focus:ring-ring',
                         copiedProvider === impl.provider
-                          ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                          ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-200'
                           : 'bg-secondary hover:bg-secondary/80 text-muted-foreground'
                       )}
                       aria-label={copiedProvider === impl.provider ? 'Copied!' : 'Copy location'}

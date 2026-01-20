@@ -24,7 +24,7 @@ test.describe('File Tree', () => {
     await expect(claudeTab).toHaveAttribute('aria-selected', 'true')
 
     // Claude tree should show CLAUDE.md with Project Memory badge (root level)
-    await expect(page.getByRole('button', { name: 'CLAUDE.md Project Memory' })).toBeVisible()
+    await expect(page.getByRole('treeitem', { name: 'CLAUDE.md Project Memory' })).toBeVisible()
 
     // Switch back to Copilot
     const copilotTab = page.getByRole('tab', { name: /GitHub Copilot/i })
@@ -44,15 +44,15 @@ test.describe('File Tree', () => {
     const githubFolder = page.getByRole('treeitem', { name: /\.github/ })
     await expect(githubFolder).toBeVisible()
 
-    // Click to collapse my-project
-    const myProject = page.getByRole('treeitem', { name: /my-project/i })
-    await myProject.click()
+    // Click on the my-project folder text to collapse it
+    // We use getByText to click specifically on the folder name, not its children
+    await page.getByText('my-project', { exact: true }).click()
 
     // .github should no longer be visible
     await expect(githubFolder).not.toBeVisible()
 
     // Click to expand again
-    await myProject.click()
+    await page.getByText('my-project', { exact: true }).click()
     await expect(githubFolder).toBeVisible()
   })
 
@@ -66,8 +66,8 @@ test.describe('File Tree', () => {
     await githubFolder.click()
 
     // Now copilot-instructions.md should be visible
-    // The file button includes its badge text in the accessible name
-    const instructionsFile = page.getByRole('button', { name: /copilot-instructions\.md.*Repo Instructions/i })
+    // The file treeitem includes its badge text in the accessible name
+    const instructionsFile = page.getByRole('treeitem', { name: /copilot-instructions\.md.*Repo Instructions/i })
     await instructionsFile.click()
 
     // Detail panel should show file info
@@ -83,7 +83,7 @@ test.describe('File Tree', () => {
     await githubFolder.click()
 
     // Click on a file with the badge
-    const instructionsFile = page.getByRole('button', { name: /copilot-instructions\.md.*Repo Instructions/i })
+    const instructionsFile = page.getByRole('treeitem', { name: /copilot-instructions\.md.*Repo Instructions/i })
     await instructionsFile.click()
 
     // Should show load order
@@ -96,7 +96,7 @@ test.describe('File Tree', () => {
     await githubFolder.click()
 
     // Click on a file
-    const instructionsFile = page.getByRole('button', { name: /copilot-instructions\.md.*Repo Instructions/i })
+    const instructionsFile = page.getByRole('treeitem', { name: /copilot-instructions\.md.*Repo Instructions/i })
     await instructionsFile.click()
 
     // Copy button should be visible
@@ -110,23 +110,23 @@ test.describe('File Tree', () => {
 
     // Files with details should have badges visible
     // copilot-instructions.md has "Repo Instructions" badge
-    await expect(page.getByRole('button', { name: /copilot-instructions\.md.*Repo Instructions/i })).toBeVisible()
+    await expect(page.getByRole('treeitem', { name: /copilot-instructions\.md.*Repo Instructions/i })).toBeVisible()
   })
 
   test('should navigate with keyboard', async ({ page }) => {
-    // Focus on the tree
+    // Focus on the my-project treeitem
     const myProject = page.getByRole('treeitem', { name: /my-project/i })
     await myProject.focus()
 
-    // Press Enter to toggle
-    await myProject.press('Enter')
+    // Press Enter to toggle - this should work since we're focusing the treeitem directly
+    await page.keyboard.press('Enter')
 
     // .github should no longer be visible
     const githubFolder = page.getByRole('treeitem', { name: /\.github/ })
     await expect(githubFolder).not.toBeVisible()
 
     // Press Enter again to expand
-    await myProject.press('Enter')
+    await page.keyboard.press('Enter')
     await expect(githubFolder).toBeVisible()
   })
 })
@@ -142,23 +142,23 @@ test.describe('File Tree - Claude Provider', () => {
 
   test('should show Claude-specific file structure', async ({ page }) => {
     // Should show CLAUDE.md with Project Memory badge at root level (in project config section)
-    await expect(page.getByRole('button', { name: 'CLAUDE.md Project Memory' })).toBeVisible()
+    await expect(page.getByRole('treeitem', { name: 'CLAUDE.md Project Memory' })).toBeVisible()
 
     // Should show .claude folder in both global and project sections
     // Check that there are two .claude folders (one global, one project)
     const claudeFolders = page.getByRole('treeitem', { name: /^\.claude$/i })
     await expect(claudeFolders).toHaveCount(2)
 
-    // Verify the global section shows ~/.claude
-    await expect(page.getByLabel('Contents of ~').getByRole('treeitem', { name: '.claude' })).toBeVisible()
+    // Verify the global section shows ~/.claude (use exact match to avoid matching .claude.json)
+    await expect(page.getByLabel('Contents of ~').getByRole('treeitem', { name: '.claude', exact: true })).toBeVisible()
 
     // Verify the project section shows .claude
-    await expect(page.getByLabel('Contents of my-project').getByRole('treeitem', { name: '.claude' })).toBeVisible()
+    await expect(page.getByLabel('Contents of my-project').getByRole('treeitem', { name: '.claude', exact: true })).toBeVisible()
   })
 
   test('should display Claude file details when clicked', async ({ page }) => {
     // Click on CLAUDE.md (root level with Project Memory badge)
-    const claudeMdFile = page.getByRole('button', { name: 'CLAUDE.md Project Memory' })
+    const claudeMdFile = page.getByRole('treeitem', { name: 'CLAUDE.md Project Memory' })
     await claudeMdFile.click()
 
     // Should show details - check for the heading specifically

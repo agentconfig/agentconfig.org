@@ -187,9 +187,9 @@ export const supportLevelLabels: Record<SupportLevel, string> = {
 }
 
 export const supportLevelColors: Record<SupportLevel, string> = {
-  full: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
-  partial: 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
-  none: 'bg-gray-500/10 text-gray-500 dark:text-gray-400',
+  full: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-200',
+  partial: 'bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-200',
+  none: 'bg-gray-100 text-gray-700 dark:bg-gray-800/50 dark:text-gray-200',
 }
 
 export const supportLevelIcons: Record<SupportLevel, string> = {

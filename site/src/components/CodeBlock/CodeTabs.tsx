@@ -41,7 +41,7 @@ export function CodeTabs({ files, className }: CodeTabsProps): VNode {
   return (
     <div className={cn('rounded-lg overflow-hidden border border-border', className)}>
       {/* Tab buttons */}
-      <div className="flex overflow-x-auto bg-muted/50 border-b border-border">
+      <div className="flex overflow-x-auto bg-muted/50 border-b border-border" tabIndex={0}>
         {files.map((file, index) => (
           <button
             key={file.path}

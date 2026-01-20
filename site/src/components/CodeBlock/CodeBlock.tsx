@@ -63,7 +63,7 @@ export function CodeBlock({
       </div>
 
       {/* Code content */}
-      <pre className="p-4 overflow-x-auto bg-muted/50 text-sm">
+      <pre className="p-4 overflow-x-auto bg-muted/50 text-sm" tabIndex={0}>
         <code className="font-mono text-foreground whitespace-pre">{code}</code>
       </pre>
     </div>

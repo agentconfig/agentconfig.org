@@ -60,7 +60,7 @@ function ExpandedRow({ row }: ExpandedRowProps): VNode {
                   'p-1.5 rounded-md transition-colors shrink-0',
                   'focus:outline-none focus:ring-2 focus:ring-ring',
                   copiedLocation === 'copilot'
-                    ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                    ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-200'
                     : 'bg-background border border-border hover:bg-secondary text-muted-foreground'
                 )}
                 aria-label={copiedLocation === 'copilot' ? 'Copied!' : 'Copy location'}
@@ -88,7 +88,7 @@ function ExpandedRow({ row }: ExpandedRowProps): VNode {
                   'p-1.5 rounded-md transition-colors shrink-0',
                   'focus:outline-none focus:ring-2 focus:ring-ring',
                   copiedLocation === 'claude'
-                    ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                    ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-200'
                     : 'bg-background border border-border hover:bg-secondary text-muted-foreground'
                 )}
                 aria-label={copiedLocation === 'claude' ? 'Copied!' : 'Copy location'}

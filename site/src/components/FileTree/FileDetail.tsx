@@ -148,6 +148,7 @@ export function FileDetail({ node, className }: FileDetailProps): VNode {
             </button>
           </div>
           <pre
+            tabIndex={0}
             className={cn(
               'p-4 rounded-lg text-sm overflow-x-auto',
               'bg-secondary/50 text-foreground',
