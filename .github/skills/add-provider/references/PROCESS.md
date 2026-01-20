@@ -244,6 +244,59 @@ export const globalTrees: Record<Provider, FileNode> = {
 }
 ```
 
+#### File Tree Completeness Guidelines
+
+⚠️ **CRITICAL**: The file tree is educational/reference material that demonstrates provider capabilities to users. Sparse file trees make providers look incomplete even if they have full support.
+
+**How to build comprehensive file trees:**
+
+1. **Demonstrate ALL supported primitives with concrete examples**
+   - If the provider has full support for Skills, show 2-3 skill examples
+   - If the provider has full support for Custom Agents, show 2-3 agent examples
+   - If the provider has full support for Slash Commands, show 2-3 command examples
+   - Include examples for: hooks, MCP config, path-scoped rules, etc.
+
+2. **Include both project-level AND global-level examples**
+   - Project tree: `.cursor/agents/`, `.cursor/skills/`, etc.
+   - Global tree: `~/.cursor/agents/`, `~/.cursor/skills/`, etc.
+   - Global examples show workflows users can reuse across all projects
+
+3. **Add nested directory examples**
+   - Show `frontend/.cursor/instructions.md` and `backend/.cursor/instructions.md`
+   - Demonstrates path-scoped configuration
+   - Makes file tree feel realistic and practical
+
+4. **Use exact syntax from official documentation**
+   - Check each primitive's official docs page for:
+     - File naming conventions (e.g., `SKILL.md` vs `skill.md`)
+     - Frontmatter fields (e.g., Cursor agents support `model`, `readonly`, `is_background`)
+     - Configuration format (e.g., `.cursor/hooks.json` vs `.cursor/hooks/hooks.json`)
+   - Don't guess or copy from other providers—syntax varies
+
+5. **Provide realistic, helpful examples**
+   - Examples should be practical (e.g., "debug-ci" skill, "code-reviewer" agent)
+   - Include complete example content with proper formatting
+   - Show what goes in `whatGoesHere`, `whenLoaded`, and `example` fields
+
+6. **Verify parity with other providers**
+   - Compare line counts: `wc -l site/src/data/fileTree.ts`
+   - Compare demonstrated primitives: count how many types each provider shows
+   - If one provider has 300+ lines and yours has 60 lines, investigate why
+   - Example: Cursor tree was initially 64 lines (2 primitives) vs Copilot 386 lines (7 primitives)—this made Cursor look incomplete despite having 11/11 full support
+
+**Research sources for file tree examples:**
+- Provider's official "Configuration" or "Setup" docs
+- Provider's docs for each primitive (skills, agents, commands, hooks, MCP)
+- Example repositories or templates from the provider
+- Community examples (verify against official docs)
+
+**Common file tree documentation pages:**
+- Commands: `{provider}.com/docs/context/commands`
+- Skills: `{provider}.com/docs/context/skills`
+- Agents: `{provider}.com/docs/context/agents` or `/context/subagents`
+- MCP: `{provider}.com/docs/context/mcp` or `/mcp`
+- Hooks: `{provider}.com/docs/agent/hooks` or `/lifecycle`
+
 ### 2.4 Verify TypeScript
 
 ```bash

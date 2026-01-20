@@ -100,10 +100,22 @@ Complete verification steps for all 6 work streams, plus pre-implementation rese
 
 **For file tree entries, verify:**
 - [ ] `id` attributes are unique across all file nodes
-- [ ] File paths follow provider's actual documentation
+- [ ] File paths follow provider's actual documentation (not guesses)
 - [ ] Labels are descriptive (e.g., "Project Instructions", "Global Settings")
 - [ ] `loadOrder` is consistent (1 for base, 2+ for specialized)
 - [ ] Examples are valid and helpful
+- [ ] Exact syntax matches official docs (frontmatter fields, file names, etc.)
+
+**File Tree Completeness Check:**
+- [ ] Demonstrates ALL primitives with full/partial support (not just 1-2)
+- [ ] Has 2-3 examples per primitive type (agents, skills, commands, etc.)
+- [ ] Includes both project-level AND global-level examples
+- [ ] Shows nested directory examples (e.g., `frontend/.cursor/instructions.md`)
+- [ ] Parity check: Compare line counts with other providers
+  - Run: `wc -l site/src/data/fileTree.ts`
+  - Compare demonstrated primitive types across providers
+  - If your tree has <100 lines and others have 300+, investigate why
+  - Sparse trees make providers look incomplete even with 11/11 support
 
 ### Data Consistency
 - [ ] All 11 primitives have exactly matching IDs between primitives.ts and comparison.ts
@@ -314,6 +326,15 @@ Based on real-world provider integrations, avoid these pitfalls:
   - ✅ Comparison table and file tree can use different emojis
   - ✅ Use emoji that makes sense for each context
   - ✅ See PATTERNS.md emoji reference for guidance
+
+- [ ] ❌ **File tree too sparse compared to other providers**
+  - ✅ File tree is educational material—sparse trees make providers look incomplete
+  - ✅ Include 2-3 examples per supported primitive (agents, skills, commands, hooks, etc.)
+  - ✅ Add both project-level AND global-level examples
+  - ✅ Show nested directory examples (frontend/.{provider}/instructions.md)
+  - ✅ Check parity: `wc -l site/src/data/fileTree.ts` and compare line counts
+  - Real example: Cursor tree was initially 64 lines vs Copilot 386 lines—made it look incomplete despite 11/11 full support
+  - ✅ Use exact syntax from official docs (frontmatter fields, file naming, etc.)
 
 ### Data & Testing
 - [ ] ❌ **Badge count assertions outdated after support changes**
