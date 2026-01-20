@@ -65,14 +65,13 @@ export function TreeNode({
       tabIndex={0}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
-      className="select-none"
+      className="select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 rounded-md"
     >
       <div
         className={cn(
           'flex items-center gap-1.5 py-1.5 px-2 rounded-md cursor-pointer',
           'transition-colors duration-150',
           'hover:bg-secondary/80',
-          'focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1',
           isSelected && 'bg-primary/10 text-primary font-medium',
           !isSelected && 'text-foreground'
         )}
