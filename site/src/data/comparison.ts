@@ -44,22 +44,22 @@ export const comparisonData: ComparisonRow[] = [
     },
   },
   {
-    primitiveId: 'skills',
-    primitiveName: 'Skills / Workflows',
+    primitiveId: 'skills-commands',
+    primitiveName: 'Skills & Commands',
     copilot: {
       level: 'full',
-      implementation: 'Skill modules in skills directory',
-      location: '.github/skills/*/SKILL.md',
+      implementation: 'Skills in .github/skills/, prompts via .prompt.md files',
+      location: '.github/skills/*/SKILL.md, .github/prompts/*.prompt.md',
     },
     claude: {
       level: 'full',
-      implementation: 'Skill modules in .claude directory',
-      location: '.claude/skills/*/SKILL.md',
+      implementation: 'Skills in .claude/skills/, commands in .claude/commands/',
+      location: '.claude/skills/*/SKILL.md, .claude/commands/*.md',
     },
     cursor: {
       level: 'full',
-      implementation: 'Skill modules as portable, reusable packages',
-      location: '.cursor/skills/*/SKILL.md',
+      implementation: 'Skills and custom commands as portable packages',
+      location: '.cursor/skills/*/SKILL.md, .cursor/commands/*.md',
     },
   },
   {
@@ -83,41 +83,22 @@ export const comparisonData: ComparisonRow[] = [
   },
   // === CUSTOMIZATION ===
   {
-    primitiveId: 'persistent-instructions',
-    primitiveName: 'Persistent Instructions',
+    primitiveId: 'instructions',
+    primitiveName: 'Instructions',
     copilot: {
       level: 'full',
-      implementation: 'Repo instructions file',
-      location: '.github/copilot-instructions.md',
+      implementation: 'Repository-level and user-level instructions',
+      location: '.github/copilot-instructions.md, VS Code settings.json',
     },
     claude: {
       level: 'full',
-      implementation: 'Project memory file with @imports',
-      location: 'CLAUDE.md',
+      implementation: 'Project and user-level memory files',
+      location: 'CLAUDE.md, ~/.claude/CLAUDE.md',
     },
     cursor: {
       level: 'full',
-      implementation: 'Project instructions file',
-      location: '.cursor/instructions.md',
-    },
-  },
-  {
-    primitiveId: 'global-instructions',
-    primitiveName: 'Global Instructions',
-    copilot: {
-      level: 'full',
-      implementation: 'User-level settings in VS Code',
-      location: 'VS Code settings.json',
-    },
-    claude: {
-      level: 'full',
-      implementation: 'User-level memory and config',
-      location: '~/.claude/CLAUDE.md',
-    },
-    cursor: {
-      level: 'full',
-      implementation: 'User-level settings and preferences',
-      location: '~/.cursor/settings.json',
+      implementation: 'Project and user-level settings',
+      location: '.cursor/instructions.md, ~/.cursor/settings.json',
     },
   },
   {
@@ -139,25 +120,7 @@ export const comparisonData: ComparisonRow[] = [
       location: '.cursor/rules/*.md',
     },
   },
-  {
-    primitiveId: 'prompt-templates',
-    primitiveName: 'Slash Commands',
-    copilot: {
-      level: 'full',
-      implementation: 'Prompt files invoked via / commands',
-      location: '.github/prompts/*.prompt.md',
-    },
-    claude: {
-      level: 'full',
-      implementation: 'Command files with frontmatter and $ARGUMENTS',
-      location: '.claude/commands/*.md',
-    },
-    cursor: {
-      level: 'full',
-      implementation: 'Custom commands with parameters and reusable workflows',
-      location: '.cursor/commands/*.md',
-    },
-  },
+
   // === CONTROL ===
   {
     primitiveId: 'custom-agents',
