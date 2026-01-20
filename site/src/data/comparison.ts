@@ -201,9 +201,9 @@ export const comparisonData: ComparisonRow[] = [
     primitiveId: 'hooks',
     primitiveName: 'Lifecycle Hooks',
     copilot: {
-      level: 'none',
-      implementation: 'Not available',
-      location: 'N/A',
+      level: 'full',
+      implementation: 'Lifecycle hooks (public documentation coming soon)',
+      location: '.github/hooks/',
     },
     claude: {
       level: 'full',

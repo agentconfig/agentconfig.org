@@ -357,9 +357,9 @@ export const primitives: Primitive[] = [
     implementations: [
       {
         provider: 'copilot',
-        implementation: 'Not available',
-        location: 'N/A',
-        support: 'diy',
+        implementation: 'Lifecycle hooks (public documentation coming soon)',
+        location: '.github/hooks/',
+        support: 'full',
       },
       {
         provider: 'claude',
