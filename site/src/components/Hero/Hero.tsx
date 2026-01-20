@@ -39,7 +39,7 @@ export function Hero({ className }: HeroProps): VNode {
     <header className={cn('border-b border-border bg-muted/30', className)}>
       <div className="container mx-auto px-4 py-12 md:py-16">
         <h1 className="text-4xl md:text-5xl font-bold mb-4">
-          Master AI Assistants
+          Elevate AI Assistants
         </h1>
         <p className="text-xl text-muted-foreground max-w-2xl mb-6">
           Configure GitHub Copilot and Claude Code for any role or workflow.
