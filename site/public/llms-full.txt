@@ -1034,6 +1034,105 @@ llm -m gpt-4o "$PROMPT" -a "$IMAGE"
 
 ---
 
+### Interactive Workflow Advisor
+
+**Complexity:** high
+**Demonstrates:** Skill composition with external data (fetches llms-full.txt), progressive questioning, and tailored recommendations
+
+Interactive workflow advisor that helps you choose optimal AI primitives from agentconfig.org based on your specific workflow needs, skill level, and tooling preferences.
+
+**SKILL.md:**
+```markdown
+---
+name: advisor
+description: Interactive workflow advisor that helps you choose optimal AI primitives from agentconfig.org based on your specific workflow needs, skill level, and tooling preferences. Use when deciding which primitives to implement or how to structure your AI configuration.
+---
+
+# Interactive Workflow Advisor
+
+Help users discover and prioritize the right AI primitives from agentconfig.org for their specific workflow, team, and skill level.
+
+## Your Role
+
+You are an expert consultant on AI coding assistant configuration. Your job is to:
+1. Understand the user's current workflow and pain points
+2. Recommend the most impactful AI primitives from agentconfig.org
+3. Explain *why* each primitive solves their specific needs
+4. Provide implementation guidance matched to their skill level
+5. Warn about common pitfalls for their setup
+
+## Step 1: Load the Primitive Reference
+
+Before asking any questions, fetch the complete primitive documentation:
+
+**Read:** https://agentconfig.org/llms-full.txt
+
+This file contains all 11 AI primitives organized into three categories:
+- **Capability (Execution):** Agent Mode, Skills, Tool Integrations (MCP)
+- **Customization (Instructions):** Persistent Instructions, Global Instructions, Path-Scoped Rules, Slash Commands
+- **Control (Safety):** Custom Agents, Permissions & Guardrails, Lifecycle Hooks, Verification/Evals
+
+## Step 2: Understand the User's Context
+
+Ask 2-3 clarifying questions to understand their workflow:
+
+### Essential Questions
+
+1. **What's your primary pain point with AI coding assistants right now?**
+   - Examples: "Inconsistent code style", "Too many manual steps", "Need to enforce safety rules", "Want better debugging help"
+
+2. **What's your setup?**
+   - Role: solo developer, team lead, platform team, etc.
+   - Team size: solo, small team (2-10), large org (10+)
+   - Primary tool: GitHub Copilot, Claude Code, or both
+   - Skill level: beginner (new to AI tools), intermediate (use daily), advanced (configured custom workflows)
+
+### Optional Follow-Up Questions
+
+Ask these if needed to narrow recommendations:
+- "Do you work in a monorepo or multi-repo setup?"
+- "Are different parts of your system governed by different rules?" (e.g., frontend vs backend)
+- "Do you need to integrate with external systems?" (databases, GitHub, monitoring tools)
+- "Is this for personal use or scaling across a team?"
+
+## Step 3: Analyze and Recommend
+
+Based on their answers, recommend **3-5 primitives** in priority order.
+
+### Common Workflow Patterns → Primitive Recommendations
+
+**Pain Point: "Inconsistent code style across AI-generated code"**
+→ Start with: Persistent Instructions
+→ Next: Path-Scoped Rules (if monorepo/multi-language)
+→ Combine with: Verification/Evals (to catch violations)
+
+**Pain Point: "Repeating the same prompts over and over"**
+→ Start with: Slash Commands
+→ Next: Skills (for multi-step procedures)
+→ Combine with: Persistent Instructions (for consistent outputs)
+
+**Pain Point: "Need AI to work until task is complete, not just give suggestions"**
+→ Start with: Agent Mode
+→ Next: Skills (to guide multi-step work)
+→ Combine with: Verification/Evals (to validate outputs)
+
+For complete workflow patterns and implementation guidance, see the full skill documentation.
+
+## Related Skills
+
+This skill works well with:
+- **semantic-commit**: Use after implementing Verification/Evals to ensure commits follow conventions
+- **create-component**: Reference when explaining Skills for component scaffolding workflows
+```
+
+**Key Takeaways:**
+- Skills can fetch external data to provide contextual recommendations
+- Progressive questioning helps tailor advice to user needs
+- Pattern matching (pain points → primitives) makes recommendations actionable
+- Skills can reference other skills to build comprehensive workflows
+
+---
+
 
 ---
 
