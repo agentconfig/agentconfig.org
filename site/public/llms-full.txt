@@ -283,9 +283,9 @@ Code that runs before/after AI tool execution.
 
 | Provider | Implementation | Location | Support |
 |----------|---------------|----------|---------|
-| GitHub Copilot | Not available | N/A | diy |
-| Claude Code | PreToolUse, PostToolUse, Stop hooks with matchers | .claude/hooks/hooks.json | full |
-| Cursor | Session, execution, and file operation hooks | .cursor/hooks.json | full |
+| GitHub Copilot | Lifecycle hooks (public documentation coming soon) | `.github/hooks/*.json` | ✓ Full |
+| Claude Code | PreToolUse, PostToolUse, Stop hooks with matchers | `.claude/hooks/hooks.json` | ✓ Full |
+| Cursor | Session, execution, and file operation hooks | `.cursor/hooks.json` | ✓ Full |
 
 ---
 
@@ -331,7 +331,7 @@ Support matrix comparing GitHub Copilot and Claude Code:
 | Slash Commands | ✓ Prompt files invoked via / commands | ✓ Command files with frontmatter and $ARGUMENTS |
 | Custom Agents | ✓ Agent definition files with roles and tool permissions | ✓ Subagent files with tools restrictions |
 | Permissions & Guardrails | ✓ Org policies and tool permissions | ✓ Allow/deny lists with pattern matching and sandbox |
-| Lifecycle Hooks | — Not available | ✓ PreToolUse, PostToolUse, Stop hooks with matchers |
+| Lifecycle Hooks | ✓ Lifecycle hooks (public documentation coming soon) | ✓ PreToolUse, PostToolUse, Stop hooks with matchers | ✓ Session, execution, and file operation hooks |
 | Verification / Evals | ✓ Run tests/lint via terminal tools | ✓ Run tests/lint via Bash tool with hooks |
 
 ### Config File Locations
@@ -342,6 +342,7 @@ Support matrix comparing GitHub Copilot and Claude Code:
 - Slash Commands: `.github/prompts/*.prompt.md`
 - Custom Agents: `.github/agents/*.agent.md`
 - Skills: `.github/skills/*/SKILL.md`
+- Lifecycle Hooks: `.github/hooks/*.json`
 
 **Claude Code:**
 - Persistent Instructions: `CLAUDE.md` (root) or `.claude/CLAUDE.md`
