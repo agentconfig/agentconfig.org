@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '**/*.md'
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - '**/*.md'
+
+# Minimal permissions for security - only read access to repository contents
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    # Prevent malicious PRs from wasting CI minutes with hung processes
+    timeout-minutes: 15
+    steps:
+      # SHA-pinned to prevent tag hijacking attacks
+      # Using v6 (latest stable) for improved credential handling
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      # Official Bun setup action - verified by GitHub
+      # SHA-pinned for security, using 1.x for stability (avoids breaking changes)
+      - uses: oven-sh/setup-bun@3d267786b128fe76c2f16a390aa2448b815359f3 # v2.1.2
+        with:
+          bun-version: 1.x
+
+      - name: Install dependencies
+        working-directory: site
+        # frozen-lockfile prevents dependency tampering during CI
+        run: bun install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        working-directory: site
+        run: bunx playwright install --with-deps chromium
+
+      - name: Run linting
+        working-directory: site
+        run: bun run lint
+
+      - name: Run type checking
+        working-directory: site
+        run: bun run typecheck
+
+      - name: Run tests
+        working-directory: site
+        run: bun run test
+
+      - name: Build
+        working-directory: site
+        run: bun run build
