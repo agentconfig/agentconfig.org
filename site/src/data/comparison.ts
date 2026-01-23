@@ -203,7 +203,7 @@ export const comparisonData: ComparisonRow[] = [
     copilot: {
       level: 'full',
       implementation: 'Lifecycle hooks (public documentation coming soon)',
-      location: '.github/hooks/',
+      location: '.github/hooks/*.json',
     },
     claude: {
       level: 'full',
