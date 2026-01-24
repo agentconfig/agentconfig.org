@@ -6,6 +6,23 @@
 
 ---
 
+## Executive Summary
+
+**RESULT**: ❌ FAIL - Multiple competitors exist, market is already served
+
+**Key Finding**: At least 5 security scanning tools for AI agent skills already exist:
+1. **SkillRisk** (skillrisk.org) - Free analyzer, EXACT match to our plan
+2. **SkillMill** (skillmill.ai) - Commercial trust registry
+3. **SkillScan** - Academic research tool with proven effectiveness
+4. **SkillCheck** - Community tool
+5. **SkillLens** - Local audit tool
+
+**Why We Missed This**: Agent Skills ecosystem exploded in late 2025/early 2026. We're 2-3 months late to market.
+
+**Recommendation**: PAUSE building a scanner. Test competitors, identify gaps, or pivot to education/integration approach.
+
+---
+
 ## Search Progress
 
 ### GitHub Searches
@@ -17,7 +34,7 @@
 - [ ] "claude skill security"
 
 ### General Security Tools
-- [ ] shellcheck - does it cover skills?
+- [x] shellcheck - Partial coverage (scripts only, not SKILL.md)
 - [ ] hadolint - does it cover skills?
 - [ ] markdownlint - security rules?
 - [ ] semgrep - skill-specific rules?
@@ -106,6 +123,31 @@
 **Status**: Mentioned on HN, unclear if active
 
 **Assessment**: Local scanning tool (vs our planned cloud/CLI)
+
+---
+
+### General Security Tools Analysis
+
+#### ShellCheck
+**URL**: https://www.shellcheck.net/
+**Coverage**: PARTIAL - only covers shell scripts, NOT SKILL.md files
+**What it does**:
+- Static analysis for shell scripts
+- Catches unset vars, bad subshell usage, quoting mistakes
+- Used in Agent Skills ecosystem for script validation
+
+**Gap**: ShellCheck cannot analyze:
+- SKILL.md markdown content
+- YAML frontmatter
+- Prompt injection in instructions
+- Hidden instructions in markdown/HTML comments
+- Cross-file vulnerabilities
+
+**Integration**: Competitors use shellcheck as ONE component of multi-stage scanning
+- SkillScan research mentions using shellcheck for script portions
+- Still need additional tools for SKILL.md analysis
+
+**Conclusion**: General tools like shellcheck are insufficient alone - skills-specific scanners are necessary
 
 ---
 
