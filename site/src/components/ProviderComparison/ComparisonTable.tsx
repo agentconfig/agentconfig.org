@@ -47,10 +47,10 @@ function ExpandedRow({ row }: ExpandedRowProps): VNode {
       <td colSpan={4} className="px-4 py-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Copilot details */}
-          <div className="space-y-2">
+          <div className="flex flex-col gap-2">
             <h4 className="text-sm font-semibold text-foreground">GitHub Copilot</h4>
-            <p className="text-sm text-muted-foreground">{row.copilot.implementation}</p>
-            <div className="flex items-center gap-2">
+            <p className="text-sm text-muted-foreground flex-1">{row.copilot.implementation}</p>
+            <div className="flex items-center gap-2 mt-auto">
               <code className="flex-1 text-xs bg-background px-2 py-1.5 rounded font-mono text-foreground border border-border">
                 {row.copilot.location}
               </code>
@@ -75,10 +75,10 @@ function ExpandedRow({ row }: ExpandedRowProps): VNode {
           </div>
 
           {/* Claude details */}
-          <div className="space-y-2">
+          <div className="flex flex-col gap-2">
             <h4 className="text-sm font-semibold text-foreground">Claude Code</h4>
-            <p className="text-sm text-muted-foreground">{row.claude.implementation}</p>
-            <div className="flex items-center gap-2">
+            <p className="text-sm text-muted-foreground flex-1">{row.claude.implementation}</p>
+            <div className="flex items-center gap-2 mt-auto">
               <code className="flex-1 text-xs bg-background px-2 py-1.5 rounded font-mono text-foreground border border-border">
                 {row.claude.location}
               </code>
@@ -103,10 +103,10 @@ function ExpandedRow({ row }: ExpandedRowProps): VNode {
           </div>
 
           {/* Cursor details */}
-          <div className="space-y-2">
+          <div className="flex flex-col gap-2">
             <h4 className="text-sm font-semibold text-foreground">Cursor</h4>
-            <p className="text-sm text-muted-foreground">{row.cursor.implementation}</p>
-            <div className="flex items-center gap-2">
+            <p className="text-sm text-muted-foreground flex-1">{row.cursor.implementation}</p>
+            <div className="flex items-center gap-2 mt-auto">
               <code className="flex-1 text-xs bg-background px-2 py-1.5 rounded font-mono text-foreground border border-border">
                 {row.cursor.location}
               </code>
