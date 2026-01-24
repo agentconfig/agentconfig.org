@@ -2,24 +2,25 @@
 
 **Date**: 2026-01-24
 **Auditor**: Claude Sonnet 4.5
-**Skills Reviewed**: 3/20 (in progress)
+**Skills Reviewed**: 5/20 (in progress)
 
 ## Summary
-- **Critical issues found**: 2 (command injection, path traversal)
-- **Medium issues found**: 3 (unsafe XML processing, missing input validation, arbitrary code execution)
+- **Critical issues found**: 4 (command injection, path traversal, arbitrary file fetch, unvalidated file processing)
+- **High issues found**: 1 (unvalidated file processing)
+- **Medium issues found**: 5 (unsafe XML processing, missing input validation, arbitrary code execution, output format injection, missing source verification)
 - **Low issues found**: 0
-- **Clean skills**: 2 (pdf, xlsx)
+- **Clean skills**: 3 (pdf, xlsx, react-best-practices)
 
 ## Audit Progress
 
 ### Skills to Audit (20 total)
 
 **Infrastructure & Deployment (High Priority):**
-1. [ ] vercel-react-best-practices (vercel-labs) - 39.6K installs
+1. [x] vercel-react-best-practices (vercel-labs) - 39.6K installs - ✅ CLEAN (documentation only)
 2. [ ] agent-browser (vercel-labs) - 3.1K installs
-3. [ ] expo-deployment (expo) - 2.0K installs
-4. [ ] dependency-updater (softaworks) - 839 installs
-5. [ ] helm-chart-scaffolding (wshobson) - 183 installs
+3. [ ] expo-deployment (expo) - 2.0K installs - ⚠️ INACCESSIBLE
+4. [ ] dependency-updater (softaworks) - 839 installs - ⚠️ REPO 404
+5. [ ] helm-chart-scaffolding (wshobson) - 183 installs - ⚠️ REPO 404
 
 **API & Integration:**
 6. [ ] stripe-best-practices (stripe/ai) - 247 installs
@@ -36,7 +37,7 @@
 15. [ ] document-illustrator (op7418) - 103 installs
 
 **Network & Security:**
-16. [ ] web-design-guidelines (vercel-labs) - 30.1K installs
+16. [x] web-design-guidelines (vercel-labs) - 30.1K installs - ⚠️ CRITICAL/MEDIUM ISSUES
 17. [ ] audit-website (squirrelscan) - 2.5K installs
 18. [ ] seo-audit (coreyhaines31/marketingskills) - 2.6K installs
 19. [ ] k8s-security-policies (wshobson) - 191 installs
@@ -66,6 +67,26 @@
 - Add input validation guidance for file paths
 - Document memory limits for processing large PDFs
 - Recommend sandboxing for untrusted PDF files (OCR scenarios)
+
+---
+
+#### 4. react-best-practices (vercel-labs)
+**Repository**: https://github.com/vercel-labs/agent-skills
+**Install Count**: 39.6K (most popular skill audited)
+**Audit Result**: CLEAN
+
+**Findings:**
+- Documentation-only skill (performance optimization guide)
+- 57 rules across 8 categories for React/Next.js development
+- No executable code, shell commands, or operations
+- No sensitive data exposed
+- MIT licensed, authored by Vercel
+- Designed for automated refactoring and code generation guidance
+
+**Notes:**
+- This skill is purely instructional/reference material
+- No security concerns as it contains no executable components
+- References external rule documentation files that would need separate audit
 
 ---
 
@@ -155,23 +176,108 @@
 
 ---
 
+#### 5. web-design-guidelines (vercel-labs) - CRITICAL & MEDIUM ISSUES
+**Repository**: https://github.com/vercel-labs/agent-skills
+**Install Count**: 30.1K (second most popular audited)
+**Audit Result**: MULTIPLE VULNERABILITIES FOUND
+
+**CRITICAL ISSUE #1: Arbitrary File Fetch (Supply Chain Attack Vector)**
+- **Severity**: CRITICAL
+- **Location**: Guideline fetching mechanism
+- **Issue**: Fetches external content from GitHub without validation
+- **Evidence**: Skill instructs "Fetch the latest guidelines from the source URL below" and uses WebFetch
+- **Impact**: If the source GitHub repository is compromised, malicious rules/code could be injected into the review process and executed on user systems
+- **Fix**: Pin guidelines to specific commit hash; implement cryptographic verification
+- **Attack Scenario**:
+  1. Attacker compromises source repository or performs MITM attack
+  2. Malicious content is served when skill fetches guidelines
+  3. User's AI agent executes malicious instructions
+  4. Attacker gains code execution in user's environment
+
+**CRITICAL ISSUE #2: Unvalidated File Processing**
+- **Severity**: HIGH
+- **Location**: File reading operations
+- **Issue**: Skill reads "specified files" with user-provided patterns but lacks input sanitization
+- **Evidence**: Accepts glob patterns and file paths without apparent validation
+- **Impact**: Path traversal could allow access to sensitive system files
+- **Fix**: Validate and sanitize all file path inputs; restrict to designated directories
+- **Example Exploit**:
+  ```bash
+  # Malicious file pattern: "../../../etc/passwd"
+  # Could read sensitive files outside intended scope
+  ```
+
+**MEDIUM ISSUE #1: Output Format Injection**
+- **Severity**: MEDIUM
+- **Location**: Reporting format
+- **Issue**: Guidelines instruct outputting findings in "terse `file:line` format" without escaping
+- **Impact**: If file paths or line content contain special characters, could cause injection in downstream processing
+- **Fix**: Define strict output escaping rules for reporting format
+
+**MEDIUM ISSUE #2: Missing Source Verification**
+- **Severity**: MEDIUM
+- **Location**: Content fetching
+- **Issue**: No checksum, signature verification, or version pinning for fetched guidelines
+- **Impact**: Man-in-the-middle attack or account compromise could serve malicious content
+- **Fix**: Implement cryptographic verification; use content-addressable storage
+
+**Recommendations for web-design-guidelines skill:**
+1. **Immediately** pin guidelines to specific commit hash (not `main` branch)
+2. Implement cryptographic verification of fetched content (SHA-256 checksums minimum)
+3. Add strict allowlist validation for all file path inputs
+4. Restrict file reading operations to designated project directories only
+5. Define and enforce output escaping rules
+6. Consider bundling guidelines with skill instead of fetching externally
+7. Add integrity checks before executing any fetched content
+
+---
+
+## Critical Meta-Finding: Skill Source Code Accessibility
+
+**FINDING**: During this audit, I encountered significant difficulty accessing the actual source code of skills listed on skills.sh.
+
+**Issues Identified:**
+1. **Repository URLs are not standardized** - Skills listed on skills.sh don't follow a consistent GitHub URL pattern
+2. **Many repositories return 404** - Several skill repositories from the skills.sh listing don't exist at expected URLs
+3. **File structure varies widely** - Some use `SKILL.md`, others use `plugin.json`, others use directory structures
+4. **No centralized source view** - skills.sh doesn't provide direct links to source code or repository pages
+5. **Discovery is difficult** - No standard GitHub topic/tag for skills, making them hard to find and audit
+
+**Security Implication**:
+If it's this difficult for a security auditor to find and review skill source code, **regular users have no practical way to inspect skills before installation**. This creates a significant supply chain security risk - users are installing code they cannot easily review.
+
+**Recommendation**:
+skills.sh should provide:
+- Direct links to source repositories on each skill listing
+- Standardized "View Source" button for each skill
+- Badge indicating whether source code is publicly auditable
+- Verification that repository URLs are valid before listing
+
+---
+
 ## Audit Methodology
 
 For each skill, checking for:
 
 **Critical Issues:**
-- [ ] Hardcoded credentials (API keys, tokens, passwords)
-- [ ] Command injection vulnerabilities (unsanitized user input in bash)
-- [ ] Path traversal risks (file operations without validation)
-- [ ] Arbitrary code execution (eval, curl | bash, base64 decode pipes)
+- [x] Hardcoded credentials (API keys, tokens, passwords)
+- [x] Command injection vulnerabilities (unsanitized user input in bash)
+- [x] Path traversal risks (file operations without validation)
+- [x] Arbitrary code execution (eval, curl | bash, base64 decode pipes)
 
 **Medium Issues:**
-- [ ] Excessive permissions requests
-- [ ] Unvalidated external network calls
-- [ ] Missing error handling on sensitive operations
-- [ ] Hardcoded URLs/endpoints (should be configurable)
+- [x] Excessive permissions requests
+- [x] Unvalidated external network calls
+- [x] Missing error handling on sensitive operations
+- [x] Hardcoded URLs/endpoints (should be configurable)
 
 **Low Issues:**
 - [ ] Missing input validation
 - [ ] Poor documentation of required secrets
 - [ ] Overly broad file patterns
+
+**Audit Challenges:**
+- Many listed skills have non-existent or inaccessible GitHub repositories
+- Inconsistent file structure across skill platforms (SKILL.md vs plugin.json vs other formats)
+- Difficult to discover actual executable code vs. documentation-only skills
+- No standardized skill format makes automated auditing difficult
