@@ -20,6 +20,8 @@ export interface ComparisonRow {
   claude: ProviderSupport
   /** Cursor implementation */
   cursor: ProviderSupport
+  /** OpenAI Codex implementation */
+  codex: ProviderSupport
 }
 
 export const comparisonData: ComparisonRow[] = [
@@ -42,6 +44,11 @@ export const comparisonData: ComparisonRow[] = [
       implementation: 'Cursor Agent mode for multi-step execution',
       location: 'Cursor Editor with Agent capabilities',
     },
+    codex: {
+      level: 'full',
+      implementation: 'Agentic coding with multi-step execution',
+      location: 'Codex CLI',
+    },
   },
   {
     primitiveId: 'skills',
@@ -61,6 +68,11 @@ export const comparisonData: ComparisonRow[] = [
       implementation: 'Skill modules as portable, reusable packages',
       location: '.cursor/skills/*/SKILL.md',
     },
+    codex: {
+      level: 'full',
+      implementation: 'Skill modules following agentskills.io specification',
+      location: '.codex/skills/*/SKILL.md',
+    },
   },
   {
     primitiveId: 'tool-integrations',
@@ -79,6 +91,11 @@ export const comparisonData: ComparisonRow[] = [
       level: 'full',
       implementation: 'MCP servers with stdio, SSE, and HTTP transports',
       location: '.cursor/mcp.json',
+    },
+    codex: {
+      level: 'full',
+      implementation: 'MCP servers with stdio and HTTP transports',
+      location: '~/.codex/config.toml',
     },
   },
   // === CUSTOMIZATION ===
@@ -100,6 +117,11 @@ export const comparisonData: ComparisonRow[] = [
       implementation: 'Project instructions file',
       location: '.cursor/instructions.md',
     },
+    codex: {
+      level: 'full',
+      implementation: 'Project AGENTS.md with hierarchical loading',
+      location: 'AGENTS.md',
+    },
   },
   {
     primitiveId: 'global-instructions',
@@ -118,6 +140,11 @@ export const comparisonData: ComparisonRow[] = [
       level: 'full',
       implementation: 'User-level settings and preferences',
       location: '~/.cursor/settings.json',
+    },
+    codex: {
+      level: 'full',
+      implementation: 'User-level AGENTS.md and config.toml',
+      location: '~/.codex/AGENTS.md',
     },
   },
   {
@@ -138,6 +165,11 @@ export const comparisonData: ComparisonRow[] = [
       implementation: 'Rules with path patterns',
       location: '.cursor/rules/*.md',
     },
+    codex: {
+      level: 'full',
+      implementation: 'Nested AGENTS.md files with hierarchical merge',
+      location: 'subdir/AGENTS.md',
+    },
   },
   {
     primitiveId: 'prompt-templates',
@@ -156,6 +188,11 @@ export const comparisonData: ComparisonRow[] = [
       level: 'full',
       implementation: 'Custom commands with parameters and reusable workflows',
       location: '.cursor/commands/*.md',
+    },
+    codex: {
+      level: 'full',
+      implementation: 'Built-in / commands for session control',
+      location: 'Codex CLI / commands',
     },
   },
   // === CONTROL ===
@@ -177,6 +214,11 @@ export const comparisonData: ComparisonRow[] = [
       implementation: 'Subagents with model selection and context isolation',
       location: '.cursor/agents/*.md',
     },
+    codex: {
+      level: 'none',
+      implementation: 'Multi-agent via Agents SDK (not built-in)',
+      location: 'External Agents SDK',
+    },
   },
   {
     primitiveId: 'guardrails',
@@ -195,6 +237,11 @@ export const comparisonData: ComparisonRow[] = [
       level: 'full',
       implementation: 'Approvals, .cursorignore, LLM safety controls, and security hooks',
       location: '.cursor/settings.json + .cursorignore',
+    },
+    codex: {
+      level: 'full',
+      implementation: 'Sandbox modes, approval policies, and .rules files',
+      location: '~/.codex/config.toml + ~/.codex/rules/*.rules',
     },
   },
   {
@@ -215,6 +262,11 @@ export const comparisonData: ComparisonRow[] = [
       implementation: 'Session, execution, and file operation hooks',
       location: '.cursor/hooks.json',
     },
+    codex: {
+      level: 'partial',
+      implementation: 'Notify hooks for external program triggers',
+      location: '~/.codex/config.toml (notify)',
+    },
   },
   {
     primitiveId: 'verification',
@@ -233,6 +285,11 @@ export const comparisonData: ComparisonRow[] = [
       level: 'full',
       implementation: 'Integrated terminal for test execution',
       location: 'Cursor Editor integrated terminal',
+    },
+    codex: {
+      level: 'full',
+      implementation: 'Shell tool for running tests/lint in agent mode',
+      location: 'Codex CLI shell tool',
     },
   },
 ]

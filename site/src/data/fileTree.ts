@@ -1,4 +1,4 @@
-export type Provider = 'copilot' | 'claude' | 'cursor'
+export type Provider = 'copilot' | 'claude' | 'cursor' | 'codex'
 
 export interface FileNode {
   /** Unique identifier for the node */
@@ -1729,14 +1729,385 @@ Provide a clear explanation of the selected code:
   ],
 }
 
+export const codexTree: FileNode = {
+  id: 'codex-root',
+  name: 'my-project',
+  type: 'folder',
+  children: [
+    {
+      id: 'codex-dotcodex',
+      name: '.codex',
+      type: 'folder',
+      children: [
+        {
+          id: 'codex-skills-folder',
+          name: 'skills',
+          type: 'folder',
+          children: [
+            {
+              id: 'codex-skill-debug-ci',
+              name: 'debug-ci',
+              type: 'folder',
+              children: [
+                {
+                  id: 'codex-skill-debug-ci-file',
+                  name: 'SKILL.md',
+                  type: 'file',
+                  details: {
+                    label: 'Skill',
+                    description: 'A reusable, multi-step workflow that Codex can invoke automatically based on task description.',
+                    whatGoesHere: [
+                      'Skill metadata (name, description in frontmatter)',
+                      'When to use this skill',
+                      'Step-by-step instructions',
+                      'Best practices and patterns',
+                    ],
+                    whenLoaded: 'Auto-selected based on task. The description is matched against user requests.',
+                    loadOrder: 6,
+                    example: `---
+name: debug-ci
+description: Diagnose and fix failing CI runs. Use when continuous integration tests fail.
+---
+
+# Debug CI Failures
+
+## When to Use
+- Use when CI/CD pipeline fails
+- When tests pass locally but fail in CI
+
+## Steps
+1. Check CI logs for error message
+2. Identify environment differences
+3. Reproduce locally with same environment
+4. Fix and verify in CI`,
+                  },
+                },
+              ],
+            },
+            {
+              id: 'codex-skill-refactor',
+              name: 'refactor',
+              type: 'folder',
+              children: [
+                {
+                  id: 'codex-skill-refactor-file',
+                  name: 'SKILL.md',
+                  type: 'file',
+                  details: {
+                    label: 'Skill',
+                    description: 'A reusable workflow for safe code refactoring.',
+                    whatGoesHere: [
+                      'Skill metadata (name, description)',
+                      'Refactoring guidelines',
+                      'Test-driven approach',
+                    ],
+                    whenLoaded: 'Auto-selected when refactoring tasks are detected.',
+                    loadOrder: 6,
+                    example: `---
+name: refactor
+description: Refactor code while maintaining tests and functionality.
+---
+
+# Safe Refactoring
+
+## Instructions
+1. Run existing tests first
+2. Make incremental changes
+3. Run tests after each change
+4. Commit working states`,
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'codex-agents-md',
+      name: 'AGENTS.md',
+      type: 'file',
+      details: {
+        label: 'Project Instructions',
+        description: 'Codex\'s primary file for project context. Supports hierarchical loading from parent directories.',
+        whatGoesHere: [
+          'Project overview and tech stack',
+          'Build and test commands',
+          'Coding conventions',
+          'Project structure notes',
+        ],
+        whenLoaded: 'Always loaded first. Codex walks from project root to current directory, merging AGENTS.md files.',
+        loadOrder: 1,
+        example: `# AGENTS.md
+
+## Tech Stack
+- TypeScript, React 18, Node.js 20
+- PostgreSQL with Prisma ORM
+
+## Commands
+- Build: \`npm run build\`
+- Test: \`npm test\`
+- Lint: \`npm run lint\`
+
+## Conventions
+- Use functional components
+- Prefer named exports
+- Run tests before committing`,
+      },
+    },
+    {
+      id: 'codex-frontend',
+      name: 'frontend',
+      type: 'folder',
+      children: [
+        {
+          id: 'codex-frontend-agents',
+          name: 'AGENTS.md',
+          type: 'file',
+          details: {
+            label: 'Nested Instructions',
+            description: 'Path-scoped instructions that apply to this directory. Merged with parent AGENTS.md files.',
+            whatGoesHere: [
+              'Directory-specific stack info',
+              'Local conventions',
+              'Relevant commands',
+            ],
+            whenLoaded: 'Loaded when working in this directory. Appended to parent context (closer files override).',
+            loadOrder: 2,
+            example: `# Frontend AGENTS.md
+
+## Stack
+- React 18 with TypeScript
+- Vite for bundling
+
+## Patterns
+- Components in /components
+- Hooks in /hooks
+- Use React Testing Library`,
+          },
+        },
+        {
+          id: 'codex-frontend-src',
+          name: 'src',
+          type: 'folder',
+          children: [],
+        },
+      ],
+    },
+    {
+      id: 'codex-backend',
+      name: 'backend',
+      type: 'folder',
+      children: [
+        {
+          id: 'codex-backend-agents',
+          name: 'AGENTS.md',
+          type: 'file',
+          details: {
+            label: 'Nested Instructions',
+            description: 'Path-scoped instructions that apply to this directory. Merged with parent AGENTS.md files.',
+            whatGoesHere: [
+              'Directory-specific stack info',
+              'API conventions',
+              'Database patterns',
+            ],
+            whenLoaded: 'Loaded when working in this directory. Appended to parent context (closer files override).',
+            loadOrder: 2,
+            example: `# Backend AGENTS.md
+
+## Stack
+- Node.js with Express
+- PostgreSQL with Prisma
+
+## Conventions
+- RESTful endpoint naming
+- Always validate input
+- Use parameterized queries`,
+          },
+        },
+        {
+          id: 'codex-backend-src',
+          name: 'src',
+          type: 'folder',
+          children: [],
+        },
+      ],
+    },
+  ],
+}
+
+export const codexGlobalTree: FileNode = {
+  id: 'codex-global-root',
+  name: '~',
+  type: 'folder',
+  children: [
+    {
+      id: 'codex-global-dotcodex',
+      name: '.codex',
+      type: 'folder',
+      children: [
+        {
+          id: 'codex-global-config',
+          name: 'config.toml',
+          type: 'file',
+          details: {
+            label: 'Global Config',
+            description: 'Personal Codex settings that apply across all projects. Shared between CLI and IDE extension.',
+            whatGoesHere: [
+              'Default model preferences',
+              'Approval policies (untrusted, on-request, never)',
+              'Sandbox mode settings',
+              'MCP server configurations',
+              'Shell environment policies',
+            ],
+            whenLoaded: 'Always loaded. Merged with project-level config (CLI flags take precedence).',
+            loadOrder: 1,
+            example: `# ~/.codex/config.toml
+
+model = "gpt-5.2"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+
+[mcp_servers.github]
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-github"]
+
+[mcp_servers.context7]
+command = "npx"
+args = ["-y", "@upstash/context7-mcp"]`,
+          },
+        },
+        {
+          id: 'codex-global-agents-md',
+          name: 'AGENTS.md',
+          type: 'file',
+          details: {
+            label: 'Global Instructions',
+            description: 'Personal instructions that apply to all your Codex sessions, regardless of project.',
+            whatGoesHere: [
+              'Your preferred coding style',
+              'Common conventions you follow',
+              'Personal preferences (commit style, testing approach)',
+            ],
+            whenLoaded: 'Always loaded first, before any project-specific context.',
+            loadOrder: 2,
+            example: `# My Global Codex Preferences
+
+## Commit Style
+- Use conventional commits (feat:, fix:, docs:)
+- Keep commits atomic and focused
+
+## Code Style
+- Prefer functional programming patterns
+- Always add JSDoc comments to public APIs
+- Use early returns to reduce nesting`,
+          },
+        },
+        {
+          id: 'codex-global-rules',
+          name: 'rules',
+          type: 'folder',
+          children: [
+            {
+              id: 'codex-global-rules-default',
+              name: 'default.rules',
+              type: 'file',
+              details: {
+                label: 'Command Rules',
+                description: 'Starlark rules that control which commands Codex can run outside the sandbox.',
+                whatGoesHere: [
+                  'prefix_rule() definitions with patterns',
+                  'Allow/prompt/forbidden decisions',
+                  'Justifications for security rules',
+                ],
+                whenLoaded: 'Loaded at startup. Applied before command execution.',
+                loadOrder: 0,
+                example: `# ~/.codex/rules/default.rules
+
+# Allow git commands
+prefix_rule(
+  pattern=["git"],
+  decision="allow"
+)
+
+# Prompt before npm publish
+prefix_rule(
+  pattern=["npm", "publish"],
+  decision="prompt",
+  justification="Publishing requires confirmation"
+)
+
+# Block dangerous commands
+prefix_rule(
+  pattern=["rm", "-rf", "/"],
+  decision="forbidden",
+  justification="Prevents accidental system damage"
+)`,
+              },
+            },
+          ],
+        },
+        {
+          id: 'codex-global-skills',
+          name: 'skills',
+          type: 'folder',
+          children: [
+            {
+              id: 'codex-global-skill-pr',
+              name: 'git-pr-workflow',
+              type: 'folder',
+              children: [
+                {
+                  id: 'codex-global-skill-pr-file',
+                  name: 'SKILL.md',
+                  type: 'file',
+                  details: {
+                    label: 'Global Skill',
+                    description: 'A personal skill available across all your projects.',
+                    whatGoesHere: [
+                      'Skill metadata (name, description)',
+                      'Step-by-step instructions',
+                      'Common workflows you repeat across repos',
+                    ],
+                    whenLoaded: 'Auto-selected based on task. Available globally.',
+                    loadOrder: 4,
+                    example: `---
+name: git-pr-workflow
+description: Create well-formed PRs with conventional commits and proper descriptions.
+---
+
+# Git PR Workflow
+
+## Before Creating PR
+1. Ensure commits follow conventional format
+2. Rebase on latest main if needed
+3. Run tests locally
+
+## PR Description
+- Summary of changes
+- Link to related issue(s)
+- Testing done`,
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+
 export const trees: Record<Provider, FileNode> = {
   copilot: copilotTree,
   claude: claudeTree,
   cursor: cursorTree,
+  codex: codexTree,
 }
 
 export const globalTrees: Record<Provider, FileNode> = {
   copilot: copilotGlobalTree,
   claude: claudeGlobalTree,
   cursor: cursorGlobalTree,
+  codex: codexGlobalTree,
 }

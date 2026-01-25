@@ -42,7 +42,7 @@ export function Hero({ className }: HeroProps): VNode {
           Elevate AI Assistants
         </h1>
         <p className="text-xl text-muted-foreground max-w-2xl mb-6">
-          Configure GitHub Copilot, Claude Code, and Cursor for any role or workflow.
+          Configure GitHub Copilot, Claude Code, Cursor, and OpenAI Codex for any role or workflow.
           Explore the primitives that unlock their full potential.
         </p>
         <div className="flex gap-2 flex-wrap">

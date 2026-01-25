@@ -35,6 +35,7 @@ const providerLabels: Record<Provider, string> = {
   copilot: 'GitHub Copilot',
   claude: 'Claude Code',
   cursor: 'Cursor',
+  codex: 'OpenAI Codex',
 }
 
 export function PrimitiveCard({ primitive, className }: PrimitiveCardProps): VNode {

@@ -6,13 +6,13 @@
 
 ## Site Overview
 
-agentconfig.org is a reference site for configuring AI coding assistants like GitHub Copilot
-and Claude Code. The site helps developers understand and implement AI configuration primitives
-to get consistent, high-quality assistance from AI tools.
+agentconfig.org is a reference site for configuring AI coding assistants like GitHub Copilot,
+Claude Code, Cursor, and OpenAI Codex. The site helps developers understand and implement AI
+configuration primitives to get consistent, high-quality assistance from AI tools.
 
 **Key Topics:**
-- 10 AI primitives for configuring agent behavior
-- Provider comparison (GitHub Copilot vs Claude Code)
+- 11 AI primitives for configuring agent behavior
+- Provider comparison (GitHub Copilot, Claude Code, Cursor, OpenAI Codex)
 - Config file locations and hierarchy
 - Skills Tutorial
 - Agents Tutorial
@@ -53,6 +53,7 @@ Multi-step execution with planning and tool use.
 | GitHub Copilot | Agent mode in Copilot Chat | VS Code Copilot Chat | full |
 | Claude Code | Agentic workflows in Claude Code | Claude Code CLI | full |
 | Cursor | Cursor Agent mode for multi-step execution | Cursor Editor with Agent capabilities | full |
+| OpenAI Codex | Agentic coding with multi-step execution | Codex CLI | full |
 
 ---
 
@@ -78,6 +79,7 @@ Reusable multi-step procedures for common tasks.
 | GitHub Copilot | Skill modules in skills directory | .github/skills/*/SKILL.md | full |
 | Claude Code | Skill modules in .claude directory | .claude/skills/*/SKILL.md | full |
 | Cursor | Skill modules as portable, reusable packages | .cursor/skills/*/SKILL.md | full |
+| OpenAI Codex | Skill modules following agentskills.io specification | .codex/skills/*/SKILL.md | full |
 
 ---
 
@@ -103,6 +105,7 @@ External tools for retrieving facts and taking actions.
 | GitHub Copilot | MCP servers and tool calling | VS Code MCP settings | full |
 | Claude Code | MCP servers and tool calling | .claude/settings.json | full |
 | Cursor | MCP servers with stdio, SSE, and HTTP transports | .cursor/mcp.json | full |
+| OpenAI Codex | MCP servers with stdio and HTTP transports | ~/.codex/config.toml | full |
 
 ---
 
@@ -132,6 +135,7 @@ A durable set of norms that define "good" for your project.
 | GitHub Copilot | Repository-level instructions file | .github/copilot-instructions.md | full |
 | Claude Code | Project memory file with @imports | CLAUDE.md | full |
 | Cursor | Project instructions file | .cursor/instructions.md | full |
+| OpenAI Codex | Project AGENTS.md file with hierarchical loading | AGENTS.md | full |
 
 ---
 
@@ -157,6 +161,7 @@ User-level preferences that apply across all projects.
 | GitHub Copilot | User-level settings in VS Code | VS Code settings.json | full |
 | Claude Code | User-level memory and config | ~/.claude/CLAUDE.md | full |
 | Cursor | User-level settings and preferences | ~/.cursor/settings.json | full |
+| OpenAI Codex | User-level AGENTS.md and config.toml | ~/.codex/AGENTS.md | full |
 
 ---
 
@@ -182,6 +187,7 @@ Instructions that apply only to specific file paths.
 | GitHub Copilot | Instruction files with applyTo glob patterns | .github/instructions/*.instructions.md | full |
 | Claude Code | Rule files with globs frontmatter | .claude/rules/*.md | full |
 | Cursor | Rules with path patterns | .cursor/rules/*.md | full |
+| OpenAI Codex | Nested AGENTS.md files with hierarchical merge | subdir/AGENTS.md | full |
 
 ---
 
@@ -207,6 +213,7 @@ Repeatable prompts invoked via / commands.
 | GitHub Copilot | Prompt files invoked via / commands | .github/prompts/*.prompt.md | full |
 | Claude Code | Command files with frontmatter and $ARGUMENTS | .claude/commands/*.md | full |
 | Cursor | Custom commands with parameters and reusable workflows | .cursor/commands/*.md | full |
+| OpenAI Codex | Built-in / commands for session control | Codex CLI / commands | full |
 
 ---
 
@@ -236,6 +243,7 @@ Specialized agent personas with specific roles and permissions.
 | GitHub Copilot | Agent definition files | .github/agents/*.agent.md | full |
 | Claude Code | Custom subagents with roles and tool permissions | .claude/agents/*.md | full |
 | Cursor | Subagents with model selection and context isolation | .cursor/agents/*.md | full |
+| OpenAI Codex | Multi-agent via Agents SDK (not built-in) | External Agents SDK | diy |
 
 ---
 
@@ -261,6 +269,7 @@ Explicit constraints on what the AI can do.
 | GitHub Copilot | Org policies and tool permissions | VS Code settings + org policies | full |
 | Claude Code | Allow/deny lists with pattern matching and sandbox | .claude/settings.json | full |
 | Cursor | Approvals, .cursorignore, LLM safety controls, and security hooks | .cursor/settings.json + .cursorignore | full |
+| OpenAI Codex | Sandbox modes, approval policies, and .rules files | ~/.codex/config.toml + ~/.codex/rules/*.rules | full |
 
 ---
 
@@ -286,6 +295,7 @@ Code that runs before/after AI tool execution.
 | GitHub Copilot | Not available | N/A | diy |
 | Claude Code | PreToolUse, PostToolUse, Stop hooks with matchers | .claude/hooks/hooks.json | full |
 | Cursor | Session, execution, and file operation hooks | .cursor/hooks.json | full |
+| OpenAI Codex | Notify hooks for external program triggers | ~/.codex/config.toml (notify) | partial |
 
 ---
 
@@ -311,6 +321,7 @@ Checks that validate AI outputs before shipping.
 | GitHub Copilot | Run tests/lint via terminal tools | Terminal tools in agent mode | full |
 | Claude Code | Run tests/lint via Bash tool with hooks | Bash tool + hooks | full |
 | Cursor | Integrated terminal for test execution | Cursor Editor integrated terminal | full |
+| OpenAI Codex | Shell tool for running tests/lint in agent mode | Codex CLI shell tool | full |
 
 ---
 
@@ -318,21 +329,21 @@ Checks that validate AI outputs before shipping.
 
 # Part 2: Provider Comparison
 
-Support matrix comparing GitHub Copilot and Claude Code:
+Support matrix comparing GitHub Copilot, Claude Code, Cursor, and OpenAI Codex:
 
-| Primitive | Copilot | Claude |
-|-----------|---------|--------|
-| Agent Mode | ✓ Agent mode in Copilot Chat | ✓ Agentic workflows in Claude Code |
-| Skills / Workflows | ✓ Skill modules in skills directory | ✓ Skill modules in .claude directory |
-| Tool Integrations (MCP) | ✓ MCP servers and tool calling | ✓ MCP servers and tool calling |
-| Persistent Instructions | ✓ Repo instructions file | ✓ Project memory file with @imports |
-| Global Instructions | ✓ User-level settings in VS Code | ✓ User-level memory and config |
-| Path-Scoped Rules | ✓ Instruction files with applyTo glob patterns | ✓ Rule files with globs frontmatter |
-| Slash Commands | ✓ Prompt files invoked via / commands | ✓ Command files with frontmatter and $ARGUMENTS |
-| Custom Agents | ✓ Agent definition files with roles and tool permissions | ✓ Subagent files with tools restrictions |
-| Permissions & Guardrails | ✓ Org policies and tool permissions | ✓ Allow/deny lists with pattern matching and sandbox |
-| Lifecycle Hooks | — Not available | ✓ PreToolUse, PostToolUse, Stop hooks with matchers |
-| Verification / Evals | ✓ Run tests/lint via terminal tools | ✓ Run tests/lint via Bash tool with hooks |
+| Primitive | Copilot | Claude | Cursor | Codex |
+|-----------|---------|--------|--------|-------|
+| Agent Mode | ✓ Agent mode in Copilot Chat | ✓ Agentic workflows in Claude Code | ✓ Cursor Agent mode for multi-step execution | ✓ Agentic coding with multi-step execution |
+| Skills / Workflows | ✓ Skill modules in skills directory | ✓ Skill modules in .claude directory | ✓ Skill modules as portable, reusable packages | ✓ Skill modules following agentskills.io specification |
+| Tool Integrations (MCP) | ✓ MCP servers and tool calling | ✓ MCP servers and tool calling | ✓ MCP servers with stdio, SSE, and HTTP transports | ✓ MCP servers with stdio and HTTP transports |
+| Persistent Instructions | ✓ Repo instructions file | ✓ Project memory file with @imports | ✓ Project instructions file | ✓ Project AGENTS.md with hierarchical loading |
+| Global Instructions | ✓ User-level settings in VS Code | ✓ User-level memory and config | ✓ User-level settings and preferences | ✓ User-level AGENTS.md and config.toml |
+| Path-Scoped Rules | ✓ Instruction files with applyTo glob patterns | ✓ Rule files with globs frontmatter | ✓ Rules with path patterns | ✓ Nested AGENTS.md files with hierarchical merge |
+| Slash Commands | ✓ Prompt files invoked via / commands | ✓ Command files with frontmatter and $ARGUMENTS | ✓ Custom commands with parameters and reusable workflows | ✓ Built-in / commands for session control |
+| Custom Agents | ✓ Agent definition files with roles and tool permissions | ✓ Subagent files with tools restrictions | ✓ Subagents with model selection and context isolation | — Multi-agent via Agents SDK (not built-in) |
+| Permissions & Guardrails | ✓ Org policies and tool permissions | ✓ Allow/deny lists with pattern matching and sandbox | ✓ Approvals, .cursorignore, LLM safety controls, and security hooks | ✓ Sandbox modes, approval policies, and .rules files |
+| Lifecycle Hooks | — Not available | ✓ PreToolUse, PostToolUse, Stop hooks with matchers | ✓ Session, execution, and file operation hooks | ◐ Notify hooks for external program triggers |
+| Verification / Evals | ✓ Run tests/lint via terminal tools | ✓ Run tests/lint via Bash tool with hooks | ✓ Integrated terminal for test execution | ✓ Shell tool for running tests/lint in agent mode |
 
 ### Config File Locations
 
@@ -352,6 +363,25 @@ Support matrix comparing GitHub Copilot and Claude Code:
 - Skills: `.claude/skills/*/SKILL.md`
 - Lifecycle Hooks: `.claude/hooks/hooks.json`
 - MCP Settings: `.claude/settings.json`
+
+**Cursor:**
+- Persistent Instructions: `.cursor/instructions.md`
+- Global Settings: `~/.cursor/settings.json`
+- Path-Scoped Rules: `.cursor/rules/*.md`
+- Slash Commands: `.cursor/commands/*.md`
+- Custom Agents: `.cursor/agents/*.md`
+- Skills: `.cursor/skills/*/SKILL.md`
+- MCP Settings: `.cursor/mcp.json`
+- Lifecycle Hooks: `.cursor/hooks.json`
+
+**OpenAI Codex:**
+- Persistent Instructions: `AGENTS.md` (project root)
+- Global Instructions: `~/.codex/AGENTS.md`
+- Path-Scoped Rules: Nested `AGENTS.md` files in subdirectories
+- Global Config: `~/.codex/config.toml`
+- Skills: `.codex/skills/*/SKILL.md`
+- Command Rules: `~/.codex/rules/*.rules`
+- MCP Settings: `~/.codex/config.toml` (mcp_servers section)
 
 ---
 

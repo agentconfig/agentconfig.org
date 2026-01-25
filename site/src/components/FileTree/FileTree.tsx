@@ -17,6 +17,7 @@ const providers: { id: Provider; label: string; icon: string }[] = [
   { id: 'copilot', label: 'GitHub Copilot', icon: '🤖' },
   { id: 'claude', label: 'Claude Code', icon: '🧠' },
   { id: 'cursor', label: 'Cursor', icon: '➤' },
+  { id: 'codex', label: 'OpenAI Codex', icon: '⚡' },
 ]
 
 export function FileTree({

@@ -77,8 +77,8 @@ function generateLlmsTxt(pages: readonly PageMeta[]): string {
 
   return `# agentconfig.org
 
-> A reference site for configuring AI coding assistants like GitHub Copilot and Claude Code.
-> Covers 10 AI primitives, provider comparison, config file locations, and tutorials for
+> A reference site for configuring AI coding assistants like GitHub Copilot, Claude Code, Cursor, and OpenAI Codex.
+> Covers 11 AI primitives, provider comparison, config file locations, and tutorials for
 > skills, agent definitions, and MCP tool integrations.
 
 This file provides a table of contents. For complete content, see /llms-full.txt.
@@ -438,13 +438,13 @@ function generateLlmsFullTxt(data: Awaited<ReturnType<typeof loadData>>): string
 
 ## Site Overview
 
-agentconfig.org is a reference site for configuring AI coding assistants like GitHub Copilot
-and Claude Code. The site helps developers understand and implement AI configuration primitives
-to get consistent, high-quality assistance from AI tools.
+agentconfig.org is a reference site for configuring AI coding assistants like GitHub Copilot,
+Claude Code, Cursor, and OpenAI Codex. The site helps developers understand and implement AI
+configuration primitives to get consistent, high-quality assistance from AI tools.
 
 **Key Topics:**
-- 10 AI primitives for configuring agent behavior
-- Provider comparison (GitHub Copilot vs Claude Code)
+- 11 AI primitives for configuring agent behavior
+- Provider comparison (GitHub Copilot, Claude Code, Cursor, OpenAI Codex)
 - Config file locations and hierarchy
 ${topicsList}
 
@@ -500,16 +500,18 @@ These primitives constrain what the AI is allowed to do.
 
 # Part 2: Provider Comparison
 
-Support matrix comparing GitHub Copilot and Claude Code:
+Support matrix comparing GitHub Copilot, Claude Code, Cursor, and OpenAI Codex:
 
-| Primitive | Copilot | Claude |
-|-----------|---------|--------|
+| Primitive | Copilot | Claude | Cursor | Codex |
+|-----------|---------|--------|--------|-------|
 `
 
   for (const row of comparisonData) {
     const copilotIcon = row.copilot.level === 'full' ? '✓' : row.copilot.level === 'partial' ? '◐' : '—'
     const claudeIcon = row.claude.level === 'full' ? '✓' : row.claude.level === 'partial' ? '◐' : '—'
-    content += `| ${row.primitiveName} | ${copilotIcon} ${row.copilot.implementation} | ${claudeIcon} ${row.claude.implementation} |\n`
+    const cursorIcon = row.cursor.level === 'full' ? '✓' : row.cursor.level === 'partial' ? '◐' : '—'
+    const codexIcon = row.codex.level === 'full' ? '✓' : row.codex.level === 'partial' ? '◐' : '—'
+    content += `| ${row.primitiveName} | ${copilotIcon} ${row.copilot.implementation} | ${claudeIcon} ${row.claude.implementation} | ${cursorIcon} ${row.cursor.implementation} | ${codexIcon} ${row.codex.implementation} |\n`
   }
 
   content += `
@@ -531,6 +533,25 @@ Support matrix comparing GitHub Copilot and Claude Code:
 - Skills: \`.claude/skills/*/SKILL.md\`
 - Lifecycle Hooks: \`.claude/hooks/hooks.json\`
 - MCP Settings: \`.claude/settings.json\`
+
+**Cursor:**
+- Persistent Instructions: \`.cursor/instructions.md\`
+- Global Settings: \`~/.cursor/settings.json\`
+- Path-Scoped Rules: \`.cursor/rules/*.md\`
+- Slash Commands: \`.cursor/commands/*.md\`
+- Custom Agents: \`.cursor/agents/*.md\`
+- Skills: \`.cursor/skills/*/SKILL.md\`
+- MCP Settings: \`.cursor/mcp.json\`
+- Lifecycle Hooks: \`.cursor/hooks.json\`
+
+**OpenAI Codex:**
+- Persistent Instructions: \`AGENTS.md\` (project root)
+- Global Instructions: \`~/.codex/AGENTS.md\`
+- Path-Scoped Rules: Nested \`AGENTS.md\` files in subdirectories
+- Global Config: \`~/.codex/config.toml\`
+- Skills: \`.codex/skills/*/SKILL.md\`
+- Command Rules: \`~/.codex/rules/*.rules\`
+- MCP Settings: \`~/.codex/config.toml\` (mcp_servers section)
 
 ---
 
@@ -584,6 +605,7 @@ ${p.implementations.map((impl: any) => {
     impl.provider === 'copilot' ? 'GitHub Copilot' :
     impl.provider === 'claude' ? 'Claude Code' :
     impl.provider === 'cursor' ? 'Cursor' :
+    impl.provider === 'codex' ? 'OpenAI Codex' :
     impl.provider;
   return `| ${providerName} | ${impl.implementation} | ${impl.location} | ${impl.support} |`
 }).join('\n')}
