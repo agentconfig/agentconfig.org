@@ -438,13 +438,13 @@ function generateLlmsFullTxt(data: Awaited<ReturnType<typeof loadData>>): string
 
 ## Site Overview
 
-agentconfig.org is a reference site for configuring AI coding assistants like GitHub Copilot
-and Claude Code. The site helps developers understand and implement AI configuration primitives
-to get consistent, high-quality assistance from AI tools.
+agentconfig.org is a reference site for configuring AI coding assistants like GitHub Copilot,
+Claude Code, Cursor, and OpenAI Codex. The site helps developers understand and implement AI
+configuration primitives to get consistent, high-quality assistance from AI tools.
 
 **Key Topics:**
-- 10 AI primitives for configuring agent behavior
-- Provider comparison (GitHub Copilot vs Claude Code)
+- 11 AI primitives for configuring agent behavior
+- Provider comparison (GitHub Copilot, Claude Code, Cursor, OpenAI Codex)
 - Config file locations and hierarchy
 ${topicsList}
 
