@@ -283,7 +283,7 @@ Code that runs before/after AI tool execution.
 
 | Provider | Implementation | Location | Support |
 |----------|---------------|----------|---------|
-| GitHub Copilot | Lifecycle hooks (public documentation coming soon) | `.github/hooks/*.json` | ✓ Full |
+| GitHub Copilot | Lifecycle hooks for coding agent | `.github/hooks/*.json` | ✓ Full |
 | Claude Code | PreToolUse, PostToolUse, Stop hooks with matchers | `.claude/hooks/hooks.json` | ✓ Full |
 | Cursor | Session, execution, and file operation hooks | `.cursor/hooks.json` | ✓ Full |
 
@@ -331,7 +331,7 @@ Support matrix comparing GitHub Copilot, Claude Code, and Cursor:
 | Slash Commands | ✓ Prompt files invoked via / commands | ✓ Command files with frontmatter and $ARGUMENTS | ✓ Custom commands with parameters and reusable workflows |
 | Custom Agents | ✓ Agent definition files with roles and tool permissions | ✓ Subagent files with tools restrictions | ✓ Subagents with model selection and context isolation |
 | Permissions & Guardrails | ✓ Org policies and tool permissions | ✓ Allow/deny lists with pattern matching and sandbox | ✓ Approvals, .cursorignore, LLM safety controls, and security hooks |
-| Lifecycle Hooks | ✓ Lifecycle hooks (public documentation coming soon) | ✓ PreToolUse, PostToolUse, Stop hooks with matchers | ✓ Session, execution, and file operation hooks |
+| Lifecycle Hooks | ✓ Lifecycle hooks for coding agent | ✓ PreToolUse, PostToolUse, Stop hooks with matchers | ✓ Session, execution, and file operation hooks |
 | Verification / Evals | ✓ Run tests/lint via terminal tools | ✓ Run tests/lint via Bash tool with hooks | ✓ Integrated terminal for test execution |
 
 ### Config File Locations

@@ -202,7 +202,7 @@ export const comparisonData: ComparisonRow[] = [
     primitiveName: 'Lifecycle Hooks',
     copilot: {
       level: 'full',
-      implementation: 'Lifecycle hooks (public documentation coming soon)',
+      implementation: 'Lifecycle hooks for coding agent',
       location: '.github/hooks/*.json',
     },
     claude: {
