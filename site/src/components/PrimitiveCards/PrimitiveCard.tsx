@@ -29,7 +29,7 @@ const categoryColors = {
 const supportBadgeColors = {
   full: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-200',
   partial: 'bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-200',
-  diy: 'bg-gray-100 text-gray-700 dark:bg-gray-800/50 dark:text-gray-200',
+  none: 'bg-gray-100 text-gray-700 dark:bg-gray-800/50 dark:text-gray-200',
 }
 
 const providerMap = Object.fromEntries(providers.map(p => [p.id, p]))
