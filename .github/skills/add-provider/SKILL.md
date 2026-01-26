@@ -1,45 +1,34 @@
 ---
 name: add-provider
-description: Add a new AI provider to agentconfig.org's comparison system. Use when integrating a new coding assistant (e.g., Cursor, Claude Desktop, GitHub Copilot alternative) with proper type system updates, implementation data, UI components, tests, and documentation.
+description: Implement a new AI provider across agentconfig.org's comparison system (Streams 1-6). Use after research is complete. Handles type system updates, implementation data, UI components, tests, and documentation.
+model: opus
 ---
 
-# Add Provider
+# Add Provider (Implementation)
 
-Add a new AI coding assistant provider to agentconfig.org's provider comparison system.
+Implement a new AI provider across agentconfig.org's 6 work streams.
 
-## Overview
-
-Adding a provider requires coordinated work across **6 parallel work streams**:
-
-| Stream | Work | Duration | Dependencies |
-|--------|------|----------|--------------|
-| **1. Type System** | Add provider to union types | 2-4 hrs | None |
-| **2. Data Layer** | Add implementations for all 11 primitives | 4-6 hrs | Stream 1 |
-| **3. UI Components** | Update comparison table | 4-8 hrs | Streams 1-2 |
-| **4. Testing** | Update E2E tests | 3-4 hrs | Stream 3 |
-| **5. App Integration** | Update site copy & docs | 1-2 hrs | Streams 1-3 |
-| **6. LLMs Generation** | Regenerate machine-readable files | 1-2 hrs | All streams |
-
-**Total effort**: ~2-3 hours with parallelization
+This skill handles the **execution phase** after research is complete. Use `research-provider` skill first to gather capability audit data.
 
 ## When to Use
 
 Use this skill when:
-- Integrating a new coding assistant (Cursor, Claude Desktop, Zed with AI, etc.)
-- Expanding provider support beyond current offerings
-- The provider implements most of the 11 AI primitives
-- You want comprehensive comparison data visible to users and AI agents
+- Research is complete (use `research-provider` skill first)
+- You have provider capability audit and config file locations documented
+- You're ready to implement across all 6 work streams
+- You have verified support levels for all 11 primitives
 
 ## Prerequisites
 
-Before starting, gather:
+Before starting, you need:
 - **Provider capability audit** - Which of the 11 primitives does the provider support?
 - **File path documentation** - Where do config files go (global vs project)?
 - **Support levels** - `full` (native), `partial` (workarounds), `none` (unavailable), `diy` (custom setup)
+- **References** - Links to official documentation for each primitive
 
 ## The 11 Primitives
 
-Every provider must map to these primitives:
+Every provider must be implemented across these primitives:
 
 | Category | Primitives |
 |----------|-----------|
@@ -49,13 +38,7 @@ Every provider must map to these primitives:
 
 ## Quick Start
 
-0. **🔍 Research the provider** → See [RESEARCH-GUIDE.md](references/RESEARCH-GUIDE.md) for capability audit template
-   - Visit official documentation
-   - Document support level for each of the 11 primitives
-   - Verify config file locations
-   - **Complete this BEFORE writing any code** (see pre-implementation checklist in [CHECKLIST.md](references/CHECKLIST.md))
-
-1. **📋 Read the detailed process** → See [PROCESS.md](references/PROCESS.md) for step-by-step instructions for all 6 streams
+1. **📋 Read the detailed implementation process** → See [PROCESS.md](references/PROCESS.md) for step-by-step instructions for all 6 streams
 
 2. **📖 Review code examples** → See [EXAMPLES.md](references/EXAMPLES.md) for copy-paste templates for each stream
 
@@ -63,9 +46,9 @@ Every provider must map to these primitives:
 
 4. **🐛 Handle errors** → See [ERRORS.md](references/ERRORS.md) for solutions to common issues (including critical generation script updates)
 
-5. **✅ Verify completion** → See [CHECKLIST.md](references/CHECKLIST.md) for verification steps (includes pre-implementation checklist)
+5. **✅ Verify completion** → See [CHECKLIST.md](references/CHECKLIST.md) for post-implementation verification steps
 
-## 6-Stream Workflow at a Glance
+## 6-Stream Implementation Workflow
 
 ```
 Stream 1: Type System (Add provider to union types)
@@ -80,7 +63,7 @@ Stream 2: Data Layer (Add implementations for all 11 primitives)
       Stream 6: LLMs Generation (Regenerate machine-readable files)
 ```
 
-**Parallel execution**: Start Stream 5 while Streams 3-4 complete. Stream 1-2 are sequential. Stream 6 must run last.
+**Execution strategy**: Streams 1-2 are sequential. Streams 3-5 can run in parallel. Stream 6 must complete last. Use your research audit data to populate all implementation details.
 
 ## Key Files to Modify
 
@@ -95,20 +78,20 @@ Stream 2: Data Layer (Add implementations for all 11 primitives)
 
 ## Example Prompts
 
-**Add a new provider from scratch:**
+**Implement a provider after research is complete:**
 ```
-Use the add-provider skill to add Cursor as a provider to agentconfig.org.
-Research Cursor's implementation of all 11 primitives first, then follow all 6 streams.
-```
-
-**Skip to a specific stream:**
-```
-I've completed Stream 1 (types). Now execute Stream 2 (data layer) to add cursor implementations.
+Use the add-provider skill to implement Claude Desktop as a provider across all 6 streams.
+Here's my research audit: [paste RESEARCH-GUIDE.md findings]
 ```
 
-**Update existing provider data:**
+**Execute a specific stream:**
 ```
-Update Cursor's support level from partial to full for Tool Integrations in the comparison.ts and UI.
+I have the research data for Zed AI. Now implement Stream 1 (type system) only.
+```
+
+**Continue implementation from where you left off:**
+```
+I've completed Streams 1-2 (types and data). Now execute Streams 3-6 (UI, tests, integration, and generation).
 ```
 
 ## Success Metrics
@@ -143,6 +126,7 @@ When opening your pull request, keep it crisp and focused:
 
 ## Related Skills
 
+- **[research-provider](../../research-provider)** - Research a provider's capabilities (start here first)
 - **[add-primitive](../../add-primitive)** - Add a new AI primitive (expand beyond 11)
 - **[generate-llms](../../generate-llms)** - Regenerate llms.txt files
 - **[semantic-commit](../../semantic-commit)** - Create semantic commit messages
