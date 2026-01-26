@@ -170,7 +170,7 @@ export const primitives: Primitive[] = [
     implementations: [
       {
         provider: 'copilot',
-        implementation: 'Repository-level instructions file',
+        implementation: 'Repo instructions file',
         location: '.github/copilot-instructions.md',
         support: 'full',
       },
