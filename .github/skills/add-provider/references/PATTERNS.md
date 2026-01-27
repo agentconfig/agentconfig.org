@@ -4,7 +4,7 @@ Standard conventions and decision guides for adding providers.
 
 ## Support Levels
 
-Use these consistently across all 11 primitives:
+Use these consistently across all 10 primitives:
 
 ### `full` - Native, First-Class Support
 
@@ -12,7 +12,7 @@ The provider has built-in, well-documented support for this primitive.
 
 **Examples:**
 - Agent Mode in Cursor Editor (native multi-step execution)
-- Persistent Instructions in .cursor/instructions.md (first-class config file)
+- Instructions in .cursor/instructions.md (first-class config file)
 - Tool Integrations in Claude Code (MCP support built-in)
 
 **When to use**: The feature is natively available, documented, and part of the provider's core offering.
@@ -173,7 +173,7 @@ const providerLabels: Record<Provider, string> = {
 
 ## Implementation Details: What to Document
 
-For each of the 11 primitives × each provider, document:
+For each of the 10 primitives × each provider, document:
 
 ### `implementation` (string)
 
@@ -226,8 +226,7 @@ Quick reference for common feature mappings:
 | **Agent Mode** | `full` | `full` | `full` | All support multi-step execution |
 | **Skills** | `full` | `full` | `partial` | Cursor has rules but not full skill system |
 | **Tool Integrations** | `full` | `full` | `partial` | Cursor has Extensions API, not full MCP |
-| **Persistent Instructions** | `full` | `full` | `full` | All have project-level instructions |
-| **Global Instructions** | `full` | `full` | `full` | All support user-level preferences |
+| **Instructions** | `full` | `full` | `full` | All have project and user-level instructions |
 | **Path-Scoped Rules** | `full` | `full` | `full` | All support directory-specific rules |
 | **Slash Commands** | `full` | `full` | `partial` | Cursor has UI shortcuts, not full custom commands |
 | **Custom Agents** | `full` | `full` | `partial` | Cursor has agents but less flexible |
@@ -382,7 +381,7 @@ Before committing provider data:
   - [ ] `primitives.ts` (Provider type + implementations)
   - [ ] `fileTree.ts` (Provider type)
   - [ ] `comparison.ts` (ComparisonRow interface)
-- [ ] All 11 primitives have provider entries
+- [ ] All 10 primitives have provider entries
 - [ ] All 11 comparison rows have provider field
 - [ ] Support levels are consistent (primitives.ts ↔ comparison.ts)
 - [ ] File locations follow provider's naming conventions

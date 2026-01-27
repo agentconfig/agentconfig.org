@@ -78,7 +78,7 @@ function generateLlmsTxt(pages: readonly PageMeta[]): string {
   return `# agentconfig.org
 
 > A reference site for configuring AI coding assistants like GitHub Copilot, Claude Code, Cursor, and OpenAI Codex.
-> Covers 11 AI primitives, provider comparison, config file locations, and tutorials for
+> Covers 10 AI primitives, provider comparison, config file locations, and tutorials for
 > skills, agent definitions, and MCP tool integrations.
 
 This file provides a table of contents. For complete content, see /llms-full.txt.
@@ -443,7 +443,7 @@ Claude Code, Cursor, and OpenAI Codex. The site helps developers understand and 
 configuration primitives to get consistent, high-quality assistance from AI tools.
 
 **Key Topics:**
-- 11 AI primitives for configuring agent behavior
+- 10 AI primitives for configuring agent behavior
 - Provider comparison (GitHub Copilot, Claude Code, Cursor, OpenAI Codex)
 - Config file locations and hierarchy
 ${topicsList}
@@ -518,15 +518,16 @@ Support matrix comparing GitHub Copilot, Claude Code, Cursor, and OpenAI Codex:
 ### Config File Locations
 
 **GitHub Copilot:**
-- Persistent Instructions: \`.github/copilot-instructions.md\`
+- Instructions (Project): \`.github/copilot-instructions.md\`
+- Instructions (User): VS Code settings.json
 - Path-Scoped Rules: \`.github/instructions/*.instructions.md\`
 - Slash Commands: \`.github/prompts/*.prompt.md\`
 - Custom Agents: \`.github/agents/*.agent.md\`
 - Skills: \`.github/skills/*/SKILL.md\`
 
 **Claude Code:**
-- Persistent Instructions: \`CLAUDE.md\` (root) or \`.claude/CLAUDE.md\`
-- Global Instructions: \`~/.claude/CLAUDE.md\`
+- Instructions (Project): \`CLAUDE.md\` (root) or \`.claude/CLAUDE.md\`
+- Instructions (User): \`~/.claude/CLAUDE.md\`
 - Path-Scoped Rules: \`.claude/rules/*.md\`
 - Slash Commands: \`.claude/commands/*.md\`
 - Custom Agents: \`.claude/agents/*.md\`
@@ -535,8 +536,8 @@ Support matrix comparing GitHub Copilot, Claude Code, Cursor, and OpenAI Codex:
 - MCP Settings: \`.claude/settings.json\`
 
 **Cursor:**
-- Persistent Instructions: \`.cursor/instructions.md\`
-- Global Settings: \`~/.cursor/settings.json\`
+- Instructions (Project): \`.cursor/instructions.md\`
+- Instructions (User): \`~/.cursor/settings.json\`
 - Path-Scoped Rules: \`.cursor/rules/*.md\`
 - Slash Commands: \`.cursor/commands/*.md\`
 - Custom Agents: \`.cursor/agents/*.md\`
@@ -545,8 +546,8 @@ Support matrix comparing GitHub Copilot, Claude Code, Cursor, and OpenAI Codex:
 - Lifecycle Hooks: \`.cursor/hooks.json\`
 
 **OpenAI Codex:**
-- Persistent Instructions: \`AGENTS.md\` (project root)
-- Global Instructions: \`~/.codex/AGENTS.md\`
+- Instructions (Project): \`AGENTS.md\` (project root)
+- Instructions (User): \`~/.codex/AGENTS.md\`
 - Path-Scoped Rules: Nested \`AGENTS.md\` files in subdirectories
 - Global Config: \`~/.codex/config.toml\`
 - Skills: \`.codex/skills/*/SKILL.md\`

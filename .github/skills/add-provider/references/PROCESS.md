@@ -77,7 +77,7 @@ You'll see errors about missing provider data - this is expected. Continue to St
 1. **Visit official provider documentation**
    - Example: cursor.com/docs, claude.ai, github.com/features/copilot
 
-2. **For each of the 11 primitives, research and document:**
+2. **For each of the 10 primitives, research and document:**
    - Does the provider support this feature natively?
    - What are the official file locations? (e.g., `.cursor/instructions.md`, not guesses)
    - Are there any limitations or workarounds?
@@ -109,7 +109,7 @@ Tool Integrations (MCP): ✓ Full support
 
 Edit `site/src/data/primitives.ts`:
 
-For each of the 11 primitives, add a new entry to the `implementations` array:
+For each of the 10 primitives, add a new entry to the `implementations` array:
 
 ```typescript
 implementations: [
@@ -153,12 +153,11 @@ Does provider natively support this?
    └─ support: 'none' (rare)
 ```
 
-All 11 primitives:
+All 10 primitives:
 - Agent Mode
 - Skills / Workflows
 - Tool Integrations (MCP)
-- Persistent Instructions
-- Global Instructions
+- Instructions
 - Path-Scoped Rules
 - Slash Commands
 - Custom Agents

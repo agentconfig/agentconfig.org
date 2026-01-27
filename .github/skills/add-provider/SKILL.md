@@ -14,7 +14,7 @@ Adding a provider requires coordinated work across **6 parallel work streams**:
 | Stream | Work | Duration | Dependencies |
 |--------|------|----------|--------------|
 | **1. Type System** | Add provider to union types | 2-4 hrs | None |
-| **2. Data Layer** | Add implementations for all 11 primitives | 4-6 hrs | Stream 1 |
+| **2. Data Layer** | Add implementations for all 10 primitives | 4-6 hrs | Stream 1 |
 | **3. UI Components** | Update comparison table | 4-8 hrs | Streams 1-2 |
 | **4. Testing** | Update E2E tests | 3-4 hrs | Stream 3 |
 | **5. App Integration** | Update site copy & docs | 1-2 hrs | Streams 1-3 |
@@ -27,24 +27,24 @@ Adding a provider requires coordinated work across **6 parallel work streams**:
 Use this skill when:
 - Integrating a new coding assistant (Cursor, Claude Desktop, Zed with AI, etc.)
 - Expanding provider support beyond current offerings
-- The provider implements most of the 11 AI primitives
+- The provider implements most of the 10 AI primitives
 - You want comprehensive comparison data visible to users and AI agents
 
 ## Prerequisites
 
 Before starting, gather:
-- **Provider capability audit** - Which of the 11 primitives does the provider support?
+- **Provider capability audit** - Which of the 10 primitives does the provider support?
 - **File path documentation** - Where do config files go (global vs project)?
 - **Support levels** - `full` (native), `partial` (workarounds), `none` (unavailable), `diy` (custom setup)
 
-## The 11 Primitives
+## The 10 Primitives
 
 Every provider must map to these primitives:
 
 | Category | Primitives |
 |----------|-----------|
 | **Execution** | Agent Mode, Skills/Workflows, Tool Integrations (MCP) |
-| **Customization** | Persistent Instructions, Global Instructions, Path-Scoped Rules, Slash Commands |
+| **Customization** | Instructions, Path-Scoped Rules, Slash Commands |
 | **Control** | Custom Agents, Permissions & Guardrails, Lifecycle Hooks, Verification/Evals |
 
 ## Quick Start

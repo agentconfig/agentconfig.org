@@ -1982,7 +1982,7 @@ args = ["-y", "@upstash/context7-mcp"]`,
           name: 'AGENTS.md',
           type: 'file',
           details: {
-            label: 'Global Instructions',
+            label: 'Instructions (User-Level)',
             description: 'Personal instructions that apply to all your Codex sessions, regardless of project.',
             whatGoesHere: [
               'Your preferred coding style',

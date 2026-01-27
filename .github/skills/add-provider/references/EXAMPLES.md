@@ -406,7 +406,7 @@ test('should display support level badges', async ({ page }) => {
 ```typescript
 test('should expand row on click to show details', async ({ page }) => {
   const table = page.getByRole('table')
-  const row = table.getByRole('row').filter({ hasText: 'Persistent Instructions' }).first()
+  const row = table.getByRole('row').filter({ hasText: 'Instructions' }).first()
   await row.click()
 
   await expect(page.getByText('Repo instructions file')).toBeVisible()
@@ -416,7 +416,7 @@ test('should expand row on click to show details', async ({ page }) => {
 
 test('should show file locations when expanded', async ({ page }) => {
   const table = page.getByRole('table')
-  const row = table.getByRole('row').filter({ hasText: 'Persistent Instructions' }).first()
+  const row = table.getByRole('row').filter({ hasText: 'Instructions' }).first()
   await row.click()
 
   await expect(page.getByText('.github/copilot-instructions.md')).toBeVisible()
@@ -426,7 +426,7 @@ test('should show file locations when expanded', async ({ page }) => {
 
 test('should have copy buttons in expanded row', async ({ page }) => {
   const table = page.getByRole('table')
-  const row = table.getByRole('row').filter({ hasText: 'Persistent Instructions' }).first()
+  const row = table.getByRole('row').filter({ hasText: 'Instructions' }).first()
   await row.click()
 
   const copyButtons = page.getByRole('button', { name: /Copy location/i })
@@ -538,11 +538,10 @@ Use this checklist when adding implementation data. All 11 must be included:
 1. **Agent Mode** (Execution)
 2. **Skills / Workflows** (Execution)
 3. **Tool Integrations (MCP)** (Execution)
-4. **Persistent Instructions** (Customization)
-5. **Global Instructions** (Customization)
-6. **Path-Scoped Rules** (Customization)
-7. **Slash Commands** (Customization)
-8. **Custom Agents** (Control)
-9. **Permissions & Guardrails** (Control)
-10. **Lifecycle Hooks** (Control)
-11. **Verification / Evals** (Control)
+4. **Instructions** (Customization)
+5. **Path-Scoped Rules** (Customization)
+6. **Slash Commands** (Customization)
+7. **Custom Agents** (Control)
+8. **Permissions & Guardrails** (Control)
+9. **Lifecycle Hooks** (Control)
+10. **Verification / Evals** (Control)

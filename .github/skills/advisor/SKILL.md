@@ -22,9 +22,9 @@ Before asking any questions, fetch the complete primitive documentation:
 
 **Read:** https://agentconfig.org/llms-full.txt
 
-This file contains all 11 AI primitives organized into three categories:
+This file contains all 10 AI primitives organized into three categories:
 - **Capability (Execution):** Agent Mode, Skills, Tool Integrations (MCP)
-- **Customization (Instructions):** Persistent Instructions, Global Instructions, Path-Scoped Rules, Slash Commands
+- **Customization (Instructions):** Instructions, Path-Scoped Rules, Slash Commands
 - **Control (Safety):** Custom Agents, Permissions & Guardrails, Lifecycle Hooks, Verification/Evals
 
 ## Step 2: Understand the User's Context
@@ -62,14 +62,14 @@ Based on their answers, recommend **3-5 primitives** in priority order.
 #### Common Workflow Patterns → Primitive Recommendations
 
 **Pain Point: "Inconsistent code style across AI-generated code"**
-→ Start with: Persistent Instructions
+→ Start with: Instructions
 → Next: Path-Scoped Rules (if monorepo/multi-language)
 → Combine with: Verification/Evals (to catch violations)
 
 **Pain Point: "Repeating the same prompts over and over"**
 → Start with: Slash Commands
 → Next: Skills (for multi-step procedures)
-→ Combine with: Persistent Instructions (for consistent outputs)
+→ Combine with: Instructions (for consistent outputs)
 
 **Pain Point: "Need AI to work until task is complete, not just give suggestions"**
 → Start with: Agent Mode
@@ -88,16 +88,16 @@ Based on their answers, recommend **3-5 primitives** in priority order.
 
 **Pain Point: "Different parts of our codebase have different conventions"**
 → Start with: Path-Scoped Rules
-→ Next: Persistent Instructions (for shared conventions)
+→ Next: Instructions (for shared conventions)
 → Combine with: Custom Agents (for role-specific expertise)
 
 **Setup: Scaling AI usage across a team**
-→ Start with: Persistent Instructions (shared conventions)
+→ Start with: Instructions (shared conventions)
 → Next: Skills (codify team workflows)
 → Consider: Permissions & Guardrails (safety at scale)
 
 **Setup: Solo developer wanting better productivity**
-→ Start with: Agent Mode + Persistent Instructions
+→ Start with: Agent Mode + Instructions
 → Next: Slash Commands (for frequent tasks)
 → Later: Skills (as patterns emerge)
 
@@ -109,13 +109,13 @@ For each recommended primitive, provide:
 Connect the primitive directly to their stated pain point. Use their language.
 
 **Example:**
-> "You mentioned inconsistent code style. **Persistent Instructions** solves this by defining your coding standards once in a file (like `.github/copilot-instructions.md` or `CLAUDE.md`). Every AI interaction will honor these rules without you repeating them."
+> "You mentioned inconsistent code style. **Instructions** solves this by defining your coding standards once in a file (like `.github/copilot-instructions.md` or `CLAUDE.md`). Every AI interaction will honor these rules without you repeating them."
 
 ### 2. What It Prevents
 Explain the failure mode this primitive addresses.
 
 **Example:**
-> "Without Persistent Instructions, you'll get stylistic drift—the AI might use different quote styles, naming conventions, or formatting across sessions. This means manual cleanup and rework."
+> "Without Instructions, you'll get stylistic drift—the AI might use different quote styles, naming conventions, or formatting across sessions. This means manual cleanup and rework."
 
 ### 3. Implementation Guidance (Matched to Skill Level)
 
@@ -176,7 +176,7 @@ Help the user understand *order of implementation*.
 3. **Iterate based on what you learn**
 
 **Example Sequencing:**
-> **Week 1:** Implement Persistent Instructions—start with 5 core rules
+> **Week 1:** Implement Instructions—start with 5 core rules
 > **Week 2:** Add Verification/Evals—run tests before every commit
 > **Week 3:** Once you're comfortable, add Slash Commands for repeated prompts
 
@@ -188,7 +188,7 @@ For every recommended primitive, provide direct links to:
 - Provider-specific implementation guide (Copilot vs Claude)
 
 **Example:**
-> **Persistent Instructions**
+> **Instructions**
 > - Primitive overview: https://agentconfig.org/#primitives
 > - Tutorial: https://agentconfig.org/agents#your-first-agent-definition
 > - Copilot implementation: https://agentconfig.org/agents#provider-specific-formats
@@ -241,14 +241,14 @@ Based on your needs, here are the primitives I recommend (in priority order):
 - **Advanced:** Recommend 4-5 primitives. Discuss architecture. Mention edge cases.
 
 ### Be Specific, Not Generic
-- Bad: "Persistent Instructions helps with consistency."
-- Good: "Persistent Instructions will stop the AI from mixing single and double quotes in your TypeScript files."
+- Bad: "Instructions helps with consistency."
+- Good: "Instructions will stop the AI from mixing single and double quotes in your TypeScript files."
 
 ### Focus on High-Impact Primitives
 Not all primitives are equally important for every workflow. Prioritize based on their specific pain points, not completeness.
 
 ### Stay Within agentconfig.org Scope
-Only recommend the 11 primitives documented on agentconfig.org. Don't suggest tools or patterns outside this framework.
+Only recommend the 10 primitives documented on agentconfig.org. Don't suggest tools or patterns outside this framework.
 
 ### Encourage Iteration
 Remind users to start small, validate, and expand. Configuration is a journey, not a one-time setup.
@@ -267,9 +267,9 @@ Remind users to start small, validate, and expand. Configuration is a journey, n
 **You:**
 > Perfect. Based on your setup, here are my recommendations:
 >
-> ## 1. Persistent Instructions — Stop Repeating Yourself
+> ## 1. Instructions — Stop Repeating Yourself
 >
-> **What it solves:** You're spending time re-explaining TypeScript conventions every session. Persistent Instructions let you define these once in a `CLAUDE.md` file.
+> **What it solves:** You're spending time re-explaining TypeScript conventions every session. Instructions let you define these once in a `CLAUDE.md` file (project-level) or `~/.claude/CLAUDE.md` (user-level for all projects).
 >
 > **How it works:** Claude Code automatically reads `CLAUDE.md` at the start of every session. Any conventions you document there (quote style, naming patterns, no semicolons, etc.) become the default behavior.
 >
@@ -277,7 +277,7 @@ Remind users to start small, validate, and expand. Configuration is a journey, n
 >
 > **Learn more:** https://agentconfig.org/agents#provider-specific-formats
 >
-> **Combine with:** Global Instructions (~/.claude/CLAUDE.md) if these conventions apply across all your projects.
+> **Combine with:** User-level instructions in `~/.claude/CLAUDE.md` for conventions that apply across all your projects.
 >
 > **Watch out:** Be specific. "Use good TypeScript" won't help. "Always use named exports, never default exports" will.
 >

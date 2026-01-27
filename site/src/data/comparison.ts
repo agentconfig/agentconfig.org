@@ -100,51 +100,27 @@ export const comparisonData: ComparisonRow[] = [
   },
   // === CUSTOMIZATION ===
   {
-    primitiveId: 'persistent-instructions',
-    primitiveName: 'Persistent Instructions',
+    primitiveId: 'instructions',
+    primitiveName: 'Instructions',
     copilot: {
       level: 'full',
-      implementation: 'Repo instructions file',
-      location: '.github/copilot-instructions.md',
+      implementation: 'Repository-level and user-level instructions',
+      location: '.github/copilot-instructions.md, VS Code settings.json',
     },
     claude: {
       level: 'full',
-      implementation: 'Project memory file with @imports',
-      location: 'CLAUDE.md',
+      implementation: 'Project and user-level memory files',
+      location: 'CLAUDE.md, ~/.claude/CLAUDE.md',
     },
     cursor: {
       level: 'full',
-      implementation: 'Project instructions file',
-      location: '.cursor/instructions.md',
+      implementation: 'Project and user-level settings',
+      location: '.cursor/instructions.md, ~/.cursor/settings.json',
     },
     codex: {
       level: 'full',
-      implementation: 'Project AGENTS.md with hierarchical loading',
-      location: 'AGENTS.md',
-    },
-  },
-  {
-    primitiveId: 'global-instructions',
-    primitiveName: 'Global Instructions',
-    copilot: {
-      level: 'full',
-      implementation: 'User-level settings in VS Code',
-      location: 'VS Code settings.json',
-    },
-    claude: {
-      level: 'full',
-      implementation: 'User-level memory and config',
-      location: '~/.claude/CLAUDE.md',
-    },
-    cursor: {
-      level: 'full',
-      implementation: 'User-level settings and preferences',
-      location: '~/.cursor/settings.json',
-    },
-    codex: {
-      level: 'full',
-      implementation: 'User-level AGENTS.md and config.toml',
-      location: '~/.codex/AGENTS.md',
+      implementation: 'Project and user-level AGENTS.md files',
+      location: 'AGENTS.md, ~/.codex/AGENTS.md',
     },
   },
   {

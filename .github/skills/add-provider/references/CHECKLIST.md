@@ -18,8 +18,7 @@ Complete verification steps for all 6 work streams, plus pre-implementation rese
 - [ ] Agent Mode: support level documented with evidence
 - [ ] Skills / Workflows: support level documented with evidence
 - [ ] Tool Integrations (MCP): support level documented with evidence
-- [ ] Persistent Instructions: support level documented with evidence
-- [ ] Global Instructions: support level documented with evidence
+- [ ] Instructions: support level documented with evidence
 - [ ] Path-Scoped Rules: support level documented with evidence
 - [ ] Slash Commands: support level documented with evidence
 - [ ] Custom Agents: support level documented with evidence
@@ -62,12 +61,11 @@ Complete verification steps for all 6 work streams, plus pre-implementation rese
 ## Stream 2: Data Layer Verification
 
 ### Primitives Implementations
-- [ ] `site/src/data/primitives.ts` - Added provider entry for ALL 11 primitives:
+- [ ] `site/src/data/primitives.ts` - Added provider entry for ALL 10 primitives:
   - [ ] Agent Mode
   - [ ] Skills / Workflows
   - [ ] Tool Integrations (MCP)
-  - [ ] Persistent Instructions
-  - [ ] Global Instructions
+  - [ ] Instructions
   - [ ] Path-Scoped Rules
   - [ ] Slash Commands
   - [ ] Custom Agents
@@ -118,7 +116,7 @@ Complete verification steps for all 6 work streams, plus pre-implementation rese
   - Sparse trees make providers look incomplete even with 11/11 support
 
 ### Data Consistency
-- [ ] All 11 primitives have exactly matching IDs between primitives.ts and comparison.ts
+- [ ] All 10 primitives have exactly matching IDs between primitives.ts and comparison.ts
 - [ ] No typos in provider names (must be lowercase)
 - [ ] Run `npm run typecheck` - Should have NO errors now
 
@@ -159,7 +157,7 @@ Complete verification steps for all 6 work streams, plus pre-implementation rese
 ### Visual Verification
 - [ ] `npm run dev` - Load comparison section
 - [ ] All provider columns visible
-- [ ] All 11 primitives listed
+- [ ] All 10 primitives listed
 - [ ] Support badges show correct colors
 - [ ] Click row to expand → shows all provider details
 - [ ] Copy buttons work for each provider
@@ -192,7 +190,7 @@ Complete verification steps for all 6 work streams, plus pre-implementation rese
 - [ ] No flaky tests (run multiple times)
 
 ### Badge Count Math
-- [ ] Formula: (11 primitives) × (support levels count)
+- [ ] Formula: (10 primitives) × (support levels count)
 - [ ] Example for Cursor: (6 full + 5 partial) × 3 providers = ?
 - [ ] Verify actual count matches test assertion
 - [ ] If test fails: Update expectation to match actual count
@@ -240,7 +238,7 @@ Complete verification steps for all 6 work streams, plus pre-implementation rese
 - [ ] Check file modifications: `git status` shows updated llms files
 
 **Verify llms-full.txt content:**
-- [ ] All 11 primitives listed with provider data
+- [ ] All 10 primitives listed with provider data
 - [ ] Provider name displays correctly (e.g., "Cursor" not "cursor")
 - [ ] Implementation descriptions are readable
 - [ ] File paths are accurate
@@ -278,7 +276,7 @@ Complete verification steps for all 6 work streams, plus pre-implementation rese
 - [ ] Open http://localhost:5173 (after `npm run dev`)
 - [ ] Scroll to Provider Comparison section
 - [ ] Verify all 3+ provider columns visible
-- [ ] Verify all 11 primitives listed
+- [ ] Verify all 10 primitives listed
 - [ ] Click each row to expand - shows all provider details
 - [ ] Copy buttons work for each provider
 - [ ] Mobile view (resize to mobile) - stacks correctly
