@@ -11,7 +11,7 @@ Claude Code, Cursor, and OpenAI Codex. The site helps developers understand and 
 configuration primitives to get consistent, high-quality assistance from AI tools.
 
 **Key Topics:**
-- 11 AI primitives for configuring agent behavior
+- 10 AI primitives for configuring agent behavior
 - Provider comparison (GitHub Copilot, Claude Code, Cursor, OpenAI Codex)
 - Config file locations and hierarchy
 - Skills Tutorial
@@ -113,55 +113,30 @@ External tools for retrieving facts and taking actions.
 
 These primitives shape how the AI behaves.
 
-### Persistent Instructions
+### Instructions
 
-A durable set of norms that define "good" for your project.
+Persistent rules and preferences at project or user level.
 
-**What it is:** A durable set of norms: tone, coding standards, constraints, safety rules, and "definition of done." These form the behavioral contract that governs all AI interactions.
+**What it is:** Durable norms that define "good" for your work: coding standards, tone, constraints, safety rules, and definition of done. Can be project-scoped (repository-wide) or user-scoped (personal preferences across all projects).
 
 **Use when:**
 - You want consistent behavior across many tasks
-- You want the AI to honor repo conventions without re-learning
+- You want the AI to honor conventions without re-learning
 - You need a "definition of done" for your project
+- You have personal coding standards you always follow
 
-**Prevents:** Stylistic drift and rework from inconsistent outputs
+**Prevents:** Stylistic drift, rework from inconsistent outputs, and repeating preferences in every project
 
-**Combine with:** Prompt Templates, Scope-Specific Instructions
-
-**Provider Implementations:**
-
-| Provider | Implementation | Location | Support |
-|----------|---------------|----------|---------|
-| GitHub Copilot | Repository-level instructions file | .github/copilot-instructions.md | full |
-| Claude Code | Project memory file with @imports | CLAUDE.md | full |
-| Cursor | Project instructions file | .cursor/instructions.md | full |
-| OpenAI Codex | Project AGENTS.md file with hierarchical loading | AGENTS.md | full |
-
----
-
-### Global Instructions
-
-User-level preferences that apply across all projects.
-
-**What it is:** Personal preferences and standards that follow you across all projects. Defines your individual coding style, preferred patterns, and global behaviors.
-
-**Use when:**
-- You want consistent personal preferences across projects
-- You have coding standards you always follow
-- You want global slash commands or agents available everywhere
-
-**Prevents:** Repeating the same preferences in every project
-
-**Combine with:** Persistent Instructions, Custom Agents
+**Combine with:** Path-Scoped Rules, Slash Commands, Custom Agents
 
 **Provider Implementations:**
 
 | Provider | Implementation | Location | Support |
 |----------|---------------|----------|---------|
-| GitHub Copilot | User-level settings in VS Code | VS Code settings.json | full |
-| Claude Code | User-level memory and config | ~/.claude/CLAUDE.md | full |
-| Cursor | User-level settings and preferences | ~/.cursor/settings.json | full |
-| OpenAI Codex | User-level AGENTS.md and config.toml | ~/.codex/AGENTS.md | full |
+| GitHub Copilot | Repository-level and user-level instructions | .github/copilot-instructions.md, VS Code settings.json | full |
+| Claude Code | Project and user-level memory files | CLAUDE.md, ~/.claude/CLAUDE.md | full |
+| Cursor | Project and user-level settings | .cursor/instructions.md, ~/.cursor/settings.json | full |
+| OpenAI Codex | Project and user-level AGENTS.md files | AGENTS.md, ~/.codex/AGENTS.md | full |
 
 ---
 
@@ -178,7 +153,7 @@ Instructions that apply only to specific file paths.
 
 **Prevents:** Accidental cross-domain assumptions (backend rules applied to frontend)
 
-**Combine with:** Persistent Instructions, Custom Agents
+**Combine with:** Instructions, Custom Agents
 
 **Provider Implementations:**
 
@@ -204,7 +179,7 @@ Repeatable prompts invoked via / commands.
 
 **Prevents:** Prompt drift and inconsistent outputs across team members
 
-**Combine with:** Persistent Instructions, Skills
+**Combine with:** Instructions, Skills
 
 **Provider Implementations:**
 
@@ -336,8 +311,7 @@ Support matrix comparing GitHub Copilot, Claude Code, Cursor, and OpenAI Codex:
 | Agent Mode | ✓ Agent mode in Copilot Chat | ✓ Agentic workflows in Claude Code | ✓ Cursor Agent mode for multi-step execution | ✓ Agentic coding with multi-step execution |
 | Skills / Workflows | ✓ Skill modules in skills directory | ✓ Skill modules in .claude directory | ✓ Skill modules as portable, reusable packages | ✓ Skill modules following agentskills.io specification |
 | Tool Integrations (MCP) | ✓ MCP servers and tool calling | ✓ MCP servers and tool calling | ✓ MCP servers with stdio, SSE, and HTTP transports | ✓ MCP servers with stdio and HTTP transports |
-| Persistent Instructions | ✓ Repo instructions file | ✓ Project memory file with @imports | ✓ Project instructions file | ✓ Project AGENTS.md with hierarchical loading |
-| Global Instructions | ✓ User-level settings in VS Code | ✓ User-level memory and config | ✓ User-level settings and preferences | ✓ User-level AGENTS.md and config.toml |
+| Instructions | ✓ Repository-level and user-level instructions | ✓ Project and user-level memory files | ✓ Project and user-level settings | ✓ Project and user-level AGENTS.md files |
 | Path-Scoped Rules | ✓ Instruction files with applyTo glob patterns | ✓ Rule files with globs frontmatter | ✓ Rules with path patterns | ✓ Nested AGENTS.md files with hierarchical merge |
 | Slash Commands | ✓ Prompt files invoked via / commands | ✓ Command files with frontmatter and $ARGUMENTS | ✓ Custom commands with parameters and reusable workflows | ✓ Built-in / commands for session control |
 | Custom Agents | ✓ Agent definition files with roles and tool permissions | ✓ Subagent files with tools restrictions | ✓ Subagents with model selection and context isolation | — Multi-agent via Agents SDK (not built-in) |
@@ -348,15 +322,16 @@ Support matrix comparing GitHub Copilot, Claude Code, Cursor, and OpenAI Codex:
 ### Config File Locations
 
 **GitHub Copilot:**
-- Persistent Instructions: `.github/copilot-instructions.md`
+- Instructions (Project): `.github/copilot-instructions.md`
+- Instructions (User): VS Code settings.json
 - Path-Scoped Rules: `.github/instructions/*.instructions.md`
 - Slash Commands: `.github/prompts/*.prompt.md`
 - Custom Agents: `.github/agents/*.agent.md`
 - Skills: `.github/skills/*/SKILL.md`
 
 **Claude Code:**
-- Persistent Instructions: `CLAUDE.md` (root) or `.claude/CLAUDE.md`
-- Global Instructions: `~/.claude/CLAUDE.md`
+- Instructions (Project): `CLAUDE.md` (root) or `.claude/CLAUDE.md`
+- Instructions (User): `~/.claude/CLAUDE.md`
 - Path-Scoped Rules: `.claude/rules/*.md`
 - Slash Commands: `.claude/commands/*.md`
 - Custom Agents: `.claude/agents/*.md`
@@ -365,8 +340,8 @@ Support matrix comparing GitHub Copilot, Claude Code, Cursor, and OpenAI Codex:
 - MCP Settings: `.claude/settings.json`
 
 **Cursor:**
-- Persistent Instructions: `.cursor/instructions.md`
-- Global Settings: `~/.cursor/settings.json`
+- Instructions (Project): `.cursor/instructions.md`
+- Instructions (User): `~/.cursor/settings.json`
 - Path-Scoped Rules: `.cursor/rules/*.md`
 - Slash Commands: `.cursor/commands/*.md`
 - Custom Agents: `.cursor/agents/*.md`
@@ -375,8 +350,8 @@ Support matrix comparing GitHub Copilot, Claude Code, Cursor, and OpenAI Codex:
 - Lifecycle Hooks: `.cursor/hooks.json`
 
 **OpenAI Codex:**
-- Persistent Instructions: `AGENTS.md` (project root)
-- Global Instructions: `~/.codex/AGENTS.md`
+- Instructions (Project): `AGENTS.md` (project root)
+- Instructions (User): `~/.codex/AGENTS.md`
 - Path-Scoped Rules: Nested `AGENTS.md` files in subdirectories
 - Global Config: `~/.codex/config.toml`
 - Skills: `.codex/skills/*/SKILL.md`
@@ -1097,9 +1072,9 @@ Before asking any questions, fetch the complete primitive documentation:
 
 **Read:** https://agentconfig.org/llms-full.txt
 
-This file contains all 11 AI primitives organized into three categories:
+This file contains all 10 AI primitives organized into three categories:
 - **Capability (Execution):** Agent Mode, Skills, Tool Integrations (MCP)
-- **Customization (Instructions):** Persistent Instructions, Global Instructions, Path-Scoped Rules, Slash Commands
+- **Customization (Instructions):** Instructions, Path-Scoped Rules, Slash Commands
 - **Control (Safety):** Custom Agents, Permissions & Guardrails, Lifecycle Hooks, Verification/Evals
 
 ## Step 2: Understand the User's Context
@@ -1132,14 +1107,14 @@ Based on their answers, recommend **3-5 primitives** in priority order.
 ### Common Workflow Patterns → Primitive Recommendations
 
 **Pain Point: "Inconsistent code style across AI-generated code"**
-→ Start with: Persistent Instructions
+→ Start with: Instructions
 → Next: Path-Scoped Rules (if monorepo/multi-language)
 → Combine with: Verification/Evals (to catch violations)
 
 **Pain Point: "Repeating the same prompts over and over"**
 → Start with: Slash Commands
 → Next: Skills (for multi-step procedures)
-→ Combine with: Persistent Instructions (for consistent outputs)
+→ Combine with: Instructions (for consistent outputs)
 
 **Pain Point: "Need AI to work until task is complete, not just give suggestions"**
 → Start with: Agent Mode

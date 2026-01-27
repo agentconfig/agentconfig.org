@@ -1,7 +1,7 @@
 # agentconfig.org
 
 > A reference site for configuring AI coding assistants like GitHub Copilot, Claude Code, Cursor, and OpenAI Codex.
-> Covers 11 AI primitives, provider comparison, config file locations, and tutorials for
+> Covers 10 AI primitives, provider comparison, config file locations, and tutorials for
 > skills, agent definitions, and MCP tool integrations.
 
 This file provides a table of contents. For complete content, see /llms-full.txt.
