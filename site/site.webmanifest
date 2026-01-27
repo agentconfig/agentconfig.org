@@ -1,7 +1,20 @@
 {
-  "name": "MyWebSite",
-  "short_name": "MySite",
+  "name": "agentconfig.org - Elevate AI Coding Assistants",
+  "short_name": "agentconfig",
+  "description": "Learn how to configure GitHub Copilot and Claude Code for maximum effectiveness.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "theme_color": "#1a1a2e",
+  "background_color": "#f5f3ef",
+  "categories": ["productivity"],
   "icons": [
+    {
+      "src": "/favicon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
     {
       "src": "/web-app-manifest-192x192.png",
       "sizes": "192x192",
@@ -15,7 +28,16 @@
       "purpose": "maskable"
     }
   ],
-  "theme_color": "#ffffff",
-  "background_color": "#ffffff",
-  "display": "standalone"
+  "screenshots": [
+    {
+      "src": "/favicon-96x96.png",
+      "sizes": "96x96",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/web-app-manifest-192x192.png",
+      "sizes": "192x192",
+      "form_factor": "wide"
+    }
+  ]
 }
