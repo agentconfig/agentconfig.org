@@ -4,6 +4,8 @@ A reference guide for configuring AI coding assistants. Learn where config files
 
 **Live site:** [agentconfig.org](https://agentconfig.org)
 
+**✨ Works offline!** After your first visit, the entire site is cached locally. You can browse all pages, documentation, and guides even without an internet connection.
+
 ## What's Here
 
 - **AI Primitives** — The 11 core configuration primitives (instructions, skills, agents, commands, etc.) that power AI coding assistants
@@ -73,9 +75,10 @@ bun run build
 ## Tech Stack
 
 - Preact + TypeScript
-- Vite
+- Vite with vite-plugin-pwa (Progressive Web App support)
 - Tailwind CSS v4
 - Playwright for E2E tests
+- Service worker with Workbox for offline caching
 
 ## Contributing
 
