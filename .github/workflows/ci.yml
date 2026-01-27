@@ -32,7 +32,7 @@ jobs:
 
       # Cache Bun dependencies to speed up CI
       - name: Cache Bun dependencies
-        uses: actions/cache@7d05b273cc0e2a2c47a2178ed51bac9e9e3a433c # v4.2.3
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
         with:
           path: ~/.bun/install/cache
           key: bun-${{ runner.os }}-${{ hashFiles('site/bun.lock') }}
@@ -47,7 +47,7 @@ jobs:
       # Cache Playwright browsers to speed up CI
       # Key based on package.json Playwright version for reliable cache invalidation
       - name: Cache Playwright browsers
-        uses: actions/cache@7d05b273cc0e2a2c47a2178ed51bac9e9e3a433c # v4.2.3
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
         id: playwright-cache
         with:
           path: ~/.cache/ms-playwright
