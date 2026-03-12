@@ -33,6 +33,12 @@ export const furtherReadingLinks: readonly FurtherReadingLink[] = [
     description: 'Official documentation for CLAUDE.md, rules, imports, and memory hierarchy.',
   },
   {
+    title: 'Agent Package Manager (APM)',
+    url: 'https://microsoft.github.io/apm/',
+    source: 'Microsoft',
+    description: 'Portable `apm.yml` manifests for installing instructions, prompts, agents, skills, hooks, plugins, and MCP servers.',
+  },
+  {
     title: 'Copilot Customization',
     url: 'https://docs.github.com/en/copilot/customizing-copilot/adding-repository-custom-instructions-for-github-copilot',
     source: 'GitHub Docs',

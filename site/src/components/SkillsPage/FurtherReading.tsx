@@ -20,6 +20,11 @@ const resources: readonly ResourceLink[] = [
     description: 'Detailed specification for the SKILL.md format, including frontmatter constraints.',
   },
   {
+    title: 'Microsoft APM',
+    url: 'https://microsoft.github.io/apm/',
+    description: 'An open-source manifest and dependency manager for packaging skills with other agent primitives.',
+  },
+  {
     title: 'VS Code Skills Documentation',
     url: 'https://code.visualstudio.com/docs/copilot/customization/agent-skills',
     description: 'Official documentation for using skills with GitHub Copilot in VS Code.',

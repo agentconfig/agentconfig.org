@@ -8,6 +8,11 @@ export interface HeroProps {
 
 const navItems = [
   {
+    href: '#apm',
+    label: 'APM',
+    className: 'bg-sky-100 text-sky-800 dark:bg-sky-900/30 dark:text-sky-300',
+  },
+  {
     href: '#primitives',
     label: 'Primitives',
     className: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',

@@ -13,9 +13,10 @@ test.describe('App', () => {
     await expect(page.getByRole('heading', { name: 'Elevate AI Assistants' })).toBeVisible()
   })
 
-  test('should display all three section placeholders', async ({ page }) => {
+  test('should display the key homepage sections', async ({ page }) => {
     await page.goto('/')
 
+    await expect(page.getByRole('heading', { name: 'APM Spotlight' })).toBeVisible()
     await expect(page.getByRole('heading', { name: 'AI Primitives', exact: true })).toBeVisible()
     await expect(page.getByRole('heading', { name: 'Interactive File Tree' })).toBeVisible()
     await expect(page.getByRole('heading', { name: 'Provider Comparison' })).toBeVisible()

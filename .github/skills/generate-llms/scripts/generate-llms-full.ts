@@ -79,7 +79,7 @@ function generateLlmsTxt(pages: readonly PageMeta[]): string {
 
 > A reference site for configuring AI coding assistants like GitHub Copilot, Claude Code, Cursor, and OpenAI Codex.
 > Covers 11 AI primitives, provider comparison, config file locations, and tutorials for
-> skills, agent definitions, and MCP tool integrations.
+> skills, agent definitions, MCP tool integrations, and emerging packaging layers like APM.
 
 This file provides a table of contents. For complete content, see /llms-full.txt.
 
@@ -96,6 +96,7 @@ ${docsList}
 - [agentskills.io specification](https://agentskills.io/specification): The skills format specification
 - [AGENTS.md specification](https://agents.md): Open format for guiding coding agents
 - [MCP specification](https://modelcontextprotocol.io/specification/latest): Model Context Protocol specification
+- [Microsoft APM](https://microsoft.github.io/apm/): Open-source manifest and dependency manager for agent configuration
 - [Claude Code Memory docs](https://docs.anthropic.com/en/docs/claude-code/memory): Official CLAUDE.md documentation
 - [Copilot customization docs](https://docs.github.com/en/copilot/customizing-copilot): GitHub Copilot instructions documentation
 `
@@ -434,7 +435,7 @@ function generateLlmsFullTxt(data: Awaited<ReturnType<typeof loadData>>): string
 
 > This file contains the complete content of agentconfig.org for AI agents.
 > It includes all AI primitives, provider comparisons, config file locations,
-> and tutorials for skills, agent definitions, and MCP tool integrations.
+> and tutorials for skills, agent definitions, MCP tool integrations, and the APM packaging layer.
 
 ## Site Overview
 

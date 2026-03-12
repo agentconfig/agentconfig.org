@@ -1,4 +1,5 @@
 import type { VNode } from 'preact'
+import { ApmSpotlight } from '@/components/ApmSpotlight'
 import { PageLayout } from '@/layouts'
 import { Hero } from '@/components/Hero'
 import { Section } from '@/components/Section'
@@ -10,6 +11,15 @@ export function App(): VNode {
   return (
     <PageLayout>
       <Hero />
+
+      <Section
+        id="apm"
+        title="APM Spotlight"
+        description="Agent Package Manager (APM) is an emerging manifest layer for shipping skills, instructions, prompts, agents, hooks, plugins, and MCP servers together."
+        className="bg-muted/20"
+      >
+        <ApmSpotlight />
+      </Section>
 
       <Section
         id="primitives"

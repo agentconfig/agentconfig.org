@@ -100,7 +100,7 @@ test.describe('File Tree', () => {
     await instructionsFile.click()
 
     // Copy button should be visible
-    await expect(page.getByRole('button', { name: /Copy/i })).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Copy example to clipboard' })).toBeVisible()
   })
 
   test('should display badges on files with details', async ({ page }) => {

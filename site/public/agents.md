@@ -322,6 +322,7 @@ This is the REST API package built with Express + TypeScript.
 
 - [AGENTS.md Specification](https://agents.md): The open format for guiding coding agents, used by 60k+ open-source projects.
 - [Claude Code Memory](https://docs.anthropic.com/en/docs/claude-code/memory): Official documentation for CLAUDE.md, rules, imports, and memory hierarchy.
+- [Agent Package Manager (APM)](https://microsoft.github.io/apm/): Portable `apm.yml` manifests for installing instructions, prompts, agents, skills, hooks, plugins, and MCP servers.
 - [Copilot Customization](https://docs.github.com/en/copilot/customizing-copilot/adding-repository-custom-instructions-for-github-copilot): How to configure copilot-instructions.md, path-specific rules, and agent files.
 - [How to write a great agents.md](https://github.blog/ai-and-ml/github-copilot/how-to-write-a-great-agents-md-lessons-from-over-2500-repositories/): Lessons from analyzing 2,500+ repositories on effective agent configuration.
 - [OpenAI AGENTS.md Repository](https://github.com/agentsmd/agents.md): The official specification and tools for the AGENTS.md open format.

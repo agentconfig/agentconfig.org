@@ -362,4 +362,5 @@ claude mcp add --transport http sentry https://mcp.sentry.dev/mcp
 - [VS Code MCP Servers](https://code.visualstudio.com/docs/copilot/chat/mcp-servers): How to configure and use MCP servers with GitHub Copilot in VS Code.
 - [MCP Specification](https://modelcontextprotocol.io/specification/latest): The complete technical specification for the Model Context Protocol.
 - [Official MCP Servers](https://github.com/modelcontextprotocol/servers): Repository of official and community-contributed MCP server implementations.
+- [Agent Package Manager (APM)](https://microsoft.github.io/apm/): Shows how `apm.yml` can package MCP servers alongside other agent configuration primitives.
 - [GitHub MCP Server Registry](https://github.com/mcp): Browse and discover MCP servers from the official GitHub registry.

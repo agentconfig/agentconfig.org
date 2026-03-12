@@ -2,7 +2,7 @@
 
 > This file contains the complete content of agentconfig.org for AI agents.
 > It includes all AI primitives, provider comparisons, config file locations,
-> and tutorials for skills, agent definitions, and MCP tool integrations.
+> and tutorials for skills, agent definitions, MCP tool integrations, and the APM packaging layer.
 
 ## Site Overview
 
@@ -475,6 +475,28 @@ For writing style guidelines, see the voice-and-tone skill at:
 - Reuse common patterns (voice, commit style, testing)
 - Build sophisticated workflows from simple pieces
 - Update one skill and all dependent workflows improve
+
+---
+
+### Packaging and Distribution
+
+Where APM fits relative to skills and other primitives.
+
+Skills define behavior. APM packages that behavior so a team can install it consistently.
+
+If `SKILL.md` is the workflow itself, then `apm.yml` is the manifest that can distribute that workflow alongside instructions, prompts, agents, hooks, plugins, and MCP servers.
+
+**Why this matters:**
+- Avoids copy-pasting shared agent setup across repositories
+- Gives teams versioned, reviewable agent dependencies
+- Lets one manifest install multiple primitives together
+
+**Useful mental model:**
+- `SKILL.md` = how a workflow behaves
+- `AGENTS.md` / `CLAUDE.md` = durable instructions
+- `apm.yml` = dependency manifest that assembles those pieces
+
+The current proposal is [Microsoft APM](https://microsoft.github.io/apm/). It is worth tracking because it sits above the files this site documents rather than replacing them.
 
 ---
 
@@ -1486,6 +1508,7 @@ This is the REST API package built with Express + TypeScript.
 
 - [AGENTS.md Specification](https://agents.md): The open format for guiding coding agents, used by 60k+ open-source projects.
 - [Claude Code Memory](https://docs.anthropic.com/en/docs/claude-code/memory): Official documentation for CLAUDE.md, rules, imports, and memory hierarchy.
+- [Agent Package Manager (APM)](https://microsoft.github.io/apm/): Portable `apm.yml` manifests for installing instructions, prompts, agents, skills, hooks, plugins, and MCP servers.
 - [Copilot Customization](https://docs.github.com/en/copilot/customizing-copilot/adding-repository-custom-instructions-for-github-copilot): How to configure copilot-instructions.md, path-specific rules, and agent files.
 - [How to write a great agents.md](https://github.blog/ai-and-ml/github-copilot/how-to-write-a-great-agents-md-lessons-from-over-2500-repositories/): Lessons from analyzing 2,500+ repositories on effective agent configuration.
 - [OpenAI AGENTS.md Repository](https://github.com/agentsmd/agents.md): The official specification and tools for the AGENTS.md open format.
@@ -1858,4 +1881,5 @@ claude mcp add --transport http sentry https://mcp.sentry.dev/mcp
 - [VS Code MCP Servers](https://code.visualstudio.com/docs/copilot/chat/mcp-servers): How to configure and use MCP servers with GitHub Copilot in VS Code.
 - [MCP Specification](https://modelcontextprotocol.io/specification/latest): The complete technical specification for the Model Context Protocol.
 - [Official MCP Servers](https://github.com/modelcontextprotocol/servers): Repository of official and community-contributed MCP server implementations.
+- [Agent Package Manager (APM)](https://microsoft.github.io/apm/): Shows how `apm.yml` can package MCP servers alongside other agent configuration primitives.
 - [GitHub MCP Server Registry](https://github.com/mcp): Browse and discover MCP servers from the official GitHub registry.

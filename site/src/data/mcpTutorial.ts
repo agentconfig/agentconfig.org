@@ -51,6 +51,12 @@ export const furtherReadingLinks: readonly FurtherReadingLink[] = [
     description: 'Repository of official and community-contributed MCP server implementations.',
   },
   {
+    title: 'Agent Package Manager (APM)',
+    url: 'https://microsoft.github.io/apm/',
+    source: 'Microsoft',
+    description: 'Shows how `apm.yml` can package MCP servers alongside other agent configuration primitives.',
+  },
+  {
     title: 'GitHub MCP Server Registry',
     url: 'https://github.com/mcp',
     source: 'GitHub',

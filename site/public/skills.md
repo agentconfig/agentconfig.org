@@ -95,6 +95,28 @@ For writing style guidelines, see the voice-and-tone skill at:
 
 ---
 
+### Packaging and Distribution
+
+Where APM fits relative to skills and other primitives.
+
+Skills define behavior. APM packages that behavior so a team can install it consistently.
+
+If `SKILL.md` is the workflow itself, then `apm.yml` is the manifest that can distribute that workflow alongside instructions, prompts, agents, hooks, plugins, and MCP servers.
+
+**Why this matters:**
+- Avoids copy-pasting shared agent setup across repositories
+- Gives teams versioned, reviewable agent dependencies
+- Lets one manifest install multiple primitives together
+
+**Useful mental model:**
+- `SKILL.md` = how a workflow behaves
+- `AGENTS.md` / `CLAUDE.md` = durable instructions
+- `apm.yml` = dependency manifest that assembles those pieces
+
+The current proposal is [Microsoft APM](https://microsoft.github.io/apm/). It is worth tracking because it sits above the files this site documents rather than replacing them.
+
+---
+
 ### When to Use What
 
 Scripts vs references vs assets—a decision tree.
