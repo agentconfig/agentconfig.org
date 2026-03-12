@@ -23,6 +23,11 @@ test.describe('Agents Page', () => {
     await expect(page.getByRole('link', { name: /Six Core Sections/ })).toBeVisible()
   })
 
+  test('should recommend AGENTS.md as the shared baseline when supported', async ({ page }) => {
+    await expect(page.getByText(/start with AGENTS\.md as your baseline/i)).toBeVisible()
+    await expect(page.getByText(/use it as the default team-wide definition file/i)).toBeVisible()
+  })
+
   test('should have all 9 tutorial sections', async ({ page }) => {
     await expect(page.locator('#what-are-definitions')).toBeVisible()
     await expect(page.locator('#first-definition')).toBeVisible()
