@@ -24,8 +24,7 @@ test.describe('Agents Page', () => {
   })
 
   test('should recommend AGENTS.md as the shared baseline when supported', async ({ page }) => {
-    await expect(page.getByText(/start with AGENTS\.md as your baseline/i)).toBeVisible()
-    await expect(page.getByText(/use it as the default team-wide definition file/i)).toBeVisible()
+    await expect(page.getByText(/start there for shared team instructions/i)).toBeVisible()
   })
 
   test('should have all 9 tutorial sections', async ({ page }) => {

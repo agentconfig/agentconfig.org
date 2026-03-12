@@ -23,11 +23,6 @@ and monorepo strategies.
 Agent definitions are markdown files that teach AI coding assistants about your project.
 They provide context about how to build, what conventions to follow, and where things live.
 
-The most popular format is AGENTS.md, an open standard used by over 60,000 projects and
-supported by Claude Code, GitHub Copilot, Cursor, Aider, and others. When a tool supports it,
-start with AGENTS.md as your baseline and add provider-specific files only for features unique
-to that tool.
-
 **Why Markdown?**
 - Human readable: Team members can review and update easily
 - Version controlled: Instructions evolve with your codebase
@@ -111,12 +106,6 @@ Analysis of 2,500+ repositories shows effective agent definitions cover:
 ```
 
 ### 4. Provider-Specific Formats
-
-Start with the shared baseline, then layer in provider-specific features only where needed.
-
-For assistants that support AGENTS.md, use it as the default team-wide definition file. Add
-CLAUDE.md, .github/copilot-instructions.md, or other provider files when you need capabilities
-that AGENTS.md does not cover on its own.
 
 **AGENTS.md** (Open standard, 60k+ projects):
 ```markdown

@@ -72,9 +72,8 @@ export function AgentsPage(): VNode {
 
                 <p>
                   The most popular format is <code>AGENTS.md</code>, an open standard used by over 60,000
-                  projects and supported by Claude Code, GitHub Copilot, Cursor, Aider, and others. When a
-                  tool supports it, start with <code>AGENTS.md</code> as your baseline and add provider-specific
-                  files only for features unique to that tool.
+                  projects and supported by Claude Code, GitHub Copilot, Cursor, Aider, and others. Individual
+                  providers also have their own formats with additional features.
                 </p>
               </section>
 
@@ -168,13 +167,7 @@ export function AgentsPage(): VNode {
               <section id="provider-formats" className="scroll-mt-24 mb-16">
                 <h2 className="text-3xl font-bold mb-4">4. Provider-Specific Formats</h2>
                 <p className="text-lg text-muted-foreground mb-6">
-                  Start with the shared baseline, then layer in provider-specific features only where needed.
-                </p>
-
-                <p>
-                  For assistants that support <code>AGENTS.md</code>, use it as the default team-wide definition
-                  file. Add <code>CLAUDE.md</code>, <code>.github/copilot-instructions.md</code>, or other
-                  provider files when you need capabilities that <code>AGENTS.md</code> does not cover on its own.
+                  Each AI provider has their own file format with unique features. Here's how they compare.
                 </p>
 
                 <CodeTabs
