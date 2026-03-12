@@ -1,5 +1,6 @@
 import type { VNode } from 'preact'
 import type { JSX } from 'preact'
+import { ArrowRight } from 'lucide-preact'
 import { cn } from '@/lib/utils'
 
 export interface HeroProps {
@@ -7,11 +8,6 @@ export interface HeroProps {
 }
 
 const navItems = [
-  {
-    href: '#apm',
-    label: 'APM',
-    className: 'bg-sky-100 text-sky-800 dark:bg-sky-900/30 dark:text-sky-300',
-  },
   {
     href: '#primitives',
     label: 'Primitives',
@@ -28,6 +24,8 @@ const navItems = [
     className: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
   },
 ] as const
+
+const inlineCodeClass = 'rounded bg-background px-1.5 py-0.5 font-mono text-[0.95em] text-foreground'
 
 export function Hero({ className }: HeroProps): VNode {
   const handleClick = (event: JSX.TargetedMouseEvent<HTMLAnchorElement>): void => {
@@ -65,6 +63,24 @@ export function Hero({ className }: HeroProps): VNode {
               {item.label}
             </a>
           ))}
+        </div>
+
+        <div className="mt-6 max-w-2xl rounded-2xl border border-border bg-background/80 p-4 shadow-sm backdrop-blur-sm md:p-5">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-sky-700 dark:text-sky-300">
+            Emerging ecosystem
+          </p>
+          <p className="mt-3 text-sm leading-7 text-muted-foreground md:text-base">
+            APM packages files like <code className={inlineCodeClass}>SKILL.md</code>,{' '}
+            <code className={inlineCodeClass}>AGENTS.md</code>, prompts, hooks, and MCP
+            servers into a portable manifest your team can version and share.
+          </p>
+          <a
+            href="/apm/"
+            className="mt-4 inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-sky-400/50 hover:text-sky-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:hover:text-sky-300"
+          >
+            Explore APM
+            <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          </a>
         </div>
       </div>
     </header>

@@ -32,13 +32,22 @@ export interface PageMeta {
  */
 export const pages: readonly PageMeta[] = [
   {
+    slug: 'apm',
+    title: 'APM Guide',
+    description: 'Agent Package Manager as a packaging layer for skills, instructions, prompts, agents, hooks, plugins, and MCP servers',
+    features: 'APM mental model, manifest examples, and primitive packaging guidance',
+    dataFile: 'apmTutorial.ts',
+    mdFile: 'apm.md',
+    partNumber: 3,
+  },
+  {
     slug: 'skills',
     title: 'Skills Tutorial',
     description: 'How to create agent skills following the agentskills.io specification',
     features: 'Skills tutorial with 5 example skills',
     dataFile: 'skillsTutorial.ts',
     mdFile: 'skills.md',
-    partNumber: 3,
+    partNumber: 4,
   },
   {
     slug: 'agents',
@@ -47,7 +56,7 @@ export const pages: readonly PageMeta[] = [
     features: 'Agents tutorial with code samples',
     dataFile: 'agentsTutorial.ts',
     mdFile: 'agents.md',
-    partNumber: 4,
+    partNumber: 5,
   },
   {
     slug: 'mcp',
@@ -56,6 +65,6 @@ export const pages: readonly PageMeta[] = [
     features: 'MCP tutorial with configuration examples',
     dataFile: 'mcpTutorial.ts',
     mdFile: 'mcp.md',
-    partNumber: 5,
+    partNumber: 6,
   },
 ] as const

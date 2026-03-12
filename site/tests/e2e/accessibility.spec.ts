@@ -29,6 +29,15 @@ test.describe('Accessibility', () => {
     expect(results.violations).toEqual([])
   })
 
+  test('apm page should have no accessibility violations', async ({ page }) => {
+    await page.goto('/apm/')
+    await expect(page.getByRole('heading', { name: 'Agent Package Manager' })).toBeVisible()
+
+    const results = await new AxeBuilder({ page }).analyze()
+
+    expect(results.violations).toEqual([])
+  })
+
   test('mcp page should have no accessibility violations', async ({ page }) => {
     await page.goto('/mcp/')
     await expect(page.getByRole('heading', { name: 'MCP Tool Integrations' })).toBeVisible()

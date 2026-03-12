@@ -15,8 +15,17 @@ test.describe('Navigation', () => {
     test('should display all navigation links', async ({ page }) => {
       const nav = page.getByLabel('Main navigation')
       await expect(nav.getByRole('link', { name: 'Overview' })).toBeVisible()
+      await expect(nav.getByRole('link', { name: 'APM' })).toBeVisible()
       await expect(nav.getByRole('link', { name: 'Skills' })).toBeVisible()
       await expect(nav.getByRole('link', { name: 'Agents' })).toBeVisible()
+    })
+
+    test('should navigate to APM page', async ({ page }) => {
+      const navLink = page.getByLabel('Main navigation').getByRole('link', { name: 'APM' })
+      await navLink.click()
+
+      await expect(page).toHaveURL(/\/apm\/?/)
+      await expect(page.getByRole('heading', { name: 'Agent Package Manager' })).toBeVisible()
     })
 
     test('should navigate to Skills page', async ({ page }) => {
@@ -61,6 +70,7 @@ test.describe('Navigation', () => {
       const menuButton = page.getByRole('button', { name: 'Open menu' })
       await menuButton.click()
 
+      await expect(page.getByRole('menuitem', { name: 'APM' })).toBeVisible()
       await expect(page.getByRole('menuitem', { name: 'Skills' })).toBeVisible()
       await expect(page.getByRole('menuitem', { name: 'Agents' })).toBeVisible()
       await expect(page.getByRole('button', { name: 'Close menu' })).toBeVisible()

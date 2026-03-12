@@ -16,9 +16,9 @@ test.describe('App', () => {
   test('should display the key homepage sections', async ({ page }) => {
     await page.goto('/')
 
-    await expect(page.getByRole('heading', { name: 'APM Spotlight' })).toBeVisible()
     await expect(page.getByRole('heading', { name: 'AI Primitives', exact: true })).toBeVisible()
     await expect(page.getByRole('heading', { name: 'Interactive File Tree' })).toBeVisible()
     await expect(page.getByRole('heading', { name: 'Provider Comparison' })).toBeVisible()
+    await expect(page.getByRole('link', { name: 'Explore APM' })).toBeVisible()
   })
 })

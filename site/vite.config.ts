@@ -17,6 +17,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: path.resolve(__dirname, 'index.html'),
+        apm: path.resolve(__dirname, 'apm/index.html'),
         skills: path.resolve(__dirname, 'skills/index.html'),
         agents: path.resolve(__dirname, 'agents/index.html'),
         mcp: path.resolve(__dirname, 'mcp/index.html'),

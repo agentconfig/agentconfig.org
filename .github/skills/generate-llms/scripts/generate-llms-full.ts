@@ -35,6 +35,7 @@ interface PageMeta {
 async function loadData() {
   const primitives = await import(join(dataDir, 'primitives.ts'))
   const comparison = await import(join(dataDir, 'comparison.ts'))
+  const apmTutorial = await import(join(dataDir, 'apmTutorial.ts'))
   const skillsTutorial = await import(join(dataDir, 'skillsTutorial.ts'))
   const skillExamples = await import(join(dataDir, 'skillExamples.ts'))
   const agentsTutorial = await import(join(dataDir, 'agentsTutorial.ts'))
@@ -48,6 +49,10 @@ async function loadData() {
     primitives: primitives.primitives,
     categories: primitives.categories,
     comparisonData: comparison.comparisonData,
+    // APM tutorial
+    apmTocItems: apmTutorial.tocItems,
+    apmCodeSamples: apmTutorial.codeSamples,
+    apmFurtherReadingLinks: apmTutorial.furtherReadingLinks,
     // Skills tutorial
     tutorialSections: skillsTutorial.tutorialSections,
     skillExamples: skillExamples.skillExamples,
@@ -79,7 +84,7 @@ function generateLlmsTxt(pages: readonly PageMeta[]): string {
 
 > A reference site for configuring AI coding assistants like GitHub Copilot, Claude Code, Cursor, and OpenAI Codex.
 > Covers 11 AI primitives, provider comparison, config file locations, and tutorials for
-> skills, agent definitions, MCP tool integrations, and emerging packaging layers like APM.
+> APM, skills, agent definitions, and MCP tool integrations.
 
 This file provides a table of contents. For complete content, see /llms-full.txt.
 
@@ -159,6 +164,82 @@ ${example.keyTakeaways.map(t => `- ${t}`).join('\n')}
 
 `
   }
+
+  return content
+}
+
+function generateApmMd(data: Awaited<ReturnType<typeof loadData>>): string {
+  const { apmTocItems, apmCodeSamples, apmFurtherReadingLinks } = data
+
+  let content = `# Agent Package Manager
+
+Guide to understanding Agent Package Manager (APM) as a packaging and distribution
+layer for existing agent primitives such as skills, instructions, prompts, agents,
+hooks, plugins, and MCP servers.
+
+## Tutorial Sections
+
+${apmTocItems.map((item: any) => `- ${item.label}${item.level ? ` (${item.level})` : ''}`).join('\n')}
+
+## Section Details
+
+### 1. What is APM?
+
+APM stands for Agent Package Manager. It introduces a manifest-driven way to install
+and share collections of agent configuration assets.
+
+It sits above the files this site already documents. You still have skills,
+instructions, prompts, agents, hooks, plugins, and MCP servers. APM gives those
+pieces a package-manager-style distribution mechanism.
+
+### 2. Why It Matters
+
+- Versioning shared agent setups explicitly
+- Keeping multiple repositories aligned on one setup
+- Packaging multiple primitives together in one installable manifest
+- Making agent dependency changes visible in source control
+
+### 3. How It Relates to Primitives
+
+APM is not another primitive like skills or MCP. It is a layer for packaging those
+primitives together.
+
+- \`SKILL.md\` defines a workflow
+- \`AGENTS.md\` or provider instruction files define guidance
+- \`mcp.json\` or equivalent connects tools
+- \`apm.yml\` can assemble and distribute those files as one package
+
+### 4. Manifest Mental Model
+
+\`apm.yml\` behaves like a dependency manifest:
+
+\`\`\`yaml
+${apmCodeSamples.manifestExample}
+\`\`\`
+
+Packaging view:
+
+\`\`\`
+${apmCodeSamples.packagingMatrix}
+\`\`\`
+
+### 5. What It Packages
+
+- Skills
+- Instructions
+- Prompts and agents
+- Hooks, plugins, and MCP servers
+
+### 6. When to Use APM
+
+- Use raw primitives when experimenting locally or learning the building blocks
+- Use APM when multiple teams or repositories need the same reproducible setup
+- Use both when you author the primitive files directly but want a clean distribution layer
+
+## Further Reading
+
+${apmFurtherReadingLinks.map((link: any) => `- [${link.title}](${link.url}): ${link.description}`).join('\n')}
+`
 
   return content
 }
@@ -435,7 +516,7 @@ function generateLlmsFullTxt(data: Awaited<ReturnType<typeof loadData>>): string
 
 > This file contains the complete content of agentconfig.org for AI agents.
 > It includes all AI primitives, provider comparisons, config file locations,
-> and tutorials for skills, agent definitions, MCP tool integrations, and the APM packaging layer.
+> and tutorials for APM, skills, agent definitions, and MCP tool integrations.
 
 ## Site Overview
 
@@ -556,7 +637,16 @@ Support matrix comparing GitHub Copilot, Claude Code, Cursor, and OpenAI Codex:
 
 ---
 
-# Part 3: Skills Tutorial
+# Part 3: APM Guide
+
+`
+
+  content += generateApmMd(data).replace(/^# Agent Package Manager\n\n[^\n]+\n[^\n]+\n[^\n]+\n\n/, '')
+
+  content += `
+---
+
+# Part 4: Skills Tutorial
 
 `
 
@@ -565,7 +655,7 @@ Support matrix comparing GitHub Copilot, Claude Code, Cursor, and OpenAI Codex:
   content += `
 ---
 
-# Part 4: Agent Definitions Tutorial
+# Part 5: Agent Definitions Tutorial
 
 `
 
@@ -574,7 +664,7 @@ Support matrix comparing GitHub Copilot, Claude Code, Cursor, and OpenAI Codex:
   content += `
 ---
 
-# Part 5: MCP Tool Integrations Tutorial
+# Part 6: MCP Tool Integrations Tutorial
 
 `
 
@@ -627,7 +717,11 @@ async function main() {
   console.log('Generating skills.md...')
   const skillsMd = generateSkillsMd(data)
   writeFileSync(join(publicDir, 'skills.md'), skillsMd)
-  
+
+  console.log('Generating apm.md...')
+  const apmMd = generateApmMd(data)
+  writeFileSync(join(publicDir, 'apm.md'), apmMd)
+
   console.log('Generating agents.md...')
   const agentsMd = generateAgentsMd(data)
   writeFileSync(join(publicDir, 'agents.md'), agentsMd)

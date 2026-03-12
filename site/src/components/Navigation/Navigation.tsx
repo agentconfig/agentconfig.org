@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils'
 // Page-based navigation items
 const navItems = [
   { href: '/', label: 'Overview' },
+  { href: '/apm/', label: 'APM' },
   { href: '/skills/', label: 'Skills' },
   { href: '/agents/', label: 'Agents' },
   { href: '/mcp/', label: 'MCP' },
