@@ -240,9 +240,9 @@ export function AgentsPage(): VNode {
                 <div className="my-8 p-6 bg-blue-50 dark:bg-blue-950/30 rounded-lg border border-blue-200 dark:border-blue-800">
                   <h3 className="text-lg font-semibold mb-3">💡 Recommendation</h3>
                   <p>
-                    Use <code>AGENTS.md</code> for team-wide instructions that should work across tools.
-                    Add provider-specific files only when you need their unique features (like path rules
-                    or file imports).
+                    If your assistants support <code>AGENTS.md</code>, start there for shared team instructions.
+                    Add provider-specific files only when you need unique capabilities like Claude imports,
+                    Copilot agents, or dedicated path-scoped rule formats.
                   </p>
                 </div>
               </section>

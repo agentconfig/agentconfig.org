@@ -168,6 +168,10 @@ When writing tests:
 | Agent personas | ✗ | ✗ | ✓ .agent.md |
 | Cross-tool support | Wide | Claude only | Copilot only |
 
+Recommendation: If your assistants support AGENTS.md, start there for shared team
+instructions. Add provider-specific files only when you need unique capabilities like Claude
+imports, Copilot agents, or dedicated path-scoped rule formats.
+
 ### 5. Path-Scoped Rules
 
 Claude (.claude/rules/api.md):
