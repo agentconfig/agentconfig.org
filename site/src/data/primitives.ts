@@ -411,9 +411,9 @@ export const primitives: Primitive[] = [
     implementations: [
       {
         provider: 'copilot',
-        implementation: 'Not available',
-        location: 'N/A',
-        support: 'diy',
+        implementation: 'Session, prompt, and pre-tool hooks via JSON config files',
+        location: '.github/hooks/*.json',
+        support: 'full',
       },
       {
         provider: 'claude',

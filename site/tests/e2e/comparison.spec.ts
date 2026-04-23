@@ -41,18 +41,18 @@ test.describe('Provider Comparison', () => {
     // Check for Full Support badges
     await expect(table.getByText('Full Support').first()).toBeVisible()
     // 11 primitives, 4 providers: Full support counts vary by primitive
-    // Copilot: 10 full, 1 none (hooks)
+    // Copilot: 11 full
     // Claude: 11 full
     // Cursor: 11 full
     // Codex: 9 full, 1 partial (hooks), 1 none (custom-agents)
     const fullSupportBadges = table.getByText('Full Support')
-    await expect(fullSupportBadges).toHaveCount(41) // 10 + 11 + 11 + 9 = 41
+    await expect(fullSupportBadges).toHaveCount(42) // 11 + 11 + 11 + 9 = 42
     // Codex has partial support for lifecycle hooks
     const partialBadges = table.getByText('Partial')
     await expect(partialBadges).toHaveCount(1)
-    // Copilot hooks + Codex custom-agents = 2 "Not Available"
+    // Codex custom-agents = 1 "Not Available"
     const notAvailableBadges = table.getByText('Not Available')
-    await expect(notAvailableBadges).toHaveCount(2)
+    await expect(notAvailableBadges).toHaveCount(1)
   })
 
   test('should expand row on click to show details', async ({ page }) => {
