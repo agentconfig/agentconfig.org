@@ -371,6 +371,50 @@ Review this PR for:
             },
           ],
         },
+        {
+          id: 'copilot-hooks',
+          name: 'hooks',
+          type: 'folder',
+          children: [
+            {
+              id: 'copilot-hooks-policy',
+              name: 'copilot-cli-policy.json',
+              type: 'file',
+              details: {
+                label: 'Lifecycle Hooks',
+                description: 'Hook configuration for Copilot CLI. Defines scripts that run at key points in a Copilot CLI session—on start, when a prompt is submitted, or before a tool executes. See https://docs.github.com/en/copilot/tutorials/copilot-cli-hooks',
+                whatGoesHere: [
+                  'Hook event types (sessionStart, userPromptSubmitted, preToolExecution)',
+                  'Script paths for Bash or PowerShell',
+                  'Timeouts and working directory settings',
+                ],
+                whenLoaded: 'Hooks execute at their defined lifecycle points during a Copilot CLI session.',
+                loadOrder: 8,
+                example: `{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "type": "command",
+        "bash": "./scripts/session-banner.sh",
+        "cwd": ".github/hooks",
+        "timeoutSec": 10
+      }
+    ],
+    "userPromptSubmitted": [
+      {
+        "type": "command",
+        "bash": "./scripts/log-prompt.sh",
+        "cwd": ".github/hooks",
+        "timeoutSec": 10
+      }
+    ]
+  }
+}`,
+              },
+            },
+          ],
+        },
       ],
     },
     {
