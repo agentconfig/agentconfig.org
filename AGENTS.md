@@ -102,6 +102,37 @@ Project-specific skills are in `.github/skills/`. These work with both Copilot a
 | [theme-styling](.github/skills/theme-styling/SKILL.md) | Styling with Tailwind CSS 4 |
 | [semantic-commit](.github/skills/semantic-commit/SKILL.md) | Creating commit messages |
 | [co-author](.github/skills/co-author/SKILL.md) | Co-author attribution |
+| [research-provider](.github/skills/research-provider/SKILL.md) | Research provider capabilities |
+| [add-provider](.github/skills/add-provider/SKILL.md) | Implement provider across all streams |
+
+### Custom Skill Extensions
+
+This project uses optional custom front matter fields beyond the agentskills.io spec:
+
+**`model` field** (custom extension)
+
+Specifies which Claude model is optimized for this skill. This supports the "fork workflow" pattern where research and implementation are split across different agents.
+
+```yaml
+---
+name: research-provider
+description: Research a new AI provider's capabilities...
+model: haiku
+---
+```
+
+**Valid values**: `haiku`, `sonnet`, `opus`
+
+**Usage**:
+- `haiku`: Lightweight research, analysis, documentation reading
+- `sonnet`: Balanced capabilities for general work
+- `opus`: Complex implementation, multi-file coordination, architecture
+
+**How it works**:
+- Agents should respect this hint when selecting their execution model
+- For Claude Code: The `model:` field indicates which model is optimized for the skill
+- For GitHub Copilot: This field is documentation only (Copilot determines model selection)
+- Custom workflows can use this to orchestrate multi-phase tasks (research → implementation)
 
 ## Multi-Agent Coordination
 
