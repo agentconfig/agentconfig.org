@@ -33,6 +33,52 @@ The site presents information in 4 different ways:
 - **Linting**: ESLint with strict config
 - **Hosting**: GitHub Pages
 - **Theme**: Light/dark mode support
+- **PWA**: Service worker and offline support with vite-plugin-pwa
+
+## PWA & Offline Support
+
+The site includes full Progressive Web App (PWA) support for offline functionality.
+
+### How It Works
+
+After the first visit, the site is fully cached locally:
+- All pages (/, /skills/, /agents/, /mcp/) are cached
+- All static assets (CSS, JavaScript, images) are cached
+- All documentation files (llms.txt, agents.md, skills.md, mcp.md) are cached
+- Service worker auto-updates when new content is deployed
+
+**Try it out:**
+1. Visit agentconfig.org
+2. Open DevTools → Application → Service Workers
+3. Verify the service worker is registered and active
+4. Enable "Offline" mode in DevTools
+5. Navigate to different pages—they'll load from the local cache
+
+### Architecture
+
+**Service Worker Generation:**
+- Built automatically during `bun run build`
+- Generated at `dist/sw.js` using vite-plugin-pwa and Workbox
+- Precaches 24+ static assets (~450KB total)
+- Auto-updates service worker on new deployments
+
+**Manifest File:**
+- Located at `site.webmanifest`
+- Contains branding, theme colors, icons, and app metadata
+- Referenced in all HTML entry points
+- Enables "Add to Home Screen" on mobile devices
+
+**Testing:**
+- E2E tests verify PWA functionality in `site/tests/e2e/pwa.spec.ts`
+- Tests verify manifest validity, favicon references, and service worker generation
+- All PWA tests run with the main test suite: `bun run test`
+
+### Maintenance
+
+When modifying PWA-related files:
+- **site/vite.config.ts** — Changing glob patterns or caching strategy requires rebuild
+- **site.webmanifest** — Update app name, description, colors, and icons here
+- **site/tests/e2e/pwa.spec.ts** — Add tests for new PWA features
 
 ## Commands
 
