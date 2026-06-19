@@ -7,8 +7,8 @@ export interface ProviderImplementation {
   implementation: string
   /** File location or feature name */
   location: string
-  /** Support level */
-  support: 'full' | 'partial' | 'diy'
+  /** Support level: full = first-class feature, partial = workarounds available, none = not available */
+  support: 'full' | 'partial' | 'none'
 }
 
 export interface Primitive {
@@ -170,7 +170,7 @@ export const primitives: Primitive[] = [
     implementations: [
       {
         provider: 'copilot',
-        implementation: 'Repository-level instructions file',
+        implementation: 'Repo instructions file',
         location: '.github/copilot-instructions.md',
         support: 'full',
       },
@@ -188,7 +188,7 @@ export const primitives: Primitive[] = [
       },
       {
         provider: 'codex',
-        implementation: 'Project AGENTS.md file with hierarchical loading',
+        implementation: 'Project AGENTS.md with hierarchical loading',
         location: 'AGENTS.md',
         support: 'full',
       },
@@ -351,7 +351,7 @@ export const primitives: Primitive[] = [
         provider: 'codex',
         implementation: 'Multi-agent via Agents SDK (not built-in)',
         location: 'External Agents SDK',
-        support: 'diy',
+        support: 'none',
       },
     ],
     category: 'safety',
@@ -413,7 +413,7 @@ export const primitives: Primitive[] = [
         provider: 'copilot',
         implementation: 'Not available',
         location: 'N/A',
-        support: 'diy',
+        support: 'none',
       },
       {
         provider: 'claude',
