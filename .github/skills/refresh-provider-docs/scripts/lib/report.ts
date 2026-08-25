@@ -17,9 +17,17 @@ const STATUS_NOTE: Record<FindingStatus, string> = {
   confirmed: 'No action needed. These rows are evidence that the published claim is still correct.',
 }
 
+/**
+ * Table cells carry documented paths such as `.cursor/rules/*.mdc` and
+ * `<name>`. Without escaping, Markdown renders the globs as emphasis and the
+ * angle brackets as HTML, silently deleting characters from the very paths the
+ * report exists to report accurately.
+ */
 function escapeCell(value: string | null): string {
   if (value === null || value === '') return '—'
-  return value.replace(/\|/g, '\\|').replace(/\n+/g, ' ')
+  return value
+    .replace(/\n+/g, ' ')
+    .replace(/[\\`*_[\]<>&|]/g, (character) => `\\${character}`)
 }
 
 function findingRow(finding: Finding): string {
@@ -50,7 +58,7 @@ export function renderReport(result: CompareResult, options: ReportOptions = {})
   lines.push('')
   lines.push(`Generated ${generatedAt} from ${options.claimCount ?? result.findings.length} normalized claims against registry version ${options.registryVersion ?? 'unknown'}.`)
   lines.push('')
-  lines.push('Every row below cites the primary source it came from and the date that source was retrieved. Rows without a citation are not published.')
+  lines.push('Every row below cites the source it came from and the date that source was retrieved. Confirmed and changed rows rest on a registered primary source; ambiguous rows may cite a secondary, unregistered, or mismatched source, which is precisely why they are unresolved. Rows without a citation are not published.')
   lines.push('')
   lines.push('## Summary')
   lines.push('')

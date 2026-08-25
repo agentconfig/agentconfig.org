@@ -2,7 +2,7 @@ import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'fs'
 import { dirname, join } from 'path'
 import { fileURLToPath } from 'url'
-import { fetchSources, markdownUrlFor } from '../scripts/lib/fetch.ts'
+import { fetchSources, markdownUrlFor, newRunDir, snapshotRoot } from '../scripts/lib/fetch.ts'
 import { allSources, loadRegistry } from '../scripts/lib/registry.ts'
 
 const skillRoot = join(dirname(fileURLToPath(import.meta.url)), '..')
@@ -53,6 +53,17 @@ describe('retrieval', () => {
     expect(markdownUrlFor(source, { markdown: '{url}.md' })).toBe('https://example.com/docs/hooks.md')
     expect(markdownUrlFor(source, { markdown: 'https://example.com/api/body?pathname={pathname}' })).toContain('%2Fdocs%2Fhooks')
     expect(markdownUrlFor(source, undefined)).toBe('https://example.com/docs/hooks')
+  })
+
+  test('fails closed on an unknown provider instead of reporting an empty run as a success', async () => {
+    await expect(fetchSources(loaded, { allowNetwork: true, providers: ['copilto'] })).rejects.toThrow('Unknown provider id')
+  })
+
+  test('gives every run its own snapshot directory', () => {
+    const first = newRunDir(new Date('2026-08-26T00:00:00Z'))
+    const second = newRunDir(new Date('2026-08-26T00:00:01Z'))
+    expect(first).not.toBe(second)
+    expect(first.startsWith(snapshotRoot)).toBe(true)
   })
 })
 

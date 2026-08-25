@@ -14,7 +14,7 @@
 
 import { readFileSync, writeFileSync } from 'fs'
 import { compareClaims } from './lib/compare.ts'
-import { defaultSnapshotDir, fetchSources } from './lib/fetch.ts'
+import { fetchSources, newRunDir } from './lib/fetch.ts'
 import { allSources, FailClosedError, loadRegistry } from './lib/registry.ts'
 import { renderReport } from './lib/report.ts'
 import { validateClaims, type Claim } from './lib/schema.ts'
@@ -100,7 +100,7 @@ async function commandSources(flags: Args['flags']): Promise<number> {
 
   if (!flags['check-urls']) return EXIT_OK
 
-  const results = await fetchSources(loaded, { allowNetwork: flags['allow-network'] === true, outDir: String(flags.out ?? defaultSnapshotDir) })
+  const results = await fetchSources(loaded, { allowNetwork: flags['allow-network'] === true, outDir: String(flags.out ?? newRunDir()) })
   const broken = results.filter((result) => !result.ok)
   console.log(`\nURL check: ${results.length - broken.length}/${results.length} sources resolved.`)
   for (const result of broken) {
@@ -112,7 +112,7 @@ async function commandSources(flags: Args['flags']): Promise<number> {
 async function commandFetch(flags: Args['flags']): Promise<number> {
   const loaded = loadRegistry()
   const providers = typeof flags.provider === 'string' ? [flags.provider] : undefined
-  const outDir = String(flags.out ?? defaultSnapshotDir)
+  const outDir = String(flags.out ?? newRunDir())
   const results = await fetchSources(loaded, {
     allowNetwork: flags['allow-network'] === true,
     outDir,

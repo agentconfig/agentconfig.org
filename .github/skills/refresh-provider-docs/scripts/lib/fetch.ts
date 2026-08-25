@@ -9,7 +9,17 @@ import type { RegistrySource } from './schema.ts'
  * entry point requires an explicit opt-in from the caller.
  */
 
-export const defaultSnapshotDir = join(tmpdir(), 'agentconfig-provider-docs')
+export const snapshotRoot = join(tmpdir(), 'agentconfig-provider-docs')
+
+/**
+ * Each retrieval writes into its own directory. Reusing one fixed directory
+ * would leave snapshots from an earlier or provider-scoped run beside the new
+ * manifest, and the workflow tells the agent to read the directory, so stale
+ * files would be cited as current evidence.
+ */
+export function newRunDir(now: Date = new Date()): string {
+  return join(snapshotRoot, `run-${now.toISOString().replace(/[:.]/g, '-')}`)
+}
 
 export interface FetchOptions {
   allowNetwork: boolean
@@ -58,14 +68,26 @@ function snapshotName(sourceId: string): string {
 export async function fetchSources(loaded: LoadedRegistry, options: FetchOptions): Promise<SourceFetchResult[]> {
   assertNetworkAllowed(options.allowNetwork)
 
-  const outDir = options.outDir ?? defaultSnapshotDir
+  const requested = options.providers?.filter((id) => id !== '') ?? []
+  if (requested.length > 0) {
+    const known = new Set(loaded.registry.providers.map((provider) => provider.id))
+    const unknown = requested.filter((id) => !known.has(id))
+    if (unknown.length > 0) {
+      throw new FailClosedError(`Unknown provider id: ${unknown.join(', ')}`, [
+        `Registered providers are: ${[...known].sort().join(', ')}.`,
+        'A typo would otherwise retrieve nothing and report an empty run as a success.',
+      ])
+    }
+  }
+
+  const outDir = options.outDir ?? newRunDir()
   const timeoutMs = options.timeoutMs ?? 30_000
   mkdirSync(outDir, { recursive: true })
 
   const results: SourceFetchResult[] = []
 
   for (const provider of loaded.registry.providers) {
-    if (options.providers && options.providers.length > 0 && !options.providers.includes(provider.id)) continue
+    if (requested.length > 0 && !requested.includes(provider.id)) continue
 
     for (const source of provider.sources) {
       const requestedUrl = markdownUrlFor(source, provider.retrieval)

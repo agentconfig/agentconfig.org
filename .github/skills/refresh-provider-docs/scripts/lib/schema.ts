@@ -33,6 +33,14 @@ export const ASPECTS = [
   'support',
 ] as const
 
+/**
+ * Aspects whose values carry meaning in the order the provider documents them.
+ * Sorting these would let two genuinely conflicting official claims, such as
+ * two different precedence orders, canonicalize to the same string and escape
+ * the ambiguous fail-closed path.
+ */
+export const ORDERED_ASPECTS = ['precedence'] as const
+
 export const AUTHORITIES = ['primary', 'secondary'] as const
 export const SUPPORT_LEVELS = ['full', 'partial', 'diy', 'none'] as const
 export const COVERAGE_LEVELS = ['tracked', 'candidate'] as const
@@ -197,8 +205,8 @@ export function validateRegistry(input: unknown): ValidationResult<Registry> {
       requireHttpsUrl(rawSource, 'url', sourceWhere, errors)
       const authority = requireEnum(rawSource, 'authority', AUTHORITIES, sourceWhere, errors)
       if (authority === 'primary') primaryCount += 1
-      if (authority === 'secondary' && typeof rawSource.note !== 'string') {
-        errors.push(`${sourceWhere}: a secondary source must carry a "note" explaining why no primary source is used`)
+      if (authority === 'secondary' && (typeof rawSource.note !== 'string' || rawSource.note.trim() === '')) {
+        errors.push(`${sourceWhere}: a secondary source must carry a non-empty "note" explaining why no primary source is used`)
       }
       if (sourceId !== '') {
         if (seenSourceIds.has(sourceId)) errors.push(`${sourceWhere}: duplicate source id`)
@@ -265,10 +273,17 @@ export function validateClaims(input: unknown): ValidationResult<Claim[]> {
   return { ok: true, value: claims }
 }
 
-/** Canonical comparison form. Formatting differences must not read as drift. */
-export function canonicalize(value: string | string[]): string {
+/**
+ * Canonical comparison form. Formatting differences must not read as drift.
+ *
+ * Set-valued aspects are sorted so that listing order is not mistaken for a
+ * change. Ordered aspects keep the documented sequence, because for those the
+ * order is the claim.
+ */
+export function canonicalize(value: string | string[], aspect?: Aspect): string {
+  const preserveOrder = aspect !== undefined && (ORDERED_ASPECTS as readonly string[]).includes(aspect)
   const parts = Array.isArray(value) ? value : [value]
-  return parts
+  const normalized = parts
     .flatMap((part) => part.split(/\s*(?:,|\bor\b)\s*/i))
     .map((part) =>
       part
@@ -279,8 +294,7 @@ export function canonicalize(value: string | string[]): string {
         .toLowerCase(),
     )
     .filter((part) => part !== '')
-    .sort()
-    .join(' | ')
+  return (preserveOrder ? normalized : normalized.sort()).join(' | ')
 }
 
 export function displayValue(value: string | string[]): string {

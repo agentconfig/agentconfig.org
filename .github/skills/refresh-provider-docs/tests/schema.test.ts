@@ -114,4 +114,38 @@ describe('canonicalize', () => {
   test('still treats a different path as different', () => {
     expect(canonicalize('.cursor/rules/*.mdc')).not.toBe(canonicalize('.cursor/rules/*.md'))
   })
+
+  test('keeps documented order for ordered aspects so conflicting precedence stays visible', () => {
+    expect(canonicalize(['managed', 'user'], 'precedence')).not.toBe(canonicalize(['user', 'managed'], 'precedence'))
+  })
+
+  test('still sorts set-valued aspects', () => {
+    expect(canonicalize(['b', 'a'], 'location')).toBe(canonicalize(['a', 'b'], 'location'))
+  })
+})
+
+describe('secondary source notes', () => {
+  function registryWithNote(note: unknown) {
+    return {
+      version: 1,
+      maxSourceAgeDays: 30,
+      providers: [
+        {
+          id: 'p',
+          name: 'P',
+          coverage: 'candidate',
+          sources: [{ id: 'p.docs', topic: 'instructions', url: 'https://docs.example.com/p', authority: 'secondary', note }],
+        },
+      ],
+    }
+  }
+
+  test('rejects a blank note, which justifies nothing', () => {
+    expect(validateRegistry(registryWithNote('   ')).ok).toBe(false)
+    expect(validateRegistry(registryWithNote('')).ok).toBe(false)
+  })
+
+  test('accepts a real justification', () => {
+    expect(validateRegistry(registryWithNote('No primary page documents this yet.')).ok).toBe(true)
+  })
 })

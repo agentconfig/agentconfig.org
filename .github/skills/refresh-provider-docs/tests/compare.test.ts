@@ -108,6 +108,18 @@ describe('fail-closed behavior', () => {
     expect(finding.detail).toContain('does not match')
   })
 
+  test('rejects a descendant page as evidence for the registered page', () => {
+    const findings = run('url-descendant.json').findings
+    const descendant = byId(findings, 'c.descendant')
+    expect(descendant.status).toBe('ambiguous')
+    expect(descendant.detail).toContain('does not match')
+  })
+
+  test('still accepts a fragment on the registered page', () => {
+    const fragment = byId(run('url-descendant.json').findings, 'c.fragment')
+    expect(fragment.status).toBe('confirmed')
+  })
+
   test('rejects a source borrowed from another provider', () => {
     const finding = run('provider-mismatch.json').findings[0]!
     expect(finding.status).toBe('ambiguous')
@@ -150,5 +162,35 @@ describe('evidence report', () => {
   test('does not invent a value that no claim carried', () => {
     expect(markdown).not.toContain('undefined')
     expect(markdown).not.toContain('[object Object]')
+  })
+
+  test('escapes path characters that Markdown would otherwise swallow', () => {
+    const escaped = renderReport(
+      {
+        findings: [
+          {
+            claimId: 'c.escaping',
+            provider: 'testprov',
+            primitive: 'skills',
+            aspect: 'location',
+            status: 'changed',
+            action: 'update-site-data',
+            siteValue: '.cursor/rules/*.md',
+            documentedValue: '<name>/SKILL.md and .agent/*_rules',
+            sourceUrl: 'https://docs.example.com/testprov/skills',
+            sourceAuthority: 'primary',
+            retrievedAt: '2026-08-25',
+            detail: 'escaping check',
+          },
+        ],
+        counts: { confirmed: 0, changed: 1, ambiguous: 0, unsupported: 0 },
+        unverifiedSiteEntries: 0,
+        needsAction: true,
+      },
+      { generatedAt: '2026-08-26T00:00:00Z', registryVersion: 1, claimCount: 1 },
+    )
+    expect(escaped).toContain('\\<name\\>')
+    expect(escaped).toContain('\\*.md')
+    expect(escaped).toContain('\\_rules')
   })
 })

@@ -33,10 +33,16 @@ function ageInDays(retrievedAt: string, now: Date): number {
   return (now.getTime() - retrieved.getTime()) / 86_400_000
 }
 
+/**
+ * Registry entries are canonical page URLs. A claim may cite the markdown
+ * variant or a fragment on the same page, but never a different page: allowing
+ * arbitrary descendants would let a claim about one page pass as evidence for
+ * another and slip past the URL-mismatch fail-closed path.
+ */
 function sourceUrlMatchesRegistry(claimUrl: string, registryUrl: string): boolean {
   const base = registryUrl.replace(/\/$/, '')
   const candidate = claimUrl.replace(/\/$/, '')
-  return candidate === base || candidate === `${base}.md` || candidate.startsWith(`${base}#`) || candidate.startsWith(`${base}/`)
+  return candidate === base || candidate === `${base}.md` || candidate.startsWith(`${base}#`) || candidate.startsWith(`${base}.md#`)
 }
 
 function makeFinding(
@@ -89,7 +95,7 @@ export function compareClaims(
   }
 
   for (const [key, group] of groups) {
-    const distinctValues = new Set(group.map((claim) => canonicalize(claim.value)))
+    const distinctValues = new Set(group.map((claim) => canonicalize(claim.value, claim.aspect)))
     const representative = group.find((claim) => claim.sourceAuthority === 'primary') ?? group[0]!
 
     if (distinctValues.size > 1) {
@@ -191,7 +197,7 @@ export function compareClaims(
       (entry) => entry.provider === representative.provider && entry.primitive === representative.primitive && entry.aspect === representative.aspect,
     )
 
-    const documented = canonicalize(representative.value)
+    const documented = canonicalize(representative.value, representative.aspect)
     const documentsNoSupport = representative.aspect === 'support' && documented === 'none'
 
     if (siteEntries.length === 0) {
@@ -237,7 +243,7 @@ export function compareClaims(
 
     for (const entry of siteEntries) answeredSiteKeys.add(`${entry.origin}|${entry.provider}|${entry.primitive}|${entry.aspect}`)
 
-    const siteValues = new Set(siteEntries.map((entry) => canonicalize(entry.value)))
+    const siteValues = new Set(siteEntries.map((entry) => canonicalize(entry.value, entry.aspect)))
     if (siteValues.size > 1) {
       const detail = siteEntries.map((entry) => `${entry.origin}: ${entry.value}`).join(' vs ')
       findings.push(
@@ -253,7 +259,7 @@ export function compareClaims(
     }
 
     const siteValue = siteEntries[0]!.value
-    const matches = canonicalize(siteValue) === documented
+    const matches = canonicalize(siteValue, representative.aspect) === documented
 
     if (documentsNoSupport) {
       findings.push(

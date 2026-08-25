@@ -1,0 +1,4 @@
+[
+  { "id": "c.descendant", "provider": "testprov", "primitive": "hooks", "aspect": "location", "value": ".testprov/hooks.json", "sourceId": "testprov.hooks", "sourceUrl": "https://docs.example.com/testprov/hooks/unrelated-subpage", "sourceAuthority": "primary", "retrievedAt": "2026-08-25" },
+  { "id": "c.fragment", "provider": "testprov", "primitive": "persistent-instructions", "aspect": "location", "value": "OLD.md", "sourceId": "testprov.instructions", "sourceUrl": "https://docs.example.com/testprov/instructions#file-location", "sourceAuthority": "primary", "retrievedAt": "2026-08-25" }
+]

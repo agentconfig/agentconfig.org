@@ -36,7 +36,9 @@ Aspects marked "not modeled" are not defects in the claim. They produce `extend-
 
 ## Comparison rules
 
-Values are canonicalized before comparison: trimmed, whitespace collapsed, backticks and quotes stripped, trailing punctuation removed, lowercased, split on commas and the word "or", then sorted. This means formatting differences do not read as drift, while a genuinely different path still does.
+Values are canonicalized before comparison: trimmed, whitespace collapsed, backticks and quotes stripped, trailing punctuation removed, lowercased, and split on commas and the word "or". Set-valued aspects are then sorted, so listing order does not read as drift while a genuinely different path still does. Ordered aspects — currently `precedence` — keep the documented sequence, because for those the order is the claim: two official sources that document different precedence orders must surface as `ambiguous` rather than canonicalizing to the same string.
+
+A claim must cite the registered page itself. The comparison accepts the exact registered URL, its `.md` variant, and a fragment on that page, and rejects any other URL, including a descendant path, so evidence about one page can never be recorded against another.
 
 `AGENTS.md or .github/copilot-instructions.md` and `[".github/copilot-instructions.md", "AGENTS.md"]` compare equal. `.cursor/rules/*.mdc` and `.cursor/rules/*.md` do not.
 

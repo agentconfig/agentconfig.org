@@ -44,7 +44,7 @@ bun .github/skills/refresh-provider-docs/scripts/provider-docs.ts fetch --allow-
 
 Retrieval requires `--allow-network` every time. Nothing in this skill runs during an ordinary site build, and the site never depends on network access to render.
 
-Snapshots and a `manifest.json` are written to a temporary directory outside the repository. Each snapshot carries its source id, canonical URL, authority, and retrieval timestamp in a header comment. If any source fails, the command exits non-zero: fix or retire the registry entry rather than publishing a claim you could not retrieve.
+Snapshots and a `manifest.json` are written to a fresh run-specific directory outside the repository, printed at the end of the run. Each run gets its own directory so a partial or provider-scoped retrieval can never leave older snapshots beside the new manifest, where they would be read back as current evidence. Each snapshot carries its source id, canonical URL, authority, and retrieval timestamp in a header comment. An unknown `--provider` value fails closed rather than reporting an empty run as a success. If any source fails, the command exits non-zero: fix or retire the registry entry rather than publishing a claim you could not retrieve.
 
 ### 2. Read the snapshots and write claims
 
