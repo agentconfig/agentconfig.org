@@ -264,6 +264,11 @@ ${codeSamples.agentPersona}
 
 ### 7. File Hierarchy & Precedence
 
+A common usage pattern is hierarchical AGENTS.md: keep broad repo defaults at the root, then add
+nested AGENTS.md files in high-variance subtrees where ownership, build flows, or risk boundaries
+diverge. Providers that support this walk up from the current file toward the root, applying the
+most specific instructions first and falling back to broader ones.
+
 **Claude Code:**
 \`\`\`
 ${codeSamples.claudeHierarchy}

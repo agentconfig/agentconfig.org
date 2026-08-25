@@ -4,9 +4,11 @@ Standard conventions and decision guides for adding providers.
 
 ## Support Levels
 
-Use these consistently across all 13 primitives:
+`primitives.ts` and `comparison.ts` use two different, non-interchangeable support enums — always
+check which file you're editing before picking a value. See PROCESS.md's decision tree for the
+side-by-side mapping.
 
-### `full` - Native, First-Class Support
+### `full` - Native, First-Class Support (both files)
 
 The provider has built-in, well-documented support for this primitive.
 
@@ -17,35 +19,35 @@ The provider has built-in, well-documented support for this primitive.
 
 **When to use**: The feature is natively available, documented, and part of the provider's core offering.
 
-### `partial` - Works with Limitations or Workarounds
+### `partial` - Works with Limitations or Workarounds (both files)
 
 The provider supports the primitive but with limitations, workarounds, or indirect approaches.
 
 **Examples:**
-- Skills in Cursor (via .cursor/rules but not as full as GitHub Copilot)
-- Tool Integrations in Cursor (via Extensions API, not full MCP)
 - Slash Commands in Cursor (via UI shortcuts, not full custom commands)
+- Runtime Sandbox in Copilot (policy/settings surfaces, not a dedicated sandbox config file)
 
 **When to use**: The primitive works but requires workarounds, isn't as feature-complete, or needs custom configuration.
 
-### `diy` - DIY (Do It Yourself) Workaround
+### `diy` - DIY (Do It Yourself) Workaround (`primitives.ts` only)
 
 Not natively available, but users can implement custom configuration to achieve similar functionality.
+This value is valid **only** in `ProviderImplementation.support` (`primitives.ts`) — it is rejected by
+`ComparisonRow`'s `SupportLevel` type in `comparison.ts`.
 
 **Examples:**
-- Lifecycle Hooks in Copilot (not available natively, but user can script them)
-- Lifecycle Hooks in Cursor (not available, but could be scripted)
+- Custom Agents in Codex (no built-in feature, but achievable via the Agents SDK)
 
 **When to use**: The feature isn't built-in but is achievable through custom setup.
 
-### `none` - Not Available
+### `none` - Not Available (`comparison.ts` only)
 
-The provider cannot support this primitive in any form.
+The provider cannot support this primitive in any form. This value is valid **only** in
+`ComparisonRow[provider].level` (`comparison.ts`) — it is rejected by `ProviderImplementation.support`
+in `primitives.ts`; use `diy` there for the equivalent "no built-in support" case.
 
-**Examples:**
-- (Rare - most primitives can be emulated somehow)
-
-**When to use**: The primitive is fundamentally incompatible with the provider's architecture.
+**When to use**: The primitive is fundamentally incompatible with the provider's architecture, or has
+no viable custom-setup path.
 
 ---
 
@@ -224,14 +226,14 @@ Quick reference for common feature mappings:
 | Primitive | Copilot | Claude | Cursor | Codex | Notes |
 |-----------|---------|--------|--------|-------|-------|
 | **Agent Mode** | `full` | `full` | `full` | `full` | All support multi-step execution |
-| **Skills** | `full` | `full` | `partial` | `full` | Cursor has rules but not full skill system |
-| **Tool Integrations** | `full` | `full` | `partial` | `full` | Cursor has Extensions API, not full MCP |
+| **Skills** | `full` | `full` | `full` | `full` | Cursor has a full skills-package system (.cursor/skills/*/SKILL.md) |
+| **Tool Integrations** | `full` | `full` | `full` | `full` | Cursor has full MCP support (stdio, SSE, HTTP transports) |
 | **Persistent Instructions** | `full` | `full` | `full` | `full` | All have project-level instructions |
 | **User Scope Instructions** | `full` | `full` | `full` | `full` | All support user-level preferences |
 | **Directory / Path Scope Instructions** | `full` | `full` | `full` | `full` | All support directory-specific rules |
-| **Slash Commands** | `full` | `full` | `partial` | `full` | Cursor has UI shortcuts, not full custom commands |
-| **Custom Agents** | `full` | `full` | `partial` | `diy` | Codex has no built-in custom agents |
-| **Permissions & Guardrails** | `full` | `full` | `partial` | `full` | Cursor has safety features, not as comprehensive |
+| **Slash Commands** | `full` | `full` | `full` | `full` | Cursor supports custom commands with parameters (.cursor/commands/*.md) |
+| **Custom Agents** | `full` | `full` | `full` | `diy` | Codex has no built-in custom agents (achievable via the Agents SDK) |
+| **Permissions & Guardrails** | `full` | `full` | `full` | `full` | Cursor has approvals, .cursorignore, and security hooks |
 | **Lifecycle Hooks** | `full` | `full` | `full` | `full` | All four providers now have built-in hooks |
 | **Runtime Sandbox** | `partial` | `full` | `full` | `full` | Copilot's sandbox controls are policy/settings surfaces, not a dedicated file |
 | **Configuration Distribution** | `full` | `full` | `full` | `full` | All support hierarchical instruction files |
