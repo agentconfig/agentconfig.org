@@ -1,0 +1,3 @@
+[
+  { "id": "c.bad", "provider": "testprov", "primitive": "hooks", "aspect": "not-an-aspect", "value": "", "sourceId": "testprov.hooks", "sourceUrl": "http://insecure.example.com/hooks", "sourceAuthority": "rumor", "retrievedAt": "last Tuesday" }
+]

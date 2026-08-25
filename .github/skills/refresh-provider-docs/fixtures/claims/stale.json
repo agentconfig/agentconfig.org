@@ -1,0 +1,3 @@
+[
+  { "id": "c.stale", "provider": "testprov", "primitive": "hooks", "aspect": "location", "value": ".testprov/hooks.json", "sourceId": "testprov.hooks", "sourceUrl": "https://docs.example.com/testprov/hooks", "sourceAuthority": "primary", "retrievedAt": "2020-01-01" }
+]

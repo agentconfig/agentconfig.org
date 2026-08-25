@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "maxSourceAgeDays": 30,
+  "providers": [
+    {
+      "id": "testprov",
+      "name": "Test Provider",
+      "coverage": "tracked",
+      "sources": [
+        { "id": "testprov.hooks", "topic": "hooks", "url": "https://docs.example.com/testprov/hooks", "authority": "primary" },
+        { "id": "testprov.instructions", "topic": "instructions", "url": "https://docs.example.com/testprov/instructions", "authority": "primary" },
+        { "id": "testprov.skills", "topic": "skills", "url": "https://docs.example.com/testprov/skills", "authority": "primary" },
+        { "id": "testprov.blog", "topic": "instructions", "url": "https://blog.example.com/testprov-announcement", "authority": "secondary", "note": "Announcement post used only when the reference documentation has not caught up." }
+      ]
+    },
+    {
+      "id": "otherprov",
+      "name": "Other Provider",
+      "coverage": "candidate",
+      "sources": [
+        { "id": "otherprov.docs", "topic": "instructions", "url": "https://docs.example.com/otherprov/instructions", "authority": "primary" }
+      ]
+    }
+  ]
+}

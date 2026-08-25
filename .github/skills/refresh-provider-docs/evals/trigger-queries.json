@@ -1,0 +1,24 @@
+{
+  "shouldTrigger": [
+    "Refresh the provider documentation and tell me what changed",
+    "Are our Copilot hook locations still accurate?",
+    "Check whether Claude Code still stores hooks in settings.json",
+    "Has anything changed in the Codex configuration docs since we last looked?",
+    "Verify the provider comparison table against official documentation",
+    "Where does Cursor put its rules files now?",
+    "Add Gemini CLI to the compatibility index using authoritative sources",
+    "Re-run the weekly provider documentation check",
+    "What primary source backs our MCP claim for Claude?",
+    "Our skills paths look stale, confirm them against the docs"
+  ],
+  "shouldNotTrigger": [
+    "Add a new primitive card to the site",
+    "Fix the spacing on the comparison table",
+    "Write an end-to-end test for the skills page",
+    "Regenerate llms.txt after my content edit",
+    "Change the site theme colors",
+    "Draft a blog post about agent configuration",
+    "Deploy the site",
+    "Rename a component file"
+  ]
+}
