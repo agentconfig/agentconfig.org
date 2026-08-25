@@ -121,6 +121,8 @@ export interface Finding {
   sourceAuthority: Authority | null
   retrievedAt: string | null
   detail: string
+  /** A qualifier the claim carried. Dropping it would publish incomplete evidence. */
+  notes: string | null
 }
 
 export type ValidationResult<T> = { ok: true; value: T } | { ok: false; errors: string[] }
@@ -293,6 +295,10 @@ export function validateClaims(input: unknown): ValidationResult<Claim[]> {
     const valueIsList = Array.isArray(value) && value.length > 0 && value.every((item) => typeof item === 'string' && item.trim() !== '')
     if (!valueIsString && !valueIsList) {
       errors.push(`${where}: "value" must be a non-empty string or a non-empty array of strings`)
+    }
+
+    if (rawClaim.notes !== undefined && (typeof rawClaim.notes !== 'string' || rawClaim.notes.trim() === '')) {
+      errors.push(`${where}: "notes" must be a non-empty string when provided`)
     }
 
     // Support is a single level, never a list. An array would skip the enum

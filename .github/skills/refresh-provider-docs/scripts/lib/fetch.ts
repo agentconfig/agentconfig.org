@@ -1,6 +1,6 @@
 import { mkdirSync, writeFileSync } from 'fs'
 import { tmpdir } from 'os'
-import { join } from 'path'
+import { basename, join } from 'path'
 import { FailClosedError, type LoadedRegistry } from './registry.ts'
 import type { RegistrySource } from './schema.ts'
 
@@ -18,12 +18,27 @@ export const snapshotRoot = join(tmpdir(), 'agentconfig-provider-docs')
  * files would be cited as current evidence.
  */
 export function newRunDir(now: Date = new Date()): string {
-  return join(snapshotRoot, `run-${now.toISOString().replace(/[:.]/g, '-')}`)
+  const unique = Math.random().toString(36).slice(2, 10)
+  return join(snapshotRoot, `run-${now.toISOString().replace(/[:.]/g, '-')}-${unique}`)
+}
+
+/**
+ * A caller-supplied directory is a parent, not the run directory itself.
+ * Pointing two retrievals at the same `--out` would otherwise leave one run's
+ * snapshots beside another run's manifest, recreating the stale-evidence
+ * problem the per-run directory exists to prevent.
+ */
+export function resolveRunDir(outDir: string | undefined, now: Date = new Date()): string {
+  const run = newRunDir(now)
+  return outDir ? join(outDir, basename(run)) : run
 }
 
 export interface FetchOptions {
   allowNetwork: boolean
+  /** Parent directory for the run directory. The run still gets its own subdirectory. */
   outDir?: string
+  /** An already-resolved run directory, when the caller needs to print it first. */
+  runDir?: string
   timeoutMs?: number
   providers?: string[]
 }
@@ -80,7 +95,10 @@ export async function fetchSources(loaded: LoadedRegistry, options: FetchOptions
     }
   }
 
-  const outDir = options.outDir ?? newRunDir()
+  // A caller-supplied directory is treated as a parent: the run still gets its
+  // own subdirectory, so pointing two retrievals at the same --out cannot
+  // leave one run's snapshots beside another run's manifest.
+  const outDir = options.runDir ?? resolveRunDir(options.outDir)
   const timeoutMs = options.timeoutMs ?? 30_000
   mkdirSync(outDir, { recursive: true })
 

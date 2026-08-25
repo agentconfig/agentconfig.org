@@ -26,6 +26,7 @@ describe('claim schema', () => {
     expect(joined).toContain('sourceAuthority')
     expect(joined).toContain('retrievedAt')
     expect(joined).toContain('https')
+    expect(joined).toContain('notes')
   })
 
   test('treats an empty result as a failed retrieval rather than a clean run', () => {

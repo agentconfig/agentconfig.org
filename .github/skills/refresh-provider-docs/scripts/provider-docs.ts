@@ -14,7 +14,7 @@
 
 import { readFileSync, writeFileSync } from 'fs'
 import { compareClaims } from './lib/compare.ts'
-import { fetchSources, newRunDir } from './lib/fetch.ts'
+import { fetchSources, resolveRunDir } from './lib/fetch.ts'
 import { allSources, FailClosedError, loadRegistry } from './lib/registry.ts'
 import { renderReport } from './lib/report.ts'
 import { validateClaims, type Claim } from './lib/schema.ts'
@@ -30,6 +30,11 @@ interface Args {
   flags: Record<string, string | boolean>
 }
 
+/** Flags this CLI understands. An unrecognized flag is a typo, and silently
+ * ignoring it can widen the scope of a run, so parsing fails closed instead. */
+const KNOWN_FLAGS = new Set(['allow-network', 'check-urls', 'json', 'out', 'provider'])
+const VALUE_FLAGS = new Set(['json', 'out', 'provider'])
+
 function parseArgs(argv: string[]): Args {
   const [command = 'help', ...rest] = argv
   const positional: string[] = []
@@ -41,12 +46,31 @@ function parseArgs(argv: string[]): Args {
       positional.push(token)
       continue
     }
-    const name = token.slice(2)
+    const body = token.slice(2)
+    // `--name=value` has to be handled here. Treating it as a flag literally
+    // named `name=value` would leave the real flag unset, so a scoped run
+    // would quietly broaden into an unscoped one.
+    const separator = body.indexOf('=')
+    const name = separator === -1 ? body : body.slice(0, separator)
+    if (!KNOWN_FLAGS.has(name)) {
+      throw new FailClosedError(`Unknown flag --${name}`, [`Supported flags: ${[...KNOWN_FLAGS].map((flag) => `--${flag}`).join(', ')}.`])
+    }
+    if (separator !== -1) {
+      const value = body.slice(separator + 1)
+      if (value.trim() === '' && VALUE_FLAGS.has(name)) {
+        throw new FailClosedError(`--${name} requires a value`, [`Pass --${name} <value> instead of --${name}=.`])
+      }
+      flags[name] = value
+      continue
+    }
     const next = rest[index + 1]
     if (next && !next.startsWith('--')) {
       flags[name] = next
       index += 1
     } else {
+      if (VALUE_FLAGS.has(name)) {
+        throw new FailClosedError(`--${name} requires a value`, [`Pass --${name} <value>.`])
+      }
       flags[name] = true
     }
   }
@@ -100,7 +124,10 @@ async function commandSources(flags: Args['flags']): Promise<number> {
 
   if (!flags['check-urls']) return EXIT_OK
 
-  const results = await fetchSources(loaded, { allowNetwork: flags['allow-network'] === true, outDir: String(flags.out ?? newRunDir()) })
+  const results = await fetchSources(loaded, {
+    allowNetwork: flags['allow-network'] === true,
+    runDir: resolveRunDir(typeof flags.out === 'string' ? flags.out : undefined),
+  })
   const broken = results.filter((result) => !result.ok)
   console.log(`\nURL check: ${results.length - broken.length}/${results.length} sources resolved.`)
   for (const result of broken) {
@@ -111,11 +138,23 @@ async function commandSources(flags: Args['flags']): Promise<number> {
 
 async function commandFetch(flags: Args['flags']): Promise<number> {
   const loaded = loadRegistry()
+  // A bare `--provider` parses as boolean true. Treating that as "no filter"
+  // would silently broaden a targeted refresh into a full retrieval, so a
+  // malformed flag fails closed instead.
+  if (flags.provider !== undefined && typeof flags.provider !== 'string') {
+    throw new FailClosedError('--provider requires a value', ['Pass --provider <id>, or omit the flag to retrieve every registered provider.'])
+  }
+  if (flags.out !== undefined && typeof flags.out !== 'string') {
+    throw new FailClosedError('--out requires a value', ['Pass --out <directory>, or omit the flag to use the default snapshot root.'])
+  }
+  if (typeof flags.provider === 'string' && flags.provider.trim() === '') {
+    throw new FailClosedError('--provider requires a non-empty value', ['Pass --provider <id>, or omit the flag to retrieve every registered provider.'])
+  }
   const providers = typeof flags.provider === 'string' ? [flags.provider] : undefined
-  const outDir = String(flags.out ?? newRunDir())
+  const outDir = resolveRunDir(typeof flags.out === 'string' ? flags.out : undefined)
   const results = await fetchSources(loaded, {
     allowNetwork: flags['allow-network'] === true,
-    outDir,
+    runDir: outDir,
     ...(providers ? { providers } : {}),
   })
 

@@ -45,8 +45,20 @@ function sourceUrlMatchesRegistry(claimUrl: string, registryUrl: string): boolea
   return candidate === base || candidate === `${base}.md` || candidate.startsWith(`${base}#`) || candidate.startsWith(`${base}.md#`)
 }
 
+function aggregateNotes(claims: Claim[]): string | null {
+  const notes = claims
+    .map((claim) => {
+      const note = claim.notes?.trim()
+      if (!note) return null
+      return `${claim.id}: ${note}`
+    })
+    .filter((note): note is string => note !== null)
+  return notes.length > 0 ? notes.join(' | ') : null
+}
+
 function makeFinding(
   claim: Claim,
+  claims: Claim[],
   status: FindingStatus,
   action: FindingAction,
   detail: string,
@@ -65,6 +77,7 @@ function makeFinding(
     sourceAuthority: claim.sourceAuthority,
     retrievedAt: claim.retrievedAt,
     detail,
+    notes: aggregateNotes(claims),
   }
 }
 
@@ -86,6 +99,40 @@ export function compareClaims(
   const findings: Finding[] = []
   const answeredSiteKeys = new Set<string>()
 
+  // Site self-contradiction is a property of the site, not of any claim, so it
+  // is detected up front. Checking it only while processing a matching claim
+  // meant a partial refresh could leave `primitives.ts` and `comparison.ts`
+  // disagreeing with nobody told.
+  const siteGroups = new Map<string, typeof site.entries>()
+  for (const entry of site.entries) {
+    const key = `${entry.provider}|${entry.primitive}|${entry.aspect}`
+    const group = siteGroups.get(key)
+    if (group) group.push(entry)
+    else siteGroups.set(key, [entry])
+  }
+
+  const contradictorySiteKeys = new Set<string>()
+  for (const [key, entries] of siteGroups) {
+    if (new Set(entries.map((entry) => canonicalize(entry.value, entry.aspect))).size <= 1) continue
+    contradictorySiteKeys.add(key)
+    const [provider, primitive, aspect] = key.split('|') as [string, string, Claim['aspect']]
+    findings.push({
+      claimId: `site.${key.replace(/\|/g, '.')}`,
+      provider,
+      primitive,
+      aspect,
+      status: 'ambiguous',
+      action: 'human-review',
+      siteValue: entries.map((entry) => entry.value).join(' | '),
+      documentedValue: null,
+      sourceUrl: null,
+      sourceAuthority: null,
+      retrievedAt: null,
+      detail: `The site contradicts itself before any comparison can be made (${entries.map((entry) => `${entry.origin}: ${entry.value}`).join(' vs ')}).`,
+      notes: null,
+    })
+  }
+
   const groups = new Map<string, Claim[]>()
   for (const claim of claims) {
     const key = claimKey(claim)
@@ -103,20 +150,21 @@ export function compareClaims(
     for (const claim of group) {
       const source = loaded.sourceById.get(claim.sourceId)
       if (!source) {
-        citationProblem = makeFinding(claim, 'ambiguous', 'human-review', `Source "${claim.sourceId}" is not in the registry, so its authority cannot be established.`, null)
+        citationProblem = makeFinding(claim, group, 'ambiguous', 'human-review', `Source "${claim.sourceId}" is not in the registry, so its authority cannot be established.`, null)
         break
       }
       if (source.provider !== claim.provider) {
-        citationProblem = makeFinding(claim, 'ambiguous', 'human-review', `Source "${claim.sourceId}" belongs to provider "${source.provider}" but the claim is about "${claim.provider}".`, null)
+        citationProblem = makeFinding(claim, group, 'ambiguous', 'human-review', `Source "${claim.sourceId}" belongs to provider "${source.provider}" but the claim is about "${claim.provider}".`, null)
         break
       }
       if (!sourceUrlMatchesRegistry(claim.sourceUrl, source.url)) {
-        citationProblem = makeFinding(claim, 'ambiguous', 'human-review', `Claim URL ${claim.sourceUrl} does not match registered source URL ${source.url}.`, null)
+        citationProblem = makeFinding(claim, group, 'ambiguous', 'human-review', `Claim URL ${claim.sourceUrl} does not match registered source URL ${source.url}.`, null)
         break
       }
       if (claim.sourceAuthority !== source.authority) {
         citationProblem = makeFinding(
           claim,
+          group,
           'ambiguous',
           'human-review',
           `The claim labels source "${claim.sourceId}" as ${claim.sourceAuthority}, but the registry records it as ${source.authority}. Authority is decided by the registry, not by the claim.`,
@@ -140,6 +188,7 @@ export function compareClaims(
       findings.push(
         makeFinding(
           representative,
+          group,
           'ambiguous',
           'human-review',
           `Official sources disagree and this skill will not choose between them: ${citations}`,
@@ -153,6 +202,7 @@ export function compareClaims(
       findings.push(
         makeFinding(
           representative,
+          group,
           'ambiguous',
           'human-review',
           'Only secondary sources support this claim; a primary source is required before publishing it.',
@@ -173,6 +223,7 @@ export function compareClaims(
       findings.push(
         makeFinding(
           futureClaim,
+          group,
           'ambiguous',
           'human-review',
           `Evidence carries a future retrieval date (${futureClaim.retrievedAt}), so its freshness cannot be established; record the date the source was actually retrieved.`,
@@ -188,6 +239,7 @@ export function compareClaims(
       findings.push(
         makeFinding(
           stalest,
+          group,
           'ambiguous',
           'human-review',
           `Evidence was retrieved ${Math.round(age)} days ago, beyond the ${maxAge}-day freshness limit; retrieve it again before publishing.`,
@@ -202,6 +254,7 @@ export function compareClaims(
       findings.push(
         makeFinding(
           representative,
+          group,
           'changed',
           'extend-site-model',
           `The site publishes no field for the "${representative.aspect}" aspect, so this documented behavior is currently invisible to readers.`,
@@ -223,12 +276,20 @@ export function compareClaims(
       const primitiveIsPublished = site.primitives.includes(representative.primitive)
       if (documentsNoSupport) {
         findings.push(
-          makeFinding(representative, 'unsupported', 'none', 'Provider documentation states this is not supported, and the site makes no claim to the contrary.', null),
+          makeFinding(
+            representative,
+            group,
+            'unsupported',
+            'none',
+            'Provider documentation states this is not supported, and the site makes no claim to the contrary.',
+            null,
+          ),
         )
       } else if (!primitiveIsPublished) {
         findings.push(
           makeFinding(
             representative,
+            group,
             'changed',
             'extend-site-model',
             `The site has no "${representative.primitive}" primitive, so this documented capability cannot be expressed today.`,
@@ -239,6 +300,7 @@ export function compareClaims(
         findings.push(
           makeFinding(
             representative,
+            group,
             'changed',
             'extend-site-model',
             `The site does not publish "${representative.provider}" yet, so this documented behavior has no home in the comparison.`,
@@ -249,6 +311,7 @@ export function compareClaims(
         findings.push(
           makeFinding(
             representative,
+            group,
             'changed',
             'update-site-data',
             `The site publishes no "${representative.aspect}" value for ${representative.provider} and "${representative.primitive}".`,
@@ -261,20 +324,9 @@ export function compareClaims(
 
     for (const entry of siteEntries) answeredSiteKeys.add(`${entry.origin}|${entry.provider}|${entry.primitive}|${entry.aspect}`)
 
-    const siteValues = new Set(siteEntries.map((entry) => canonicalize(entry.value, entry.aspect)))
-    if (siteValues.size > 1) {
-      const detail = siteEntries.map((entry) => `${entry.origin}: ${entry.value}`).join(' vs ')
-      findings.push(
-        makeFinding(
-          representative,
-          'ambiguous',
-          'human-review',
-          `The site contradicts itself before any comparison can be made (${detail}).`,
-          siteEntries.map((entry) => entry.value).join(' | '),
-        ),
-      )
-      continue
-    }
+    // The pre-scan already reported this key, and there is no single site
+    // value to compare against.
+    if (contradictorySiteKeys.has(key)) continue
 
     const siteValue = siteEntries[0]!.value
     const matches = canonicalize(siteValue, representative.aspect) === documented
@@ -283,6 +335,7 @@ export function compareClaims(
       findings.push(
         makeFinding(
           representative,
+          group,
           'unsupported',
           matches ? 'none' : 'update-site-data',
           matches
@@ -297,6 +350,7 @@ export function compareClaims(
     findings.push(
       makeFinding(
         representative,
+        group,
         matches ? 'confirmed' : 'changed',
         matches ? 'none' : 'update-site-data',
         matches

@@ -1,8 +1,72 @@
 [
-  { "id": "c.confirmed", "provider": "testprov", "primitive": "hooks", "aspect": "location", "value": ".testprov/hooks.json", "sourceId": "testprov.hooks", "sourceUrl": "https://docs.example.com/testprov/hooks", "sourceAuthority": "primary", "retrievedAt": "2026-08-25" },
-  { "id": "c.changed", "provider": "testprov", "primitive": "persistent-instructions", "aspect": "location", "value": "NEW.md", "sourceId": "testprov.instructions", "sourceUrl": "https://docs.example.com/testprov/instructions", "sourceAuthority": "primary", "retrievedAt": "2026-08-25" },
-  { "id": "c.unmodeled-aspect", "provider": "testprov", "primitive": "hooks", "aspect": "lifecycle-events", "value": ["sessionStart", "sessionEnd"], "sourceId": "testprov.hooks", "sourceUrl": "https://docs.example.com/testprov/hooks", "sourceAuthority": "primary", "retrievedAt": "2026-08-25" },
-  { "id": "c.unknown-primitive", "provider": "testprov", "primitive": "memory", "aspect": "artifact", "value": "Automatic session memory", "sourceId": "testprov.instructions", "sourceUrl": "https://docs.example.com/testprov/instructions", "sourceAuthority": "primary", "retrievedAt": "2026-08-25" },
-  { "id": "c.unpublished-provider", "provider": "otherprov", "primitive": "persistent-instructions", "aspect": "location", "value": "OTHER.md", "sourceId": "otherprov.docs", "sourceUrl": "https://docs.example.com/otherprov/instructions", "sourceAuthority": "primary", "retrievedAt": "2026-08-25" },
-  { "id": "c.unsupported", "provider": "testprov", "primitive": "hooks", "aspect": "support", "value": "none", "sourceId": "testprov.hooks", "sourceUrl": "https://docs.example.com/testprov/hooks", "sourceAuthority": "primary", "retrievedAt": "2026-08-25" }
+  {
+    "id": "c.confirmed",
+    "provider": "testprov",
+    "primitive": "hooks",
+    "aspect": "location",
+    "value": ".testprov/hooks.json",
+    "sourceId": "testprov.hooks",
+    "sourceUrl": "https://docs.example.com/testprov/hooks",
+    "sourceAuthority": "primary",
+    "retrievedAt": "2026-08-25"
+  },
+  {
+    "id": "c.changed",
+    "provider": "testprov",
+    "primitive": "persistent-instructions",
+    "aspect": "location",
+    "value": "NEW.md",
+    "sourceId": "testprov.instructions",
+    "sourceUrl": "https://docs.example.com/testprov/instructions",
+    "sourceAuthority": "primary",
+    "retrievedAt": "2026-08-25"
+  },
+  {
+    "id": "c.unmodeled-aspect",
+    "provider": "testprov",
+    "primitive": "hooks",
+    "aspect": "lifecycle-events",
+    "value": [
+      "sessionStart",
+      "sessionEnd"
+    ],
+    "sourceId": "testprov.hooks",
+    "sourceUrl": "https://docs.example.com/testprov/hooks",
+    "sourceAuthority": "primary",
+    "retrievedAt": "2026-08-25",
+    "notes": "sessionEnd does not run for subagents."
+  },
+  {
+    "id": "c.unknown-primitive",
+    "provider": "testprov",
+    "primitive": "memory",
+    "aspect": "artifact",
+    "value": "Automatic session memory",
+    "sourceId": "testprov.instructions",
+    "sourceUrl": "https://docs.example.com/testprov/instructions",
+    "sourceAuthority": "primary",
+    "retrievedAt": "2026-08-25"
+  },
+  {
+    "id": "c.unpublished-provider",
+    "provider": "otherprov",
+    "primitive": "persistent-instructions",
+    "aspect": "location",
+    "value": "OTHER.md",
+    "sourceId": "otherprov.docs",
+    "sourceUrl": "https://docs.example.com/otherprov/instructions",
+    "sourceAuthority": "primary",
+    "retrievedAt": "2026-08-25"
+  },
+  {
+    "id": "c.unsupported",
+    "provider": "testprov",
+    "primitive": "hooks",
+    "aspect": "support",
+    "value": "none",
+    "sourceId": "testprov.hooks",
+    "sourceUrl": "https://docs.example.com/testprov/hooks",
+    "sourceAuthority": "primary",
+    "retrievedAt": "2026-08-25"
+  }
 ]
