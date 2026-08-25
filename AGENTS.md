@@ -1,7 +1,7 @@
 # Agent Instructions for agentconfig.org
 
 This file is the authoritative source for AI agent instructions in this repository.
-Both GitHub Copilot and Claude Code read this file automatically.
+GitHub Copilot and other agents with `AGENTS.md` support read it directly. Claude Code loads the same instructions through the `@AGENTS.md` import in `CLAUDE.md`.
 
 ## Project Overview
 
@@ -92,7 +92,12 @@ bun run test         # Run Playwright E2E tests
 
 ## Skills
 
-Project-specific skills are in `.github/skills/`. These work with both Copilot and Claude Code.
+Project-specific skills have one canonical source in `.github/skills/`. Copilot discovers that directory directly. Claude Code discovers the same files through the tracked `.claude/skills` directory symlink; edit the canonical source rather than the symlink.
+
+| Host | Discovery path | Source |
+|------|----------------|--------|
+| GitHub Copilot | `.github/skills/<skill-name>/SKILL.md` | Canonical |
+| Claude Code | `.claude/skills/<skill-name>/SKILL.md` | `.claude/skills` links to canonical source |
 
 | Skill | When to Use |
 |-------|-------------|

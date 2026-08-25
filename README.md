@@ -16,8 +16,8 @@ A reference guide for configuring AI coding assistants. Learn where config files
 
 | Type | Path |
 |------|------|
-| Global skills | `~/.copilot/skills/` or `~/.github/skills/` |
-| Project instructions | `.github/copilot-instructions.md` |
+| Global skills | `~/.copilot/skills/` or `~/.agents/skills/` |
+| Project instructions | `AGENTS.md` |
 | Project skills | `.github/skills/<skill-name>/SKILL.md` |
 | Project agents | `.github/agents/<name>.agent.md` |
 
@@ -28,7 +28,8 @@ A reference guide for configuring AI coding assistants. Learn where config files
 | Global config | `~/.claude/` |
 | Global memory | `~/.claude/CLAUDE.md` |
 | Global commands | `~/.claude/commands/<name>.md` |
-| Project memory | `./CLAUDE.md` or `.claude/CLAUDE.md` |
+| Project instructions | `CLAUDE.md`, importing `AGENTS.md` |
+| Project skills | `.claude/skills/<skill-name>/SKILL.md` through a directory symlink |
 | Project settings | `.claude/settings.json` |
 
 ### Cursor
@@ -48,6 +49,12 @@ A reference guide for configuring AI coding assistants. Learn where config files
 | Project instructions | `AGENTS.md` |
 | Project skills | `.codex/skills/<skill-name>/SKILL.md` |
 | Command rules | `~/.codex/rules/*.rules` |
+
+## Repository Agent Harness
+
+[`AGENTS.md`](AGENTS.md) is the canonical source of shared repository instructions. GitHub Copilot reads it directly, while [`CLAUDE.md`](CLAUDE.md) imports it with Claude Code's `@AGENTS.md` syntax. Project skills remain canonical in `.github/skills/`; the tracked `.claude/skills` directory symlink exposes the same files to Claude Code without maintaining duplicate copies.
+
+See GitHub's [repository instruction documentation](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions) and Claude Code's [memory](https://code.claude.com/docs/en/memory) and [skills](https://code.claude.com/docs/en/skills) documentation for host-specific discovery behavior.
 
 See the [llms.txt](https://agentconfig.org/llms.txt) for a machine-readable summary.
 
