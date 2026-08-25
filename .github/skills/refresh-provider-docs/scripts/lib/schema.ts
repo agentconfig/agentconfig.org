@@ -297,6 +297,10 @@ export function validateClaims(input: unknown): ValidationResult<Claim[]> {
       errors.push(`${where}: "value" must be a non-empty string or a non-empty array of strings`)
     }
 
+    if (rawClaim.notes !== undefined && (typeof rawClaim.notes !== 'string' || rawClaim.notes.trim() === '')) {
+      errors.push(`${where}: "notes" must be a non-empty string when provided`)
+    }
+
     // Support is a single level, never a list. An array would skip the enum
     // check and then be compared as ordinary text, so ["full", "none"] would
     // pass validation instead of failing closed.
