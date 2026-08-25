@@ -117,7 +117,7 @@ Research completed: 2025-01-17
 Audit results:
 - All 13 primitives researched
 - Config locations verified against official docs
-- Support levels: 7 full, 4 partial, 0 diy, 0 none
+- Support levels: 9 full, 3 partial, 1 diy
 - 100% coverage with official documentation references
 
 Key findings:
@@ -200,10 +200,10 @@ Here's what the actual research looked like for Codex:
 - Config: ~/.codex/config.toml
 - Native support: ✓ documented
 
-**Path-Scoped Rules**: no support
-- Official docs: searched thoroughly, no mention
-- Workaround: Not applicable
-- Support level: "diy" (could potentially create custom solution)
+**Directory / Path Scope Instructions**: full support
+- Official docs: nested `AGENTS.md` files load hierarchically, closest file wins
+- Config: `AGENTS.md` in any subdirectory
+- Native support: ✓ documented
 
 **Skills/Workflows**: partial support
 - Official docs: mentions AGENTS.md for workflows

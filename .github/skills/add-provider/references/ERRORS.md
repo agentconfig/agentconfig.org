@@ -73,14 +73,9 @@ export const trees: Record<Provider, FileNode> = {
 
 ```typescript
 // Count manually:
-// 13 primitives × 3 providers = 33 total support badges
-// But only "Full Support" badges: your number varies by provider
-
-// If your provider has:
-// - 6 "full" support: 6
-// - 1 "partial" per primitive for 5 primitives: 5 partial
-// Total Full Support: (10 × 3) + (1 × 3) = 33...
-// Wait, let me recalculate
+// 13 primitives × 4 providers = 52 total support badges
+// Only "Full Support" badges are a subset of that total, so count them
+// directly rather than deriving them from the 52-badge total.
 
 // Better approach: Run test and see actual number, then update
 const fullSupportBadges = table.getByText('Full Support')

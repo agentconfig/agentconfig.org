@@ -19,17 +19,19 @@ Complete verification steps for all 6 work streams, plus pre-implementation rese
 - [ ] Skills / Workflows: support level documented with evidence
 - [ ] Tool Integrations (MCP): support level documented with evidence
 - [ ] Persistent Instructions: support level documented with evidence
-- [ ] Global Instructions: support level documented with evidence
-- [ ] Path-Scoped Rules: support level documented with evidence
+- [ ] User Scope Instructions: support level documented with evidence
+- [ ] Directory / Path Scope Instructions: support level documented with evidence
 - [ ] Slash Commands: support level documented with evidence
 - [ ] Custom Agents: support level documented with evidence
 - [ ] Permissions & Guardrails: support level documented with evidence
 - [ ] Lifecycle Hooks: support level documented with evidence
+- [ ] Runtime Sandbox: support level documented with evidence
+- [ ] Configuration Distribution: support level documented with evidence
 - [ ] Verification / Evals: support level documented with evidence
 
 ### Documentation
 - [ ] Created research summary with links to official docs
-- [ ] Each primitive has a support level decision (full/partial/diy/none)
+- [ ] Each primitive has a support level decision (`primitives.ts`: full/partial/diy; `comparison.ts`: full/partial/none)
 - [ ] Each support level decision has evidence (link to docs)
 - [ ] All config file locations are from official sources, not guesses
 - [ ] Verified no overlaps or conflicts between primitives
@@ -67,12 +69,14 @@ Complete verification steps for all 6 work streams, plus pre-implementation rese
   - [ ] Skills / Workflows
   - [ ] Tool Integrations (MCP)
   - [ ] Persistent Instructions
-  - [ ] Global Instructions
-  - [ ] Path-Scoped Rules
+  - [ ] User Scope Instructions
+  - [ ] Directory / Path Scope Instructions
   - [ ] Slash Commands
   - [ ] Custom Agents
   - [ ] Permissions & Guardrails
   - [ ] Lifecycle Hooks
+  - [ ] Runtime Sandbox
+  - [ ] Configuration Distribution
   - [ ] Verification / Evals
 
 **For each primitive entry, verify:**
@@ -192,8 +196,7 @@ Complete verification steps for all 6 work streams, plus pre-implementation rese
 - [ ] No flaky tests (run multiple times)
 
 ### Badge Count Math
-- [ ] Formula: (13 primitives) × (support levels count)
-- [ ] Example for Cursor: (6 full + 5 partial) × 3 providers = ?
+- [ ] Formula: (13 primitives) × (4 providers) = 52 total support badges
 - [ ] Verify actual count matches test assertion
 - [ ] If test fails: Update expectation to match actual count
 
@@ -295,7 +298,7 @@ Complete verification steps for all 6 work streams, plus pre-implementation rese
 ## Common Pitfalls to Avoid
 
 - [ ] **Case sensitivity**: Provider type must be lowercase ('cursor' not 'Cursor')
-- [ ] **Missing primitives**: All 11 must be updated, not just a few
+- [ ] **Missing primitives**: All 13 must be updated, not just a few
 - [ ] **Type mismatches**: Provider field value must match the type exactly
 - [ ] **colSpan errors**: Table colSpan must match number of columns (primitive + all providers)
 - [ ] **Grid layout**: md:grid-cols-X where X = number of provider columns

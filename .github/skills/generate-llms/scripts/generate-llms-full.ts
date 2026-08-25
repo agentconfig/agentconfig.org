@@ -524,70 +524,28 @@ Support matrix comparing GitHub Copilot, Claude Code, Cursor, and OpenAI Codex:
   content += `
 ### Config File Locations
 
-**GitHub Copilot:**
-- Persistent Instructions: \`AGENTS.md\` or \`.github/copilot-instructions.md\`
-- User Scope Instructions: Personal Copilot settings (no repository file)
-- Directory / Path Scope Instructions: Nested \`AGENTS.md\` files or \`.github/instructions/*.instructions.md\`
-- Skills / Workflows: \`.github/skills/*/SKILL.md\`
-- Slash Commands: \`.github/prompts/*.prompt.md\`
-- Tool Integrations (MCP): \`.vscode/mcp.json\` or VS Code settings
-- Agent Mode: VS Code Copilot Chat (no file; a chat mode)
-- Custom Agents: \`.github/agents/*.agent.md\`
-- Permissions & Guardrails: Repository/organization Copilot policies
-- Lifecycle Hooks: GitHub Actions workflows around the coding agent
-- Runtime Sandbox: Actions network firewall allowlist (Copilot coding agent)
-- Configuration Distribution: \`AGENTS.md\` plus nested \`.github/instructions/*.instructions.md\`
-- Verification / Evals: Terminal tools in agent mode
+`
 
-**Claude Code:**
-- Persistent Instructions: \`CLAUDE.md\` (root) or \`.claude/CLAUDE.md\`
-- User Scope Instructions: \`~/.claude/CLAUDE.md\`
-- Directory / Path Scope Instructions: \`.claude/rules/*.md\`
-- Skills / Workflows: \`.claude/skills/*/SKILL.md\`
-- Slash Commands: \`.claude/commands/*.md\`
-- Tool Integrations (MCP): \`.mcp.json\` (project) or \`~/.claude.json\` (local/user)
-- Agent Mode: Claude Code CLI (agentic workflows)
-- Custom Agents: \`.claude/agents/*.md\`
-- Permissions & Guardrails: \`.claude/settings.json\` allow/deny/ask rules
-- Lifecycle Hooks: \`hooks\` in \`.claude/settings.json\`
-- Runtime Sandbox: Sandbox modes in \`.claude/settings.json\`
-- Configuration Distribution: \`AGENTS.md\` imported into \`CLAUDE.md\` plus \`.claude/rules/*.md\`
-- Verification / Evals: Bash tool with hooks
+  const providerLabels: Record<string, string> = {
+    copilot: 'GitHub Copilot',
+    claude: 'Claude Code',
+    cursor: 'Cursor',
+    codex: 'OpenAI Codex',
+  }
 
-**Cursor:**
-- Persistent Instructions: \`.cursor/instructions.md\`
-- User Scope Instructions: \`~/.cursor/settings.json\`
-- Directory / Path Scope Instructions: \`.cursor/rules/*.mdc\`
-- Skills / Workflows: \`.cursor/skills/*/SKILL.md\`
-- Slash Commands: \`.cursor/commands/*.md\`
-- Tool Integrations (MCP): \`.cursor/mcp.json\`
-- Agent Mode: Cursor Editor with Agent capabilities
-- Custom Agents: \`.cursor/agents/*.md\`
-- Permissions & Guardrails: Settings > Agents > Approvals & Execution
-- Lifecycle Hooks: \`.cursor/hooks.json\`
-- Runtime Sandbox: Settings > Agents > Approvals & Execution plus \`.cursor/cli-config.json\`
-- Configuration Distribution: \`.cursor/instructions.md\`, \`.cursor/rules/*.mdc\`, \`.cursor/skills/*/SKILL.md\`
-- Verification / Evals: Terminal commands in Agent mode
+  for (const [providerId, providerLabel] of Object.entries(providerLabels)) {
+    content += `**${providerLabel}:**\n`
+    for (const p of primitives) {
+      const impl = p.implementations.find((i: { provider: string }) => i.provider === providerId)
+      const location = impl ? impl.location : 'Not documented'
+      content += `- ${p.name}: \`${location}\`\n`
+    }
+    content += '\n'
+  }
 
-**OpenAI Codex:**
-- Persistent Instructions: \`AGENTS.md\` (project root)
-- User Scope Instructions: \`~/.codex/AGENTS.md\`
-- Directory / Path Scope Instructions: Nested \`AGENTS.md\` files in subdirectories
-- Skills / Workflows: \`.codex/skills/*/SKILL.md\`
-- Slash Commands: \`~/.codex/prompts/*.md\`
-- Tool Integrations (MCP): \`~/.codex/config.toml\` (\`mcp_servers\` section)
-- Agent Mode: Codex CLI (agentic coding)
-- Custom Agents: Not yet supported
-- Permissions & Guardrails: \`approval_policy\` in \`~/.codex/config.toml\`
-- Lifecycle Hooks: \`~/.codex/config.toml\` lifecycle notifications
-- Runtime Sandbox: \`sandbox_mode\` and \`sandbox_workspace_write.*\` in \`~/.codex/config.toml\`
-- Configuration Distribution: Hierarchical \`AGENTS.md\` with user + repo layering
-- Verification / Evals: Terminal tools in Codex CLI
-
----
+  content += `---
 
 # Part 4: Skills Tutorial
-
 `
 
   content += generateSkillsMd(data).replace(/^# Skills Tutorial\n\n[^\n]+\n[^\n]+\n[^\n]+\n\n/, '')

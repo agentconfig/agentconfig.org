@@ -37,7 +37,7 @@ Edit `site/src/data/primitives.ts`:
       provider: 'copilot',
       implementation: 'How Copilot implements this',
       location: '.github/path/to/file',
-      support: 'full',  // 'full' | 'partial' | 'none'
+      support: 'full',  // 'full' | 'partial' | 'diy'
       sourceUrl: 'https://docs.github.com/...',  // primary provider documentation
     },
     {
@@ -66,8 +66,7 @@ Edit `site/src/data/primitives.ts`:
 }
 ```
 
-Always list all four providers (`copilot`, `claude`, `cursor`, `codex`) even when support is `partial` or `none` — a missing provider entry silently reads as "no data" rather than "not supported," which the `refresh-provider-docs` skill and comparison table both rely on to stay honest. Cite a primary `sourceUrl` for every claim; do not add a primitive with unverified provider claims (use the `refresh-provider-docs` skill first if you have not already confirmed the paths against current documentation).
-```
+Always list all four providers (`copilot`, `claude`, `cursor`, `codex`) even when support is `partial` or `diy` — a missing provider entry silently reads as "no data" rather than "not supported," which the `refresh-provider-docs` skill and comparison table both rely on to stay honest. Cite a primary `sourceUrl` for every claim; do not add a primitive with unverified provider claims (use the `refresh-provider-docs` skill first if you have not already confirmed the paths against current documentation).
 
 ### 2. Add to File Tree (if applicable)
 
@@ -156,15 +155,25 @@ interface ProviderImplementation {
   provider: 'copilot' | 'claude' | 'cursor' | 'codex'
   implementation: string
   location: string
-  support: 'full' | 'partial' | 'none'
+  support: 'full' | 'partial' | 'diy'
   sourceUrl?: string  // primary provider documentation backing this claim
 }
 ```
 
 ### Support Levels
-- `full` - Native, well-documented support
-- `partial` - Works but with limitations
-- `none` - Not supported; documentation states the capability is unavailable
+
+`primitives.ts` (`ProviderImplementation.support`) and `comparison.ts` (`ComparisonRow[provider].level`) use two different, non-interchangeable enums — do not copy one file's values into the other:
+
+- `primitives.ts` uses `'full' | 'partial' | 'diy'`:
+  - `full` - Native, well-documented support
+  - `partial` - Works but with limitations
+  - `diy` - No built-in support; requires custom setup to approximate
+- `comparison.ts` uses `'full' | 'partial' | 'none'`:
+  - `full` - Native, well-documented support
+  - `partial` - Works but with limitations
+  - `none` - Not supported; documentation states the capability is unavailable
+
+If you're documenting a provider that genuinely has zero support for a primitive, use `diy` in `primitives.ts` and `none` in `comparison.ts` for the same row — this is expected, not a self-contradiction.
 
 ### Categories (Layers)
 

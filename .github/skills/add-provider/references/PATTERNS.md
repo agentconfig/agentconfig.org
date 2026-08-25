@@ -221,19 +221,21 @@ Does provider natively support this?
 
 Quick reference for common feature mappings:
 
-| Primitive | Copilot | Claude | Cursor | Notes |
-|-----------|---------|--------|--------|-------|
-| **Agent Mode** | `full` | `full` | `full` | All support multi-step execution |
-| **Skills** | `full` | `full` | `partial` | Cursor has rules but not full skill system |
-| **Tool Integrations** | `full` | `full` | `partial` | Cursor has Extensions API, not full MCP |
-| **Persistent Instructions** | `full` | `full` | `full` | All have project-level instructions |
-| **Global Instructions** | `full` | `full` | `full` | All support user-level preferences |
-| **Path-Scoped Rules** | `full` | `full` | `full` | All support directory-specific rules |
-| **Slash Commands** | `full` | `full` | `partial` | Cursor has UI shortcuts, not full custom commands |
-| **Custom Agents** | `full` | `full` | `partial` | Cursor has agents but less flexible |
-| **Permissions & Guardrails** | `full` | `full` | `partial` | Cursor has safety features, not as comprehensive |
-| **Lifecycle Hooks** | `diy` | `full` | `none` | Only Claude has built-in hooks |
-| **Verification / Evals** | `full` | `full` | `full` | All support terminal execution for tests |
+| Primitive | Copilot | Claude | Cursor | Codex | Notes |
+|-----------|---------|--------|--------|-------|-------|
+| **Agent Mode** | `full` | `full` | `full` | `full` | All support multi-step execution |
+| **Skills** | `full` | `full` | `partial` | `full` | Cursor has rules but not full skill system |
+| **Tool Integrations** | `full` | `full` | `partial` | `full` | Cursor has Extensions API, not full MCP |
+| **Persistent Instructions** | `full` | `full` | `full` | `full` | All have project-level instructions |
+| **User Scope Instructions** | `full` | `full` | `full` | `full` | All support user-level preferences |
+| **Directory / Path Scope Instructions** | `full` | `full` | `full` | `full` | All support directory-specific rules |
+| **Slash Commands** | `full` | `full` | `partial` | `full` | Cursor has UI shortcuts, not full custom commands |
+| **Custom Agents** | `full` | `full` | `partial` | `diy` | Codex has no built-in custom agents |
+| **Permissions & Guardrails** | `full` | `full` | `partial` | `full` | Cursor has safety features, not as comprehensive |
+| **Lifecycle Hooks** | `full` | `full` | `full` | `full` | All four providers now have built-in hooks |
+| **Runtime Sandbox** | `partial` | `full` | `full` | `full` | Copilot's sandbox controls are policy/settings surfaces, not a dedicated file |
+| **Configuration Distribution** | `full` | `full` | `full` | `full` | All support hierarchical instruction files |
+| **Verification / Evals** | `full` | `full` | `full` | `full` | All support terminal execution for tests |
 
 ---
 
@@ -337,7 +339,7 @@ When adding a provider, research these questions:
 - Format? (markdown, JSON, plain text)
 - Where are they stored?
 
-### Path-Scoped Rules
+### Directory / Path Scope Instructions
 - Can instructions apply to specific directories?
 - How are patterns specified? (glob, regex)
 - Format of scoping syntax?
@@ -383,7 +385,7 @@ Before committing provider data:
   - [ ] `fileTree.ts` (Provider type)
   - [ ] `comparison.ts` (ComparisonRow interface)
 - [ ] All 13 primitives have provider entries
-- [ ] All 11 comparison rows have provider field
+- [ ] All 13 comparison rows have provider field
 - [ ] Support levels are consistent (primitives.ts ↔ comparison.ts)
 - [ ] File locations follow provider's naming conventions
 - [ ] Provider display name is added to PrimitiveCard labels

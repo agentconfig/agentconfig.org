@@ -35,11 +35,11 @@ Use this skill when:
 Before starting, gather:
 - **Provider capability audit** - Which of the 13 primitives does the provider support?
 - **File path documentation** - Where do config files go (global vs project)?
-- **Support levels** - `full` (native), `partial` (workarounds), `none` (unavailable), `diy` (custom setup)
+- **Support levels** - `primitives.ts` uses `full` (native), `partial` (workarounds), `diy` (custom setup); `comparison.ts` uses `full`, `partial`, `none` (unavailable) — the two files use different enums, do not mix them
 
 ## The 13 Primitives
 
-Every provider must map to these primitives, one per layer (see `categories` in `site/src/data/primitives.ts` for the full layer list and `scopeModel` for the separate where-it-applies vocabulary — scopes are not primitives):
+Every provider must map to all 13 primitives across the 8 layers below (layers are not 1:1 with primitives — Instructions has three, Memory & State currently has none); see `categories` in `site/src/data/primitives.ts` for the full layer list and `scopeModel` for the separate where-it-applies vocabulary — scopes are not primitives:
 
 | Layer | Primitives |
 |-------|-----------|

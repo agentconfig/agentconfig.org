@@ -518,12 +518,13 @@ test('should have copy buttons in expanded row', async ({ page }) => {
 **File**: `.github/skills/generate-llms/scripts/generate-llms-full.ts`
 
 ```typescript
-// Look for the provider name mapping around line 583
+// Look for the provider name mapping in formatPrimitive()
 ${p.implementations.map((impl: any) => {
   const providerName =
     impl.provider === 'copilot' ? 'GitHub Copilot' :
     impl.provider === 'claude' ? 'Claude Code' :
     impl.provider === 'cursor' ? 'Cursor' :
+    impl.provider === 'codex' ? 'OpenAI Codex' :
     impl.provider;
   return `| ${providerName} | ${impl.implementation} | ${impl.location} | ${impl.support} |`
 }).join('\n')}
@@ -533,16 +534,18 @@ ${p.implementations.map((impl: any) => {
 
 ## Reference: All 13 Primitives
 
-Use this checklist when adding implementation data. All 11 must be included:
+Use this checklist when adding implementation data. All 13 must be included:
 
-1. **Agent Mode** (Execution)
-2. **Skills / Workflows** (Execution)
-3. **Tool Integrations (MCP)** (Execution)
-4. **Persistent Instructions** (Customization)
-5. **Global Instructions** (Customization)
-6. **Path-Scoped Rules** (Customization)
-7. **Slash Commands** (Customization)
-8. **Custom Agents** (Control)
-9. **Permissions & Guardrails** (Control)
-10. **Lifecycle Hooks** (Control)
-11. **Verification / Evals** (Control)
+1. **Agent Mode** (Delegation)
+2. **Skills / Workflows** (Procedures)
+3. **Tool Integrations (MCP)** (Tools & Context)
+4. **Persistent Instructions** (Instructions)
+5. **User Scope Instructions** (Instructions)
+6. **Directory / Path Scope Instructions** (Instructions)
+7. **Slash Commands** (Procedures)
+8. **Custom Agents** (Delegation)
+9. **Permissions & Guardrails** (Control & Approval)
+10. **Lifecycle Hooks** (Control & Approval)
+11. **Runtime Sandbox** (Control & Approval)
+12. **Configuration Distribution** (Distribution)
+13. **Verification / Evals** (Verification & Observability)

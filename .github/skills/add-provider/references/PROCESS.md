@@ -144,13 +144,11 @@ implementations: [
 ```
 Does provider natively support this?
 ├─ Yes, well-documented, core feature
-│  └─ support: 'full'
+│  └─ primitives.ts support: 'full'   | comparison.ts level: 'full'
 ├─ Yes, but limited or with workarounds
-│  └─ support: 'partial'
-├─ No, but achievable with custom setup
-│  └─ support: 'diy'
-└─ No, impossible
-   └─ support: 'none' (rare)
+│  └─ primitives.ts support: 'partial' | comparison.ts level: 'partial'
+└─ No, not supported (whether via custom setup or not at all)
+   └─ primitives.ts support: 'diy'    | comparison.ts level: 'none'
 ```
 
 All 13 primitives:
@@ -158,19 +156,21 @@ All 13 primitives:
 - Skills / Workflows
 - Tool Integrations (MCP)
 - Persistent Instructions
-- Global Instructions
-- Path-Scoped Rules
+- User Scope Instructions
+- Directory / Path Scope Instructions
 - Slash Commands
 - Custom Agents
 - Permissions & Guardrails
 - Lifecycle Hooks
+- Runtime Sandbox
+- Configuration Distribution
 - Verification / Evals
 
 ### 2.2 Add Provider Data to Comparison Matrix
 
 Edit `site/src/data/comparison.ts`:
 
-For each of the 11 `ComparisonRow` entries, add cursor field:
+For each of the 13 `ComparisonRow` entries, add cursor field:
 
 ```typescript
 {

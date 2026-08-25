@@ -70,7 +70,7 @@ Based on their answers, recommend **3-5 primitives** in priority order.
 
 **Pain Point: "Inconsistent code style across AI-generated code"**
 → Start with: Persistent Instructions
-→ Next: Path-Scoped Rules (if monorepo/multi-language)
+→ Next: Directory/Path Scope Instructions (if monorepo/multi-language)
 → Combine with: Verification/Evals (to catch violations)
 
 **Pain Point: "Repeating the same prompts over and over"**
@@ -94,7 +94,7 @@ Based on their answers, recommend **3-5 primitives** in priority order.
 → Combine with: Agent Mode (to use tools in multi-step workflows)
 
 **Pain Point: "Different parts of our codebase have different conventions"**
-→ Start with: Path-Scoped Rules
+→ Start with: Directory/Path Scope Instructions
 → Next: Persistent Instructions (for shared conventions)
 → Combine with: Custom Agents (for role-specific expertise)
 
@@ -162,7 +162,7 @@ Recommend which other primitives work well together.
 **Example:**
 > **Combine with:**
 > - **Verification/Evals** - Run `bun run lint` after each change to catch style violations
-> - **Path-Scoped Rules** - Different rules for `src/api/` vs `src/frontend/`
+> - **Directory/Path Scope Instructions** - Different rules for `src/api/` vs `src/frontend/`
 
 ### 5. Common Pitfalls
 Warn about mistakes specific to their setup.
@@ -284,7 +284,7 @@ Remind users to start small, validate, and expand. Configuration is a journey, n
 >
 > **Learn more:** https://agentconfig.org/agents#provider-specific-formats
 >
-> **Combine with:** Global Instructions (~/.claude/CLAUDE.md) if these conventions apply across all your projects.
+> **Combine with:** User Scope Instructions (~/.claude/CLAUDE.md) if these conventions apply across all your projects.
 >
 > **Watch out:** Be specific. "Use good TypeScript" won't help. "Always use named exports, never default exports" will.
 >
