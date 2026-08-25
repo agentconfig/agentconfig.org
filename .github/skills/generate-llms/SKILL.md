@@ -49,7 +49,7 @@ The llms files are generated from these TypeScript data files:
 | File | Content |
 |------|---------|
 | `site/src/data/pages.ts` | **Page registry** - lists all pages for llms generation |
-| `site/src/data/primitives.ts` | 10 AI primitives with descriptions, use cases, and provider implementations |
+| `site/src/data/primitives.ts` | 11 AI primitives with descriptions, use cases, and provider implementations |
 | `site/src/data/comparison.ts` | Provider comparison matrix (Copilot vs Claude) |
 | `site/src/data/skillsTutorial.ts` | Skills tutorial sections and concepts |
 | `site/src/data/skillExamples.ts` | 5 example skills with full code |
@@ -80,7 +80,7 @@ The homepage llms.txt follows the strict llmstxt.org format:
 ```markdown
 # agentconfig.org
 
-> A reference site for configuring AI coding assistants. Covers 10 AI primitives,
+> A reference site for configuring AI coding assistants. Covers 11 AI primitives,
 > provider comparison (GitHub Copilot vs Claude Code), and tutorials for skills
 > and agent definitions.
 
@@ -113,7 +113,7 @@ bun .github/skills/generate-llms/scripts/generate-llms-full.ts
 This reads all data files and generates comprehensive markdown including:
 
 1. **Site overview** with purpose and structure
-2. **All 10 AI primitives** with full details:
+2. **All 11 AI primitives** with full details:
    - Description
    - What it is
    - When to use it

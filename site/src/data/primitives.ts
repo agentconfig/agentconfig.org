@@ -9,6 +9,8 @@ export interface ProviderImplementation {
   location: string
   /** Support level */
   support: 'full' | 'partial' | 'diy'
+  /** Primary provider documentation */
+  sourceUrl?: string
 }
 
 export interface Primitive {
@@ -136,8 +138,9 @@ export const primitives: Primitive[] = [
       {
         provider: 'claude',
         implementation: 'MCP servers and tool calling',
-        location: '.claude/settings.json',
+        location: '.mcp.json or ~/.claude.json',
         support: 'full',
+        sourceUrl: 'https://code.claude.com/docs/en/mcp',
       },
       {
         provider: 'cursor',
@@ -170,9 +173,10 @@ export const primitives: Primitive[] = [
     implementations: [
       {
         provider: 'copilot',
-        implementation: 'Repository-level instructions file',
-        location: '.github/copilot-instructions.md',
+        implementation: 'AGENTS.md or repository instructions file',
+        location: 'AGENTS.md or .github/copilot-instructions.md',
         support: 'full',
+        sourceUrl: 'https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions',
       },
       {
         provider: 'claude',
@@ -250,9 +254,10 @@ export const primitives: Primitive[] = [
     implementations: [
       {
         provider: 'copilot',
-        implementation: 'Instruction files with applyTo glob patterns',
-        location: '.github/instructions/*.instructions.md',
+        implementation: 'Nested AGENTS.md or applyTo instruction files',
+        location: 'subdir/AGENTS.md or .github/instructions/*.instructions.md',
         support: 'full',
+        sourceUrl: 'https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions',
       },
       {
         provider: 'claude',
@@ -411,15 +416,17 @@ export const primitives: Primitive[] = [
     implementations: [
       {
         provider: 'copilot',
-        implementation: 'Not available',
-        location: 'N/A',
-        support: 'diy',
+        implementation: 'Lifecycle hooks for Copilot CLI and cloud agent',
+        location: '.github/hooks/*.json',
+        support: 'full',
+        sourceUrl: 'https://docs.github.com/en/copilot/reference/hooks-reference',
       },
       {
         provider: 'claude',
-        implementation: 'PreToolUse, PostToolUse, Stop hooks with matchers',
-        location: '.claude/hooks/hooks.json',
+        implementation: 'Lifecycle hooks configured in shared project settings',
+        location: '.claude/settings.json',
         support: 'full',
+        sourceUrl: 'https://code.claude.com/docs/en/hooks',
       },
       {
         provider: 'cursor',

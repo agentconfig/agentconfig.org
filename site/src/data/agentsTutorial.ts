@@ -28,13 +28,13 @@ export const furtherReadingLinks: readonly FurtherReadingLink[] = [
   },
   {
     title: 'Claude Code Memory',
-    url: 'https://docs.anthropic.com/en/docs/claude-code/memory',
+    url: 'https://code.claude.com/docs/en/memory',
     source: 'Anthropic',
     description: 'Official documentation for CLAUDE.md, rules, imports, and memory hierarchy.',
   },
   {
     title: 'Copilot Customization',
-    url: 'https://docs.github.com/en/copilot/customizing-copilot/adding-repository-custom-instructions-for-github-copilot',
+    url: 'https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions',
     source: 'GitHub Docs',
     description: 'How to configure copilot-instructions.md, path-specific rules, and agent files.',
   },
@@ -125,20 +125,12 @@ export const codeSamples: Record<string, string> = {
 - Framework: Vitest
 - Run: \`npm test\``,
 
-  claudeMdFormat: `# CLAUDE.md
+  claudeMdFormat: `@AGENTS.md
 
-See @README.md for project overview.
-See @package.json for available npm commands.
+## Claude Code
 
-## Code Style
-Follow @docs/code-style.md for conventions.
-
-## Testing
-Run tests with \`npm test\` before every commit.
-
-## Important Files
-- @src/config.ts - Application configuration
-- @src/types/index.ts - Shared TypeScript types`,
+Add only Claude-specific instructions here. Shared project instructions
+belong in AGENTS.md.`,
 
   copilotInstructions: `# .github/copilot-instructions.md
 
@@ -206,27 +198,26 @@ something is a concern and suggest specific fixes.`,
     ├── security-reviewer.agent.md
     └── docs-writer.agent.md`,
 
-  claudeHierarchy: `Precedence (highest to lowest):
+  claudeHierarchy: `Instruction loading order (broadest to most specific):
 
-1. Subtree CLAUDE.md (closest to working file)
-2. Path-specific rules (.claude/rules/*.md)
-3. Project CLAUDE.md (repository root)
-4. User CLAUDE.md (~/.claude/CLAUDE.md)
-5. Enterprise settings
+1. Managed policy CLAUDE.md
+2. User CLAUDE.md (~/.claude/CLAUDE.md)
+3. Project CLAUDE.md or .claude/CLAUDE.md
+4. CLAUDE.local.md
+5. Nested CLAUDE.md files, loaded when Claude reads that subtree
 
-More specific always wins. A rule in packages/api/CLAUDE.md
-overrides the root CLAUDE.md for files in that package.`,
+Applicable files are concatenated into context. More specific files are read
+later; they do not mechanically replace broader files.`,
 
-  copilotHierarchy: `Precedence (highest to lowest):
+  copilotHierarchy: `Instruction behavior:
 
-1. Agent-specific (.agent.md instructions)
-2. Path-specific (.instructions.md with applyTo)
-3. Repository-wide (copilot-instructions.md)
-4. Organization settings
-5. User settings
+1. The nearest AGENTS.md takes precedence among AGENTS.md files
+2. Matching .instructions.md files are additive with repository instructions
+3. Personal, repository, and organization instructions can all apply
+4. Personal instructions have the highest priority, followed by repository
+   instructions and then organization instructions
 
-Path rules are additive—they combine with repository
-instructions rather than replacing them.`,
+Avoid conflicts rather than relying on priority to reconcile them.`,
 
   monorepoStructure: `monorepo/
 ├── AGENTS.md           # Shared instructions (all packages)

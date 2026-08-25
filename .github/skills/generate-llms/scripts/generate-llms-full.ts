@@ -96,8 +96,8 @@ ${docsList}
 - [agentskills.io specification](https://agentskills.io/specification): The skills format specification
 - [AGENTS.md specification](https://agents.md): Open format for guiding coding agents
 - [MCP specification](https://modelcontextprotocol.io/specification/latest): Model Context Protocol specification
-- [Claude Code Memory docs](https://docs.anthropic.com/en/docs/claude-code/memory): Official CLAUDE.md documentation
-- [Copilot customization docs](https://docs.github.com/en/copilot/customizing-copilot): GitHub Copilot instructions documentation
+- [Claude Code memory docs](https://code.claude.com/docs/en/memory): Official CLAUDE.md documentation
+- [Copilot repository instructions](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions): GitHub Copilot instruction-file documentation
 `
 }
 
@@ -186,15 +186,18 @@ They provide context about how to build, what conventions to follow, and where t
 - Human readable: Team members can review and update easily
 - Version controlled: Instructions evolve with your codebase
 - Tool agnostic: Many AI tools read the same formats
-- No runtime cost: Instructions load at session start
+- No application runtime dependency: Instructions are documentation consumed by supporting agents
 
 ### 2. Your First Agent Definition
 
-Minimal example that works with any AI coding assistant:
+Minimal example for assistants that support AGENTS.md:
 
 \`\`\`markdown
 ${codeSamples.minimalAgent}
 \`\`\`
+
+Claude Code reads CLAUDE.md rather than AGENTS.md directly. Add a CLAUDE.md containing
+\`@AGENTS.md\` to reuse these shared instructions with Claude Code.
 
 ### 3. The Six Sections That Matter
 
@@ -213,7 +216,7 @@ ${codeSamples.sixSections}
 
 ### 4. Provider-Specific Formats
 
-**AGENTS.md** (Open standard, 60k+ projects):
+**AGENTS.md** (open format):
 \`\`\`markdown
 ${codeSamples.agentsMdFormat}
 \`\`\`
@@ -231,7 +234,7 @@ ${codeSamples.copilotInstructions}
 | Feature | AGENTS.md | CLAUDE.md | copilot-instructions |
 |---------|-----------|-----------|---------------------|
 | Location | Project root | Root or .claude/ | .github/ |
-| Path rules | ✗ | ✓ .claude/rules/ | ✓ .instructions.md |
+| Path rules | ✓ nested AGENTS.md | ✓ .claude/rules/ | ✓ .instructions.md |
 | File imports | ✗ | ✓ @file syntax | ✗ |
 | Agent personas | ✗ | ✗ | ✓ .agent.md |
 | Cross-tool support | Wide | Claude only | Copilot only |
@@ -456,7 +459,7 @@ ${topicsList}
 
 # Part 1: AI Primitives
 
-The site documents 10 AI primitives organized into 3 categories:
+The site documents 11 AI primitives organized into 3 categories:
 - **Capability (Execution)**: What the AI can do
 - **Customization (Instructions)**: How to shape AI behavior
 - **Control (Safety)**: How to constrain AI actions
@@ -522,11 +525,12 @@ Support matrix comparing GitHub Copilot, Claude Code, Cursor, and OpenAI Codex:
 ### Config File Locations
 
 **GitHub Copilot:**
-- Persistent Instructions: \`.github/copilot-instructions.md\`
-- Path-Scoped Rules: \`.github/instructions/*.instructions.md\`
+- Persistent Instructions: \`AGENTS.md\` or \`.github/copilot-instructions.md\`
+- Path-Scoped Rules: Nested \`AGENTS.md\` files or \`.github/instructions/*.instructions.md\`
 - Slash Commands: \`.github/prompts/*.prompt.md\`
 - Custom Agents: \`.github/agents/*.agent.md\`
 - Skills: \`.github/skills/*/SKILL.md\`
+- Lifecycle Hooks: \`.github/hooks/*.json\`
 
 **Claude Code:**
 - Persistent Instructions: \`CLAUDE.md\` (root) or \`.claude/CLAUDE.md\`
@@ -535,8 +539,8 @@ Support matrix comparing GitHub Copilot, Claude Code, Cursor, and OpenAI Codex:
 - Slash Commands: \`.claude/commands/*.md\`
 - Custom Agents: \`.claude/agents/*.md\`
 - Skills: \`.claude/skills/*/SKILL.md\`
-- Lifecycle Hooks: \`.claude/hooks/hooks.json\`
-- MCP Settings: \`.claude/settings.json\`
+- Lifecycle Hooks: \`hooks\` in \`.claude/settings.json\`
+- MCP Settings: \`.mcp.json\` (project) or \`~/.claude.json\` (local/user)
 
 **Cursor:**
 - Persistent Instructions: \`.cursor/instructions.md\`
@@ -602,8 +606,8 @@ ${p.useWhen.map((u: string) => `- ${u}`).join('\n')}
 
 **Provider Implementations:**
 
-| Provider | Implementation | Location | Support |
-|----------|---------------|----------|---------|
+| Provider | Implementation | Location | Support | Source |
+|----------|---------------|----------|---------|--------|
 ${p.implementations.map((impl: any) => {
   const providerName =
     impl.provider === 'copilot' ? 'GitHub Copilot' :
@@ -611,7 +615,8 @@ ${p.implementations.map((impl: any) => {
     impl.provider === 'cursor' ? 'Cursor' :
     impl.provider === 'codex' ? 'OpenAI Codex' :
     impl.provider;
-  return `| ${providerName} | ${impl.implementation} | ${impl.location} | ${impl.support} |`
+  const source = impl.sourceUrl != null ? `[Provider documentation](${impl.sourceUrl})` : '—'
+  return `| ${providerName} | ${impl.implementation} | ${impl.location} | ${impl.support} | ${source} |`
 }).join('\n')}
 
 ---

@@ -27,11 +27,11 @@ They provide context about how to build, what conventions to follow, and where t
 - Human readable: Team members can review and update easily
 - Version controlled: Instructions evolve with your codebase
 - Tool agnostic: Many AI tools read the same formats
-- No runtime cost: Instructions load at session start
+- No application runtime dependency: Instructions are documentation consumed by supporting agents
 
 ### 2. Your First Agent Definition
 
-Minimal example that works with any AI coding assistant:
+Minimal example for assistants that support AGENTS.md:
 
 ```markdown
 # AGENTS.md
@@ -46,6 +46,9 @@ Minimal example that works with any AI coding assistant:
 - Use functional components
 - Single quotes, no semicolons
 ```
+
+Claude Code reads CLAUDE.md rather than AGENTS.md directly. Add a CLAUDE.md containing
+`@AGENTS.md` to reuse these shared instructions with Claude Code.
 
 ### 3. The Six Sections That Matter
 
@@ -107,7 +110,7 @@ Analysis of 2,500+ repositories shows effective agent definitions cover:
 
 ### 4. Provider-Specific Formats
 
-**AGENTS.md** (Open standard, 60k+ projects):
+**AGENTS.md** (open format):
 ```markdown
 # AGENTS.md
 
@@ -126,20 +129,12 @@ Analysis of 2,500+ repositories shows effective agent definitions cover:
 
 **CLAUDE.md** (Claude Code):
 ```markdown
-# CLAUDE.md
+@AGENTS.md
 
-See @README.md for project overview.
-See @package.json for available npm commands.
+## Claude Code
 
-## Code Style
-Follow @docs/code-style.md for conventions.
-
-## Testing
-Run tests with `npm test` before every commit.
-
-## Important Files
-- @src/config.ts - Application configuration
-- @src/types/index.ts - Shared TypeScript types
+Add only Claude-specific instructions here. Shared project instructions
+belong in AGENTS.md.
 ```
 
 **copilot-instructions.md** (GitHub Copilot):
@@ -163,7 +158,7 @@ When writing tests:
 | Feature | AGENTS.md | CLAUDE.md | copilot-instructions |
 |---------|-----------|-----------|---------------------|
 | Location | Project root | Root or .claude/ | .github/ |
-| Path rules | ✗ | ✓ .claude/rules/ | ✓ .instructions.md |
+| Path rules | ✓ nested AGENTS.md | ✓ .claude/rules/ | ✓ .instructions.md |
 | File imports | ✗ | ✓ @file syntax | ✗ |
 | Agent personas | ✗ | ✗ | ✓ .agent.md |
 | Cross-tool support | Wide | Claude only | Copilot only |
@@ -230,30 +225,29 @@ something is a concern and suggest specific fixes.
 
 **Claude Code:**
 ```
-Precedence (highest to lowest):
+Instruction loading order (broadest to most specific):
 
-1. Subtree CLAUDE.md (closest to working file)
-2. Path-specific rules (.claude/rules/*.md)
-3. Project CLAUDE.md (repository root)
-4. User CLAUDE.md (~/.claude/CLAUDE.md)
-5. Enterprise settings
+1. Managed policy CLAUDE.md
+2. User CLAUDE.md (~/.claude/CLAUDE.md)
+3. Project CLAUDE.md or .claude/CLAUDE.md
+4. CLAUDE.local.md
+5. Nested CLAUDE.md files, loaded when Claude reads that subtree
 
-More specific always wins. A rule in packages/api/CLAUDE.md
-overrides the root CLAUDE.md for files in that package.
+Applicable files are concatenated into context. More specific files are read
+later; they do not mechanically replace broader files.
 ```
 
 **GitHub Copilot:**
 ```
-Precedence (highest to lowest):
+Instruction behavior:
 
-1. Agent-specific (.agent.md instructions)
-2. Path-specific (.instructions.md with applyTo)
-3. Repository-wide (copilot-instructions.md)
-4. Organization settings
-5. User settings
+1. The nearest AGENTS.md takes precedence among AGENTS.md files
+2. Matching .instructions.md files are additive with repository instructions
+3. Personal, repository, and organization instructions can all apply
+4. Personal instructions have the highest priority, followed by repository
+   instructions and then organization instructions
 
-Path rules are additive—they combine with repository
-instructions rather than replacing them.
+Avoid conflicts rather than relying on priority to reconcile them.
 ```
 
 ### 8. Monorepo Strategies
@@ -325,7 +319,7 @@ This is the REST API package built with Express + TypeScript.
 ## Further Reading
 
 - [AGENTS.md Specification](https://agents.md): The open format for guiding coding agents, used by 60k+ open-source projects.
-- [Claude Code Memory](https://docs.anthropic.com/en/docs/claude-code/memory): Official documentation for CLAUDE.md, rules, imports, and memory hierarchy.
-- [Copilot Customization](https://docs.github.com/en/copilot/customizing-copilot/adding-repository-custom-instructions-for-github-copilot): How to configure copilot-instructions.md, path-specific rules, and agent files.
+- [Claude Code Memory](https://code.claude.com/docs/en/memory): Official documentation for CLAUDE.md, rules, imports, and memory hierarchy.
+- [Copilot Customization](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions): How to configure copilot-instructions.md, path-specific rules, and agent files.
 - [How to write a great agents.md](https://github.blog/ai-and-ml/github-copilot/how-to-write-a-great-agents-md-lessons-from-over-2500-repositories/): Lessons from analyzing 2,500+ repositories on effective agent configuration.
 - [OpenAI AGENTS.md Repository](https://github.com/agentsmd/agents.md): The official specification and tools for the AGENTS.md open format.

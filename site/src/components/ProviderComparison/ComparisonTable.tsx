@@ -1,6 +1,6 @@
 import { useState } from 'preact/hooks'
 import type { VNode } from 'preact'
-import { ChevronDown, Copy, Check } from 'lucide-preact'
+import { ChevronDown, Copy, Check, ExternalLink } from 'lucide-preact'
 import { cn } from '@/lib/utils'
 import {
   comparisonData,
@@ -55,6 +55,17 @@ function ExpandedRow({ row }: ExpandedRowProps): VNode {
               <div key={provider.id} className="flex flex-col gap-2">
                 <h4 className="text-sm font-semibold text-foreground">{provider.name}</h4>
                 <p className="text-sm text-muted-foreground flex-1">{support.implementation}</p>
+                {support.sourceUrl != null && (
+                  <a
+                    href={support.sourceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+                  >
+                    Provider documentation
+                    <ExternalLink className="h-3 w-3" aria-hidden="true" />
+                  </a>
+                )}
                 <div className="flex items-center gap-2 mt-auto">
                   <code className="flex-1 text-xs bg-background px-2 py-1.5 rounded font-mono text-foreground border border-border">
                     {support.location}

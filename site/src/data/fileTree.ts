@@ -505,7 +505,7 @@ export const claudeTree: FileNode = {
             whatGoesHere: [
               'Model preferences',
               'Tool permissions (allow/deny lists)',
-              'MCP server configurations',
+              'Lifecycle hook definitions',
               'Sandbox settings',
             ],
             whenLoaded: 'Always loaded. Configures Claude\'s capabilities.',
@@ -515,6 +515,19 @@ export const claudeTree: FileNode = {
   "permissions": {
     "allow": ["Read", "Edit", "Bash(npm test)", "Bash(git commit:*)"],
     "deny": ["Bash(rm -rf /*)"]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\\"$CLAUDE_PROJECT_DIR\\"/.claude/hooks/validate-edit.sh"
+          }
+        ]
+      }
+    ]
   }
 }`,
           },
@@ -666,40 +679,58 @@ description: "Refactor code while maintaining tests"
           type: 'folder',
           children: [
             {
-              id: 'claude-hooks-json',
-              name: 'hooks.json',
+              id: 'claude-hook-script',
+              name: 'validate-edit.sh',
               type: 'file',
               details: {
-                label: 'Hooks Config',
-                description: 'Defines lifecycle hooks that run before/after tool execution or on notifications.',
+                label: 'Hook Script',
+                description: 'Optional script invoked by a lifecycle hook configured in .claude/settings.json.',
                 whatGoesHere: [
-                  'Hook event types (PreToolUse, PostToolUse, Stop, etc.)',
-                  'Matcher patterns for specific tools (regex)',
-                  'Commands to execute with optional timeout',
+                  'Deterministic validation or automation logic',
+                  'JSON input parsing',
+                  'Structured allow, deny, or feedback output',
                 ],
-                whenLoaded: 'Hooks execute at their defined lifecycle points.',
+                whenLoaded: 'Executed when a matching hook in settings.json fires.',
                 loadOrder: 0,
-                example: `{
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Edit|Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": ".claude/hooks/validate-edit.sh",
-            "timeout": 10
-          }
-        ]
-      }
-    ]
-  }
-}`,
+                example: `#!/bin/bash
+input=$(cat)
+file_path=$(echo "$input" | jq -r '.tool_input.file_path // empty')
+
+case "$file_path" in
+  *.env)
+    echo "Protected file" >&2
+    exit 2
+    ;;
+esac`,
               },
             },
           ],
         },
       ],
+    },
+    {
+      id: 'claude-project-mcp',
+      name: '.mcp.json',
+      type: 'file',
+      details: {
+        label: 'Project MCP Config',
+        description: 'Team-shared MCP server definitions for Claude Code.',
+        whatGoesHere: [
+          'MCP server names and transport types',
+          'Commands and arguments for stdio servers',
+          'URLs and headers for remote servers',
+        ],
+        whenLoaded: 'Discovered at project scope and activated after workspace trust and server approval.',
+        loadOrder: 0,
+        example: `{
+  "mcpServers": {
+    "example": {
+      "type": "http",
+      "url": "https://mcp.example.com/mcp"
+    }
+  }
+}`,
+      },
     },
     {
       id: 'claude-md',
@@ -714,7 +745,7 @@ description: "Refactor code while maintaining tests"
           'Architecture notes',
           '@path/to/file imports for additional context',
         ],
-        whenLoaded: 'Always loaded first. Forms the baseline context for all Claude interactions.',
+        whenLoaded: 'Loaded as the shared project instruction file after managed and user instructions.',
         loadOrder: 1,
         example: `# CLAUDE.md
 
