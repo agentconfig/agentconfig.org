@@ -1757,12 +1757,45 @@ Use shared project settings for team policy and local settings for personal auto
         "hooks": [
           {
             "type": "command",
-            "command": "node .claude/hooks/policy.mjs"
+            "command": "node .claude/hooks/adapter.mjs"
           }
         ]
       }
     ]
   }
+}
+```
+
+```javascript
+import { Buffer } from 'node:buffer'
+import { evaluatePolicy } from './policy-core.mjs'
+
+const chunks = []
+for await (const chunk of process.stdin) {
+  chunks.push(chunk)
+}
+
+const input = Buffer.concat(chunks).toString('utf8')
+const payload = JSON.parse(input)
+const event = {
+  normalizedEvent: payload.hook_event_name === 'PreToolUse'
+    ? 'before_tool_use'
+    : payload.hook_event_name,
+  tool: {
+    name: payload.tool_name,
+    input: payload.tool_input,
+  },
+}
+
+const decision = evaluatePolicy(event)
+
+if (decision.decision === 'block') {
+  console.log(JSON.stringify({
+    decision: 'block',
+    reason: decision.message,
+  }))
+} else {
+  console.log(JSON.stringify({ decision: 'allow' }))
 }
 ```
 
@@ -1783,6 +1816,7 @@ refresh skill.
 
 - Use Copilot hooks as the primary worked implementation when your repository already standardizes on AGENTS.md and GitHub-native automation.
 - Keep repository hooks deterministic and reviewable because they are versioned with the project.
+- Remember that Copilot command hook timeouts are always fail-open, even for preToolUse and administrator policy hooks.
 - Treat personal hooks as local workflow glue, not as team policy.
 
 Source: [GitHub Copilot hooks reference](https://docs.github.com/en/copilot/reference/hooks-reference)
@@ -1827,17 +1861,41 @@ takes normalized input and returns a deterministic decision. Provider adapters o
 translation, exit codes, and provider-specific response formats.
 
 ```typescript
-export function commandContainsForcePush(input) {
-  if (typeof input === 'string') {
-    return /\bgit\s+push\b.*\s--force(?:\s|$)/.test(input)
-  }
+function tokenizeCommand(command) {
+  return command.match(/"[^"]*"|'[^']*'|\S+/g)?.map((token) => token.replace(/^["']|["']$/g, '')) ?? []
+}
 
-  if (input == null || typeof input !== 'object') {
+export function commandContainsForcePush(input) {
+  const command = typeof input === 'string'
+    ? input
+    : input != null && typeof input === 'object' && typeof input.command === 'string'
+      ? input.command
+      : null
+
+  if (command == null) {
     return false
   }
 
-  const command = input.command
-  return typeof command === 'string' && /\bgit\s+push\b.*\s--force(?:\s|$)/.test(command)
+  const tokens = tokenizeCommand(command)
+  const gitIndex = tokens.findIndex((token) => token === 'git' || token.endsWith('/git'))
+  if (gitIndex === -1) {
+    return false
+  }
+
+  const args = tokens.slice(gitIndex + 1)
+  const pushIndex = args.findIndex((token) => !token.startsWith('-') && token === 'push')
+  if (pushIndex === -1) {
+    return false
+  }
+
+  return args.slice(pushIndex + 1).some((token) =>
+    token === '-f' ||
+    token.startsWith('-') && token.includes('f') && !token.startsWith('--') ||
+    token === '--force' ||
+    token.startsWith('--force=') ||
+    token === '--force-with-lease' ||
+    token.startsWith('--force-with-lease=')
+  )
 }
 
 export function normalizeCopilotEvent(input) {
@@ -1899,6 +1957,7 @@ defaults than ordinary scripts.
 - Untrusted content: treat retrieved documents, tool output, and user prompts as data, not hook instructions.
 - Data egress: fail closed before sending repository, user, or customer data externally unless policy allows it.
 - Unavailable services: fail open for optional telemetry, fail closed for policy gates, and test both choices.
+- Copilot timeouts: command hook timeouts are always fail-open, even for preToolUse and administrator policy hooks; use small timeouts and make policy-critical checks fast.
 
 ```typescript
 import { spawn } from 'node:child_process'
@@ -1917,12 +1976,12 @@ Every example hook should have a fixture test and a host-level smoke test.
 **Fixture test:**
 ```typescript
 import { describe, expect, it } from 'bun:test'
-import { evaluatePolicy } from '../policy-core.mjs'
+import { evaluatePolicy, normalizeCopilotEvent } from '../policy-core.mjs'
 import forcePushFixture from './fixtures/copilot-pre-tool-use-force-push.json'
 
 describe('hook policy', () => {
   it('blocks force-push commands before tool use', () => {
-    const decision = evaluatePolicy(forcePushFixture)
+    const decision = evaluatePolicy(normalizeCopilotEvent(forcePushFixture))
 
     expect(decision).toEqual({
       decision: 'block',
@@ -1934,10 +1993,11 @@ describe('hook policy', () => {
 
 **Smoke test:**
 ```bash
-printf '%s\n' '{"hook_event_name":"PreToolUse","tool_name":"Bash","tool_input":{"command":"git push --force"}}' \
-  | node .github/hooks/policy.mjs
+output=$(printf '%s\n' '{"hook_event_name":"PreToolUse","tool_name":"Bash","tool_input":{"command":"git push -f origin main"}}' \
+  | node .github/hooks/policy.mjs)
 
 test "$?" -eq 0
+node -e 'const out = JSON.parse(process.argv[1]); if (out.permissionDecision !== "deny") process.exit(1)' "$output"
 ```
 
 ### 10. When Not To Use Hooks

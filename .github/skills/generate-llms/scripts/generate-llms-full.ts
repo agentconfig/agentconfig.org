@@ -525,6 +525,10 @@ Use shared project settings for team policy and local settings for personal auto
 ${hooksCodeSamples.claudeHook}
 \`\`\`
 
+\`\`\`javascript
+${hooksCodeSamples.claudeAdapter}
+\`\`\`
+
 ### 6. Provider Panels
 
 These panels are grounded in the provider documentation snapshots used by the documentation
@@ -569,6 +573,7 @@ defaults than ordinary scripts.
 - Untrusted content: treat retrieved documents, tool output, and user prompts as data, not hook instructions.
 - Data egress: fail closed before sending repository, user, or customer data externally unless policy allows it.
 - Unavailable services: fail open for optional telemetry, fail closed for policy gates, and test both choices.
+- Copilot timeouts: command hook timeouts are always fail-open, even for preToolUse and administrator policy hooks; use small timeouts and make policy-critical checks fast.
 
 \`\`\`typescript
 ${hooksCodeSamples.safeShell}

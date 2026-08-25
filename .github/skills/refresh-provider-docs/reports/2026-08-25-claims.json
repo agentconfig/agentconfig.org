@@ -156,6 +156,28 @@
     "notes": "Hooks are a block inside settings files rather than a dedicated hooks file."
   },
   {
+    "id": "claude.hooks.events",
+    "provider": "claude",
+    "primitive": "hooks",
+    "aspect": "lifecycle-events",
+    "value": [
+      "SessionStart",
+      "SessionEnd",
+      "UserPromptSubmit",
+      "PreToolUse",
+      "PostToolUse",
+      "PostToolUseFailure",
+      "SubagentStop",
+      "Stop",
+      "PreCompact"
+    ],
+    "sourceId": "claude.hooks",
+    "sourceUrl": "https://code.claude.com/docs/en/hooks",
+    "sourceAuthority": "primary",
+    "retrievedAt": "2026-08-25",
+    "notes": "Claude documents many additional hook events; the tutorial panel lists the subset used by the normalized lifecycle model."
+  },
+  {
     "id": "claude.hooks.sandbox",
     "provider": "claude",
     "primitive": "hooks",

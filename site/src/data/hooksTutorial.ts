@@ -101,6 +101,7 @@ export const providerPanels: readonly ProviderHookPanel[] = [
     notes: [
       'Use Copilot hooks as the primary worked implementation when your repository already standardizes on AGENTS.md and GitHub-native automation.',
       'Keep repository hooks deterministic and reviewable because they are versioned with the project.',
+      'Remember that Copilot command hook timeouts are always fail-open, even for preToolUse and administrator policy hooks.',
       'Treat personal hooks as local workflow glue, not as team policy.',
     ],
     sourceTitle: 'GitHub Copilot hooks reference',
@@ -213,7 +214,7 @@ export const codeSamples: Record<string, string> = {
         "hooks": [
           {
             "type": "command",
-            "command": "node .claude/hooks/policy.mjs"
+            "command": "node .claude/hooks/adapter.mjs"
           }
         ]
       }
@@ -238,17 +239,72 @@ export const codeSamples: Record<string, string> = {
   }
 }`,
 
-  policyCore: `export function commandContainsForcePush(input) {
-  if (typeof input === 'string') {
-    return /\\bgit\\s+push\\b.*\\s--force(?:\\s|$)/.test(input)
-  }
+  claudeAdapter: `import { Buffer } from 'node:buffer'
+import { evaluatePolicy } from './policy-core.mjs'
 
-  if (input == null || typeof input !== 'object') {
+const chunks = []
+for await (const chunk of process.stdin) {
+  chunks.push(chunk)
+}
+
+const input = Buffer.concat(chunks).toString('utf8')
+const payload = JSON.parse(input)
+const event = {
+  normalizedEvent: payload.hook_event_name === 'PreToolUse'
+    ? 'before_tool_use'
+    : payload.hook_event_name,
+  tool: {
+    name: payload.tool_name,
+    input: payload.tool_input,
+  },
+}
+
+const decision = evaluatePolicy(event)
+
+if (decision.decision === 'block') {
+  console.log(JSON.stringify({
+    decision: 'block',
+    reason: decision.message,
+  }))
+} else {
+  console.log(JSON.stringify({ decision: 'allow' }))
+}`,
+
+  policyCore: `function tokenizeCommand(command) {
+  return command.match(/"[^"]*"|'[^']*'|\\S+/g)?.map((token) => token.replace(/^["']|["']$/g, '')) ?? []
+}
+
+export function commandContainsForcePush(input) {
+  const command = typeof input === 'string'
+    ? input
+    : input != null && typeof input === 'object' && typeof input.command === 'string'
+      ? input.command
+      : null
+
+  if (command == null) {
     return false
   }
 
-  const command = input.command
-  return typeof command === 'string' && /\\bgit\\s+push\\b.*\\s--force(?:\\s|$)/.test(command)
+  const tokens = tokenizeCommand(command)
+  const gitIndex = tokens.findIndex((token) => token === 'git' || token.endsWith('/git'))
+  if (gitIndex === -1) {
+    return false
+  }
+
+  const args = tokens.slice(gitIndex + 1)
+  const pushIndex = args.findIndex((token) => !token.startsWith('-') && token === 'push')
+  if (pushIndex === -1) {
+    return false
+  }
+
+  return args.slice(pushIndex + 1).some((token) =>
+    token === '-f' ||
+    token.startsWith('-') && token.includes('f') && !token.startsWith('--') ||
+    token === '--force' ||
+    token.startsWith('--force=') ||
+    token === '--force-with-lease' ||
+    token.startsWith('--force-with-lease=')
+  )
 }
 
 export function normalizeCopilotEvent(input) {
@@ -302,12 +358,12 @@ if (decision.decision === 'block') {
 }`,
 
   fixtureTest: `import { describe, expect, it } from 'bun:test'
-import { evaluatePolicy } from '../policy-core.mjs'
+import { evaluatePolicy, normalizeCopilotEvent } from '../policy-core.mjs'
 import forcePushFixture from './fixtures/copilot-pre-tool-use-force-push.json'
 
 describe('hook policy', () => {
   it('blocks force-push commands before tool use', () => {
-    const decision = evaluatePolicy(forcePushFixture)
+    const decision = evaluatePolicy(normalizeCopilotEvent(forcePushFixture))
 
     expect(decision).toEqual({
       decision: 'block',
@@ -316,10 +372,11 @@ describe('hook policy', () => {
   })
 })`,
 
-  smokeTest: `printf '%s\\n' '{"hook_event_name":"PreToolUse","tool_name":"Bash","tool_input":{"command":"git push --force"}}' \\
-  | node .github/hooks/policy.mjs
+  smokeTest: `output=$(printf '%s\\n' '{"hook_event_name":"PreToolUse","tool_name":"Bash","tool_input":{"command":"git push -f origin main"}}' \\
+  | node .github/hooks/policy.mjs)
 
-test "$?" -eq 0`,
+test "$?" -eq 0
+node -e 'const out = JSON.parse(process.argv[1]); if (out.permissionDecision !== "deny") process.exit(1)' "$output"`,
 
   safeShell: `import { spawn } from 'node:child_process'
 

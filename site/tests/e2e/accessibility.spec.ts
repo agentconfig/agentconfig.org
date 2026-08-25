@@ -37,4 +37,13 @@ test.describe('Accessibility', () => {
 
     expect(results.violations).toEqual([])
   })
+
+  test('hooks page should have no accessibility violations', async ({ page }) => {
+    await page.goto('/hooks/')
+    await expect(page.getByRole('heading', { name: 'Lifecycle Hooks' })).toBeVisible()
+
+    const results = await new AxeBuilder({ page }).analyze()
+
+    expect(results.violations).toEqual([])
+  })
 })

@@ -37,4 +37,22 @@ test.describe('Hooks Page', () => {
     await expect(page).toHaveURL(/.*#policy-core/)
     await expect(page.locator('#policy-core')).toBeInViewport()
   })
+
+  test('renders representative content on mobile', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 667 })
+    await page.goto('/hooks/')
+
+    await expect(page.getByRole('heading', { name: 'Lifecycle Hooks', exact: true })).toBeVisible()
+    await expect(page.getByRole('navigation', { name: 'Table of contents' })).toBeVisible()
+    await expect(page.getByText('Copilot timeouts:')).toBeVisible()
+  })
+
+  test('renders code blocks in dark mode', async ({ page }) => {
+    await page.emulateMedia({ colorScheme: 'dark' })
+    await page.reload()
+
+    await expect(page.locator('html')).toHaveClass(/dark/)
+    await expect(page.getByRole('heading', { name: '7. Policy Core Pattern' })).toBeVisible()
+    await expect(page.locator('pre').first()).toBeVisible()
+  })
 })
