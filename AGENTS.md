@@ -104,6 +104,7 @@ Project-specific skills have one canonical source in `.github/skills/`. Copilot 
 | [create-component](.github/skills/create-component/SKILL.md) | Adding new UI components |
 | [write-e2e-test](.github/skills/write-e2e-test/SKILL.md) | Creating Playwright tests |
 | [add-primitive](.github/skills/add-primitive/SKILL.md) | Adding/updating primitive definitions |
+| [refresh-provider-docs](.github/skills/refresh-provider-docs/SKILL.md) | Verifying published provider claims against authoritative documentation |
 | [theme-styling](.github/skills/theme-styling/SKILL.md) | Styling with Tailwind CSS 4 |
 | [semantic-commit](.github/skills/semantic-commit/SKILL.md) | Creating commit messages |
 | [co-author](.github/skills/co-author/SKILL.md) | Co-author attribution |

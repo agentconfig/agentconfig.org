@@ -1,0 +1,141 @@
+{
+  "version": 1,
+  "maxSourceAgeDays": 30,
+  "providers": [
+    {
+      "id": "copilot",
+      "name": "GitHub Copilot",
+      "coverage": "tracked",
+      "index": { "url": "https://docs.github.com/llms.txt", "kind": "llms-txt" },
+      "retrieval": {
+        "markdown": "https://docs.github.com/api/article/body?pathname={pathname}",
+        "search": "https://docs.github.com/api/search/v1?query={query}&language=en&version=free-pro-team%40latest&client_name=agentconfig.org",
+        "note": "GitHub Docs publishes an Article Body API that returns rendered markdown. Prefer it over scraping HTML."
+      },
+      "sources": [
+        { "id": "copilot.repository-instructions", "topic": "instructions", "url": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions", "authority": "primary" },
+        { "id": "copilot.instructions-support", "topic": "precedence", "url": "https://docs.github.com/en/copilot/reference/custom-instructions-support", "authority": "primary" },
+        { "id": "copilot.cli-instructions", "topic": "instructions", "url": "https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-custom-instructions", "authority": "primary" },
+        { "id": "copilot.about-agent-skills", "topic": "skills", "url": "https://docs.github.com/en/copilot/concepts/agents/about-agent-skills", "authority": "primary" },
+        { "id": "copilot.cli-skills", "topic": "skills", "url": "https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-skills", "authority": "primary" },
+        { "id": "copilot.about-hooks", "topic": "hooks", "url": "https://docs.github.com/en/copilot/concepts/agents/hooks", "authority": "primary" },
+        { "id": "copilot.hooks-reference", "topic": "hooks", "url": "https://docs.github.com/en/copilot/reference/hooks-reference", "authority": "primary" },
+        { "id": "copilot.cli-hooks", "topic": "hooks", "url": "https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/use-hooks", "authority": "primary" },
+        { "id": "copilot.mcp", "topic": "mcp", "url": "https://docs.github.com/en/copilot/how-tos/provide-context/use-mcp-in-your-ide/extend-copilot-chat-with-mcp", "authority": "primary" },
+        { "id": "copilot.custom-agents", "topic": "custom-agents", "url": "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/cloud-agent/create-custom-agents-in-your-ide", "authority": "primary" },
+        { "id": "copilot.cloud-agent", "topic": "cloud-agent", "url": "https://docs.github.com/en/copilot/concepts/agents/cloud-agent/about-cloud-agent", "authority": "primary" }
+      ]
+    },
+    {
+      "id": "claude",
+      "name": "Claude Code",
+      "coverage": "tracked",
+      "index": { "url": "https://code.claude.com/docs/llms.txt", "kind": "llms-txt" },
+      "retrieval": {
+        "markdown": "{url}.md",
+        "note": "Claude Code documentation pages serve markdown when the .md suffix is appended."
+      },
+      "sources": [
+        { "id": "claude.memory", "topic": "instructions", "url": "https://code.claude.com/docs/en/memory", "authority": "primary" },
+        { "id": "claude.skills", "topic": "skills", "url": "https://code.claude.com/docs/en/skills", "authority": "primary" },
+        { "id": "claude.hooks", "topic": "hooks", "url": "https://code.claude.com/docs/en/hooks", "authority": "primary" },
+        { "id": "claude.mcp", "topic": "mcp", "url": "https://code.claude.com/docs/en/mcp", "authority": "primary" },
+        { "id": "claude.sub-agents", "topic": "custom-agents", "url": "https://code.claude.com/docs/en/sub-agents", "authority": "primary" },
+        { "id": "claude.settings", "topic": "permissions", "url": "https://code.claude.com/docs/en/settings", "authority": "primary" },
+        { "id": "claude.iam", "topic": "precedence", "url": "https://code.claude.com/docs/en/iam", "authority": "primary" }
+      ]
+    },
+    {
+      "id": "codex",
+      "name": "OpenAI Codex",
+      "coverage": "tracked",
+      "index": { "url": "https://developers.openai.com/codex/llms.txt", "kind": "llms-txt" },
+      "retrieval": {
+        "markdown": "{url}.md",
+        "note": "The Codex documentation site is client-rendered, so HTML snapshots are unusable. Always retrieve the .md variant, which the site publishes for every page."
+      },
+      "sources": [
+        { "id": "codex.agents-md", "topic": "instructions", "url": "https://developers.openai.com/codex/agent-configuration/agents-md", "authority": "primary" },
+        { "id": "codex.config-reference", "topic": "permissions", "url": "https://developers.openai.com/codex/config-file/config-reference", "authority": "primary" },
+        { "id": "codex.local-config", "topic": "permissions", "url": "https://developers.openai.com/codex/local-config", "authority": "primary" },
+        { "id": "codex.hooks", "topic": "hooks", "url": "https://developers.openai.com/codex/hooks", "authority": "primary" },
+        { "id": "codex.subagents", "topic": "custom-agents", "url": "https://developers.openai.com/codex/agent-configuration/subagents", "authority": "primary" },
+        { "id": "codex.skills", "topic": "skills", "url": "https://developers.openai.com/codex/build-skills", "authority": "primary" },
+        { "id": "codex.mcp", "topic": "mcp", "url": "https://developers.openai.com/codex/extend/mcp", "authority": "primary" },
+        { "id": "codex.cli", "topic": "cli", "url": "https://developers.openai.com/codex/cli", "authority": "primary" }
+      ]
+    },
+    {
+      "id": "cursor",
+      "name": "Cursor",
+      "coverage": "tracked",
+      "retrieval": {
+        "note": "Cursor documentation is served as HTML only; a .md suffix returns 404. Read retrieved snapshots carefully rather than assuming markdown structure."
+      },
+      "sources": [
+        { "id": "cursor.rules", "topic": "instructions", "url": "https://cursor.com/docs/context/rules", "authority": "primary" },
+        { "id": "cursor.mcp", "topic": "mcp", "url": "https://cursor.com/docs/context/mcp", "authority": "primary" },
+        { "id": "cursor.hooks", "topic": "hooks", "url": "https://cursor.com/docs/agent/hooks", "authority": "primary" }
+      ]
+    },
+    {
+      "id": "gemini",
+      "name": "Gemini CLI",
+      "coverage": "tracked",
+      "index": { "url": "https://github.com/google-gemini/gemini-cli", "kind": "repository" },
+      "retrieval": {
+        "note": "Gemini CLI documentation is generated from the google-gemini/gemini-cli repository; the published site and the repository docs must agree before a claim is recorded."
+      },
+      "sources": [
+        { "id": "gemini.configuration", "topic": "instructions", "url": "https://google-gemini.github.io/gemini-cli/docs/get-started/configuration.html", "authority": "primary" },
+        { "id": "gemini.mcp", "topic": "mcp", "url": "https://google-gemini.github.io/gemini-cli/docs/tools/mcp-server.html", "authority": "primary" },
+        { "id": "gemini.commands", "topic": "cli", "url": "https://google-gemini.github.io/gemini-cli/docs/cli/commands.html", "authority": "primary" }
+      ]
+    },
+    {
+      "id": "windsurf",
+      "name": "Windsurf",
+      "coverage": "candidate",
+      "index": { "url": "https://docs.windsurf.com/llms.txt", "kind": "llms-txt" },
+      "retrieval": {
+        "note": "A .md suffix returns HTML for this site, so snapshots are HTML. Use the llms.txt index to confirm page identity."
+      },
+      "sources": [
+        { "id": "windsurf.memories", "topic": "memory", "url": "https://docs.windsurf.com/windsurf/cascade/memories", "authority": "primary" },
+        { "id": "windsurf.mcp", "topic": "mcp", "url": "https://docs.windsurf.com/windsurf/cascade/mcp", "authority": "primary" }
+      ]
+    },
+    {
+      "id": "cline",
+      "name": "Cline",
+      "coverage": "candidate",
+      "index": { "url": "https://docs.cline.bot/llms.txt", "kind": "llms-txt" },
+      "retrieval": { "markdown": "{url}.md" },
+      "sources": [
+        { "id": "cline.rules", "topic": "instructions", "url": "https://docs.cline.bot/features/cline-rules", "authority": "primary" },
+        { "id": "cline.mcp", "topic": "mcp", "url": "https://docs.cline.bot/mcp/mcp-overview", "authority": "primary" }
+      ]
+    },
+    {
+      "id": "devin",
+      "name": "Devin",
+      "coverage": "candidate",
+      "index": { "url": "https://docs.devin.ai/llms.txt", "kind": "llms-txt" },
+      "retrieval": { "markdown": "{url}.md" },
+      "sources": [
+        { "id": "devin.knowledge", "topic": "memory", "url": "https://docs.devin.ai/product-guides/knowledge", "authority": "primary" },
+        { "id": "devin.mcp", "topic": "mcp", "url": "https://docs.devin.ai/work-with-devin/devin-mcp", "authority": "primary" }
+      ]
+    },
+    {
+      "id": "standards",
+      "name": "Cross-provider standards",
+      "coverage": "tracked",
+      "sources": [
+        { "id": "standards.agents-md", "topic": "standard", "url": "https://agents.md/", "authority": "primary" },
+        { "id": "standards.mcp", "topic": "standard", "url": "https://modelcontextprotocol.io/", "authority": "primary" },
+        { "id": "standards.llms-txt", "topic": "standard", "url": "https://llmstxt.org/", "authority": "primary" }
+      ]
+    }
+  ]
+}

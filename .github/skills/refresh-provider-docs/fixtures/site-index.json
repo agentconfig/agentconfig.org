@@ -1,0 +1,12 @@
+{
+  "providers": ["testprov"],
+  "primitives": ["hooks", "persistent-instructions", "skills"],
+  "entries": [
+    { "provider": "testprov", "primitive": "hooks", "aspect": "location", "value": ".testprov/hooks.json", "sourceUrl": null, "origin": "primitives.ts" },
+    { "provider": "testprov", "primitive": "hooks", "aspect": "support", "value": "full", "sourceUrl": null, "origin": "primitives.ts" },
+    { "provider": "testprov", "primitive": "hooks", "aspect": "artifact", "value": "Lifecycle hooks", "sourceUrl": null, "origin": "primitives.ts" },
+    { "provider": "testprov", "primitive": "persistent-instructions", "aspect": "location", "value": "OLD.md", "sourceUrl": null, "origin": "primitives.ts" },
+    { "provider": "testprov", "primitive": "skills", "aspect": "location", "value": ".testprov/skills", "sourceUrl": null, "origin": "primitives.ts" },
+    { "provider": "testprov", "primitive": "skills", "aspect": "location", "value": ".testprov/plugins", "sourceUrl": null, "origin": "comparison.ts" }
+  ]
+}

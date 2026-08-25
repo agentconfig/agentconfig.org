@@ -1,0 +1,3 @@
+[
+  { "id": "c.siteconflict", "provider": "testprov", "primitive": "skills", "aspect": "location", "value": ".testprov/skills", "sourceId": "testprov.skills", "sourceUrl": "https://docs.example.com/testprov/skills", "sourceAuthority": "primary", "retrievedAt": "2026-08-25" }
+]
