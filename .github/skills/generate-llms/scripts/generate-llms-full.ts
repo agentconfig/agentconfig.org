@@ -563,6 +563,10 @@ ${hooksCodeSamples.policyCore}
 ${hooksCodeSamples.codexHook}
 \`\`\`
 
+\`\`\`javascript
+${hooksCodeSamples.codexAdapter}
+\`\`\`
+
 ### 8. Safe Integrations
 
 Hooks often sit next to shell commands, secrets, and external systems, so they need stricter

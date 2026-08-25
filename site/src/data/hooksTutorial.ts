@@ -198,8 +198,7 @@ export const codeSamples: Record<string, string> = {
     "preToolUse": [
       {
         "type": "command",
-        "matcher": "bash",
-        "command": "node .github/hooks/policy.mjs",
+        "bash": "node .github/hooks/policy.mjs",
         "timeoutSec": 30
       }
     ]
@@ -263,11 +262,53 @@ const decision = evaluatePolicy(event)
 
 if (decision.decision === 'block') {
   console.log(JSON.stringify({
-    decision: 'block',
-    reason: decision.message,
+    hookSpecificOutput: {
+      hookEventName: 'PreToolUse',
+      permissionDecision: 'deny',
+      permissionDecisionReason: decision.message,
+    },
   }))
 } else {
-  console.log(JSON.stringify({ decision: 'allow' }))
+  console.log(JSON.stringify({
+    hookSpecificOutput: {
+      hookEventName: 'PreToolUse',
+      permissionDecision: 'allow',
+    },
+  }))
+}`,
+
+  codexAdapter: `import { Buffer } from 'node:buffer'
+import { evaluatePolicy } from './policy-core.mjs'
+
+const chunks = []
+for await (const chunk of process.stdin) {
+  chunks.push(chunk)
+}
+
+const input = Buffer.concat(chunks).toString('utf8')
+const payload = JSON.parse(input)
+const event = {
+  normalizedEvent: payload.hook_event_name === 'PreToolUse'
+    ? 'before_tool_use'
+    : payload.hook_event_name,
+  tool: {
+    name: payload.tool_name,
+    input: payload.tool_input,
+  },
+}
+
+const decision = evaluatePolicy(event)
+
+if (decision.decision === 'block') {
+  console.log(JSON.stringify({
+    hookSpecificOutput: {
+      hookEventName: 'PreToolUse',
+      permissionDecision: 'deny',
+      permissionDecisionReason: decision.message,
+    },
+  }))
+} else {
+  console.log(JSON.stringify({ systemMessage: 'Policy hook allowed the tool call.' }))
 }`,
 
   policyCore: `function tokenizeCommand(command) {
@@ -309,7 +350,7 @@ export function commandContainsForcePush(input) {
 
 export function normalizeCopilotEvent(input) {
   return {
-    normalizedEvent: input.hook_event_name === 'PreToolUse' || input.tool_name != null
+    normalizedEvent: input.event === 'preToolUse' || input.hook_event_name === 'PreToolUse' || input.toolName != null || input.tool_name != null
       ? 'before_tool_use'
       : input.event ?? 'before_tool_use',
     tool: {
@@ -359,10 +400,17 @@ if (decision.decision === 'block') {
 
   fixtureTest: `import { describe, expect, it } from 'bun:test'
 import { evaluatePolicy, normalizeCopilotEvent } from '../policy-core.mjs'
-import forcePushFixture from './fixtures/copilot-pre-tool-use-force-push.json'
 
 describe('hook policy', () => {
   it('blocks force-push commands before tool use', () => {
+    const forcePushFixture = {
+      event: 'preToolUse',
+      toolName: 'bash',
+      toolArgs: {
+        command: 'git push -f origin main',
+      },
+    }
+
     const decision = evaluatePolicy(normalizeCopilotEvent(forcePushFixture))
 
     expect(decision).toEqual({
@@ -372,7 +420,7 @@ describe('hook policy', () => {
   })
 })`,
 
-  smokeTest: `output=$(printf '%s\\n' '{"hook_event_name":"PreToolUse","tool_name":"Bash","tool_input":{"command":"git push -f origin main"}}' \\
+  smokeTest: `output=$(printf '%s\\n' '{"event":"preToolUse","toolName":"bash","toolArgs":{"command":"git push -f origin main"}}' \\
   | node .github/hooks/policy.mjs)
 
 test "$?" -eq 0

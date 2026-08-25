@@ -128,6 +128,7 @@ export function PolicyCoreSection(): VNode {
       <p>A pure policy core takes normalized input and returns a deterministic decision. It does not read environment variables, shell out, call external APIs, or print progress. Provider adapters own I/O, schema translation, exit codes, and provider-specific response formats.</p>
       <CodeBlock code={codeSamples.policyCore ?? ''} language="javascript" filename="policy-core.mjs" className="my-6" />
       <CodeBlock code={codeSamples.codexHook ?? ''} language="json" filename=".codex/hooks.json" className="my-6" />
+      <CodeBlock code={codeSamples.codexAdapter ?? ''} language="javascript" filename=".codex/hooks/policy.mjs" className="my-6" />
     </section>
   )
 }
