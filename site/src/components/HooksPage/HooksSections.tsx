@@ -140,6 +140,7 @@ export function SafeIntegrationsSection(): VNode {
       <p className="text-lg text-muted-foreground mb-6">Hooks often sit next to shell commands, secrets, and external systems, so they need stricter defaults than ordinary scripts.</p>
       <ul className="my-6 space-y-3">
         <li><strong>Shell injection:</strong> pass arguments as arrays and avoid shell interpolation for untrusted input.</li>
+        <li><strong>Shell parsing:</strong> do not infer force-push arguments from raw shell text. The example policy blocks every detected <code>git push</code>; use a real shell parser or server-side branch protection when normal pushes must remain available.</li>
         <li><strong>Secrets:</strong> never echo tokens, never put credentials in hook config, and redact environment-derived values from diagnostics.</li>
         <li><strong>Untrusted content:</strong> treat retrieved documents, tool output, and user prompts as data, not instructions for the hook itself.</li>
         <li><strong>Data egress:</strong> fail closed before sending repository, user, or customer data to an external service unless policy explicitly allows it.</li>
