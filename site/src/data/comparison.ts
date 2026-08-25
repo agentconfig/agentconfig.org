@@ -129,7 +129,7 @@ export const comparisonData: ComparisonRow[] = [
   },
   {
     primitiveId: 'global-instructions',
-    primitiveName: 'Global Instructions',
+    primitiveName: 'User Scope Instructions',
     copilot: {
       level: 'full',
       implementation: 'User-level settings in VS Code',
@@ -153,7 +153,7 @@ export const comparisonData: ComparisonRow[] = [
   },
   {
     primitiveId: 'scope-specific-instructions',
-    primitiveName: 'Path-Scoped Rules',
+    primitiveName: 'Directory / Path Scope Instructions',
     copilot: {
       level: 'full',
       implementation: 'Nested AGENTS.md or applyTo instruction files',
@@ -273,6 +273,54 @@ export const comparisonData: ComparisonRow[] = [
       level: 'partial',
       implementation: 'Notify hooks for external program triggers',
       location: '~/.codex/config.toml (notify)',
+    },
+  },
+  {
+    primitiveId: 'runtime-sandbox',
+    primitiveName: 'Runtime Sandbox',
+    copilot: {
+      level: 'partial',
+      implementation: 'Execution controls and policy constraints',
+      location: 'Copilot policy/settings surfaces',
+    },
+    claude: {
+      level: 'full',
+      implementation: 'Sandboxing and command allow/deny controls',
+      location: '.claude/settings.json',
+    },
+    cursor: {
+      level: 'full',
+      implementation: 'Approvals and runtime safety limits',
+      location: '.cursor/settings.json',
+    },
+    codex: {
+      level: 'full',
+      implementation: 'Sandbox modes and approval policies',
+      location: '~/.codex/config.toml',
+    },
+  },
+  {
+    primitiveId: 'distribution',
+    primitiveName: 'Configuration Distribution',
+    copilot: {
+      level: 'full',
+      implementation: 'Shared AGENTS.md with optional scoped instruction files',
+      location: 'AGENTS.md + .github/instructions/*.instructions.md',
+    },
+    claude: {
+      level: 'full',
+      implementation: 'Shared AGENTS.md imported into CLAUDE.md plus rules',
+      location: 'AGENTS.md + CLAUDE.md + .claude/rules/*.md',
+    },
+    cursor: {
+      level: 'full',
+      implementation: 'Instructions, rules, and skill packages',
+      location: '.cursor/instructions.md + .cursor/rules/*.md',
+    },
+    codex: {
+      level: 'full',
+      implementation: 'Hierarchical AGENTS.md across user and repository scope',
+      location: 'AGENTS.md + subdir/AGENTS.md + ~/.codex/AGENTS.md',
     },
   },
   {

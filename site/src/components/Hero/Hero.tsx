@@ -9,8 +9,13 @@ export interface HeroProps {
 const navItems = [
   {
     href: '#primitives',
-    label: 'Primitives',
+    label: 'Layers',
     className: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
+  },
+  {
+    href: '#scope-model',
+    label: 'Scopes',
+    className: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-400',
   },
   {
     href: '#file-tree',

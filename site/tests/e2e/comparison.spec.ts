@@ -9,7 +9,7 @@ test.describe('Provider Comparison', () => {
 
   test('should display comparison table', async ({ page }) => {
     // Table should be visible
-    await expect(page.getByRole('table')).toBeVisible()
+    await expect(page.locator('#comparison').getByRole('table')).toBeVisible()
   })
 
   test('should display table headers', async ({ page }) => {
@@ -21,11 +21,11 @@ test.describe('Provider Comparison', () => {
   })
 
   test('should display all primitives in the table', async ({ page }) => {
-    const table = page.getByRole('table')
+    const table = page.locator('#comparison').getByRole('table')
     // Check for primitive names in the table cells
     await expect(table.getByText('Persistent Instructions')).toBeVisible()
-    await expect(table.getByText('Global Instructions')).toBeVisible()
-    await expect(table.getByText('Path-Scoped Rules')).toBeVisible()
+    await expect(table.getByText('User Scope Instructions')).toBeVisible()
+    await expect(table.getByText('Directory / Path Scope Instructions')).toBeVisible()
     await expect(table.getByText('Slash Commands')).toBeVisible()
     await expect(table.getByText('Agent Mode')).toBeVisible()
     await expect(table.getByText('Skills / Workflows')).toBeVisible()
@@ -33,31 +33,28 @@ test.describe('Provider Comparison', () => {
     await expect(table.getByText('Custom Agents')).toBeVisible()
     await expect(table.getByText('Permissions & Guardrails')).toBeVisible()
     await expect(table.getByText('Lifecycle Hooks')).toBeVisible()
+    await expect(table.getByText('Runtime Sandbox')).toBeVisible()
+    await expect(table.getByText('Configuration Distribution')).toBeVisible()
     await expect(table.getByText('Verification / Evals')).toBeVisible()
   })
 
   test('should display support level badges', async ({ page }) => {
-    const table = page.getByRole('table')
+    const table = page.locator('#comparison').getByRole('table')
     // Check for Full Support badges
     await expect(table.getByText('Full Support').first()).toBeVisible()
-    // 11 primitives, 4 providers: Full support counts vary by primitive
-    // Copilot: 11 full
-    // Claude: 11 full
-    // Cursor: 11 full
-    // Codex: 9 full, 1 partial (hooks), 1 none (custom-agents)
+    // 13 rows x 4 providers: support counts vary by row.
+    // Full support: 49, partial: 2, not available: 1.
     const fullSupportBadges = table.getByText('Full Support')
-    await expect(fullSupportBadges).toHaveCount(42) // 11 + 11 + 11 + 9 = 42
-    // Codex has partial support for lifecycle hooks
+    await expect(fullSupportBadges).toHaveCount(49)
     const partialBadges = table.getByText('Partial')
-    await expect(partialBadges).toHaveCount(1)
-    // Codex custom-agents = 1 "Not Available"
+    await expect(partialBadges).toHaveCount(2)
     const notAvailableBadges = table.getByText('Not Available')
     await expect(notAvailableBadges).toHaveCount(1)
   })
 
   test('should expand row on click to show details', async ({ page }) => {
     // Click on a table row (the tr element is clickable)
-    const table = page.getByRole('table')
+    const table = page.locator('#comparison').getByRole('table')
     const row = table.getByRole('row').filter({ hasText: 'Persistent Instructions' }).first()
     await row.click()
 
@@ -70,7 +67,7 @@ test.describe('Provider Comparison', () => {
 
   test('should show file locations when expanded', async ({ page }) => {
     // Click on a table row
-    const table = page.getByRole('table')
+    const table = page.locator('#comparison').getByRole('table')
     const row = table.getByRole('row').filter({ hasText: 'Persistent Instructions' }).first()
     await row.click()
 
@@ -83,7 +80,7 @@ test.describe('Provider Comparison', () => {
   })
 
   test('should collapse row on second click', async ({ page }) => {
-    const table = page.getByRole('table')
+    const table = page.locator('#comparison').getByRole('table')
     const row = table.getByRole('row').filter({ hasText: 'Persistent Instructions' }).first()
 
     // Click to expand
@@ -110,7 +107,7 @@ test.describe('Provider Comparison', () => {
   })
 
   test('should have copy buttons in expanded row', async ({ page }) => {
-    const table = page.getByRole('table')
+    const table = page.locator('#comparison').getByRole('table')
     const row = table.getByRole('row').filter({ hasText: 'Persistent Instructions' }).first()
 
     // Click to expand
@@ -125,7 +122,7 @@ test.describe('Provider Comparison', () => {
   })
 
   test('should only expand one row at a time', async ({ page }) => {
-    const table = page.getByRole('table')
+    const table = page.locator('#comparison').getByRole('table')
 
     // Click first row
     const firstRow = table.getByRole('row').filter({ hasText: 'Persistent Instructions' }).first()

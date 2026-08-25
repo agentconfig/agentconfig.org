@@ -9,9 +9,9 @@ test.describe('Primitive Cards', () => {
 
   test('should display category filter tabs', async ({ page }) => {
     await expect(page.getByRole('tab', { name: /All Primitives/i })).toBeVisible()
-    await expect(page.getByRole('tab', { name: /Capability/i })).toBeVisible()
-    await expect(page.getByRole('tab', { name: /Customization/i })).toBeVisible()
-    await expect(page.getByRole('tab', { name: /Control/i })).toBeVisible()
+    await expect(page.getByRole('tab', { name: /Instructions/i })).toBeVisible()
+    await expect(page.getByRole('tab', { name: /Procedures/i })).toBeVisible()
+    await expect(page.getByRole('tab', { name: /Control & Approval/i })).toBeVisible()
   })
 
   test('should have All Primitives selected by default', async ({ page }) => {
@@ -27,38 +27,50 @@ test.describe('Primitive Cards', () => {
   })
 
   test('should filter primitives by category', async ({ page }) => {
-    // Click on Customization category
-    const customizationTab = page.getByRole('tab', { name: /Customization/i })
-    await customizationTab.click()
-    await expect(customizationTab).toHaveAttribute('aria-selected', 'true')
+    // Click on Instructions layer
+    const instructionsTab = page.getByRole('tab', { name: /Instructions/i })
+    await instructionsTab.click()
+    await expect(instructionsTab).toHaveAttribute('aria-selected', 'true')
 
-    // Should see customization primitives
+    // Should see instruction primitives
     await expect(page.getByRole('heading', { name: 'Persistent Instructions' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Path-Scoped Rules' })).toBeVisible()
+
+    // Should NOT see procedures primitives
+    await expect(page.getByRole('heading', { name: 'Slash Commands' })).not.toBeVisible()
+  })
+
+  test('should filter to procedures primitives', async ({ page }) => {
+    const proceduresTab = page.getByRole('tab', { name: /Procedures/i })
+    await proceduresTab.click()
+
+    // Should see procedures primitives
+    await expect(page.getByRole('heading', { name: 'Skills / Workflows' })).toBeVisible()
     await expect(page.getByRole('heading', { name: 'Slash Commands' })).toBeVisible()
 
-    // Should NOT see capability primitives
+    // Should NOT see instruction primitives
     await expect(page.getByRole('heading', { name: 'Agent Mode' })).not.toBeVisible()
   })
 
-  test('should filter to capability primitives', async ({ page }) => {
-    const capabilityTab = page.getByRole('tab', { name: /Capability/i })
-    await capabilityTab.click()
+  test('should filter to delegation primitives', async ({ page }) => {
+    const delegationTab = page.getByRole('tab', { name: /Delegation/i })
+    await delegationTab.click()
 
-    // Should see capability primitives
+    // Should see delegation primitives
     await expect(page.getByRole('heading', { name: 'Agent Mode' })).toBeVisible()
-    await expect(page.getByRole('heading', { name: 'Skills / Workflows' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Custom Agents' })).toBeVisible()
 
-    // Should NOT see customization primitives
+    // Should NOT see instruction primitives
     await expect(page.getByRole('heading', { name: 'Persistent Instructions' })).not.toBeVisible()
   })
 
-  test('should filter to control primitives', async ({ page }) => {
-    const controlTab = page.getByRole('tab', { name: /Control/i })
+  test('should filter to control and approval primitives', async ({ page }) => {
+    const controlTab = page.getByRole('tab', { name: /Control & Approval/i })
     await controlTab.click()
 
-    // Should see control primitives
+    // Should see control & approval primitives
     await expect(page.getByRole('heading', { name: 'Permissions & Guardrails' })).toBeVisible()
-    await expect(page.getByRole('heading', { name: 'Verification / Evals' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Runtime Sandbox' })).toBeVisible()
   })
 
   test('should expand primitive card on click', async ({ page }) => {
@@ -95,12 +107,12 @@ test.describe('Primitive Cards', () => {
 
   test('should show file locations', async ({ page }) => {
     // Expand a primitive card
-    const card = page.getByRole('heading', { name: 'Persistent Instructions' }).locator('..')
-    await card.click()
+    const cardButton = page.getByRole('heading', { name: 'Persistent Instructions' }).locator('xpath=ancestor::button[1]')
+    await cardButton.click()
 
     // Should show file location
-    await expect(page.getByText('.github/copilot-instructions.md')).toBeVisible()
-    await expect(page.getByText('CLAUDE.md')).toBeVisible()
+    await expect(page.getByText('AGENTS.md or .github/copilot-instructions.md').first()).toBeVisible()
+    await expect(page.getByText('.cursor/instructions.md').first()).toBeVisible()
   })
 
   test('should collapse expanded card on second click', async ({ page }) => {
@@ -119,8 +131,8 @@ test.describe('Primitive Cards', () => {
   })
 
   test('should return to all primitives when clicking All tab', async ({ page }) => {
-    // Filter to control
-    await page.getByRole('tab', { name: /Control/i }).click()
+    // Filter to control & approval
+    await page.getByRole('tab', { name: /Control & Approval/i }).click()
     await expect(page.getByRole('heading', { name: 'Persistent Instructions' })).not.toBeVisible()
 
     // Click All
@@ -132,9 +144,9 @@ test.describe('Primitive Cards', () => {
   })
 
   test('should show category counts in filter tabs', async ({ page }) => {
-    // Check that tabs show counts (except All) - 3 capability, 4 customization, 4 control
-    await expect(page.getByRole('tab', { name: /Capability.*\(3\)/i })).toBeVisible()
-    await expect(page.getByRole('tab', { name: /Customization.*\(4\)/i })).toBeVisible()
-    await expect(page.getByRole('tab', { name: /Control.*\(4\)/i })).toBeVisible()
+    // Check that layer tabs show counts (except All)
+    await expect(page.getByRole('tab', { name: /Instructions.*\(2\)/i })).toBeVisible()
+    await expect(page.getByRole('tab', { name: /Procedures.*\(2\)/i })).toBeVisible()
+    await expect(page.getByRole('tab', { name: /Control & Approval.*\(3\)/i })).toBeVisible()
   })
 })
