@@ -41,18 +41,18 @@ test.describe('Provider Comparison', () => {
     // Check for Full Support badges
     await expect(table.getByText('Full Support').first()).toBeVisible()
     // 11 primitives, 4 providers: Full support counts vary by primitive
-    // Copilot: 10 full, 1 none (hooks)
+    // Copilot: 11 full
     // Claude: 11 full
     // Cursor: 11 full
     // Codex: 9 full, 1 partial (hooks), 1 none (custom-agents)
     const fullSupportBadges = table.getByText('Full Support')
-    await expect(fullSupportBadges).toHaveCount(41) // 10 + 11 + 11 + 9 = 41
+    await expect(fullSupportBadges).toHaveCount(42) // 11 + 11 + 11 + 9 = 42
     // Codex has partial support for lifecycle hooks
     const partialBadges = table.getByText('Partial')
     await expect(partialBadges).toHaveCount(1)
-    // Copilot hooks + Codex custom-agents = 2 "Not Available"
+    // Codex custom-agents = 1 "Not Available"
     const notAvailableBadges = table.getByText('Not Available')
-    await expect(notAvailableBadges).toHaveCount(2)
+    await expect(notAvailableBadges).toHaveCount(1)
   })
 
   test('should expand row on click to show details', async ({ page }) => {
@@ -62,7 +62,7 @@ test.describe('Provider Comparison', () => {
     await row.click()
 
     // Should show expanded details with implementation info for all 4 providers
-    await expect(page.getByText('Repo instructions file')).toBeVisible()
+    await expect(page.getByText('AGENTS.md or repository instructions file')).toBeVisible()
     await expect(page.getByText('Project memory file with @imports')).toBeVisible()
     await expect(page.getByText('Project instructions file')).toBeVisible()
     await expect(page.getByText('Project AGENTS.md with hierarchical loading')).toBeVisible()
@@ -75,7 +75,7 @@ test.describe('Provider Comparison', () => {
     await row.click()
 
     // Should show file locations for all 4 providers
-    await expect(page.getByText('.github/copilot-instructions.md')).toBeVisible()
+    await expect(page.getByText('AGENTS.md or .github/copilot-instructions.md')).toBeVisible()
     await expect(page.getByText('CLAUDE.md').first()).toBeVisible()
     await expect(page.getByText('.cursor/instructions.md')).toBeVisible()
     // Codex also uses AGENTS.md - check the expanded row shows the Codex section header
@@ -90,13 +90,13 @@ test.describe('Provider Comparison', () => {
     await row.click()
 
     // Verify expanded
-    await expect(page.getByText('Repo instructions file')).toBeVisible()
+    await expect(page.getByText('AGENTS.md or repository instructions file')).toBeVisible()
 
     // Click to collapse
     await row.click()
 
     // Should no longer show expanded content
-    await expect(page.getByText('Repo instructions file')).not.toBeVisible()
+    await expect(page.getByText('AGENTS.md or repository instructions file')).not.toBeVisible()
   })
 
   test('should display legend', async ({ page }) => {
@@ -130,14 +130,14 @@ test.describe('Provider Comparison', () => {
     // Click first row
     const firstRow = table.getByRole('row').filter({ hasText: 'Persistent Instructions' }).first()
     await firstRow.click()
-    await expect(page.getByText('Repo instructions file')).toBeVisible()
+    await expect(page.getByText('AGENTS.md or repository instructions file')).toBeVisible()
 
     // Click second row
     const secondRow = table.getByRole('row').filter({ hasText: 'Agent Mode' }).first()
     await secondRow.click()
 
     // First row should collapse
-    await expect(page.getByText('Repo instructions file')).not.toBeVisible()
+    await expect(page.getByText('AGENTS.md or repository instructions file')).not.toBeVisible()
     // Second row should be expanded
     await expect(page.getByText('Agent mode in Copilot Chat')).toBeVisible()
   })

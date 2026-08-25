@@ -66,14 +66,16 @@ export function AgentsPage(): VNode {
                     <li><strong>Human readable:</strong> Team members can review and update instructions easily</li>
                     <li><strong>Version controlled:</strong> Instructions evolve with your codebase</li>
                     <li><strong>Tool agnostic:</strong> Many AI tools read the same formats</li>
-                    <li><strong>No runtime cost:</strong> Instructions load at session start, not during inference</li>
+                    <li><strong>No application runtime dependency:</strong> Instructions are documentation consumed by supporting agents</li>
                   </ul>
                 </div>
 
                 <p>
-                  The most popular format is <code>AGENTS.md</code>, an open standard used by over 60,000
-                  projects and supported by Claude Code, GitHub Copilot, Cursor, Aider, and others. Individual
-                  providers also have their own formats with additional features.
+                  The most popular format is <code>AGENTS.md</code>, an open format supported by GitHub
+                  Copilot, OpenAI Codex, Cursor, Aider, and other coding agents. Claude Code reads
+                  <code>CLAUDE.md</code> rather than <code>AGENTS.md</code> directly, but a small
+                  <code>CLAUDE.md</code> can import <code>AGENTS.md</code> so the project keeps one shared
+                  source of instructions.
                 </p>
               </section>
 
@@ -81,8 +83,8 @@ export function AgentsPage(): VNode {
               <section id="first-definition" className="scroll-mt-24 mb-16">
                 <h2 className="text-3xl font-bold mb-4">2. Your First Agent Definition</h2>
                 <p className="text-lg text-muted-foreground mb-6">
-                  Start with a single file in your project root. Here's a minimal example that works
-                  with any AI coding assistant.
+                  Start with a single file in your project root. Here's a minimal example for assistants
+                  that support <code>AGENTS.md</code>.
                 </p>
 
                 <CodeBlock 
@@ -93,9 +95,9 @@ export function AgentsPage(): VNode {
                 />
 
                 <p>
-                  That's it! Place this file in your project root and AI assistants will automatically
-                  read it. This single file gives the AI the most essential context: how to build,
-                  test, and contribute to your project.
+                  Place this file in your project root and supporting assistants will discover it. For
+                  Claude Code, add a <code>CLAUDE.md</code> containing <code>@AGENTS.md</code>. This keeps
+                  essential build, test, and contribution guidance in one shared file.
                 </p>
 
                 <div className="my-8 p-6 bg-blue-50 dark:bg-blue-950/30 rounded-lg border border-blue-200 dark:border-blue-800">
@@ -211,7 +213,7 @@ export function AgentsPage(): VNode {
                       </tr>
                       <tr className="border-b">
                         <td className="py-2 pr-4">Path rules</td>
-                        <td className="py-2 pr-4">✗</td>
+                        <td className="py-2 pr-4">✓ nested AGENTS.md</td>
                         <td className="py-2 pr-4">✓ .claude/rules/</td>
                         <td className="py-2">✓ .instructions.md</td>
                       </tr>
@@ -305,8 +307,8 @@ export function AgentsPage(): VNode {
 
                 <p>
                   GitHub Copilot supports custom agent personas through <code>.agent.md</code> files.
-                  Each agent has its own name, description, and instructions. Users can invoke them
-                  with <code>@agent-name</code> in chat.
+                  Each agent has its own name, description, instructions, and optional tool restrictions.
+                  Users select the agent in a supported Copilot interface.
                 </p>
 
                 <CodeBlock 
@@ -355,8 +357,9 @@ export function AgentsPage(): VNode {
                 </p>
 
                 <p>
-                  Both Claude and Copilot read instructions from multiple levels. Understanding
-                  the hierarchy helps you put instructions in the right place.
+                  Both Claude and Copilot read instructions from multiple levels, but they combine and
+                  prioritize those sources differently. Understanding each provider's behavior helps you
+                  put instructions in the right place.
                 </p>
 
                 <CodeTabs
@@ -394,9 +397,10 @@ export function AgentsPage(): VNode {
                 <div className="my-8 p-6 bg-yellow-50 dark:bg-yellow-950/30 rounded-lg border border-yellow-200 dark:border-yellow-800">
                   <h3 className="text-lg font-semibold mb-3">⚠️ Conflict Resolution</h3>
                   <p>
-                    When instructions conflict, <strong>more specific wins</strong>. A path-scoped rule
-                    overrides a repository-wide rule, which overrides user preferences. Be explicit
-                    about intent when you need to override.
+                    Avoid conflicting instructions. Claude concatenates applicable instruction files and
+                    reads more specific files later. Copilot gives the nearest <code>AGENTS.md</code>
+                    precedence among <code>AGENTS.md</code> files, while matching path instructions are
+                    additive. Neither model is a substitute for keeping the instruction set consistent.
                   </p>
                 </div>
               </section>

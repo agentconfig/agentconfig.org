@@ -7,6 +7,8 @@ export interface ProviderSupport {
   implementation: string
   /** File location or feature name */
   location: string
+  /** Primary provider documentation */
+  sourceUrl?: string
 }
 
 export interface ComparisonRow {
@@ -85,7 +87,8 @@ export const comparisonData: ComparisonRow[] = [
     claude: {
       level: 'full',
       implementation: 'MCP servers and tool calling',
-      location: '.claude/settings.json',
+      location: '.mcp.json or ~/.claude.json',
+      sourceUrl: 'https://code.claude.com/docs/en/mcp',
     },
     cursor: {
       level: 'full',
@@ -104,8 +107,9 @@ export const comparisonData: ComparisonRow[] = [
     primitiveName: 'Persistent Instructions',
     copilot: {
       level: 'full',
-      implementation: 'Repo instructions file',
-      location: '.github/copilot-instructions.md',
+      implementation: 'AGENTS.md or repository instructions file',
+      location: 'AGENTS.md or .github/copilot-instructions.md',
+      sourceUrl: 'https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions',
     },
     claude: {
       level: 'full',
@@ -152,8 +156,9 @@ export const comparisonData: ComparisonRow[] = [
     primitiveName: 'Path-Scoped Rules',
     copilot: {
       level: 'full',
-      implementation: 'Instruction files with applyTo glob patterns',
-      location: '.github/instructions/*.instructions.md',
+      implementation: 'Nested AGENTS.md or applyTo instruction files',
+      location: 'subdir/AGENTS.md or .github/instructions/*.instructions.md',
+      sourceUrl: 'https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions',
     },
     claude: {
       level: 'full',
@@ -248,14 +253,16 @@ export const comparisonData: ComparisonRow[] = [
     primitiveId: 'hooks',
     primitiveName: 'Lifecycle Hooks',
     copilot: {
-      level: 'none',
-      implementation: 'Not available',
-      location: 'N/A',
+      level: 'full',
+      implementation: 'Lifecycle hooks for Copilot CLI and cloud agent',
+      location: '.github/hooks/*.json',
+      sourceUrl: 'https://docs.github.com/en/copilot/reference/hooks-reference',
     },
     claude: {
       level: 'full',
-      implementation: 'PreToolUse, PostToolUse, Stop hooks with matchers',
-      location: '.claude/hooks/hooks.json',
+      implementation: 'Lifecycle hooks configured in shared project settings',
+      location: '.claude/settings.json',
+      sourceUrl: 'https://code.claude.com/docs/en/hooks',
     },
     cursor: {
       level: 'full',

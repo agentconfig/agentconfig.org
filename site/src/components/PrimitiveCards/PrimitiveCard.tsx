@@ -1,6 +1,6 @@
 import { useState } from 'preact/hooks'
 import type { VNode } from 'preact'
-import { ChevronDown, Copy, Check, Shield, Zap, Wrench, FileText } from 'lucide-preact'
+import { ChevronDown, Copy, Check, ExternalLink, Shield, Zap, Wrench, FileText } from 'lucide-preact'
 import { cn } from '@/lib/utils'
 import { type Primitive, type Provider } from '@/data/primitives'
 import { providers } from '@/data/providers'
@@ -182,6 +182,17 @@ export function PrimitiveCard({ primitive, className }: PrimitiveCardProps): VNo
                   <p className="text-sm text-muted-foreground mb-2">
                     {impl.implementation}
                   </p>
+                  {impl.sourceUrl != null && (
+                    <a
+                      href={impl.sourceUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mb-2 inline-flex items-center gap-1 text-xs text-primary hover:underline"
+                    >
+                      Provider documentation
+                      <ExternalLink className="h-3 w-3" aria-hidden="true" />
+                    </a>
+                  )}
                   <div className="flex items-center gap-2">
                     <code className="flex-1 text-xs bg-background px-2 py-1 rounded font-mono text-foreground">
                       {impl.location}

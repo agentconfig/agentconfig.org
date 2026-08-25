@@ -22,7 +22,7 @@ configuration primitives to get consistent, high-quality assistance from AI tool
 
 # Part 1: AI Primitives
 
-The site documents 10 AI primitives organized into 3 categories:
+The site documents 11 AI primitives organized into 3 categories:
 - **Capability (Execution)**: What the AI can do
 - **Customization (Instructions)**: How to shape AI behavior
 - **Control (Safety)**: How to constrain AI actions
@@ -48,12 +48,12 @@ Multi-step execution with planning and tool use.
 
 **Provider Implementations:**
 
-| Provider | Implementation | Location | Support |
-|----------|---------------|----------|---------|
-| GitHub Copilot | Agent mode in Copilot Chat | VS Code Copilot Chat | full |
-| Claude Code | Agentic workflows in Claude Code | Claude Code CLI | full |
-| Cursor | Cursor Agent mode for multi-step execution | Cursor Editor with Agent capabilities | full |
-| OpenAI Codex | Agentic coding with multi-step execution | Codex CLI | full |
+| Provider | Implementation | Location | Support | Source |
+|----------|---------------|----------|---------|--------|
+| GitHub Copilot | Agent mode in Copilot Chat | VS Code Copilot Chat | full | — |
+| Claude Code | Agentic workflows in Claude Code | Claude Code CLI | full | — |
+| Cursor | Cursor Agent mode for multi-step execution | Cursor Editor with Agent capabilities | full | — |
+| OpenAI Codex | Agentic coding with multi-step execution | Codex CLI | full | — |
 
 ---
 
@@ -74,12 +74,12 @@ Reusable multi-step procedures for common tasks.
 
 **Provider Implementations:**
 
-| Provider | Implementation | Location | Support |
-|----------|---------------|----------|---------|
-| GitHub Copilot | Skill modules in skills directory | .github/skills/*/SKILL.md | full |
-| Claude Code | Skill modules in .claude directory | .claude/skills/*/SKILL.md | full |
-| Cursor | Skill modules as portable, reusable packages | .cursor/skills/*/SKILL.md | full |
-| OpenAI Codex | Skill modules following agentskills.io specification | .codex/skills/*/SKILL.md | full |
+| Provider | Implementation | Location | Support | Source |
+|----------|---------------|----------|---------|--------|
+| GitHub Copilot | Skill modules in skills directory | .github/skills/*/SKILL.md | full | — |
+| Claude Code | Skill modules in .claude directory | .claude/skills/*/SKILL.md | full | — |
+| Cursor | Skill modules as portable, reusable packages | .cursor/skills/*/SKILL.md | full | — |
+| OpenAI Codex | Skill modules following agentskills.io specification | .codex/skills/*/SKILL.md | full | — |
 
 ---
 
@@ -100,12 +100,12 @@ External tools for retrieving facts and taking actions.
 
 **Provider Implementations:**
 
-| Provider | Implementation | Location | Support |
-|----------|---------------|----------|---------|
-| GitHub Copilot | MCP servers and tool calling | VS Code MCP settings | full |
-| Claude Code | MCP servers and tool calling | .claude/settings.json | full |
-| Cursor | MCP servers with stdio, SSE, and HTTP transports | .cursor/mcp.json | full |
-| OpenAI Codex | MCP servers with stdio and HTTP transports | ~/.codex/config.toml | full |
+| Provider | Implementation | Location | Support | Source |
+|----------|---------------|----------|---------|--------|
+| GitHub Copilot | MCP servers and tool calling | VS Code MCP settings | full | — |
+| Claude Code | MCP servers and tool calling | .mcp.json or ~/.claude.json | full | [Provider documentation](https://code.claude.com/docs/en/mcp) |
+| Cursor | MCP servers with stdio, SSE, and HTTP transports | .cursor/mcp.json | full | — |
+| OpenAI Codex | MCP servers with stdio and HTTP transports | ~/.codex/config.toml | full | — |
 
 ---
 
@@ -130,12 +130,12 @@ A durable set of norms that define "good" for your project.
 
 **Provider Implementations:**
 
-| Provider | Implementation | Location | Support |
-|----------|---------------|----------|---------|
-| GitHub Copilot | Repository-level instructions file | .github/copilot-instructions.md | full |
-| Claude Code | Project memory file with @imports | CLAUDE.md | full |
-| Cursor | Project instructions file | .cursor/instructions.md | full |
-| OpenAI Codex | Project AGENTS.md file with hierarchical loading | AGENTS.md | full |
+| Provider | Implementation | Location | Support | Source |
+|----------|---------------|----------|---------|--------|
+| GitHub Copilot | AGENTS.md or repository instructions file | AGENTS.md or .github/copilot-instructions.md | full | [Provider documentation](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions) |
+| Claude Code | Project memory file with @imports | CLAUDE.md | full | — |
+| Cursor | Project instructions file | .cursor/instructions.md | full | — |
+| OpenAI Codex | Project AGENTS.md file with hierarchical loading | AGENTS.md | full | — |
 
 ---
 
@@ -156,12 +156,12 @@ User-level preferences that apply across all projects.
 
 **Provider Implementations:**
 
-| Provider | Implementation | Location | Support |
-|----------|---------------|----------|---------|
-| GitHub Copilot | User-level settings in VS Code | VS Code settings.json | full |
-| Claude Code | User-level memory and config | ~/.claude/CLAUDE.md | full |
-| Cursor | User-level settings and preferences | ~/.cursor/settings.json | full |
-| OpenAI Codex | User-level AGENTS.md and config.toml | ~/.codex/AGENTS.md | full |
+| Provider | Implementation | Location | Support | Source |
+|----------|---------------|----------|---------|--------|
+| GitHub Copilot | User-level settings in VS Code | VS Code settings.json | full | — |
+| Claude Code | User-level memory and config | ~/.claude/CLAUDE.md | full | — |
+| Cursor | User-level settings and preferences | ~/.cursor/settings.json | full | — |
+| OpenAI Codex | User-level AGENTS.md and config.toml | ~/.codex/AGENTS.md | full | — |
 
 ---
 
@@ -182,12 +182,12 @@ Instructions that apply only to specific file paths.
 
 **Provider Implementations:**
 
-| Provider | Implementation | Location | Support |
-|----------|---------------|----------|---------|
-| GitHub Copilot | Instruction files with applyTo glob patterns | .github/instructions/*.instructions.md | full |
-| Claude Code | Rule files with globs frontmatter | .claude/rules/*.md | full |
-| Cursor | Rules with path patterns | .cursor/rules/*.md | full |
-| OpenAI Codex | Nested AGENTS.md files with hierarchical merge | subdir/AGENTS.md | full |
+| Provider | Implementation | Location | Support | Source |
+|----------|---------------|----------|---------|--------|
+| GitHub Copilot | Nested AGENTS.md or applyTo instruction files | subdir/AGENTS.md or .github/instructions/*.instructions.md | full | [Provider documentation](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions) |
+| Claude Code | Rule files with globs frontmatter | .claude/rules/*.md | full | — |
+| Cursor | Rules with path patterns | .cursor/rules/*.md | full | — |
+| OpenAI Codex | Nested AGENTS.md files with hierarchical merge | subdir/AGENTS.md | full | — |
 
 ---
 
@@ -208,12 +208,12 @@ Repeatable prompts invoked via / commands.
 
 **Provider Implementations:**
 
-| Provider | Implementation | Location | Support |
-|----------|---------------|----------|---------|
-| GitHub Copilot | Prompt files invoked via / commands | .github/prompts/*.prompt.md | full |
-| Claude Code | Command files with frontmatter and $ARGUMENTS | .claude/commands/*.md | full |
-| Cursor | Custom commands with parameters and reusable workflows | .cursor/commands/*.md | full |
-| OpenAI Codex | Built-in / commands for session control | Codex CLI / commands | full |
+| Provider | Implementation | Location | Support | Source |
+|----------|---------------|----------|---------|--------|
+| GitHub Copilot | Prompt files invoked via / commands | .github/prompts/*.prompt.md | full | — |
+| Claude Code | Command files with frontmatter and $ARGUMENTS | .claude/commands/*.md | full | — |
+| Cursor | Custom commands with parameters and reusable workflows | .cursor/commands/*.md | full | — |
+| OpenAI Codex | Built-in / commands for session control | Codex CLI / commands | full | — |
 
 ---
 
@@ -238,12 +238,12 @@ Specialized agent personas with specific roles and permissions.
 
 **Provider Implementations:**
 
-| Provider | Implementation | Location | Support |
-|----------|---------------|----------|---------|
-| GitHub Copilot | Agent definition files | .github/agents/*.agent.md | full |
-| Claude Code | Custom subagents with roles and tool permissions | .claude/agents/*.md | full |
-| Cursor | Subagents with model selection and context isolation | .cursor/agents/*.md | full |
-| OpenAI Codex | Multi-agent via Agents SDK (not built-in) | External Agents SDK | diy |
+| Provider | Implementation | Location | Support | Source |
+|----------|---------------|----------|---------|--------|
+| GitHub Copilot | Agent definition files | .github/agents/*.agent.md | full | — |
+| Claude Code | Custom subagents with roles and tool permissions | .claude/agents/*.md | full | — |
+| Cursor | Subagents with model selection and context isolation | .cursor/agents/*.md | full | — |
+| OpenAI Codex | Multi-agent via Agents SDK (not built-in) | External Agents SDK | diy | — |
 
 ---
 
@@ -264,12 +264,12 @@ Explicit constraints on what the AI can do.
 
 **Provider Implementations:**
 
-| Provider | Implementation | Location | Support |
-|----------|---------------|----------|---------|
-| GitHub Copilot | Org policies and tool permissions | VS Code settings + org policies | full |
-| Claude Code | Allow/deny lists with pattern matching and sandbox | .claude/settings.json | full |
-| Cursor | Approvals, .cursorignore, LLM safety controls, and security hooks | .cursor/settings.json + .cursorignore | full |
-| OpenAI Codex | Sandbox modes, approval policies, and .rules files | ~/.codex/config.toml + ~/.codex/rules/*.rules | full |
+| Provider | Implementation | Location | Support | Source |
+|----------|---------------|----------|---------|--------|
+| GitHub Copilot | Org policies and tool permissions | VS Code settings + org policies | full | — |
+| Claude Code | Allow/deny lists with pattern matching and sandbox | .claude/settings.json | full | — |
+| Cursor | Approvals, .cursorignore, LLM safety controls, and security hooks | .cursor/settings.json + .cursorignore | full | — |
+| OpenAI Codex | Sandbox modes, approval policies, and .rules files | ~/.codex/config.toml + ~/.codex/rules/*.rules | full | — |
 
 ---
 
@@ -290,12 +290,12 @@ Code that runs before/after AI tool execution.
 
 **Provider Implementations:**
 
-| Provider | Implementation | Location | Support |
-|----------|---------------|----------|---------|
-| GitHub Copilot | Not available | N/A | diy |
-| Claude Code | PreToolUse, PostToolUse, Stop hooks with matchers | .claude/hooks/hooks.json | full |
-| Cursor | Session, execution, and file operation hooks | .cursor/hooks.json | full |
-| OpenAI Codex | Notify hooks for external program triggers | ~/.codex/config.toml (notify) | partial |
+| Provider | Implementation | Location | Support | Source |
+|----------|---------------|----------|---------|--------|
+| GitHub Copilot | Lifecycle hooks for Copilot CLI and cloud agent | .github/hooks/*.json | full | [Provider documentation](https://docs.github.com/en/copilot/reference/hooks-reference) |
+| Claude Code | Lifecycle hooks configured in shared project settings | .claude/settings.json | full | [Provider documentation](https://code.claude.com/docs/en/hooks) |
+| Cursor | Session, execution, and file operation hooks | .cursor/hooks.json | full | — |
+| OpenAI Codex | Notify hooks for external program triggers | ~/.codex/config.toml (notify) | partial | — |
 
 ---
 
@@ -316,12 +316,12 @@ Checks that validate AI outputs before shipping.
 
 **Provider Implementations:**
 
-| Provider | Implementation | Location | Support |
-|----------|---------------|----------|---------|
-| GitHub Copilot | Run tests/lint via terminal tools | Terminal tools in agent mode | full |
-| Claude Code | Run tests/lint via Bash tool with hooks | Bash tool + hooks | full |
-| Cursor | Integrated terminal for test execution | Cursor Editor integrated terminal | full |
-| OpenAI Codex | Shell tool for running tests/lint in agent mode | Codex CLI shell tool | full |
+| Provider | Implementation | Location | Support | Source |
+|----------|---------------|----------|---------|--------|
+| GitHub Copilot | Run tests/lint via terminal tools | Terminal tools in agent mode | full | — |
+| Claude Code | Run tests/lint via Bash tool with hooks | Bash tool + hooks | full | — |
+| Cursor | Integrated terminal for test execution | Cursor Editor integrated terminal | full | — |
+| OpenAI Codex | Shell tool for running tests/lint in agent mode | Codex CLI shell tool | full | — |
 
 ---
 
@@ -336,23 +336,24 @@ Support matrix comparing GitHub Copilot, Claude Code, Cursor, and OpenAI Codex:
 | Agent Mode | ✓ Agent mode in Copilot Chat | ✓ Agentic workflows in Claude Code | ✓ Cursor Agent mode for multi-step execution | ✓ Agentic coding with multi-step execution |
 | Skills / Workflows | ✓ Skill modules in skills directory | ✓ Skill modules in .claude directory | ✓ Skill modules as portable, reusable packages | ✓ Skill modules following agentskills.io specification |
 | Tool Integrations (MCP) | ✓ MCP servers and tool calling | ✓ MCP servers and tool calling | ✓ MCP servers with stdio, SSE, and HTTP transports | ✓ MCP servers with stdio and HTTP transports |
-| Persistent Instructions | ✓ Repo instructions file | ✓ Project memory file with @imports | ✓ Project instructions file | ✓ Project AGENTS.md with hierarchical loading |
+| Persistent Instructions | ✓ AGENTS.md or repository instructions file | ✓ Project memory file with @imports | ✓ Project instructions file | ✓ Project AGENTS.md with hierarchical loading |
 | Global Instructions | ✓ User-level settings in VS Code | ✓ User-level memory and config | ✓ User-level settings and preferences | ✓ User-level AGENTS.md and config.toml |
-| Path-Scoped Rules | ✓ Instruction files with applyTo glob patterns | ✓ Rule files with globs frontmatter | ✓ Rules with path patterns | ✓ Nested AGENTS.md files with hierarchical merge |
+| Path-Scoped Rules | ✓ Nested AGENTS.md or applyTo instruction files | ✓ Rule files with globs frontmatter | ✓ Rules with path patterns | ✓ Nested AGENTS.md files with hierarchical merge |
 | Slash Commands | ✓ Prompt files invoked via / commands | ✓ Command files with frontmatter and $ARGUMENTS | ✓ Custom commands with parameters and reusable workflows | ✓ Built-in / commands for session control |
 | Custom Agents | ✓ Agent definition files with roles and tool permissions | ✓ Subagent files with tools restrictions | ✓ Subagents with model selection and context isolation | — Multi-agent via Agents SDK (not built-in) |
 | Permissions & Guardrails | ✓ Org policies and tool permissions | ✓ Allow/deny lists with pattern matching and sandbox | ✓ Approvals, .cursorignore, LLM safety controls, and security hooks | ✓ Sandbox modes, approval policies, and .rules files |
-| Lifecycle Hooks | — Not available | ✓ PreToolUse, PostToolUse, Stop hooks with matchers | ✓ Session, execution, and file operation hooks | ◐ Notify hooks for external program triggers |
+| Lifecycle Hooks | ✓ Lifecycle hooks for Copilot CLI and cloud agent | ✓ Lifecycle hooks configured in shared project settings | ✓ Session, execution, and file operation hooks | ◐ Notify hooks for external program triggers |
 | Verification / Evals | ✓ Run tests/lint via terminal tools | ✓ Run tests/lint via Bash tool with hooks | ✓ Integrated terminal for test execution | ✓ Shell tool for running tests/lint in agent mode |
 
 ### Config File Locations
 
 **GitHub Copilot:**
-- Persistent Instructions: `.github/copilot-instructions.md`
-- Path-Scoped Rules: `.github/instructions/*.instructions.md`
+- Persistent Instructions: `AGENTS.md` or `.github/copilot-instructions.md`
+- Path-Scoped Rules: Nested `AGENTS.md` files or `.github/instructions/*.instructions.md`
 - Slash Commands: `.github/prompts/*.prompt.md`
 - Custom Agents: `.github/agents/*.agent.md`
 - Skills: `.github/skills/*/SKILL.md`
+- Lifecycle Hooks: `.github/hooks/*.json`
 
 **Claude Code:**
 - Persistent Instructions: `CLAUDE.md` (root) or `.claude/CLAUDE.md`
@@ -361,8 +362,8 @@ Support matrix comparing GitHub Copilot, Claude Code, Cursor, and OpenAI Codex:
 - Slash Commands: `.claude/commands/*.md`
 - Custom Agents: `.claude/agents/*.md`
 - Skills: `.claude/skills/*/SKILL.md`
-- Lifecycle Hooks: `.claude/hooks/hooks.json`
-- MCP Settings: `.claude/settings.json`
+- Lifecycle Hooks: `hooks` in `.claude/settings.json`
+- MCP Settings: `.mcp.json` (project) or `~/.claude.json` (local/user)
 
 **Cursor:**
 - Persistent Instructions: `.cursor/instructions.md`
@@ -1191,11 +1192,11 @@ They provide context about how to build, what conventions to follow, and where t
 - Human readable: Team members can review and update easily
 - Version controlled: Instructions evolve with your codebase
 - Tool agnostic: Many AI tools read the same formats
-- No runtime cost: Instructions load at session start
+- No application runtime dependency: Instructions are documentation consumed by supporting agents
 
 ### 2. Your First Agent Definition
 
-Minimal example that works with any AI coding assistant:
+Minimal example for assistants that support AGENTS.md:
 
 ```markdown
 # AGENTS.md
@@ -1210,6 +1211,9 @@ Minimal example that works with any AI coding assistant:
 - Use functional components
 - Single quotes, no semicolons
 ```
+
+Claude Code reads CLAUDE.md rather than AGENTS.md directly. Add a CLAUDE.md containing
+`@AGENTS.md` to reuse these shared instructions with Claude Code.
 
 ### 3. The Six Sections That Matter
 
@@ -1271,7 +1275,7 @@ Analysis of 2,500+ repositories shows effective agent definitions cover:
 
 ### 4. Provider-Specific Formats
 
-**AGENTS.md** (Open standard, 60k+ projects):
+**AGENTS.md** (open format):
 ```markdown
 # AGENTS.md
 
@@ -1290,20 +1294,12 @@ Analysis of 2,500+ repositories shows effective agent definitions cover:
 
 **CLAUDE.md** (Claude Code):
 ```markdown
-# CLAUDE.md
+@AGENTS.md
 
-See @README.md for project overview.
-See @package.json for available npm commands.
+## Claude Code
 
-## Code Style
-Follow @docs/code-style.md for conventions.
-
-## Testing
-Run tests with `npm test` before every commit.
-
-## Important Files
-- @src/config.ts - Application configuration
-- @src/types/index.ts - Shared TypeScript types
+Add only Claude-specific instructions here. Shared project instructions
+belong in AGENTS.md.
 ```
 
 **copilot-instructions.md** (GitHub Copilot):
@@ -1327,7 +1323,7 @@ When writing tests:
 | Feature | AGENTS.md | CLAUDE.md | copilot-instructions |
 |---------|-----------|-----------|---------------------|
 | Location | Project root | Root or .claude/ | .github/ |
-| Path rules | ✗ | ✓ .claude/rules/ | ✓ .instructions.md |
+| Path rules | ✓ nested AGENTS.md | ✓ .claude/rules/ | ✓ .instructions.md |
 | File imports | ✗ | ✓ @file syntax | ✗ |
 | Agent personas | ✗ | ✗ | ✓ .agent.md |
 | Cross-tool support | Wide | Claude only | Copilot only |
@@ -1394,30 +1390,29 @@ something is a concern and suggest specific fixes.
 
 **Claude Code:**
 ```
-Precedence (highest to lowest):
+Instruction loading order (broadest to most specific):
 
-1. Subtree CLAUDE.md (closest to working file)
-2. Path-specific rules (.claude/rules/*.md)
-3. Project CLAUDE.md (repository root)
-4. User CLAUDE.md (~/.claude/CLAUDE.md)
-5. Enterprise settings
+1. Managed policy CLAUDE.md
+2. User CLAUDE.md (~/.claude/CLAUDE.md)
+3. Project CLAUDE.md or .claude/CLAUDE.md
+4. CLAUDE.local.md
+5. Nested CLAUDE.md files, loaded when Claude reads that subtree
 
-More specific always wins. A rule in packages/api/CLAUDE.md
-overrides the root CLAUDE.md for files in that package.
+Applicable files are concatenated into context. More specific files are read
+later; they do not mechanically replace broader files.
 ```
 
 **GitHub Copilot:**
 ```
-Precedence (highest to lowest):
+Instruction behavior:
 
-1. Agent-specific (.agent.md instructions)
-2. Path-specific (.instructions.md with applyTo)
-3. Repository-wide (copilot-instructions.md)
-4. Organization settings
-5. User settings
+1. The nearest AGENTS.md takes precedence among AGENTS.md files
+2. Matching .instructions.md files are additive with repository instructions
+3. Personal, repository, and organization instructions can all apply
+4. Personal instructions have the highest priority, followed by repository
+   instructions and then organization instructions
 
-Path rules are additive—they combine with repository
-instructions rather than replacing them.
+Avoid conflicts rather than relying on priority to reconcile them.
 ```
 
 ### 8. Monorepo Strategies
@@ -1489,8 +1484,8 @@ This is the REST API package built with Express + TypeScript.
 ## Further Reading
 
 - [AGENTS.md Specification](https://agents.md): The open format for guiding coding agents, used by 60k+ open-source projects.
-- [Claude Code Memory](https://docs.anthropic.com/en/docs/claude-code/memory): Official documentation for CLAUDE.md, rules, imports, and memory hierarchy.
-- [Copilot Customization](https://docs.github.com/en/copilot/customizing-copilot/adding-repository-custom-instructions-for-github-copilot): How to configure copilot-instructions.md, path-specific rules, and agent files.
+- [Claude Code Memory](https://code.claude.com/docs/en/memory): Official documentation for CLAUDE.md, rules, imports, and memory hierarchy.
+- [Copilot Customization](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions): How to configure copilot-instructions.md, path-specific rules, and agent files.
 - [How to write a great agents.md](https://github.blog/ai-and-ml/github-copilot/how-to-write-a-great-agents-md-lessons-from-over-2500-repositories/): Lessons from analyzing 2,500+ repositories on effective agent configuration.
 - [OpenAI AGENTS.md Repository](https://github.com/agentsmd/agents.md): The official specification and tools for the AGENTS.md open format.
 
