@@ -1,4 +1,4 @@
 [
-  { "id": "c.conflict.a", "provider": "testprov", "primitive": "hooks", "aspect": "location", "value": ".testprov/hooks.json", "sourceId": "testprov.hooks", "sourceUrl": "https://docs.example.com/testprov/hooks", "sourceAuthority": "primary", "retrievedAt": "2026-08-25" },
-  { "id": "c.conflict.b", "provider": "testprov", "primitive": "hooks", "aspect": "location", "value": ".testprov/settings.json", "sourceId": "testprov.instructions", "sourceUrl": "https://docs.example.com/testprov/instructions", "sourceAuthority": "primary", "retrievedAt": "2026-08-25" }
+  { "id": "c.conflict.a", "provider": "testprov", "primitive": "hooks", "aspect": "location", "value": ".testprov/hooks.json", "sourceId": "testprov.hooks", "sourceUrl": "https://docs.example.com/testprov/hooks", "sourceAuthority": "primary", "retrievedAt": "2026-08-25", "notes": "Hooks file path from hooks docs." },
+  { "id": "c.conflict.b", "provider": "testprov", "primitive": "hooks", "aspect": "location", "value": ".testprov/settings.json", "sourceId": "testprov.instructions", "sourceUrl": "https://docs.example.com/testprov/instructions", "sourceAuthority": "primary", "retrievedAt": "2026-08-25", "notes": "Settings path from instructions docs." }
 ]

@@ -11,7 +11,8 @@ const STATUS_HEADING: Record<FindingStatus, string> = {
 }
 
 const STATUS_NOTE: Record<FindingStatus, string> = {
-  ambiguous: 'This skill will not resolve these automatically. Each row needs a person to read the cited sources and decide.',
+  ambiguous:
+    'This skill will not resolve these automatically. Evidence-backed rows need a person to read the cited source, while site-contradiction rows need a person to pick the canonical site value before any source comparison can run.',
   changed: 'Each row is a concrete edit to make in the site data, or a gap in what the site models today.',
   unsupported: 'Publishing a capability claim for these rows would be inaccurate.',
   confirmed: 'No action needed. These rows are evidence that the published claim is still correct.',
@@ -61,7 +62,9 @@ export function renderReport(result: CompareResult, options: ReportOptions = {})
   lines.push('')
   lines.push(`Generated ${generatedAt} from ${options.claimCount ?? result.findings.length} normalized claims against registry version ${options.registryVersion ?? 'unknown'}.`)
   lines.push('')
-  lines.push('Confirmed and changed rows rest on a registered primary source and cite it with the date it was retrieved. Ambiguous rows are unresolved for one of two reasons: the claim cites a secondary, unregistered, or mismatched source, or the site already contradicts itself on that key, in which case there is no citation to show because no comparison was attempted. No row is published on evidence weaker than a registered primary source.')
+  lines.push(
+    'Confirmed and changed rows rest on a registered primary source and cite it with the date it was retrieved. Ambiguous rows are unresolved because evidence validation failed, official sources disagree, or the site already contradicts itself on that key; site-contradiction rows have no citation because no source comparison was attempted. No row is published on evidence weaker than a registered primary source.',
+  )
   lines.push('')
   lines.push('## Summary')
   lines.push('')

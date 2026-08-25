@@ -18,7 +18,8 @@ export const snapshotRoot = join(tmpdir(), 'agentconfig-provider-docs')
  * files would be cited as current evidence.
  */
 export function newRunDir(now: Date = new Date()): string {
-  return join(snapshotRoot, `run-${now.toISOString().replace(/[:.]/g, '-')}`)
+  const unique = Math.random().toString(36).slice(2, 10)
+  return join(snapshotRoot, `run-${now.toISOString().replace(/[:.]/g, '-')}-${unique}`)
 }
 
 /**

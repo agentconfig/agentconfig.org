@@ -65,6 +65,13 @@ describe('retrieval', () => {
     expect(first).not.toBe(second)
     expect(first.startsWith(snapshotRoot)).toBe(true)
   })
+
+  test('still makes unique run directories for the same timestamp', () => {
+    const now = new Date('2026-08-26T00:00:00Z')
+    const first = newRunDir(now)
+    const second = newRunDir(now)
+    expect(first).not.toBe(second)
+  })
 })
 
 describe('activation', () => {
@@ -131,6 +138,12 @@ describe('CLI argument handling', () => {
     const { code, output } = run(['fetch', '--provider=not-a-provider', '--allow-network'])
     expect(code).toBe(1)
     expect(output).toContain('not-a-provider')
+  })
+
+  test('rejects --provider= with an empty value', () => {
+    const { code, output } = run(['fetch', '--provider=', '--allow-network'])
+    expect(code).toBe(1)
+    expect(output).toContain('--provider requires a value')
   })
 
   test('refuses an unrecognized flag rather than ignoring it', () => {

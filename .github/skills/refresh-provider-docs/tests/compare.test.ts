@@ -81,6 +81,8 @@ describe('fail-closed behavior', () => {
     const finding = byId(run('conflicting.json').findings, 'c.conflict.a')
     expect(finding.status).toBe('ambiguous')
     expect(finding.detail).toContain('disagree')
+    expect(finding.notes).toContain('c.conflict.a:')
+    expect(finding.notes).toContain('c.conflict.b:')
   })
 
   test('will not publish a claim backed only by a secondary source', () => {
@@ -198,8 +200,9 @@ describe('evidence report', () => {
 
   test('carries a claim qualifier into the report rather than dropping it', () => {
     const finding = byId(result.findings, 'c.unmodeled-aspect')
-    expect(finding.notes).toBe('sessionEnd does not run for subagents.')
-    expect(markdown).toContain('Qualifier from the source: sessionEnd does not run for subagents')
+    expect(finding.notes).toContain('c.unmodeled-aspect:')
+    expect(finding.notes).toContain('sessionEnd does not run for subagents.')
+    expect(markdown).toContain('Qualifier from the source: c.unmodeled-aspect: sessionEnd does not run for subagents')
   })
 
   test('does not invent a value that no claim carried', () => {
@@ -224,6 +227,7 @@ describe('evidence report', () => {
             sourceAuthority: 'primary',
             retrievedAt: '2026-08-25',
             detail: 'escaping check',
+            notes: null,
           },
         ],
         counts: { confirmed: 0, changed: 1, ambiguous: 0, unsupported: 0 },
@@ -254,6 +258,7 @@ describe('evidence report', () => {
             sourceAuthority: null,
             retrievedAt: null,
             detail: 'Primary source says "<name>/SKILL.md and .cursor/rules/*.mdc".',
+            notes: null,
           },
         ],
         counts: { confirmed: 0, changed: 1, ambiguous: 0, unsupported: 0 },

@@ -45,8 +45,20 @@ function sourceUrlMatchesRegistry(claimUrl: string, registryUrl: string): boolea
   return candidate === base || candidate === `${base}.md` || candidate.startsWith(`${base}#`) || candidate.startsWith(`${base}.md#`)
 }
 
+function aggregateNotes(claims: Claim[]): string | null {
+  const notes = claims
+    .map((claim) => {
+      const note = claim.notes?.trim()
+      if (!note) return null
+      return `${claim.id}: ${note}`
+    })
+    .filter((note): note is string => note !== null)
+  return notes.length > 0 ? notes.join(' | ') : null
+}
+
 function makeFinding(
   claim: Claim,
+  claims: Claim[],
   status: FindingStatus,
   action: FindingAction,
   detail: string,
@@ -65,7 +77,7 @@ function makeFinding(
     sourceAuthority: claim.sourceAuthority,
     retrievedAt: claim.retrievedAt,
     detail,
-    notes: claim.notes ?? null,
+    notes: aggregateNotes(claims),
   }
 }
 
@@ -138,20 +150,21 @@ export function compareClaims(
     for (const claim of group) {
       const source = loaded.sourceById.get(claim.sourceId)
       if (!source) {
-        citationProblem = makeFinding(claim, 'ambiguous', 'human-review', `Source "${claim.sourceId}" is not in the registry, so its authority cannot be established.`, null)
+        citationProblem = makeFinding(claim, group, 'ambiguous', 'human-review', `Source "${claim.sourceId}" is not in the registry, so its authority cannot be established.`, null)
         break
       }
       if (source.provider !== claim.provider) {
-        citationProblem = makeFinding(claim, 'ambiguous', 'human-review', `Source "${claim.sourceId}" belongs to provider "${source.provider}" but the claim is about "${claim.provider}".`, null)
+        citationProblem = makeFinding(claim, group, 'ambiguous', 'human-review', `Source "${claim.sourceId}" belongs to provider "${source.provider}" but the claim is about "${claim.provider}".`, null)
         break
       }
       if (!sourceUrlMatchesRegistry(claim.sourceUrl, source.url)) {
-        citationProblem = makeFinding(claim, 'ambiguous', 'human-review', `Claim URL ${claim.sourceUrl} does not match registered source URL ${source.url}.`, null)
+        citationProblem = makeFinding(claim, group, 'ambiguous', 'human-review', `Claim URL ${claim.sourceUrl} does not match registered source URL ${source.url}.`, null)
         break
       }
       if (claim.sourceAuthority !== source.authority) {
         citationProblem = makeFinding(
           claim,
+          group,
           'ambiguous',
           'human-review',
           `The claim labels source "${claim.sourceId}" as ${claim.sourceAuthority}, but the registry records it as ${source.authority}. Authority is decided by the registry, not by the claim.`,
@@ -175,6 +188,7 @@ export function compareClaims(
       findings.push(
         makeFinding(
           representative,
+          group,
           'ambiguous',
           'human-review',
           `Official sources disagree and this skill will not choose between them: ${citations}`,
@@ -188,6 +202,7 @@ export function compareClaims(
       findings.push(
         makeFinding(
           representative,
+          group,
           'ambiguous',
           'human-review',
           'Only secondary sources support this claim; a primary source is required before publishing it.',
@@ -208,6 +223,7 @@ export function compareClaims(
       findings.push(
         makeFinding(
           futureClaim,
+          group,
           'ambiguous',
           'human-review',
           `Evidence carries a future retrieval date (${futureClaim.retrievedAt}), so its freshness cannot be established; record the date the source was actually retrieved.`,
@@ -223,6 +239,7 @@ export function compareClaims(
       findings.push(
         makeFinding(
           stalest,
+          group,
           'ambiguous',
           'human-review',
           `Evidence was retrieved ${Math.round(age)} days ago, beyond the ${maxAge}-day freshness limit; retrieve it again before publishing.`,
@@ -237,6 +254,7 @@ export function compareClaims(
       findings.push(
         makeFinding(
           representative,
+          group,
           'changed',
           'extend-site-model',
           `The site publishes no field for the "${representative.aspect}" aspect, so this documented behavior is currently invisible to readers.`,
@@ -258,12 +276,20 @@ export function compareClaims(
       const primitiveIsPublished = site.primitives.includes(representative.primitive)
       if (documentsNoSupport) {
         findings.push(
-          makeFinding(representative, 'unsupported', 'none', 'Provider documentation states this is not supported, and the site makes no claim to the contrary.', null),
+          makeFinding(
+            representative,
+            group,
+            'unsupported',
+            'none',
+            'Provider documentation states this is not supported, and the site makes no claim to the contrary.',
+            null,
+          ),
         )
       } else if (!primitiveIsPublished) {
         findings.push(
           makeFinding(
             representative,
+            group,
             'changed',
             'extend-site-model',
             `The site has no "${representative.primitive}" primitive, so this documented capability cannot be expressed today.`,
@@ -274,6 +300,7 @@ export function compareClaims(
         findings.push(
           makeFinding(
             representative,
+            group,
             'changed',
             'extend-site-model',
             `The site does not publish "${representative.provider}" yet, so this documented behavior has no home in the comparison.`,
@@ -284,6 +311,7 @@ export function compareClaims(
         findings.push(
           makeFinding(
             representative,
+            group,
             'changed',
             'update-site-data',
             `The site publishes no "${representative.aspect}" value for ${representative.provider} and "${representative.primitive}".`,
@@ -307,6 +335,7 @@ export function compareClaims(
       findings.push(
         makeFinding(
           representative,
+          group,
           'unsupported',
           matches ? 'none' : 'update-site-data',
           matches
@@ -321,6 +350,7 @@ export function compareClaims(
     findings.push(
       makeFinding(
         representative,
+        group,
         matches ? 'confirmed' : 'changed',
         matches ? 'none' : 'update-site-data',
         matches

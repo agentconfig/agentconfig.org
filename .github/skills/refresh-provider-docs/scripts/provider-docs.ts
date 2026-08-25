@@ -33,6 +33,7 @@ interface Args {
 /** Flags this CLI understands. An unrecognized flag is a typo, and silently
  * ignoring it can widen the scope of a run, so parsing fails closed instead. */
 const KNOWN_FLAGS = new Set(['allow-network', 'check-urls', 'json', 'out', 'provider'])
+const VALUE_FLAGS = new Set(['json', 'out', 'provider'])
 
 function parseArgs(argv: string[]): Args {
   const [command = 'help', ...rest] = argv
@@ -55,7 +56,11 @@ function parseArgs(argv: string[]): Args {
       throw new FailClosedError(`Unknown flag --${name}`, [`Supported flags: ${[...KNOWN_FLAGS].map((flag) => `--${flag}`).join(', ')}.`])
     }
     if (separator !== -1) {
-      flags[name] = body.slice(separator + 1)
+      const value = body.slice(separator + 1)
+      if (value.trim() === '' && VALUE_FLAGS.has(name)) {
+        throw new FailClosedError(`--${name} requires a value`, [`Pass --${name} <value> instead of --${name}=.`])
+      }
+      flags[name] = value
       continue
     }
     const next = rest[index + 1]
@@ -138,6 +143,9 @@ async function commandFetch(flags: Args['flags']): Promise<number> {
   }
   if (flags.out !== undefined && typeof flags.out !== 'string') {
     throw new FailClosedError('--out requires a value', ['Pass --out <directory>, or omit the flag to use the default snapshot root.'])
+  }
+  if (typeof flags.provider === 'string' && flags.provider.trim() === '') {
+    throw new FailClosedError('--provider requires a non-empty value', ['Pass --provider <id>, or omit the flag to retrieve every registered provider.'])
   }
   const providers = typeof flags.provider === 'string' ? [flags.provider] : undefined
   const outDir = resolveRunDir(typeof flags.out === 'string' ? flags.out : undefined)
