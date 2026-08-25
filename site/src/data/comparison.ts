@@ -295,7 +295,7 @@ export const comparisonData: ComparisonRow[] = [
     cursor: {
       level: 'full',
       implementation: 'Run modes with sandboxing, plus allow/deny permissions',
-      location: 'Settings > Agents > Approvals & Execution + .cursor/cli-config.json',
+      location: 'Settings > Agents > Approvals & Execution + ~/.cursor/cli-config.json (global), .cursor/cli.json (project permissions override)',
       sourceUrl: 'https://cursor.com/docs/agent/security/run-modes',
     },
     codex: {

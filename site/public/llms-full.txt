@@ -328,7 +328,7 @@ Execution boundaries that constrain what agent actions can do.
 |----------|---------------|----------|---------|--------|
 | GitHub Copilot | Policy and execution constraints in agent runtime and org settings | Copilot policy/settings surfaces | partial | [Provider documentation](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-the-firewall) |
 | Claude Code | Sandboxing and command allow/deny controls | .claude/settings.json | full | [Provider documentation](https://code.claude.com/docs/en/settings) |
-| Cursor | Run modes with sandboxing, plus allow/deny permissions | Settings > Agents > Approvals & Execution + .cursor/cli-config.json | full | [Provider documentation](https://cursor.com/docs/agent/security/run-modes) |
+| Cursor | Run modes with sandboxing, plus allow/deny permissions | Settings > Agents > Approvals & Execution + ~/.cursor/cli-config.json (global), .cursor/cli.json (project permissions override) | full | [Provider documentation](https://cursor.com/docs/agent/security/run-modes) |
 | OpenAI Codex | Sandbox modes plus approval policies | ~/.codex/config.toml | full | [Provider documentation](https://developers.openai.com/codex/config-file/config-reference) |
 
 ---
@@ -477,7 +477,7 @@ Support matrix comparing GitHub Copilot, Claude Code, Cursor, and OpenAI Codex:
 - Custom Agents: `.cursor/agents/*.md`
 - Permissions & Guardrails: `.cursor/settings.json + .cursorignore`
 - Lifecycle Hooks: `.cursor/hooks.json`
-- Runtime Sandbox: `Settings > Agents > Approvals & Execution + .cursor/cli-config.json`
+- Runtime Sandbox: `Settings > Agents > Approvals & Execution + ~/.cursor/cli-config.json (global), .cursor/cli.json (project permissions override)`
 - Configuration Distribution: `.cursor/instructions.md, .cursor/rules/*.mdc, .cursor/skills/*/SKILL.md`
 - Verification / Evals: `Cursor Editor integrated terminal`
 
