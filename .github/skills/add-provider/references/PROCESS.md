@@ -77,7 +77,7 @@ You'll see errors about missing provider data - this is expected. Continue to St
 1. **Visit official provider documentation**
    - Example: cursor.com/docs, claude.ai, github.com/features/copilot
 
-2. **For each of the 11 primitives, research and document:**
+2. **For each of the 13 primitives, research and document:**
    - Does the provider support this feature natively?
    - What are the official file locations? (e.g., `.cursor/instructions.md`, not guesses)
    - Are there any limitations or workarounds?
@@ -105,11 +105,11 @@ Tool Integrations (MCP): ✓ Full support
   - Note: Requires manual configuration
 ```
 
-### 2.1 Add Provider Implementations to All 11 Primitives
+### 2.1 Add Provider Implementations to All 13 Primitives
 
 Edit `site/src/data/primitives.ts`:
 
-For each of the 11 primitives, add a new entry to the `implementations` array:
+For each of the 13 primitives, add a new entry to the `implementations` array:
 
 ```typescript
 implementations: [
@@ -144,33 +144,33 @@ implementations: [
 ```
 Does provider natively support this?
 ├─ Yes, well-documented, core feature
-│  └─ support: 'full'
+│  └─ primitives.ts support: 'full'   | comparison.ts level: 'full'
 ├─ Yes, but limited or with workarounds
-│  └─ support: 'partial'
-├─ No, but achievable with custom setup
-│  └─ support: 'diy'
-└─ No, impossible
-   └─ support: 'none' (rare)
+│  └─ primitives.ts support: 'partial' | comparison.ts level: 'partial'
+└─ No, not supported (whether via custom setup or not at all)
+   └─ primitives.ts support: 'diy'    | comparison.ts level: 'none'
 ```
 
-All 11 primitives:
+All 13 primitives:
 - Agent Mode
 - Skills / Workflows
 - Tool Integrations (MCP)
 - Persistent Instructions
-- Global Instructions
-- Path-Scoped Rules
+- User Scope Instructions
+- Directory / Path Scope Instructions
 - Slash Commands
 - Custom Agents
 - Permissions & Guardrails
 - Lifecycle Hooks
+- Runtime Sandbox
+- Configuration Distribution
 - Verification / Evals
 
 ### 2.2 Add Provider Data to Comparison Matrix
 
 Edit `site/src/data/comparison.ts`:
 
-For each of the 11 `ComparisonRow` entries, add cursor field:
+For each of the 13 `ComparisonRow` entries, add cursor field:
 
 ```typescript
 {

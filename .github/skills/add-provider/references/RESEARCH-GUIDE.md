@@ -9,7 +9,7 @@ This guide helps you gather the information needed to correctly implement a prov
 - [ ] Provider documentation is publicly available
 - [ ] You have access to test the provider (free tier or trial)
 - [ ] You've identified the official config file locations
-- [ ] You've audited support for all 11 primitives
+- [ ] You've audited support for all 13 primitives
 - [ ] You've documented your findings (see template below)
 
 ## Step 1: Official Documentation Audit
@@ -45,7 +45,7 @@ Configuration format:
 
 ## Step 2: Primitive Support Audit
 
-**For each of the 11 primitives, research:**
+**For each of the 13 primitives, research:**
 
 ```markdown
 ### Primitive Name: [e.g., Agent Mode]
@@ -87,7 +87,7 @@ Create a table showing your research results:
 | ... | ... | ... | ... | ... |
 
 **Use this table to verify:**
-- All 11 primitives have a decision
+- All 13 primitives have a decision
 - Each decision has evidence (link to official docs)
 - Config locations are consistent and accurate
 - Support levels match your evidence
@@ -115,9 +115,9 @@ Provider: OpenAI Codex
 Research completed: 2025-01-17
 
 Audit results:
-- All 11 primitives researched
+- All 13 primitives researched
 - Config locations verified against official docs
-- Support levels: 7 full, 4 partial, 0 diy, 0 none
+- Support levels: 13 full, 0 partial, 0 diy
 - 100% coverage with official documentation references
 
 Key findings:
@@ -200,21 +200,20 @@ Here's what the actual research looked like for Codex:
 - Config: ~/.codex/config.toml
 - Native support: ✓ documented
 
-**Path-Scoped Rules**: no support
-- Official docs: searched thoroughly, no mention
-- Workaround: Not applicable
-- Support level: "diy" (could potentially create custom solution)
+**Directory / Path Scope Instructions**: full support
+- Official docs: nested `AGENTS.md` files load hierarchically, closest file wins
+- Config: `AGENTS.md` in any subdirectory
+- Native support: ✓ documented
 
-**Skills/Workflows**: partial support
-- Official docs: mentions AGENTS.md for workflows
-- Limitation: Uses standard format, not Codex-specific
-- Support level: "partial" (works but through shared standard)
+**Skills/Workflows**: full support
+- Official docs: `.codex/skills/*/SKILL.md` (agentskills.io specification)
+- Native support: ✓ documented as a first-class primitive
 
 ## Validation Checklist
 
 Before moving to Stream 1, verify:
 
-- [ ] All 11 primitives have a support level decision
+- [ ] All 13 primitives have a support level decision
 - [ ] Each support level has evidence (official docs link)
 - [ ] Config file locations are from official sources
 - [ ] You've tested config files where possible

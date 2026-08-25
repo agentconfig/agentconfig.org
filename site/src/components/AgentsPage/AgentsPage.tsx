@@ -361,6 +361,11 @@ export function AgentsPage(): VNode {
                   prioritize those sources differently. Understanding each provider's behavior helps you
                   put instructions in the right place.
                 </p>
+                <p>
+                  A common usage pattern is hierarchical <code>AGENTS.md</code>: keep broad repo defaults
+                  at the root, then add nested <code>AGENTS.md</code> files in high-variance subtrees
+                  where ownership, build flows, or risk boundaries diverge.
+                </p>
 
                 <CodeTabs
                   files={[

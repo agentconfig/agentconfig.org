@@ -1,6 +1,6 @@
 import { useState } from 'preact/hooks'
 import type { VNode } from 'preact'
-import { ChevronDown, Copy, Check, ExternalLink, Shield, Zap, Wrench, FileText } from 'lucide-preact'
+import { ChevronDown, Copy, Check, ExternalLink, Shield, Wrench, FileText, GitBranch, Boxes, BookOpenCheck } from 'lucide-preact'
 import { cn } from '@/lib/utils'
 import { type Primitive, type Provider } from '@/data/primitives'
 import { providers } from '@/data/providers'
@@ -14,16 +14,24 @@ export interface PrimitiveCardProps {
 
 const categoryIcons = {
   instructions: FileText,
-  execution: Zap,
-  tools: Wrench,
-  safety: Shield,
+  procedures: BookOpenCheck,
+  'tools-context': Wrench,
+  delegation: GitBranch,
+  'control-approval': Shield,
+  'memory-state': Boxes,
+  distribution: Boxes,
+  'verification-observability': Shield,
 }
 
 const categoryColors = {
   instructions: 'text-blue-500 dark:text-blue-400',
-  execution: 'text-amber-500 dark:text-amber-400',
-  tools: 'text-emerald-500 dark:text-emerald-400',
-  safety: 'text-rose-500 dark:text-rose-400',
+  procedures: 'text-amber-500 dark:text-amber-400',
+  'tools-context': 'text-emerald-500 dark:text-emerald-400',
+  delegation: 'text-violet-500 dark:text-violet-400',
+  'control-approval': 'text-rose-500 dark:text-rose-400',
+  'memory-state': 'text-cyan-500 dark:text-cyan-400',
+  distribution: 'text-indigo-500 dark:text-indigo-400',
+  'verification-observability': 'text-orange-500 dark:text-orange-400',
 }
 
 const supportBadgeColors = {

@@ -1,4 +1,13 @@
 export type Provider = 'copilot' | 'claude' | 'cursor' | 'codex'
+export type LayerId =
+  | 'instructions'
+  | 'procedures'
+  | 'tools-context'
+  | 'delegation'
+  | 'control-approval'
+  | 'memory-state'
+  | 'distribution'
+  | 'verification-observability'
 
 export interface ProviderImplementation {
   /** Provider name */
@@ -30,8 +39,8 @@ export interface Primitive {
   combineWith: string[]
   /** Provider-specific implementations */
   implementations: ProviderImplementation[]
-  /** Category for filtering */
-  category: 'instructions' | 'execution' | 'safety'
+  /** Layer for filtering */
+  category: LayerId
 }
 
 export const primitives: Primitive[] = [
@@ -74,7 +83,7 @@ export const primitives: Primitive[] = [
         support: 'full',
       },
     ],
-    category: 'execution',
+    category: 'delegation',
   },
   {
     id: 'skills',
@@ -114,7 +123,7 @@ export const primitives: Primitive[] = [
         support: 'full',
       },
     ],
-    category: 'execution',
+    category: 'procedures',
   },
   {
     id: 'tool-integrations',
@@ -155,14 +164,14 @@ export const primitives: Primitive[] = [
         support: 'full',
       },
     ],
-    category: 'execution',
+    category: 'tools-context',
   },
   // === CUSTOMIZATION: Here's how to shape it ===
   {
     id: 'persistent-instructions',
     name: 'Persistent Instructions',
     description: 'A durable set of norms that define "good" for your project.',
-    whatItIs: 'A durable set of norms: tone, coding standards, constraints, safety rules, and "definition of done." These form the behavioral contract that governs all AI interactions.',
+    whatItIs: 'A durable set of norms: tone, coding standards, constraints, safety rules, and "definition of done." These form the behavioral contract that governs all AI interactions. A common usage pattern is a root AGENTS.md plus nested AGENTS.md files where local constraints differ.',
     useWhen: [
       'You want consistent behavior across many tasks',
       'You want the AI to honor repo conventions without re-learning',
@@ -201,7 +210,7 @@ export const primitives: Primitive[] = [
   },
   {
     id: 'global-instructions',
-    name: 'Global Instructions',
+    name: 'User Scope Instructions',
     description: 'User-level preferences that apply across all projects.',
     whatItIs: 'Personal preferences and standards that follow you across all projects. Defines your individual coding style, preferred patterns, and global behaviors.',
     useWhen: [
@@ -241,7 +250,7 @@ export const primitives: Primitive[] = [
   },
   {
     id: 'scope-specific-instructions',
-    name: 'Path-Scoped Rules',
+    name: 'Directory / Path Scope Instructions',
     description: 'Instructions that apply only to specific file paths.',
     whatItIs: 'Instructions that apply only within a scope boundary defined by glob patterns. Enables "policy close to the code" where different parts of a system can have different conventions.',
     useWhen: [
@@ -268,8 +277,9 @@ export const primitives: Primitive[] = [
       {
         provider: 'cursor',
         implementation: 'Rules with path patterns',
-        location: '.cursor/rules/*.md',
+        location: '.cursor/rules/*.mdc',
         support: 'full',
+        sourceUrl: 'https://cursor.com/docs/context/rules',
       },
       {
         provider: 'codex',
@@ -318,7 +328,7 @@ export const primitives: Primitive[] = [
         support: 'full',
       },
     ],
-    category: 'instructions',
+    category: 'procedures',
   },
   // === CONTROL: Here's how to control it ===
   {
@@ -354,12 +364,13 @@ export const primitives: Primitive[] = [
       },
       {
         provider: 'codex',
-        implementation: 'Multi-agent via Agents SDK (not built-in)',
-        location: 'External Agents SDK',
-        support: 'diy',
+        implementation: 'Subagent definitions with model selection and delegation',
+        location: '.codex/agents/*.toml, ~/.codex/agents',
+        support: 'full',
+        sourceUrl: 'https://developers.openai.com/codex/agent-configuration/subagents',
       },
     ],
-    category: 'safety',
+    category: 'delegation',
   },
   {
     id: 'guardrails',
@@ -399,7 +410,7 @@ export const primitives: Primitive[] = [
         support: 'full',
       },
     ],
-    category: 'safety',
+    category: 'control-approval',
   },
   {
     id: 'hooks',
@@ -436,12 +447,101 @@ export const primitives: Primitive[] = [
       },
       {
         provider: 'codex',
-        implementation: 'Notify hooks for external program triggers',
-        location: '~/.codex/config.toml (notify)',
-        support: 'partial',
+        implementation: 'Lifecycle hooks (session, subagent, prompt, tool, compaction events) via hooks.json or config.toml',
+        location: '~/.codex/hooks.json, <repo>/.codex/hooks.json, ~/.codex/config.toml, <repo>/.codex/config.toml',
+        support: 'full',
+        sourceUrl: 'https://developers.openai.com/codex/hooks',
       },
     ],
-    category: 'safety',
+    category: 'control-approval',
+  },
+  {
+    id: 'runtime-sandbox',
+    name: 'Runtime Sandbox',
+    description: 'Execution boundaries that constrain what agent actions can do.',
+    whatItIs: 'Sandbox and approval policies that restrict filesystem, network, and command capabilities at runtime. This is execution environment context, not just prompt wording.',
+    useWhen: [
+      'Agent runs can touch sensitive code or systems',
+      'You need explicit constraints on network, shell, or write access',
+      'You want deterministic approval boundaries before side effects',
+    ],
+    prevents: 'Accidental high-blast-radius execution',
+    combineWith: ['Permissions & Guardrails', 'Lifecycle Hooks'],
+    implementations: [
+      {
+        provider: 'copilot',
+        implementation: 'Policy and execution constraints in agent runtime and org settings',
+        location: 'Copilot policy/settings surfaces',
+        support: 'partial',
+        sourceUrl: 'https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-the-firewall',
+      },
+      {
+        provider: 'claude',
+        implementation: 'Sandboxing and command allow/deny controls',
+        location: '.claude/settings.json',
+        support: 'full',
+        sourceUrl: 'https://code.claude.com/docs/en/settings',
+      },
+      {
+        provider: 'cursor',
+        implementation: 'Run modes with sandboxing, plus allow/deny permissions',
+        location: 'Settings > Agents > Approvals & Execution + ~/.cursor/cli-config.json (global), .cursor/cli.json (project permissions override)',
+        support: 'full',
+        sourceUrl: 'https://cursor.com/docs/agent/security/run-modes',
+      },
+      {
+        provider: 'codex',
+        implementation: 'Sandbox modes plus approval policies',
+        location: '~/.codex/config.toml',
+        support: 'full',
+        sourceUrl: 'https://developers.openai.com/codex/config-file/config-reference',
+      },
+    ],
+    category: 'control-approval',
+  },
+  {
+    id: 'distribution',
+    name: 'Configuration Distribution',
+    description: 'How shared agent configuration is packaged and discovered.',
+    whatItIs: 'The way instructions, skills, and agent definitions are distributed across repositories, directories, and personal environments so teams can share one source and localize where needed.',
+    useWhen: [
+      'You want one canonical instruction source with minimal duplication',
+      'You need shared defaults plus local overrides by path',
+      'You are rolling standards across many repositories',
+    ],
+    prevents: 'Drift caused by copying the same guidance into many files',
+    combineWith: ['Persistent Instructions', 'Directory / Path Scope Instructions', 'Skills / Workflows'],
+    implementations: [
+      {
+        provider: 'copilot',
+        implementation: 'Repository plus nested AGENTS.md with optional .instructions.md files',
+        location: 'AGENTS.md and .github/instructions/*.instructions.md',
+        support: 'full',
+        sourceUrl: 'https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions',
+      },
+      {
+        provider: 'claude',
+        implementation: 'Shared AGENTS.md imported into CLAUDE.md plus scoped rules files',
+        location: 'AGENTS.md, CLAUDE.md, .claude/rules/*.md',
+        support: 'full',
+        sourceUrl: 'https://code.claude.com/docs/en/memory',
+      },
+      {
+        provider: 'cursor',
+        implementation: 'Project instructions, rules, and reusable skills packages',
+        location: '.cursor/instructions.md, .cursor/rules/*.mdc, .cursor/skills/*/SKILL.md',
+        support: 'full',
+        sourceUrl: 'https://cursor.com/docs/skills',
+      },
+      {
+        provider: 'codex',
+        implementation: 'Hierarchical AGENTS.md with user+repo layering',
+        location: 'AGENTS.md, subdir/AGENTS.md, ~/.codex/AGENTS.md',
+        support: 'full',
+        sourceUrl: 'https://developers.openai.com/codex/agent-configuration/agents-md',
+      },
+    ],
+    category: 'distribution',
   },
   {
     id: 'verification',
@@ -481,15 +581,38 @@ export const primitives: Primitive[] = [
         support: 'full',
       },
     ],
-    category: 'safety',
+    category: 'verification-observability',
   },
 ]
 
 export const categories = [
   { id: 'all', name: 'All Primitives' },
-  { id: 'execution', name: 'Capability' },
-  { id: 'instructions', name: 'Customization' },
-  { id: 'safety', name: 'Control' },
+  { id: 'instructions', name: 'Instructions' },
+  { id: 'procedures', name: 'Procedures' },
+  { id: 'tools-context', name: 'Tools & Context' },
+  { id: 'delegation', name: 'Delegation' },
+  { id: 'control-approval', name: 'Control & Approval' },
+  { id: 'memory-state', name: 'Memory & State' },
+  { id: 'distribution', name: 'Distribution' },
+  { id: 'verification-observability', name: 'Verification & Observability' },
 ] as const
 
 export type CategoryId = (typeof categories)[number]['id']
+
+export interface ScopeModelEntry {
+  id: string
+  name: string
+  example: string
+}
+
+export const scopeModel: ScopeModelEntry[] = [
+  { id: 'managed', name: 'Managed / organization', example: 'Org-level Copilot policies or centrally managed CLAUDE.md' },
+  { id: 'user', name: 'User', example: '~/.codex/AGENTS.md, ~/.claude/CLAUDE.md, personal Copilot settings' },
+  { id: 'repository', name: 'Repository', example: 'AGENTS.md, CLAUDE.md, .github/copilot-instructions.md' },
+  { id: 'local-repository', name: 'Local repository', example: 'CLAUDE.local.md or workstation-only repo settings' },
+  { id: 'directory', name: 'Directory / path', example: 'Nested AGENTS.md, .claude/rules/*.md, .instructions.md with applyTo' },
+  { id: 'agent', name: 'Agent', example: '.github/agents/*.agent.md or .claude/agents/*.md' },
+  { id: 'session', name: 'Session', example: 'Temporary mode selections and live conversation context' },
+  { id: 'turn', name: 'Turn', example: 'One-off user prompt constraints for the current request' },
+  { id: 'tool-invocation', name: 'Tool invocation', example: 'Per-hook/per-tool policy checks and approval gates' },
+]

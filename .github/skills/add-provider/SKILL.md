@@ -14,7 +14,7 @@ Adding a provider requires coordinated work across **6 parallel work streams**:
 | Stream | Work | Duration | Dependencies |
 |--------|------|----------|--------------|
 | **1. Type System** | Add provider to union types | 2-4 hrs | None |
-| **2. Data Layer** | Add implementations for all 11 primitives | 4-6 hrs | Stream 1 |
+| **2. Data Layer** | Add implementations for all 13 primitives | 4-6 hrs | Stream 1 |
 | **3. UI Components** | Update comparison table | 4-8 hrs | Streams 1-2 |
 | **4. Testing** | Update E2E tests | 3-4 hrs | Stream 3 |
 | **5. App Integration** | Update site copy & docs | 1-2 hrs | Streams 1-3 |
@@ -27,31 +27,36 @@ Adding a provider requires coordinated work across **6 parallel work streams**:
 Use this skill when:
 - Integrating a new coding assistant (Cursor, Claude Desktop, Zed with AI, etc.)
 - Expanding provider support beyond current offerings
-- The provider implements most of the 11 AI primitives
+- The provider implements most of the 13 AI primitives
 - You want comprehensive comparison data visible to users and AI agents
 
 ## Prerequisites
 
 Before starting, gather:
-- **Provider capability audit** - Which of the 11 primitives does the provider support?
+- **Provider capability audit** - Which of the 13 primitives does the provider support?
 - **File path documentation** - Where do config files go (global vs project)?
-- **Support levels** - `full` (native), `partial` (workarounds), `none` (unavailable), `diy` (custom setup)
+- **Support levels** - `primitives.ts` uses `full` (native), `partial` (workarounds), `diy` (custom setup); `comparison.ts` uses `full`, `partial`, `none` (unavailable) — the two files use different enums, do not mix them
 
-## The 11 Primitives
+## The 13 Primitives
 
-Every provider must map to these primitives:
+Every provider must map to all 13 primitives across the 8 layers below (layers are not 1:1 with primitives — Instructions has three, Memory & State currently has none); see `categories` in `site/src/data/primitives.ts` for the full layer list and `scopeModel` for the separate where-it-applies vocabulary — scopes are not primitives:
 
-| Category | Primitives |
-|----------|-----------|
-| **Execution** | Agent Mode, Skills/Workflows, Tool Integrations (MCP) |
-| **Customization** | Persistent Instructions, Global Instructions, Path-Scoped Rules, Slash Commands |
-| **Control** | Custom Agents, Permissions & Guardrails, Lifecycle Hooks, Verification/Evals |
+| Layer | Primitives |
+|-------|-----------|
+| **Instructions** | Persistent Instructions, User Scope Instructions, Directory / Path Scope Instructions |
+| **Procedures** | Skills / Workflows, Slash Commands |
+| **Tools & Context** | Tool Integrations (MCP) |
+| **Delegation** | Agent Mode, Custom Agents |
+| **Control & Approval** | Permissions & Guardrails, Lifecycle Hooks, Runtime Sandbox |
+| **Memory & State** | (reserved — no primitive is modeled here yet; do not add one without genuinely distinct memory/state semantics) |
+| **Distribution** | Configuration Distribution |
+| **Verification & Observability** | Verification / Evals |
 
 ## Quick Start
 
 0. **🔍 Research the provider** → See [RESEARCH-GUIDE.md](references/RESEARCH-GUIDE.md) for capability audit template
    - Visit official documentation
-   - Document support level for each of the 11 primitives
+   - Document support level for each of the 13 primitives
    - Verify config file locations
    - **Complete this BEFORE writing any code** (see pre-implementation checklist in [CHECKLIST.md](references/CHECKLIST.md))
 
@@ -70,7 +75,7 @@ Every provider must map to these primitives:
 ```
 Stream 1: Type System (Add provider to union types)
    ↓
-Stream 2: Data Layer (Add implementations for all 11 primitives)
+Stream 2: Data Layer (Add implementations for all 13 primitives)
    ├→ Stream 3: UI Components (Update comparison table)
    │    ↓
    │  Stream 4: Testing (Update E2E tests)
@@ -98,7 +103,7 @@ Stream 2: Data Layer (Add implementations for all 11 primitives)
 **Add a new provider from scratch:**
 ```
 Use the add-provider skill to add Cursor as a provider to agentconfig.org.
-Research Cursor's implementation of all 11 primitives first, then follow all 6 streams.
+Research Cursor's implementation of all 13 primitives first, then follow all 6 streams.
 ```
 
 **Skip to a specific stream:**
@@ -114,7 +119,7 @@ Update Cursor's support level from partial to full for Tool Integrations in the 
 ## Success Metrics
 
 ✅ Provider added to all type definitions
-✅ All 11 primitives have provider implementation data
+✅ All 13 primitives have provider implementation data
 ✅ Comparison table renders with provider column
 ✅ All E2E tests pass
 ✅ No TypeScript errors
@@ -135,7 +140,7 @@ When opening your pull request, keep it crisp and focused:
 - **References**: Link to official provider documentation as sources
 
 **What to avoid:**
-- Listing all 11 primitives exhaustively
+- Listing all 13 primitives exhaustively
 - Repetitive narrative about each stream
 - Verbose technical implementation details
 

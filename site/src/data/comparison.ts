@@ -129,7 +129,7 @@ export const comparisonData: ComparisonRow[] = [
   },
   {
     primitiveId: 'global-instructions',
-    primitiveName: 'Global Instructions',
+    primitiveName: 'User Scope Instructions',
     copilot: {
       level: 'full',
       implementation: 'User-level settings in VS Code',
@@ -153,7 +153,7 @@ export const comparisonData: ComparisonRow[] = [
   },
   {
     primitiveId: 'scope-specific-instructions',
-    primitiveName: 'Path-Scoped Rules',
+    primitiveName: 'Directory / Path Scope Instructions',
     copilot: {
       level: 'full',
       implementation: 'Nested AGENTS.md or applyTo instruction files',
@@ -168,7 +168,8 @@ export const comparisonData: ComparisonRow[] = [
     cursor: {
       level: 'full',
       implementation: 'Rules with path patterns',
-      location: '.cursor/rules/*.md',
+      location: '.cursor/rules/*.mdc',
+      sourceUrl: 'https://cursor.com/docs/context/rules',
     },
     codex: {
       level: 'full',
@@ -220,9 +221,9 @@ export const comparisonData: ComparisonRow[] = [
       location: '.cursor/agents/*.md',
     },
     codex: {
-      level: 'none',
-      implementation: 'Multi-agent via Agents SDK (not built-in)',
-      location: 'External Agents SDK',
+      level: 'full',
+      implementation: 'Subagent definitions with model selection and delegation',
+      location: '.codex/agents/*.toml, ~/.codex/agents',
     },
   },
   {
@@ -270,9 +271,66 @@ export const comparisonData: ComparisonRow[] = [
       location: '.cursor/hooks.json',
     },
     codex: {
+      level: 'full',
+      implementation: 'Lifecycle hooks (session, subagent, prompt, tool, compaction events) via hooks.json or config.toml',
+      location: '~/.codex/hooks.json, <repo>/.codex/hooks.json, ~/.codex/config.toml, <repo>/.codex/config.toml',
+      sourceUrl: 'https://developers.openai.com/codex/hooks',
+    },
+  },
+  {
+    primitiveId: 'runtime-sandbox',
+    primitiveName: 'Runtime Sandbox',
+    copilot: {
       level: 'partial',
-      implementation: 'Notify hooks for external program triggers',
-      location: '~/.codex/config.toml (notify)',
+      implementation: 'Policy and execution constraints in agent runtime and org settings',
+      location: 'Copilot policy/settings surfaces',
+      sourceUrl: 'https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-the-firewall',
+    },
+    claude: {
+      level: 'full',
+      implementation: 'Sandboxing and command allow/deny controls',
+      location: '.claude/settings.json',
+      sourceUrl: 'https://code.claude.com/docs/en/settings',
+    },
+    cursor: {
+      level: 'full',
+      implementation: 'Run modes with sandboxing, plus allow/deny permissions',
+      location: 'Settings > Agents > Approvals & Execution + ~/.cursor/cli-config.json (global), .cursor/cli.json (project permissions override)',
+      sourceUrl: 'https://cursor.com/docs/agent/security/run-modes',
+    },
+    codex: {
+      level: 'full',
+      implementation: 'Sandbox modes plus approval policies',
+      location: '~/.codex/config.toml',
+      sourceUrl: 'https://developers.openai.com/codex/config-file/config-reference',
+    },
+  },
+  {
+    primitiveId: 'distribution',
+    primitiveName: 'Configuration Distribution',
+    copilot: {
+      level: 'full',
+      implementation: 'Repository plus nested AGENTS.md with optional .instructions.md files',
+      location: 'AGENTS.md and .github/instructions/*.instructions.md',
+      sourceUrl: 'https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions',
+    },
+    claude: {
+      level: 'full',
+      implementation: 'Shared AGENTS.md imported into CLAUDE.md plus scoped rules files',
+      location: 'AGENTS.md, CLAUDE.md, .claude/rules/*.md',
+      sourceUrl: 'https://code.claude.com/docs/en/memory',
+    },
+    cursor: {
+      level: 'full',
+      implementation: 'Project instructions, rules, and reusable skills packages',
+      location: '.cursor/instructions.md, .cursor/rules/*.mdc, .cursor/skills/*/SKILL.md',
+      sourceUrl: 'https://cursor.com/docs/skills',
+    },
+    codex: {
+      level: 'full',
+      implementation: 'Hierarchical AGENTS.md with user+repo layering',
+      location: 'AGENTS.md, subdir/AGENTS.md, ~/.codex/AGENTS.md',
+      sourceUrl: 'https://developers.openai.com/codex/agent-configuration/agents-md',
     },
   },
   {

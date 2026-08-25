@@ -223,6 +223,13 @@ something is a concern and suggest specific fixes.
 
 ### 7. File Hierarchy & Precedence
 
+A common usage pattern is hierarchical AGENTS.md: keep broad repo defaults at the root, then add
+nested AGENTS.md files in high-variance subtrees where ownership, build flows, or risk boundaries
+diverge. Providers that support this walk from the root toward the current file, but how they
+reconcile broad and specific files varies: some concatenate every applicable file into context
+(broadest first), while others give the nearest file precedence. Check each provider's own
+precedence rules below rather than assuming one universal merge order.
+
 **Claude Code:**
 ```
 Instruction loading order (broadest to most specific):

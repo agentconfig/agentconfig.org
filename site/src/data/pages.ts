@@ -38,7 +38,7 @@ export const pages: readonly PageMeta[] = [
     features: 'Skills tutorial with 5 example skills',
     dataFile: 'skillsTutorial.ts',
     mdFile: 'skills.md',
-    partNumber: 3,
+    partNumber: 4,
   },
   {
     slug: 'agents',
@@ -47,7 +47,7 @@ export const pages: readonly PageMeta[] = [
     features: 'Agents tutorial with code samples',
     dataFile: 'agentsTutorial.ts',
     mdFile: 'agents.md',
-    partNumber: 4,
+    partNumber: 5,
   },
   {
     slug: 'mcp',
@@ -56,6 +56,6 @@ export const pages: readonly PageMeta[] = [
     features: 'MCP tutorial with configuration examples',
     dataFile: 'mcpTutorial.ts',
     mdFile: 'mcp.md',
-    partNumber: 5,
+    partNumber: 6,
   },
 ] as const

@@ -1207,6 +1207,27 @@ export const cursorTree: FileNode = {
           },
         },
         {
+          id: 'cursor-cli-json',
+          name: 'cli.json',
+          type: 'file',
+          details: {
+            label: 'CLI Permissions Override',
+            description: 'Project-level override for the Cursor CLI, merged from the Git root down to the working directory. Only the permissions block is respected here; other settings are global-only.',
+            whatGoesHere: [
+              'permissions.allow / permissions.deny entries',
+              'Shell/Read/Write/WebFetch/Mcp tokens scoped to this project',
+            ],
+            whenLoaded: 'Merged into the session when the Cursor CLI runs in this project; deeper files take precedence, and deny always beats allow.',
+            loadOrder: 0,
+            example: `{
+  "permissions": {
+    "allow": ["Shell(git)", "Read(src/**.ts)", "Write(package.json)"],
+    "deny": ["Shell(rm)", "Read(.env*)"]
+  }
+}`,
+          },
+        },
+        {
           id: 'cursor-agents-folder',
           name: 'agents',
           type: 'folder',
@@ -1433,7 +1454,7 @@ Review this PR for:
           children: [
             {
               id: 'cursor-rule-frontend',
-              name: 'frontend.md',
+              name: 'frontend.mdc',
               type: 'file',
               details: {
                 label: 'Path-Specific Rule',
@@ -1460,7 +1481,7 @@ Review this PR for:
             },
             {
               id: 'cursor-rule-backend',
-              name: 'backend.md',
+              name: 'backend.mdc',
               type: 'file',
               details: {
                 label: 'Path-Specific Rule',
@@ -1617,6 +1638,30 @@ export const cursorGlobalTree: FileNode = {
       }
     }
   }
+}`,
+          },
+        },
+        {
+          id: 'cursor-global-cli-config',
+          name: 'cli-config.json',
+          type: 'file',
+          details: {
+            label: 'Global CLI Config',
+            description: 'Personal Cursor CLI settings that apply across all projects: permissions, sandbox mode, approval mode, and network access.',
+            whatGoesHere: [
+              'permissions.allow / permissions.deny defaults',
+              'sandbox.mode and sandbox.networkAccess',
+              'approvalMode (allowlist, auto-review, unrestricted)',
+            ],
+            whenLoaded: 'Always loaded for the Cursor CLI. Only the permissions block can be overridden per-project via .cursor/cli.json.',
+            loadOrder: 1,
+            example: `{
+  "permissions": {
+    "allow": ["Shell(git)", "Read(**)"],
+    "deny": ["Shell(rm)", "Read(.env*)"]
+  },
+  "sandbox": { "mode": "enabled", "networkAccess": "user_config_only" },
+  "approvalMode": "allowlist"
 }`,
           },
         },
@@ -1852,6 +1897,72 @@ description: Refactor code while maintaining tests and functionality.
             },
           ],
         },
+        {
+          id: 'codex-agents-folder',
+          name: 'agents',
+          type: 'folder',
+          children: [
+            {
+              id: 'codex-agent-reviewer',
+              name: 'code-reviewer.toml',
+              type: 'file',
+              details: {
+                label: 'Custom Agent',
+                description: 'Defines a specialized subagent with a distinct model, delegation behavior, and instructions.',
+                whatGoesHere: [
+                  'Agent name and description',
+                  'Model selection for this agent',
+                  'Behavioral instructions',
+                ],
+                whenLoaded: 'Loaded when Codex delegates to this subagent based on task matching.',
+                loadOrder: 5,
+                example: `# .codex/agents/code-reviewer.toml
+
+name = "code-reviewer"
+description = "Expert code review specialist for quality, security, and maintainability."
+model = "gpt-5.2"
+
+developer_instructions = """
+You are a code reviewer. When invoked:
+1. Identify bugs and potential issues
+2. Check adherence to project conventions
+3. Suggest improvements (but don't make changes)
+"""`,
+              },
+            },
+          ],
+        },
+        {
+          id: 'codex-hooks-json',
+          name: 'hooks.json',
+          type: 'file',
+          details: {
+            label: 'Lifecycle Hooks',
+            description: 'Project-level hooks that run on session, subagent, prompt, tool, and compaction events.',
+            whatGoesHere: [
+              'Hook event names (SessionStart, PreToolUse, PostToolUse, etc.)',
+              'Command or script to run for each event',
+              'Matchers to scope a hook to specific tools',
+            ],
+            whenLoaded: 'Loaded at session start; each hook runs when its matching lifecycle event fires.',
+            loadOrder: 3,
+            example: `{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [{ "type": "command", "command": "./scripts/validate-command.sh" }]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "hooks": [{ "type": "command", "command": "./scripts/log-tool-use.sh" }]
+      }
+    ]
+  }
+}`,
+          },
+        },
       ],
     },
     {
@@ -2013,7 +2124,7 @@ args = ["-y", "@upstash/context7-mcp"]`,
           name: 'AGENTS.md',
           type: 'file',
           details: {
-            label: 'Global Instructions',
+            label: 'User Scope Instructions',
             description: 'Personal instructions that apply to all your Codex sessions, regardless of project.',
             whatGoesHere: [
               'Your preferred coding style',
@@ -2123,6 +2234,64 @@ description: Create well-formed PRs with conventional commits and proper descrip
               ],
             },
           ],
+        },
+        {
+          id: 'codex-global-agents-folder',
+          name: 'agents',
+          type: 'folder',
+          children: [
+            {
+              id: 'codex-global-agent-example',
+              name: 'commit-helper.toml',
+              type: 'file',
+              details: {
+                label: 'Global Custom Agent',
+                description: 'A personal subagent available across all your projects, with its own model and instructions.',
+                whatGoesHere: [
+                  'Agent name and description',
+                  'Model selection for this agent',
+                  'Behavioral instructions',
+                ],
+                whenLoaded: 'Loaded when Codex delegates to this subagent based on task matching, in any project.',
+                loadOrder: 4,
+                example: `# ~/.codex/agents/commit-helper.toml
+
+name = "commit-helper"
+description = "Drafts conventional commit messages from staged changes."
+model = "gpt-5.2"
+
+developer_instructions = """
+Summarize the staged diff as a conventional commit message
+(feat:, fix:, docs:, chore:, refactor:, test:).
+"""`,
+              },
+            },
+          ],
+        },
+        {
+          id: 'codex-global-hooks-json',
+          name: 'hooks.json',
+          type: 'file',
+          details: {
+            label: 'Global Lifecycle Hooks',
+            description: 'Personal hooks that run on session, subagent, prompt, tool, and compaction events across all projects.',
+            whatGoesHere: [
+              'Hook event names (SessionStart, PreToolUse, PostToolUse, etc.)',
+              'Command or script to run for each event',
+              'Matchers to scope a hook to specific tools',
+            ],
+            whenLoaded: 'Loaded at session start for every project; each hook runs when its matching lifecycle event fires.',
+            loadOrder: 3,
+            example: `{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [{ "type": "command", "command": "~/.codex/scripts/announce-session.sh" }]
+      }
+    ]
+  }
+}`,
+          },
         },
       ],
     },

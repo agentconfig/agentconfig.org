@@ -73,14 +73,9 @@ export const trees: Record<Provider, FileNode> = {
 
 ```typescript
 // Count manually:
-// 11 primitives × 3 providers = 33 total support badges
-// But only "Full Support" badges: your number varies by provider
-
-// If your provider has:
-// - 6 "full" support: 6
-// - 1 "partial" per primitive for 5 primitives: 5 partial
-// Total Full Support: (10 × 3) + (1 × 3) = 33...
-// Wait, let me recalculate
+// 13 primitives × 4 providers = 52 total support badges
+// Only "Full Support" badges are a subset of that total, so count them
+// directly rather than deriving them from the 52-badge total.
 
 // Better approach: Run test and see actual number, then update
 const fullSupportBadges = table.getByText('Full Support')
@@ -437,7 +432,7 @@ Example for Cursor:
 git commit -m "feat(types): add cursor to provider union types"
 
 # Stream 2: Data
-git commit -m "feat(data): add cursor implementations for all 11 primitives"
+git commit -m "feat(data): add cursor implementations for all 13 primitives"
 
 # Stream 3: UI
 git commit -m "feat(ui): update comparison table for 3-provider layout"
@@ -458,7 +453,7 @@ Use the [semantic-commit skill](../../semantic-commit) for help.
 
 ## Debugging Tips
 
-### Verify all 11 primitives are complete
+### Verify all 13 primitives are complete
 
 ```bash
 # Count provider entries in primitives.ts
@@ -494,7 +489,7 @@ grep "primitiveId: '" site/src/data/comparison.ts | sed "s/.*primitiveId: '\\([^
 
 **Solution**:
 1. Visit the provider's official documentation (cursor.com/docs, claude.ai, etc.)
-2. For each of the 11 primitives, verify:
+2. For each of the 13 primitives, verify:
    - Is this feature officially supported?
    - Are there any limitations or workarounds?
    - What version/channel is it available in?
@@ -537,7 +532,7 @@ Without this, users can't switch between providers in the Interactive File Tree 
 3. Scroll to "Provider Comparison" section
 4. Verify:
    - All 3 provider columns visible
-   - All 11 primitives listed
+   - All 13 primitives listed
    - Support badges show correct colors
    - Click to expand shows all 3 provider details
    - Copy buttons work for each provider

@@ -23,7 +23,8 @@
         { "id": "copilot.cli-hooks", "topic": "hooks", "url": "https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/use-hooks", "authority": "primary" },
         { "id": "copilot.mcp", "topic": "mcp", "url": "https://docs.github.com/en/copilot/how-tos/provide-context/use-mcp-in-your-ide/extend-copilot-chat-with-mcp", "authority": "primary" },
         { "id": "copilot.custom-agents", "topic": "custom-agents", "url": "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/cloud-agent/create-custom-agents-in-your-ide", "authority": "primary" },
-        { "id": "copilot.cloud-agent", "topic": "cloud-agent", "url": "https://docs.github.com/en/copilot/concepts/agents/cloud-agent/about-cloud-agent", "authority": "primary" }
+        { "id": "copilot.cloud-agent", "topic": "cloud-agent", "url": "https://docs.github.com/en/copilot/concepts/agents/cloud-agent/about-cloud-agent", "authority": "primary" },
+        { "id": "copilot.customize-firewall", "topic": "permissions", "url": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-the-firewall", "authority": "primary" }
       ]
     },
     {
@@ -75,7 +76,9 @@
       "sources": [
         { "id": "cursor.rules", "topic": "instructions", "url": "https://cursor.com/docs/context/rules", "authority": "primary" },
         { "id": "cursor.mcp", "topic": "mcp", "url": "https://cursor.com/docs/context/mcp", "authority": "primary" },
-        { "id": "cursor.hooks", "topic": "hooks", "url": "https://cursor.com/docs/agent/hooks", "authority": "primary" }
+        { "id": "cursor.hooks", "topic": "hooks", "url": "https://cursor.com/docs/agent/hooks", "authority": "primary" },
+        { "id": "cursor.run-modes", "topic": "permissions", "url": "https://cursor.com/docs/agent/security/run-modes", "authority": "primary" },
+        { "id": "cursor.skills", "topic": "skills", "url": "https://cursor.com/docs/skills", "authority": "primary" }
       ]
     },
     {

@@ -17,7 +17,7 @@ export function PrimitiveCardsSection(): VNode {
       <div className="mb-8">
         <div
           role="tablist"
-          aria-label="Filter by category"
+          aria-label="Filter by configuration layer"
           className="flex flex-wrap gap-2"
         >
           {categories.map((category) => (
