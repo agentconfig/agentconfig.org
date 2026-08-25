@@ -68,6 +68,9 @@ function parseArgs(argv: string[]): Args {
       flags[name] = next
       index += 1
     } else {
+      if (VALUE_FLAGS.has(name)) {
+        throw new FailClosedError(`--${name} requires a value`, [`Pass --${name} <value>.`])
+      }
       flags[name] = true
     }
   }

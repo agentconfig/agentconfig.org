@@ -146,6 +146,16 @@ describe('CLI argument handling', () => {
     expect(output).toContain('--provider requires a value')
   })
 
+  test('rejects a bare value flag instead of silently succeeding', () => {
+    const out = run(['report', 'fixtures/claims/valid.json', '--out'])
+    expect(out.code).toBe(1)
+    expect(out.output).toContain('--out requires a value')
+
+    const json = run(['compare', 'fixtures/claims/valid.json', '--json'])
+    expect(json.code).toBe(1)
+    expect(json.output).toContain('--json requires a value')
+  })
+
   test('refuses an unrecognized flag rather than ignoring it', () => {
     const { code, output } = run(['fetch', '--allow-netwrok'])
     expect(code).toBe(1)
