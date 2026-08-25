@@ -1877,7 +1877,7 @@ name = "code-reviewer"
 description = "Expert code review specialist for quality, security, and maintainability."
 model = "gpt-5.2"
 
-instructions = """
+developer_instructions = """
 You are a code reviewer. When invoked:
 1. Identify bugs and potential issues
 2. Check adherence to project conventions
@@ -1902,17 +1902,19 @@ You are a code reviewer. When invoked:
             whenLoaded: 'Loaded at session start; each hook runs when its matching lifecycle event fires.',
             loadOrder: 3,
             example: `{
-  "PreToolUse": [
-    {
-      "matcher": "Bash",
-      "hooks": [{ "type": "command", "command": "./scripts/validate-command.sh" }]
-    }
-  ],
-  "PostToolUse": [
-    {
-      "hooks": [{ "type": "command", "command": "./scripts/log-tool-use.sh" }]
-    }
-  ]
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [{ "type": "command", "command": "./scripts/validate-command.sh" }]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "hooks": [{ "type": "command", "command": "./scripts/log-tool-use.sh" }]
+      }
+    ]
+  }
 }`,
           },
         },
@@ -2213,7 +2215,7 @@ name = "commit-helper"
 description = "Drafts conventional commit messages from staged changes."
 model = "gpt-5.2"
 
-instructions = """
+developer_instructions = """
 Summarize the staged diff as a conventional commit message
 (feat:, fix:, docs:, chore:, refactor:, test:).
 """`,
@@ -2236,11 +2238,13 @@ Summarize the staged diff as a conventional commit message
             whenLoaded: 'Loaded at session start for every project; each hook runs when its matching lifecycle event fires.',
             loadOrder: 3,
             example: `{
-  "SessionStart": [
-    {
-      "hooks": [{ "type": "command", "command": "~/.codex/scripts/announce-session.sh" }]
-    }
-  ]
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [{ "type": "command", "command": "~/.codex/scripts/announce-session.sh" }]
+      }
+    ]
+  }
 }`,
           },
         },
