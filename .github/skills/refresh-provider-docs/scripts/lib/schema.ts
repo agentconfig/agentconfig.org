@@ -173,8 +173,19 @@ function requireEnum<T extends string>(
 function requireHttpsUrl(record: Record<string, unknown>, key: string, where: string, errors: string[]): string {
   const value = requireString(record, key, where, errors)
   if (value === '') return ''
-  if (!value.startsWith('https://')) {
-    errors.push(`${where}: "${key}" must be an https URL, got "${value}"`)
+  let parsed: URL
+  try {
+    parsed = new URL(value)
+  } catch {
+    errors.push(`${where}: "${key}" must be a valid https URL, got "${value}"`)
+    return ''
+  }
+  // A prefix check alone accepts "https://", which has no host. If the same
+  // malformed string is registered and cited, a claim could reach confirmed
+  // without a source anyone can open.
+  if (parsed.protocol !== 'https:' || parsed.hostname === '') {
+    errors.push(`${where}: "${key}" must be an https URL with a host, got "${value}"`)
+    return ''
   }
   return value
 }
@@ -284,8 +295,11 @@ export function validateClaims(input: unknown): ValidationResult<Claim[]> {
       errors.push(`${where}: "value" must be a non-empty string or a non-empty array of strings`)
     }
 
-    if (aspect === 'support' && typeof value === 'string' && !SUPPORT_LEVELS.includes(value as SupportLevel)) {
-      errors.push(`${where}: a "support" claim must use one of ${SUPPORT_LEVELS.join(', ')}`)
+    // Support is a single level, never a list. An array would skip the enum
+    // check and then be compared as ordinary text, so ["full", "none"] would
+    // pass validation instead of failing closed.
+    if (aspect === 'support' && (typeof value !== 'string' || !SUPPORT_LEVELS.includes(value as SupportLevel))) {
+      errors.push(`${where}: a "support" claim must be a single value, one of ${SUPPORT_LEVELS.join(', ')}`)
     }
 
     if (errors.length === 0) claims.push(rawClaim as unknown as Claim)

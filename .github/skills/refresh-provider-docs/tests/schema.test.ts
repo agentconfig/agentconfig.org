@@ -34,20 +34,23 @@ describe('claim schema', () => {
   })
 
   test('rejects a support claim that is not a known support level', () => {
-    const result = validateClaims([
+    const supportClaim = (value: unknown) => [
       {
         id: 'x',
         provider: 'testprov',
         primitive: 'hooks',
         aspect: 'support',
-        value: 'mostly',
+        value,
         sourceId: 'testprov.hooks',
         sourceUrl: 'https://docs.example.com/testprov/hooks',
         sourceAuthority: 'primary',
         retrievedAt: '2026-08-25',
       },
-    ])
-    expect(result.ok).toBe(false)
+    ]
+    expect(validateClaims(supportClaim('mostly')).ok).toBe(false)
+    expect(validateClaims(supportClaim(['full', 'none'])).ok).toBe(false)
+    expect(validateClaims(supportClaim(['full'])).ok).toBe(false)
+    expect(validateClaims(supportClaim('full')).ok).toBe(true)
   })
 
   test('rejects an impossible calendar date that JavaScript would silently roll forward', () => {
@@ -70,6 +73,26 @@ describe('claim schema', () => {
     expect(validateClaims(claim('2024-02-29')).ok).toBe(true)
     expect(validateClaims(claim('2026-08-25T06:08:01.937Z')).ok).toBe(true)
     expect(validateClaims(claim('2026-08-25T23:00:00-05:00')).ok).toBe(true)
+  })
+
+  test('rejects a URL with no host, which no one could open', () => {
+    const urlClaim = (sourceUrl: string) => [
+      {
+        id: 'x',
+        provider: 'testprov',
+        primitive: 'hooks',
+        aspect: 'location',
+        value: '.testprov/hooks.json',
+        sourceId: 'testprov.hooks',
+        sourceUrl,
+        sourceAuthority: 'primary',
+        retrievedAt: '2026-08-25',
+      },
+    ]
+    expect(validateClaims(urlClaim('https://')).ok).toBe(false)
+    expect(validateClaims(urlClaim('not a url')).ok).toBe(false)
+    expect(validateClaims(urlClaim('http://docs.example.com/testprov/hooks')).ok).toBe(false)
+    expect(validateClaims(urlClaim('https://docs.example.com/testprov/hooks')).ok).toBe(true)
   })
 })
 
