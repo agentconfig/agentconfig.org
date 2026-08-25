@@ -54,6 +54,7 @@ The llms files are generated from these TypeScript data files:
 | `site/src/data/skillsTutorial.ts` | Skills tutorial sections and concepts |
 | `site/src/data/skillExamples.ts` | 5 example skills with full code |
 | `site/src/data/agentsTutorial.ts` | Agent definitions tutorial with code samples |
+| `site/src/data/hooksTutorial.ts` | Hooks tutorial with provider panels, lifecycle events, and policy patterns |
 | `site/src/data/mcpTutorial.ts` | MCP tutorial sections and code samples |
 
 ## File Structure
@@ -64,6 +65,7 @@ site/public/
 ├── llms-full.txt      # Complete site content in one file
 ├── skills.md          # Skills page content (rich markdown)
 ├── agents.md          # Agents page content (rich markdown)
+├── hooks.md           # Hooks page content (rich markdown)
 └── mcp.md             # MCP page content (rich markdown)
 ```
 

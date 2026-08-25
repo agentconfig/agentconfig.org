@@ -2,7 +2,7 @@
 
 > A reference site for configuring AI coding assistants like GitHub Copilot, Claude Code, Cursor, and OpenAI Codex.
 > Covers 13 AI primitives, a scope model, provider comparison, config file locations, and tutorials for
-> skills, agent definitions, and MCP tool integrations.
+> skills, agent definitions, lifecycle hooks, and MCP tool integrations.
 
 This file provides a table of contents. For complete content, see /llms-full.txt.
 
@@ -11,6 +11,7 @@ This file provides a table of contents. For complete content, see /llms-full.txt
 - [Homepage](https://agentconfig.org/): AI primitives reference, interactive file tree, provider comparison matrix
 - [Skills Tutorial](https://agentconfig.org/skills): How to create agent skills following the agentskills.io specification
 - [Agents Tutorial](https://agentconfig.org/agents): Agent definition files (AGENTS.md, CLAUDE.md, copilot-instructions.md)
+- [Hooks Tutorial](https://agentconfig.org/hooks): Design, test, and map lifecycle hooks across provider runtimes
 - [MCP Tool Integrations](https://agentconfig.org/mcp): Connect AI assistants to external tools via Model Context Protocol
 
 ## Docs
@@ -18,6 +19,7 @@ This file provides a table of contents. For complete content, see /llms-full.txt
 - [Full site content](/llms-full.txt): Complete content for deep context (recommended for agents)
 - [Skills Tutorial content](/skills.md): Skills tutorial with 5 example skills
 - [Agents Tutorial content](/agents.md): Agents tutorial with code samples
+- [Hooks Tutorial content](/hooks.md): Hooks tutorial with provider panels, policy patterns, and fixture tests
 - [MCP Tool Integrations content](/mcp.md): MCP tutorial with configuration examples
 
 ## Optional
