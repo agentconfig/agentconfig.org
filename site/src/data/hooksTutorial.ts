@@ -72,7 +72,7 @@ export const normalizedEvents: readonly HookEvent[] = [
     normalized: 'Tool failure',
     purpose: 'Surface diagnostics or recovery guidance after a tool call fails.',
     copilot: 'postToolUseFailure',
-    claude: 'PostToolUse',
+    claude: 'PostToolUseFailure',
     codex: 'PostToolUse',
   },
   {
@@ -110,7 +110,7 @@ export const providerPanels: readonly ProviderHookPanel[] = [
     provider: 'Claude Code',
     scope: 'Hooks live inside settings files at project, local project, and user scope.',
     locations: ['.claude/settings.json', '.claude/settings.local.json', '~/.claude/settings.json'],
-    events: ['PreToolUse', 'PostToolUse', 'UserPromptSubmit', 'Stop', 'SubagentStop', 'PreCompact', 'SessionStart', 'SessionEnd'],
+    events: ['PreToolUse', 'PostToolUse', 'PostToolUseFailure', 'UserPromptSubmit', 'Stop', 'SubagentStop', 'PreCompact', 'SessionStart', 'SessionEnd'],
     contract: 'Claude hooks are configured as matcher/command entries in settings. Hook commands receive JSON on stdin and can block, approve, or add context depending on the event and response.',
     notes: [
       'Use Claude hooks as the secondary mapping because the lifecycle model is similar but the configuration file is settings-based rather than a dedicated hooks directory.',
@@ -192,15 +192,17 @@ export const codeSamples: Record<string, string> = {
 }`,
 
   copilotHook: `{
-  "hooks": [
-    {
-      "event": "preToolUse",
-      "matcher": {
-        "tool": "bash"
-      },
-      "command": "node .github/hooks/policy.mjs"
-    }
-  ]
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "type": "command",
+        "matcher": "bash",
+        "command": "node .github/hooks/policy.mjs",
+        "timeoutSec": 30
+      }
+    ]
+  }
 }`,
 
   claudeHook: `{
@@ -223,46 +225,65 @@ export const codeSamples: Record<string, string> = {
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": {
-          "tools": ["shell"]
-        },
-        "command": "node .codex/hooks/policy.mjs"
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \\"$(git rev-parse --show-toplevel)/.codex/hooks/policy.mjs\\"",
+            "statusMessage": "Checking Bash command"
+          }
+        ]
       }
     ]
   }
 }`,
 
-  policyCore: `export interface HookDecision {
-  decision: 'allow' | 'block'
-  message?: string
+  policyCore: `export function commandContainsForcePush(input) {
+  if (typeof input === 'string') {
+    return /\\bgit\\s+push\\b.*\\s--force(?:\\s|$)/.test(input)
+  }
+
+  if (input == null || typeof input !== 'object') {
+    return false
+  }
+
+  const command = input.command
+  return typeof command === 'string' && /\\bgit\\s+push\\b.*\\s--force(?:\\s|$)/.test(command)
 }
 
-export interface NormalizedHookEvent {
-  normalizedEvent: 'before_tool_use' | 'after_tool_use' | 'agent_stop'
-  tool?: {
-    name: string
-    input: unknown
+export function normalizeCopilotEvent(input) {
+  return {
+    normalizedEvent: input.hook_event_name === 'PreToolUse' || input.tool_name != null
+      ? 'before_tool_use'
+      : input.event ?? 'before_tool_use',
+    tool: {
+      name: input.toolName ?? input.tool_name,
+      input: input.toolArgs ?? input.tool_input,
+    },
   }
 }
 
-export function evaluatePolicy(event: NormalizedHookEvent): HookDecision {
+export function evaluatePolicy(event) {
   if (event.normalizedEvent !== 'before_tool_use') {
     return { decision: 'allow' }
   }
 
-  if (event.tool?.name === 'bash' && commandContainsForcePush(event.tool.input)) {
-    return {
-      decision: 'block',
-      message: 'Force-push is disabled for agent runs. Ask for human approval first.',
+  if (event.tool?.name === 'bash' || event.tool?.name === 'Bash') {
+    if (commandContainsForcePush(event.tool.input)) {
+      return {
+        decision: 'block',
+        message: 'Force-push is disabled for agent runs. Ask for human approval first.',
+      }
     }
   }
 
   return { decision: 'allow' }
 }`,
 
-  copilotAdapter: `import { evaluatePolicy, normalizeCopilotEvent } from './policy-core'
+  copilotAdapter: `import { Buffer } from 'node:buffer'
+import { evaluatePolicy, normalizeCopilotEvent } from './policy-core.mjs'
 
-const chunks: Uint8Array[] = []
+const chunks = []
 for await (const chunk of process.stdin) {
   chunks.push(chunk)
 }
@@ -271,11 +292,17 @@ const input = Buffer.concat(chunks).toString('utf8')
 const event = normalizeCopilotEvent(JSON.parse(input))
 const decision = evaluatePolicy(event)
 
-console.log(JSON.stringify(decision))
-process.exit(decision.decision === 'block' ? 2 : 0)`,
+if (decision.decision === 'block') {
+  console.log(JSON.stringify({
+    permissionDecision: 'deny',
+    permissionDecisionReason: decision.message,
+  }))
+} else {
+  console.log(JSON.stringify({ permissionDecision: 'allow' }))
+}`,
 
   fixtureTest: `import { describe, expect, it } from 'bun:test'
-import { evaluatePolicy } from '../policy-core'
+import { evaluatePolicy } from '../policy-core.mjs'
 import forcePushFixture from './fixtures/copilot-pre-tool-use-force-push.json'
 
 describe('hook policy', () => {
@@ -289,14 +316,14 @@ describe('hook policy', () => {
   })
 })`,
 
-  smokeTest: `printf '%s\\n' '{"event":"preToolUse","tool":{"name":"bash","input":{"command":"git push --force"}}}' \\
+  smokeTest: `printf '%s\\n' '{"hook_event_name":"PreToolUse","tool_name":"Bash","tool_input":{"command":"git push --force"}}' \\
   | node .github/hooks/policy.mjs
 
-test "$?" -eq 2`,
+test "$?" -eq 0`,
 
-  safeShell: `import { spawnFile } from 'node:child_process'
+  safeShell: `import { spawn } from 'node:child_process'
 
-spawnFile('/usr/bin/git', ['status', '--short'], {
+spawn('/usr/bin/git', ['status', '--short'], {
   cwd: repositoryPath,
   shell: false,
   stdio: ['ignore', 'pipe', 'pipe'],

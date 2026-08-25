@@ -1657,7 +1657,7 @@ Normalize provider event names into the lifecycle your policy cares about:
 | User prompt submitted | Inspect or enrich a new prompt before the agent plans work. | userPromptSubmitted | UserPromptSubmit | UserPromptSubmit |
 | Before tool use | Allow, block, rewrite, or require approval before a tool side effect happens. | preToolUse | PreToolUse | PreToolUse |
 | After tool use | Record results, update compact state, or run postconditions after a successful tool call. | postToolUse | PostToolUse | PostToolUse |
-| Tool failure | Surface diagnostics or recovery guidance after a tool call fails. | postToolUseFailure | PostToolUse | PostToolUse |
+| Tool failure | Surface diagnostics or recovery guidance after a tool call fails. | postToolUseFailure | PostToolUseFailure | PostToolUse |
 | Compaction | Persist or restore compact state around context compaction. | No direct equivalent | PreCompact | PreCompact, PostCompact |
 | Agent stop | Finalize state, clean temporary locks, or report completion once the agent stops. | agentStop, subagentStop | Stop, SubagentStop | Stop, SubagentStop |
 
@@ -1706,22 +1706,25 @@ JSON file and keep real policy in a script that can be tested outside the agent 
 
 ```json
 {
-  "hooks": [
-    {
-      "event": "preToolUse",
-      "matcher": {
-        "tool": "bash"
-      },
-      "command": "node .github/hooks/policy.mjs"
-    }
-  ]
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "type": "command",
+        "matcher": "bash",
+        "command": "node .github/hooks/policy.mjs",
+        "timeoutSec": 30
+      }
+    ]
+  }
 }
 ```
 
 ```typescript
-import { evaluatePolicy, normalizeCopilotEvent } from './policy-core'
+import { Buffer } from 'node:buffer'
+import { evaluatePolicy, normalizeCopilotEvent } from './policy-core.mjs'
 
-const chunks: Uint8Array[] = []
+const chunks = []
 for await (const chunk of process.stdin) {
   chunks.push(chunk)
 }
@@ -1730,8 +1733,14 @@ const input = Buffer.concat(chunks).toString('utf8')
 const event = normalizeCopilotEvent(JSON.parse(input))
 const decision = evaluatePolicy(event)
 
-console.log(JSON.stringify(decision))
-process.exit(decision.decision === 'block' ? 2 : 0)
+if (decision.decision === 'block') {
+  console.log(JSON.stringify({
+    permissionDecision: 'deny',
+    permissionDecisionReason: decision.message,
+  }))
+} else {
+  console.log(JSON.stringify({ permissionDecision: 'allow' }))
+}
 ```
 
 ### 5. First Claude Hook
@@ -1784,7 +1793,7 @@ Source: [GitHub Copilot hooks reference](https://docs.github.com/en/copilot/refe
 
 **Locations:** `.claude/settings.json`, `.claude/settings.local.json`, `~/.claude/settings.json`
 
-**Events:** `PreToolUse`, `PostToolUse`, `UserPromptSubmit`, `Stop`, `SubagentStop`, `PreCompact`, `SessionStart`, `SessionEnd`
+**Events:** `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `UserPromptSubmit`, `Stop`, `SubagentStop`, `PreCompact`, `SessionStart`, `SessionEnd`
 
 **Contract:** Claude hooks are configured as matcher/command entries in settings. Hook commands receive JSON on stdin and can block, approve, or add context depending on the event and response.
 
@@ -1818,28 +1827,42 @@ takes normalized input and returns a deterministic decision. Provider adapters o
 translation, exit codes, and provider-specific response formats.
 
 ```typescript
-export interface HookDecision {
-  decision: 'allow' | 'block'
-  message?: string
+export function commandContainsForcePush(input) {
+  if (typeof input === 'string') {
+    return /\bgit\s+push\b.*\s--force(?:\s|$)/.test(input)
+  }
+
+  if (input == null || typeof input !== 'object') {
+    return false
+  }
+
+  const command = input.command
+  return typeof command === 'string' && /\bgit\s+push\b.*\s--force(?:\s|$)/.test(command)
 }
 
-export interface NormalizedHookEvent {
-  normalizedEvent: 'before_tool_use' | 'after_tool_use' | 'agent_stop'
-  tool?: {
-    name: string
-    input: unknown
+export function normalizeCopilotEvent(input) {
+  return {
+    normalizedEvent: input.hook_event_name === 'PreToolUse' || input.tool_name != null
+      ? 'before_tool_use'
+      : input.event ?? 'before_tool_use',
+    tool: {
+      name: input.toolName ?? input.tool_name,
+      input: input.toolArgs ?? input.tool_input,
+    },
   }
 }
 
-export function evaluatePolicy(event: NormalizedHookEvent): HookDecision {
+export function evaluatePolicy(event) {
   if (event.normalizedEvent !== 'before_tool_use') {
     return { decision: 'allow' }
   }
 
-  if (event.tool?.name === 'bash' && commandContainsForcePush(event.tool.input)) {
-    return {
-      decision: 'block',
-      message: 'Force-push is disabled for agent runs. Ask for human approval first.',
+  if (event.tool?.name === 'bash' || event.tool?.name === 'Bash') {
+    if (commandContainsForcePush(event.tool.input)) {
+      return {
+        decision: 'block',
+        message: 'Force-push is disabled for agent runs. Ask for human approval first.',
+      }
     }
   }
 
@@ -1852,10 +1875,14 @@ export function evaluatePolicy(event: NormalizedHookEvent): HookDecision {
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": {
-          "tools": ["shell"]
-        },
-        "command": "node .codex/hooks/policy.mjs"
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$(git rev-parse --show-toplevel)/.codex/hooks/policy.mjs\"",
+            "statusMessage": "Checking Bash command"
+          }
+        ]
       }
     ]
   }
@@ -1874,9 +1901,9 @@ defaults than ordinary scripts.
 - Unavailable services: fail open for optional telemetry, fail closed for policy gates, and test both choices.
 
 ```typescript
-import { spawnFile } from 'node:child_process'
+import { spawn } from 'node:child_process'
 
-spawnFile('/usr/bin/git', ['status', '--short'], {
+spawn('/usr/bin/git', ['status', '--short'], {
   cwd: repositoryPath,
   shell: false,
   stdio: ['ignore', 'pipe', 'pipe'],
@@ -1890,7 +1917,7 @@ Every example hook should have a fixture test and a host-level smoke test.
 **Fixture test:**
 ```typescript
 import { describe, expect, it } from 'bun:test'
-import { evaluatePolicy } from '../policy-core'
+import { evaluatePolicy } from '../policy-core.mjs'
 import forcePushFixture from './fixtures/copilot-pre-tool-use-force-push.json'
 
 describe('hook policy', () => {
@@ -1907,10 +1934,10 @@ describe('hook policy', () => {
 
 **Smoke test:**
 ```bash
-printf '%s\n' '{"event":"preToolUse","tool":{"name":"bash","input":{"command":"git push --force"}}}' \
+printf '%s\n' '{"hook_event_name":"PreToolUse","tool_name":"Bash","tool_input":{"command":"git push --force"}}' \
   | node .github/hooks/policy.mjs
 
-test "$?" -eq 2
+test "$?" -eq 0
 ```
 
 ### 10. When Not To Use Hooks

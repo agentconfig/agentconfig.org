@@ -34,7 +34,6 @@ test.describe('Hooks Page', () => {
 
   test('navigates to sections from the table of contents', async ({ page }) => {
     await page.getByRole('link', { name: /Policy Core Pattern/ }).click()
-    await page.waitForTimeout(500)
     await expect(page).toHaveURL(/.*#policy-core/)
     await expect(page.locator('#policy-core')).toBeInViewport()
   })
