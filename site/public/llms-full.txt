@@ -1689,11 +1689,11 @@ and diagnostics. Keep human-readable logs separate from the final machine-readab
 ```json
 {
   "decision": "block",
-  "message": "Force-push is disabled for agent runs. Create a normal push or ask for human approval.",
+  "message": "Git push is disabled for agent runs. Ask for human approval first.",
   "diagnostics": [
     {
       "severity": "error",
-      "code": "force_push_blocked"
+      "code": "git_push_blocked"
     }
   ]
 }
@@ -1872,7 +1872,7 @@ function tokenizeCommand(command) {
   return command.match(/"[^"]*"|'[^']*'|\S+/g)?.map((token) => token.replace(/^["']|["']$/g, '')) ?? []
 }
 
-export function commandContainsForcePush(input) {
+export function commandContainsGitPush(input) {
   const command = typeof input === 'string'
     ? input
     : input != null && typeof input === 'object' && typeof input.command === 'string'
@@ -1895,15 +1895,7 @@ export function commandContainsForcePush(input) {
     return false
   }
 
-  return args.slice(pushIndex + 1).some((token) =>
-    token === '-f' ||
-    token.startsWith('-') && token.includes('f') && !token.startsWith('--') ||
-    token === '--force' ||
-    token.startsWith('--force=') ||
-    token === '--force-with-lease' ||
-    token.startsWith('--force-with-lease=') ||
-    token.startsWith('+')
-  )
+  return true
 }
 
 export function normalizeCopilotEvent(input) {
@@ -1924,10 +1916,10 @@ export function evaluatePolicy(event) {
   }
 
   if (event.tool?.name === 'bash' || event.tool?.name === 'Bash') {
-    if (commandContainsForcePush(event.tool.input)) {
+    if (commandContainsGitPush(event.tool.input)) {
       return {
         decision: 'block',
-        message: 'Force-push is disabled for agent runs. Ask for human approval first.',
+        message: 'Git push is disabled for agent runs. Ask for human approval first.',
       }
     }
   }
@@ -1997,6 +1989,7 @@ Hooks often sit next to shell commands, secrets, and external systems, so they n
 defaults than ordinary scripts.
 
 - Shell injection: pass arguments as arrays and avoid shell interpolation for untrusted input.
+- Shell parsing: do not infer force-push arguments from raw shell text. The example policy blocks every detected git push; use a real shell parser or server-side branch protection when normal pushes must remain available.
 - Secrets: never echo tokens, never put credentials in hook config, and redact environment-derived values from diagnostics.
 - Untrusted content: treat retrieved documents, tool output, and user prompts as data, not hook instructions.
 - Data egress: fail closed before sending repository, user, or customer data externally unless policy allows it.
@@ -2023,38 +2016,48 @@ import { describe, expect, it } from 'bun:test'
 import { evaluatePolicy, normalizeCopilotEvent } from '../policy-core.mjs'
 
 describe('hook policy', () => {
-  it('blocks force-push commands before tool use', () => {
-    const forcePushFixture = {
+  const blockedDecision = {
+    decision: 'block',
+    message: 'Git push is disabled for agent runs. Ask for human approval first.',
+  }
+
+  it('blocks git push commands before tool use', () => {
+    const pushFixture = {
       event: 'preToolUse',
       toolName: 'bash',
       toolArgs: {
-        command: 'git push -f origin main',
+        command: 'git push origin main',
       },
     }
 
-    const decision = evaluatePolicy(normalizeCopilotEvent(forcePushFixture))
+    const decision = evaluatePolicy(normalizeCopilotEvent(pushFixture))
 
-    expect(decision).toEqual({
-      decision: 'block',
-      message: 'Force-push is disabled for agent runs. Ask for human approval first.',
-    })
+    expect(decision).toEqual(blockedDecision)
   })
 
-  it('blocks force refspecs before tool use', () => {
-    const forceRefspecFixture = {
-      event: 'preToolUse',
-      toolName: 'bash',
-      toolArgs: {
-        command: 'git push origin +main:main',
+  it('blocks force-option spellings assembled by the shell', () => {
+    const bypassFixtures = [
+      {
+        event: 'preToolUse',
+        toolName: 'bash',
+        toolArgs: {
+          command: 'git push --for"ce" origin main',
+        },
       },
+      {
+        event: 'preToolUse',
+        toolName: 'bash',
+        toolArgs: {
+          command: 'git push --for\\ce origin main',
+        },
+      },
+    ]
+
+    for (const fixture of bypassFixtures) {
+      const decision = evaluatePolicy(normalizeCopilotEvent(fixture))
+
+      expect(decision).toEqual(blockedDecision)
     }
-
-    const decision = evaluatePolicy(normalizeCopilotEvent(forceRefspecFixture))
-
-    expect(decision).toEqual({
-      decision: 'block',
-      message: 'Force-push is disabled for agent runs. Ask for human approval first.',
-    })
   })
 })
 ```

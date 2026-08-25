@@ -187,7 +187,7 @@ export const codeSamples: Record<string, string> = {
   "diagnostics": [
     {
       "severity": "error",
-      "code": "force_push_blocked"
+      "code": "git_push_blocked"
     }
   ]
 }`,

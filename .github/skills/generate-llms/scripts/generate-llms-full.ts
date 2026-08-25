@@ -573,6 +573,7 @@ Hooks often sit next to shell commands, secrets, and external systems, so they n
 defaults than ordinary scripts.
 
 - Shell injection: pass arguments as arrays and avoid shell interpolation for untrusted input.
+- Shell parsing: do not infer force-push arguments from raw shell text. The example policy blocks every detected git push; use a real shell parser or server-side branch protection when normal pushes must remain available.
 - Secrets: never echo tokens, never put credentials in hook config, and redact environment-derived values from diagnostics.
 - Untrusted content: treat retrieved documents, tool output, and user prompts as data, not hook instructions.
 - Data egress: fail closed before sending repository, user, or customer data externally unless policy allows it.
