@@ -127,6 +127,21 @@ export type ValidationResult<T> = { ok: true; value: T } | { ok: false; errors: 
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2}))?$/
 
+/**
+ * The shape alone is not enough. JavaScript rolls an impossible date such as
+ * `2026-02-31` forward into March, so fabricated evidence would parse cleanly
+ * and could be read as fresh. Require the calendar day to survive a round trip.
+ */
+function isRealCalendarDate(value: string): boolean {
+  if (!ISO_DATE.test(value)) return false
+  if (Number.isNaN(new Date(value.length === 10 ? `${value}T00:00:00Z` : value).getTime())) return false
+  const [year, month, day] = value.slice(0, 10).split('-').map(Number) as [number, number, number]
+  // Check the calendar day on its own, so a timezone offset in a full
+  // timestamp cannot shift the date into looking wrong.
+  const asUtc = new Date(Date.UTC(year, month - 1, day))
+  return asUtc.getUTCFullYear() === year && asUtc.getUTCMonth() + 1 === month && asUtc.getUTCDate() === day
+}
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
@@ -258,8 +273,8 @@ export function validateClaims(input: unknown): ValidationResult<Claim[]> {
     requireEnum(rawClaim, 'sourceAuthority', AUTHORITIES, where, errors)
 
     const retrievedAt = requireString(rawClaim, 'retrievedAt', where, errors)
-    if (retrievedAt !== '' && !ISO_DATE.test(retrievedAt)) {
-      errors.push(`${where}: "retrievedAt" must be an ISO 8601 date, got "${retrievedAt}"`)
+    if (retrievedAt !== '' && !isRealCalendarDate(retrievedAt)) {
+      errors.push(`${where}: "retrievedAt" must be a real ISO 8601 calendar date, got "${retrievedAt}"`)
     }
 
     const value = rawClaim.value

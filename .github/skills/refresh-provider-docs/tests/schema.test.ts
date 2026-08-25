@@ -49,6 +49,28 @@ describe('claim schema', () => {
     ])
     expect(result.ok).toBe(false)
   })
+
+  test('rejects an impossible calendar date that JavaScript would silently roll forward', () => {
+    const claim = (retrievedAt: string) => [
+      {
+        id: 'x',
+        provider: 'testprov',
+        primitive: 'hooks',
+        aspect: 'location',
+        value: '.testprov/hooks.json',
+        sourceId: 'testprov.hooks',
+        sourceUrl: 'https://docs.example.com/testprov/hooks',
+        sourceAuthority: 'primary',
+        retrievedAt,
+      },
+    ]
+    expect(validateClaims(claim('2026-02-31')).ok).toBe(false)
+    expect(validateClaims(claim('2026-13-01')).ok).toBe(false)
+    expect(validateClaims(claim('2025-02-29')).ok).toBe(false)
+    expect(validateClaims(claim('2024-02-29')).ok).toBe(true)
+    expect(validateClaims(claim('2026-08-25T06:08:01.937Z')).ok).toBe(true)
+    expect(validateClaims(claim('2026-08-25T23:00:00-05:00')).ok).toBe(true)
+  })
 })
 
 describe('registry schema', () => {
