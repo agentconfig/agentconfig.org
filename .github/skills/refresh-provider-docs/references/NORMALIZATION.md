@@ -40,6 +40,8 @@ Values are canonicalized before comparison: trimmed, whitespace collapsed, backt
 
 A claim must cite the registered page itself. The comparison accepts the exact registered URL, its `.md` variant, and a fragment on that page, and rejects any other URL, including a descendant path, so evidence about one page can never be recorded against another.
 
+Freshness applies to every primary claim behind a value, not only the one the comparison happens to pick, so ordering cannot decide whether stale evidence is caught. A future retrieval date is rejected outright rather than treated as permanently fresh.
+
 Authority belongs to the registry, not to the claim. A claim records the authority it believes it is citing, and the comparison rejects it as `ambiguous` when that disagrees with the registered source. Without this, a claim citing a registered secondary source could label itself `primary` and pass the primary-source gate all the way to `confirmed`.
 
 `AGENTS.md or .github/copilot-instructions.md` and `[".github/copilot-instructions.md", "AGENTS.md"]` compare equal. `.cursor/rules/*.mdc` and `.cursor/rules/*.md` do not.

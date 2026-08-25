@@ -139,8 +139,21 @@ describe('fail-closed behavior', () => {
     expect(finding.detail).toContain('contradicts itself')
   })
 
+  test('catches stale evidence regardless of which agreeing claim comes first', () => {
+    const finding = run('stale-partner.json').findings[0]!
+    expect(finding.status).toBe('ambiguous')
+    expect(finding.claimId).toBe('c.stale-partner')
+    expect(finding.detail).toContain('freshness limit')
+  })
+
+  test('rejects a future retrieval date rather than treating it as permanently fresh', () => {
+    const finding = run('future-dated.json').findings[0]!
+    expect(finding.status).toBe('ambiguous')
+    expect(finding.detail).toContain('future retrieval date')
+  })
+
   test('every ambiguous finding asks for a human', () => {
-    for (const name of ['conflicting.json', 'secondary-only.json', 'stale.json', 'unregistered-source.json', 'url-mismatch.json', 'provider-mismatch.json', 'site-inconsistent.json', 'authority-mislabeled.json']) {
+    for (const name of ['conflicting.json', 'secondary-only.json', 'stale.json', 'unregistered-source.json', 'url-mismatch.json', 'provider-mismatch.json', 'site-inconsistent.json', 'authority-mislabeled.json', 'stale-partner.json', 'future-dated.json']) {
       for (const finding of run(name).findings) {
         expect(finding.action).toBe('human-review')
       }

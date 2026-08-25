@@ -162,11 +162,32 @@ export function compareClaims(
       continue
     }
 
-    const age = ageInDays(representative.retrievedAt, now)
+    // Freshness applies to every primary claim in the group, not just the one
+    // that happened to be chosen as representative: with two agreeing primary
+    // claims, ordering would otherwise decide whether stale evidence is
+    // caught. A future retrieval date is rejected outright, since a negative
+    // age would otherwise stay under the limit forever.
+    const primaryClaims = group.filter((claim) => authorityOf(claim) === 'primary')
+    const futureClaim = primaryClaims.find((claim) => ageInDays(claim.retrievedAt, now) < 0)
+    if (futureClaim) {
+      findings.push(
+        makeFinding(
+          futureClaim,
+          'ambiguous',
+          'human-review',
+          `Evidence carries a future retrieval date (${futureClaim.retrievedAt}), so its freshness cannot be established; record the date the source was actually retrieved.`,
+          null,
+        ),
+      )
+      continue
+    }
+
+    const stalest = primaryClaims.reduce((worst, claim) => (ageInDays(claim.retrievedAt, now) > ageInDays(worst.retrievedAt, now) ? claim : worst))
+    const age = ageInDays(stalest.retrievedAt, now)
     if (age > maxAge) {
       findings.push(
         makeFinding(
-          representative,
+          stalest,
           'ambiguous',
           'human-review',
           `Evidence was retrieved ${Math.round(age)} days ago, beyond the ${maxAge}-day freshness limit; retrieve it again before publishing.`,
