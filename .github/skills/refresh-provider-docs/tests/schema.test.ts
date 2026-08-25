@@ -122,6 +122,14 @@ describe('canonicalize', () => {
   test('still sorts set-valued aspects', () => {
     expect(canonicalize(['b', 'a'], 'location')).toBe(canonicalize(['a', 'b'], 'location'))
   })
+
+  test('keeps case for path-bearing aspects, where case decides the file', () => {
+    expect(canonicalize('AGENTS.md', 'location')).not.toBe(canonicalize('agents.md', 'location'))
+  })
+
+  test('still folds case for prose-valued aspects', () => {
+    expect(canonicalize('Lifecycle hooks', 'artifact')).toBe(canonicalize('lifecycle hooks', 'artifact'))
+  })
 })
 
 describe('secondary source notes', () => {

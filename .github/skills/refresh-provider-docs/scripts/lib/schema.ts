@@ -41,6 +41,13 @@ export const ASPECTS = [
  */
 export const ORDERED_ASPECTS = ['precedence'] as const
 
+/**
+ * Aspects whose values are filesystem paths. Case folding these would hide
+ * real drift: on a case-sensitive filesystem `AGENTS.md` and `agents.md` are
+ * different files, so they must not compare equal.
+ */
+export const CASE_SENSITIVE_ASPECTS = ['location'] as const
+
 export const AUTHORITIES = ['primary', 'secondary'] as const
 export const SUPPORT_LEVELS = ['full', 'partial', 'diy', 'none'] as const
 export const COVERAGE_LEVELS = ['tracked', 'candidate'] as const
@@ -278,21 +285,23 @@ export function validateClaims(input: unknown): ValidationResult<Claim[]> {
  *
  * Set-valued aspects are sorted so that listing order is not mistaken for a
  * change. Ordered aspects keep the documented sequence, because for those the
- * order is the claim.
+ * order is the claim. Path-bearing aspects keep their case, because a path is
+ * only the same path when its case matches.
  */
 export function canonicalize(value: string | string[], aspect?: Aspect): string {
   const preserveOrder = aspect !== undefined && (ORDERED_ASPECTS as readonly string[]).includes(aspect)
+  const preserveCase = aspect !== undefined && (CASE_SENSITIVE_ASPECTS as readonly string[]).includes(aspect)
   const parts = Array.isArray(value) ? value : [value]
   const normalized = parts
     .flatMap((part) => part.split(/\s*(?:,|\bor\b)\s*/i))
-    .map((part) =>
-      part
+    .map((part) => {
+      const trimmed = part
         .trim()
         .replace(/\s+/g, ' ')
         .replace(/[.;]+$/, '')
         .replace(/^[`'"]|[`'"]$/g, '')
-        .toLowerCase(),
-    )
+      return preserveCase ? trimmed : trimmed.toLowerCase()
+    })
     .filter((part) => part !== '')
   return (preserveOrder ? normalized : normalized.sort()).join(' | ')
 }

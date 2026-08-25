@@ -120,6 +120,13 @@ describe('fail-closed behavior', () => {
     expect(fragment.status).toBe('confirmed')
   })
 
+  test('rejects a claim that labels a registered secondary source as primary', () => {
+    const finding = run('authority-mislabeled.json').findings[0]!
+    expect(finding.status).toBe('ambiguous')
+    expect(finding.action).toBe('human-review')
+    expect(finding.detail).toContain('the registry records it as secondary')
+  })
+
   test('rejects a source borrowed from another provider', () => {
     const finding = run('provider-mismatch.json').findings[0]!
     expect(finding.status).toBe('ambiguous')
@@ -133,11 +140,19 @@ describe('fail-closed behavior', () => {
   })
 
   test('every ambiguous finding asks for a human', () => {
-    for (const name of ['conflicting.json', 'secondary-only.json', 'stale.json', 'unregistered-source.json', 'url-mismatch.json', 'provider-mismatch.json', 'site-inconsistent.json']) {
+    for (const name of ['conflicting.json', 'secondary-only.json', 'stale.json', 'unregistered-source.json', 'url-mismatch.json', 'provider-mismatch.json', 'site-inconsistent.json', 'authority-mislabeled.json']) {
       for (const finding of run(name).findings) {
         expect(finding.action).toBe('human-review')
       }
     }
+  })
+
+  test('flags an unsupported finding that still requires a site edit', () => {
+    const result = run('unsupported-only.json')
+    expect(result.counts.unsupported).toBe(1)
+    expect(result.counts.changed).toBe(0)
+    expect(result.findings[0]!.action).toBe('update-site-data')
+    expect(result.needsAction).toBe(true)
   })
 })
 
@@ -192,5 +207,35 @@ describe('evidence report', () => {
     expect(escaped).toContain('\\<name\\>')
     expect(escaped).toContain('\\*.md')
     expect(escaped).toContain('\\_rules')
+  })
+
+  test('escapes documented paths in the detail bullets too, not only in the table', () => {
+    const escaped = renderReport(
+      {
+        findings: [
+          {
+            claimId: 'c.detail',
+            provider: 'testprov',
+            primitive: 'skills',
+            aspect: 'location',
+            status: 'changed',
+            action: 'update-site-data',
+            siteValue: null,
+            documentedValue: null,
+            sourceUrl: null,
+            sourceAuthority: null,
+            retrievedAt: null,
+            detail: 'Primary source says "<name>/SKILL.md and .cursor/rules/*.mdc".',
+          },
+        ],
+        counts: { confirmed: 0, changed: 1, ambiguous: 0, unsupported: 0 },
+        unverifiedSiteEntries: 0,
+        needsAction: true,
+      },
+      { generatedAt: '2026-08-26T00:00:00Z', registryVersion: 1, claimCount: 1 },
+    )
+    const bullet = escaped.split('\n').find((line) => line.startsWith('- `c.detail`'))!
+    expect(bullet).toContain('\\<name\\>')
+    expect(bullet).toContain('\\*.mdc')
   })
 })

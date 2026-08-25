@@ -36,9 +36,11 @@ Aspects marked "not modeled" are not defects in the claim. They produce `extend-
 
 ## Comparison rules
 
-Values are canonicalized before comparison: trimmed, whitespace collapsed, backticks and quotes stripped, trailing punctuation removed, lowercased, and split on commas and the word "or". Set-valued aspects are then sorted, so listing order does not read as drift while a genuinely different path still does. Ordered aspects — currently `precedence` — keep the documented sequence, because for those the order is the claim: two official sources that document different precedence orders must surface as `ambiguous` rather than canonicalizing to the same string.
+Values are canonicalized before comparison: trimmed, whitespace collapsed, backticks and quotes stripped, trailing punctuation removed, and split on commas and the word "or". Set-valued aspects are then sorted, so listing order does not read as drift while a genuinely different path still does. Ordered aspects — currently `precedence` — keep the documented sequence, because for those the order is the claim: two official sources that document different precedence orders must surface as `ambiguous` rather than canonicalizing to the same string. Path-bearing aspects — currently `location` — keep their case, because `AGENTS.md` and `agents.md` name different files on a case-sensitive filesystem. Every other aspect is case-folded, since prose case is formatting rather than meaning.
 
 A claim must cite the registered page itself. The comparison accepts the exact registered URL, its `.md` variant, and a fragment on that page, and rejects any other URL, including a descendant path, so evidence about one page can never be recorded against another.
+
+Authority belongs to the registry, not to the claim. A claim records the authority it believes it is citing, and the comparison rejects it as `ambiguous` when that disagrees with the registered source. Without this, a claim citing a registered secondary source could label itself `primary` and pass the primary-source gate all the way to `confirmed`.
 
 `AGENTS.md or .github/copilot-instructions.md` and `[".github/copilot-instructions.md", "AGENTS.md"]` compare equal. `.cursor/rules/*.mdc` and `.cursor/rules/*.md` do not.
 

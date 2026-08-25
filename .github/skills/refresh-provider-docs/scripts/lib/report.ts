@@ -18,16 +18,19 @@ const STATUS_NOTE: Record<FindingStatus, string> = {
 }
 
 /**
- * Table cells carry documented paths such as `.cursor/rules/*.mdc` and
- * `<name>`. Without escaping, Markdown renders the globs as emphasis and the
- * angle brackets as HTML, silently deleting characters from the very paths the
- * report exists to report accurately.
+ * Documented values carry paths such as `.cursor/rules/*.mdc` and `<name>`.
+ * Without escaping, Markdown renders the globs as emphasis and the angle
+ * brackets as HTML, silently deleting characters from the very paths the
+ * report exists to report accurately. This applies to prose detail as much as
+ * to table cells.
  */
+function escapeInline(value: string): string {
+  return value.replace(/\n+/g, ' ').replace(/[\\`*_[\]<>&|]/g, (character) => `\\${character}`)
+}
+
 function escapeCell(value: string | null): string {
   if (value === null || value === '') return '—'
-  return value
-    .replace(/\n+/g, ' ')
-    .replace(/[\\`*_[\]<>&|]/g, (character) => `\\${character}`)
+  return escapeInline(value)
 }
 
 function findingRow(finding: Finding): string {
@@ -83,7 +86,7 @@ export function renderReport(result: CompareResult, options: ReportOptions = {})
     for (const finding of rows) lines.push(findingRow(finding))
     lines.push('')
     for (const finding of rows) {
-      lines.push(`- \`${finding.claimId}\`: ${finding.detail}`)
+      lines.push(`- \`${finding.claimId}\`: ${escapeInline(finding.detail)}`)
     }
     lines.push('')
   }

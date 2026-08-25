@@ -1,0 +1,3 @@
+[
+  { "id": "c.mislabeled", "provider": "testprov", "primitive": "persistent-instructions", "aspect": "location", "value": "BLOG.md", "sourceId": "testprov.blog", "sourceUrl": "https://blog.example.com/testprov-announcement", "sourceAuthority": "primary", "retrievedAt": "2026-08-25" }
+]

@@ -93,7 +93,7 @@ Each finding carries one of four statuses:
 | `ambiguous` | The comparison cannot be settled deterministically | A person reads the cited sources and decides |
 | `unsupported` | Documentation states the capability is unavailable | Do not publish a capability claim |
 
-Exit codes: `0` clean, `1` fail-closed error, `2` findings require action. The scheduled refresh keys off exit code `2`.
+Exit codes: `0` clean, `1` fail-closed error, `2` findings require action. Exit `2` means any finding carries an action other than `none`, including an `unsupported` finding that still requires a site edit, so a scheduled refresh cannot miss one. The scheduled refresh keys off exit code `2`.
 
 ### 4. Act on the findings
 

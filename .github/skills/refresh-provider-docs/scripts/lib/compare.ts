@@ -95,8 +95,45 @@ export function compareClaims(
   }
 
   for (const [key, group] of groups) {
+    // Verify every citation against the registry before any value is trusted.
+    // Authority is a property of the registered source, not something a claim
+    // may assert about itself: a claim citing a registered secondary source
+    // could otherwise label itself primary and reach `confirmed`.
+    let citationProblem: Finding | null = null
+    for (const claim of group) {
+      const source = loaded.sourceById.get(claim.sourceId)
+      if (!source) {
+        citationProblem = makeFinding(claim, 'ambiguous', 'human-review', `Source "${claim.sourceId}" is not in the registry, so its authority cannot be established.`, null)
+        break
+      }
+      if (source.provider !== claim.provider) {
+        citationProblem = makeFinding(claim, 'ambiguous', 'human-review', `Source "${claim.sourceId}" belongs to provider "${source.provider}" but the claim is about "${claim.provider}".`, null)
+        break
+      }
+      if (!sourceUrlMatchesRegistry(claim.sourceUrl, source.url)) {
+        citationProblem = makeFinding(claim, 'ambiguous', 'human-review', `Claim URL ${claim.sourceUrl} does not match registered source URL ${source.url}.`, null)
+        break
+      }
+      if (claim.sourceAuthority !== source.authority) {
+        citationProblem = makeFinding(
+          claim,
+          'ambiguous',
+          'human-review',
+          `The claim labels source "${claim.sourceId}" as ${claim.sourceAuthority}, but the registry records it as ${source.authority}. Authority is decided by the registry, not by the claim.`,
+          null,
+        )
+        break
+      }
+    }
+
+    if (citationProblem) {
+      findings.push(citationProblem)
+      continue
+    }
+
+    const authorityOf = (claim: Claim): 'primary' | 'secondary' => loaded.sourceById.get(claim.sourceId)!.authority
     const distinctValues = new Set(group.map((claim) => canonicalize(claim.value, claim.aspect)))
-    const representative = group.find((claim) => claim.sourceAuthority === 'primary') ?? group[0]!
+    const representative = group.find((claim) => authorityOf(claim) === 'primary') ?? group[0]!
 
     if (distinctValues.size > 1) {
       const citations = group.map((claim) => `${displayValue(claim.value)} (${claim.sourceUrl})`).join(' vs ')
@@ -112,53 +149,13 @@ export function compareClaims(
       continue
     }
 
-    if (!group.some((claim) => claim.sourceAuthority === 'primary')) {
+    if (!group.some((claim) => authorityOf(claim) === 'primary')) {
       findings.push(
         makeFinding(
           representative,
           'ambiguous',
           'human-review',
           'Only secondary sources support this claim; a primary source is required before publishing it.',
-          null,
-        ),
-      )
-      continue
-    }
-
-    const registered = loaded.sourceById.get(representative.sourceId)
-    if (!registered) {
-      findings.push(
-        makeFinding(
-          representative,
-          'ambiguous',
-          'human-review',
-          `Source "${representative.sourceId}" is not in the registry, so its authority cannot be established.`,
-          null,
-        ),
-      )
-      continue
-    }
-
-    if (registered.provider !== representative.provider) {
-      findings.push(
-        makeFinding(
-          representative,
-          'ambiguous',
-          'human-review',
-          `Source "${representative.sourceId}" belongs to provider "${registered.provider}" but the claim is about "${representative.provider}".`,
-          null,
-        ),
-      )
-      continue
-    }
-
-    if (!sourceUrlMatchesRegistry(representative.sourceUrl, registered.url)) {
-      findings.push(
-        makeFinding(
-          representative,
-          'ambiguous',
-          'human-review',
-          `Claim URL ${representative.sourceUrl} does not match registered source URL ${registered.url}.`,
           null,
         ),
       )
@@ -302,6 +299,6 @@ export function compareClaims(
     findings,
     counts,
     unverifiedSiteEntries,
-    needsAction: counts.changed > 0 || counts.ambiguous > 0,
+    needsAction: findings.some((finding) => finding.action !== 'none'),
   }
 }
