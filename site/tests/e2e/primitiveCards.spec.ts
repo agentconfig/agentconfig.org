@@ -34,7 +34,7 @@ test.describe('Primitive Cards', () => {
 
     // Should see instruction primitives
     await expect(page.getByRole('heading', { name: 'Persistent Instructions' })).toBeVisible()
-    await expect(page.getByRole('heading', { name: 'Path-Scoped Rules' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Directory / Path Scope Instructions' })).toBeVisible()
 
     // Should NOT see procedures primitives
     await expect(page.getByRole('heading', { name: 'Slash Commands' })).not.toBeVisible()
@@ -144,9 +144,14 @@ test.describe('Primitive Cards', () => {
   })
 
   test('should show category counts in filter tabs', async ({ page }) => {
-    // Check that layer tabs show counts (except All)
-    await expect(page.getByRole('tab', { name: /Instructions.*\(2\)/i })).toBeVisible()
+    // Check that every layer tab shows its actual count (except All).
+    await expect(page.getByRole('tab', { name: /Instructions.*\(3\)/i })).toBeVisible()
     await expect(page.getByRole('tab', { name: /Procedures.*\(2\)/i })).toBeVisible()
+    await expect(page.getByRole('tab', { name: /Tools & Context.*\(1\)/i })).toBeVisible()
+    await expect(page.getByRole('tab', { name: /Delegation.*\(2\)/i })).toBeVisible()
     await expect(page.getByRole('tab', { name: /Control & Approval.*\(3\)/i })).toBeVisible()
+    await expect(page.getByRole('tab', { name: /Memory & State.*\(0\)/i })).toBeVisible()
+    await expect(page.getByRole('tab', { name: /Distribution.*\(1\)/i })).toBeVisible()
+    await expect(page.getByRole('tab', { name: /Verification & Observability.*\(1\)/i })).toBeVisible()
   })
 })

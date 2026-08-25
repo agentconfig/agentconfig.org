@@ -4,7 +4,13 @@
     "provider": "copilot",
     "primitive": "skills",
     "aspect": "location",
-    "value": [".github/skills", ".claude/skills", ".agents/skills", "~/.copilot/skills", "~/.agents/skills"],
+    "value": [
+      ".github/skills",
+      ".claude/skills",
+      ".agents/skills",
+      "~/.copilot/skills",
+      "~/.agents/skills"
+    ],
     "sourceId": "copilot.about-agent-skills",
     "sourceUrl": "https://docs.github.com/en/copilot/concepts/agents/about-agent-skills",
     "sourceAuthority": "primary",
@@ -16,7 +22,10 @@
     "provider": "copilot",
     "primitive": "hooks",
     "aspect": "location",
-    "value": [".github/hooks/*.json", "~/.copilot/hooks/*.json"],
+    "value": [
+      ".github/hooks/*.json",
+      "~/.copilot/hooks/*.json"
+    ],
     "sourceId": "copilot.about-hooks",
     "sourceUrl": "https://docs.github.com/en/copilot/concepts/agents/hooks",
     "sourceAuthority": "primary",
@@ -28,7 +37,17 @@
     "provider": "copilot",
     "primitive": "hooks",
     "aspect": "lifecycle-events",
-    "value": ["sessionStart", "sessionEnd", "userPromptSubmitted", "preToolUse", "postToolUse", "postToolUseFailure", "errorOccurred", "agentStop", "subagentStop"],
+    "value": [
+      "sessionStart",
+      "sessionEnd",
+      "userPromptSubmitted",
+      "preToolUse",
+      "postToolUse",
+      "postToolUseFailure",
+      "errorOccurred",
+      "agentStop",
+      "subagentStop"
+    ],
     "sourceId": "copilot.hooks-reference",
     "sourceUrl": "https://docs.github.com/en/copilot/reference/hooks-reference",
     "sourceAuthority": "primary",
@@ -40,7 +59,10 @@
     "provider": "copilot",
     "primitive": "hooks",
     "aspect": "surfaces",
-    "value": ["Copilot CLI", "Copilot cloud agent"],
+    "value": [
+      "Copilot CLI",
+      "Copilot cloud agent"
+    ],
     "sourceId": "copilot.about-hooks",
     "sourceUrl": "https://docs.github.com/en/copilot/concepts/agents/hooks",
     "sourceAuthority": "primary",
@@ -51,7 +73,10 @@
     "provider": "copilot",
     "primitive": "persistent-instructions",
     "aspect": "location",
-    "value": ["AGENTS.md", ".github/copilot-instructions.md"],
+    "value": [
+      "AGENTS.md",
+      ".github/copilot-instructions.md"
+    ],
     "sourceId": "copilot.repository-instructions",
     "sourceUrl": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions",
     "sourceAuthority": "primary",
@@ -73,7 +98,10 @@
     "provider": "copilot",
     "primitive": "scope-specific-instructions",
     "aspect": "location",
-    "value": ["subdir/AGENTS.md", ".github/instructions/*.instructions.md"],
+    "value": [
+      "subdir/AGENTS.md",
+      ".github/instructions/*.instructions.md"
+    ],
     "sourceId": "copilot.repository-instructions",
     "sourceUrl": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions",
     "sourceAuthority": "primary",
@@ -84,7 +112,10 @@
     "provider": "claude",
     "primitive": "persistent-instructions",
     "aspect": "location",
-    "value": ["./CLAUDE.md", "./.claude/CLAUDE.md"],
+    "value": [
+      "./CLAUDE.md",
+      "./.claude/CLAUDE.md"
+    ],
     "sourceId": "claude.memory",
     "sourceUrl": "https://code.claude.com/docs/en/memory",
     "sourceAuthority": "primary",
@@ -96,7 +127,12 @@
     "provider": "claude",
     "primitive": "persistent-instructions",
     "aspect": "scope",
-    "value": ["managed policy", "user at ~/.claude/CLAUDE.md", "project at ./CLAUDE.md", "local at ./CLAUDE.local.md"],
+    "value": [
+      "managed policy",
+      "user at ~/.claude/CLAUDE.md",
+      "project at ./CLAUDE.md",
+      "local at ./CLAUDE.local.md"
+    ],
     "sourceId": "claude.memory",
     "sourceUrl": "https://code.claude.com/docs/en/memory",
     "sourceAuthority": "primary",
@@ -108,7 +144,11 @@
     "provider": "claude",
     "primitive": "hooks",
     "aspect": "location",
-    "value": [".claude/settings.json", "~/.claude/settings.json", ".claude/settings.local.json"],
+    "value": [
+      ".claude/settings.json",
+      "~/.claude/settings.json",
+      ".claude/settings.local.json"
+    ],
     "sourceId": "claude.hooks",
     "sourceUrl": "https://code.claude.com/docs/en/hooks",
     "sourceAuthority": "primary",
@@ -131,7 +171,10 @@
     "provider": "claude",
     "primitive": "tool-integrations",
     "aspect": "location",
-    "value": [".mcp.json", "~/.claude.json"],
+    "value": [
+      ".mcp.json",
+      "~/.claude.json"
+    ],
     "sourceId": "claude.mcp",
     "sourceUrl": "https://code.claude.com/docs/en/mcp",
     "sourceAuthority": "primary",
@@ -143,7 +186,10 @@
     "provider": "claude",
     "primitive": "skills",
     "aspect": "location",
-    "value": [".claude/skills/<name>/SKILL.md", "~/.claude/skills/<name>/SKILL.md"],
+    "value": [
+      ".claude/skills/<name>/SKILL.md",
+      "~/.claude/skills/<name>/SKILL.md"
+    ],
     "sourceId": "claude.skills",
     "sourceUrl": "https://code.claude.com/docs/en/skills",
     "sourceAuthority": "primary",
@@ -177,7 +223,12 @@
     "provider": "codex",
     "primitive": "hooks",
     "aspect": "location",
-    "value": ["~/.codex/hooks.json", "<repo>/.codex/hooks.json", "~/.codex/config.toml", "<repo>/.codex/config.toml"],
+    "value": [
+      "~/.codex/hooks.json",
+      "<repo>/.codex/hooks.json",
+      "~/.codex/config.toml",
+      "<repo>/.codex/config.toml"
+    ],
     "sourceId": "codex.hooks",
     "sourceUrl": "https://developers.openai.com/codex/hooks",
     "sourceAuthority": "primary",
@@ -189,7 +240,19 @@
     "provider": "codex",
     "primitive": "hooks",
     "aspect": "lifecycle-events",
-    "value": ["SessionStart", "SessionEnd", "SubagentStart", "SubagentStop", "UserPromptSubmit", "PreToolUse", "PostToolUse", "PermissionRequest", "PreCompact", "PostCompact", "Stop"],
+    "value": [
+      "SessionStart",
+      "SessionEnd",
+      "SubagentStart",
+      "SubagentStop",
+      "UserPromptSubmit",
+      "PreToolUse",
+      "PostToolUse",
+      "PermissionRequest",
+      "PreCompact",
+      "PostCompact",
+      "Stop"
+    ],
     "sourceId": "codex.hooks",
     "sourceUrl": "https://developers.openai.com/codex/hooks",
     "sourceAuthority": "primary",
@@ -201,7 +264,10 @@
     "provider": "codex",
     "primitive": "persistent-instructions",
     "aspect": "location",
-    "value": ["AGENTS.md", "~/.codex/AGENTS.md"],
+    "value": [
+      "AGENTS.md",
+      "~/.codex/AGENTS.md"
+    ],
     "sourceId": "codex.agents-md",
     "sourceUrl": "https://developers.openai.com/codex/agent-configuration/agents-md",
     "sourceAuthority": "primary",
@@ -212,7 +278,10 @@
     "provider": "codex",
     "primitive": "custom-agents",
     "aspect": "location",
-    "value": [".codex/agents/*.toml", "~/.codex/agents"],
+    "value": [
+      ".codex/agents/*.toml",
+      "~/.codex/agents"
+    ],
     "sourceId": "codex.subagents",
     "sourceUrl": "https://developers.openai.com/codex/agent-configuration/subagents",
     "sourceAuthority": "primary",
@@ -251,5 +320,101 @@
     "sourceAuthority": "primary",
     "retrievedAt": "2026-08-25",
     "notes": "Gemini CLI calls this the context file and the name is configurable."
+  },
+  {
+    "id": "copilot.runtime-sandbox.support",
+    "provider": "copilot",
+    "primitive": "runtime-sandbox",
+    "aspect": "support",
+    "value": "partial",
+    "sourceId": "copilot.customize-firewall",
+    "sourceUrl": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-the-firewall",
+    "sourceAuthority": "primary",
+    "retrievedAt": "2026-08-25",
+    "notes": "The managed firewall constrains network access for the coding agent's Bash tool inside GitHub Actions; it does not cover MCP servers, user-initiated processes, or filesystem/command sandboxing generally."
+  },
+  {
+    "id": "claude.runtime-sandbox.support",
+    "provider": "claude",
+    "primitive": "runtime-sandbox",
+    "aspect": "support",
+    "value": "full",
+    "sourceId": "claude.settings",
+    "sourceUrl": "https://code.claude.com/docs/en/settings",
+    "sourceAuthority": "primary",
+    "retrievedAt": "2026-08-25",
+    "notes": "Permission allow/deny/ask rules plus OS-level sandboxing (macOS Seatbelt, Linux, WSL2) are configured in .claude/settings.json."
+  },
+  {
+    "id": "cursor.runtime-sandbox.support",
+    "provider": "cursor",
+    "primitive": "runtime-sandbox",
+    "aspect": "support",
+    "value": "full",
+    "sourceId": "cursor.run-modes",
+    "sourceUrl": "https://cursor.com/docs/agent/security/run-modes",
+    "sourceAuthority": "primary",
+    "retrievedAt": "2026-08-25",
+    "notes": "Run Modes (Settings > Agents > Approvals & Execution) control approval and sandboxing for shell, MCP, and Fetch tool calls."
+  },
+  {
+    "id": "codex.runtime-sandbox.support",
+    "provider": "codex",
+    "primitive": "runtime-sandbox",
+    "aspect": "support",
+    "value": "full",
+    "sourceId": "codex.config-reference",
+    "sourceUrl": "https://developers.openai.com/codex/config-file/config-reference",
+    "sourceAuthority": "primary",
+    "retrievedAt": "2026-08-25",
+    "notes": "approval_policy, sandbox_mode, and sandbox_workspace_write.* keys in ~/.codex/config.toml control sandbox and approval behavior."
+  },
+  {
+    "id": "copilot.distribution.location",
+    "provider": "copilot",
+    "primitive": "distribution",
+    "aspect": "location",
+    "value": "AGENTS.md and .github/instructions/*.instructions.md",
+    "sourceId": "copilot.repository-instructions",
+    "sourceUrl": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions",
+    "sourceAuthority": "primary",
+    "retrievedAt": "2026-08-25",
+    "notes": "Repository and nested AGENTS.md files are shared instruction sources; path-scoped instructions files layer on top."
+  },
+  {
+    "id": "claude.distribution.location",
+    "provider": "claude",
+    "primitive": "distribution",
+    "aspect": "location",
+    "value": "AGENTS.md, CLAUDE.md, .claude/rules/*.md",
+    "sourceId": "claude.memory",
+    "sourceUrl": "https://code.claude.com/docs/en/memory",
+    "sourceAuthority": "primary",
+    "retrievedAt": "2026-08-25",
+    "notes": "Claude Code loads AGENTS.md/CLAUDE.md hierarchically, and scoped rules files layer additional path-based guidance."
+  },
+  {
+    "id": "cursor.distribution.location",
+    "provider": "cursor",
+    "primitive": "distribution",
+    "aspect": "location",
+    "value": ".cursor/instructions.md, .cursor/rules/*.mdc, .cursor/skills/*/SKILL.md",
+    "sourceId": "cursor.skills",
+    "sourceUrl": "https://cursor.com/docs/skills",
+    "sourceAuthority": "primary",
+    "retrievedAt": "2026-08-25",
+    "notes": "Cursor discovers skills from .cursor/skills (and legacy .claude/skills, .codex/skills) in addition to instructions.md and *.mdc rules."
+  },
+  {
+    "id": "codex.distribution.location",
+    "provider": "codex",
+    "primitive": "distribution",
+    "aspect": "location",
+    "value": "AGENTS.md, subdir/AGENTS.md, ~/.codex/AGENTS.md",
+    "sourceId": "codex.agents-md",
+    "sourceUrl": "https://developers.openai.com/codex/agent-configuration/agents-md",
+    "sourceAuthority": "primary",
+    "retrievedAt": "2026-08-25",
+    "notes": "Codex loads AGENTS.md hierarchically across user, repository, and subdirectory scope."
   }
 ]

@@ -168,7 +168,8 @@ export const comparisonData: ComparisonRow[] = [
     cursor: {
       level: 'full',
       implementation: 'Rules with path patterns',
-      location: '.cursor/rules/*.md',
+      location: '.cursor/rules/*.mdc',
+      sourceUrl: 'https://cursor.com/docs/context/rules',
     },
     codex: {
       level: 'full',
@@ -270,9 +271,10 @@ export const comparisonData: ComparisonRow[] = [
       location: '.cursor/hooks.json',
     },
     codex: {
-      level: 'partial',
-      implementation: 'Notify hooks for external program triggers',
-      location: '~/.codex/config.toml (notify)',
+      level: 'full',
+      implementation: 'Lifecycle hooks (session, subagent, prompt, tool, compaction events) via hooks.json or config.toml',
+      location: '~/.codex/hooks.json, <repo>/.codex/hooks.json, ~/.codex/config.toml, <repo>/.codex/config.toml',
+      sourceUrl: 'https://developers.openai.com/codex/hooks',
     },
   },
   {
@@ -280,23 +282,27 @@ export const comparisonData: ComparisonRow[] = [
     primitiveName: 'Runtime Sandbox',
     copilot: {
       level: 'partial',
-      implementation: 'Execution controls and policy constraints',
+      implementation: 'Policy and execution constraints in agent runtime and org settings',
       location: 'Copilot policy/settings surfaces',
+      sourceUrl: 'https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-the-firewall',
     },
     claude: {
       level: 'full',
       implementation: 'Sandboxing and command allow/deny controls',
       location: '.claude/settings.json',
+      sourceUrl: 'https://code.claude.com/docs/en/settings',
     },
     cursor: {
       level: 'full',
-      implementation: 'Approvals and runtime safety limits',
-      location: '.cursor/settings.json',
+      implementation: 'Run modes with sandboxing, plus allow/deny permissions',
+      location: 'Settings > Agents > Approvals & Execution + .cursor/cli-config.json',
+      sourceUrl: 'https://cursor.com/docs/agent/security/run-modes',
     },
     codex: {
       level: 'full',
-      implementation: 'Sandbox modes and approval policies',
+      implementation: 'Sandbox modes plus approval policies',
       location: '~/.codex/config.toml',
+      sourceUrl: 'https://developers.openai.com/codex/config-file/config-reference',
     },
   },
   {
@@ -304,23 +310,26 @@ export const comparisonData: ComparisonRow[] = [
     primitiveName: 'Configuration Distribution',
     copilot: {
       level: 'full',
-      implementation: 'Shared AGENTS.md with optional scoped instruction files',
-      location: 'AGENTS.md + .github/instructions/*.instructions.md',
+      implementation: 'Repository plus nested AGENTS.md with optional .instructions.md files',
+      location: 'AGENTS.md and .github/instructions/*.instructions.md',
+      sourceUrl: 'https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions',
     },
     claude: {
       level: 'full',
-      implementation: 'Shared AGENTS.md imported into CLAUDE.md plus rules',
-      location: 'AGENTS.md + CLAUDE.md + .claude/rules/*.md',
+      implementation: 'Shared AGENTS.md imported into CLAUDE.md plus scoped rules files',
+      location: 'AGENTS.md, CLAUDE.md, .claude/rules/*.md',
+      sourceUrl: 'https://code.claude.com/docs/en/memory',
     },
     cursor: {
       level: 'full',
-      implementation: 'Instructions, rules, and skill packages',
-      location: '.cursor/instructions.md + .cursor/rules/*.md',
+      implementation: 'Project instructions, rules, and reusable skills packages',
+      location: '.cursor/instructions.md, .cursor/rules/*.mdc, .cursor/skills/*/SKILL.md',
+      sourceUrl: 'https://cursor.com/docs/skills',
     },
     codex: {
       level: 'full',
-      implementation: 'Hierarchical AGENTS.md across user and repository scope',
-      location: 'AGENTS.md + subdir/AGENTS.md + ~/.codex/AGENTS.md',
+      implementation: 'Hierarchical AGENTS.md with user+repo layering',
+      location: 'AGENTS.md, subdir/AGENTS.md, ~/.codex/AGENTS.md',
     },
   },
   {

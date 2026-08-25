@@ -565,7 +565,7 @@ Before asking any questions, fetch the complete primitive documentation:
 
 This file contains all 11 AI primitives organized into three categories:
 - **Capability (Execution):** Agent Mode, Skills, Tool Integrations (MCP)
-- **Customization (Instructions):** Persistent Instructions, Global Instructions, Path-Scoped Rules, Slash Commands
+- **Customization (Instructions):** Persistent Instructions, User Scope Instructions, Directory/Path Scope Instructions, Slash Commands
 - **Control (Safety):** Custom Agents, Permissions & Guardrails, Lifecycle Hooks, Verification/Evals
 
 ## Step 2: Understand the User's Context
@@ -599,7 +599,7 @@ Based on their answers, recommend **3-5 primitives** in priority order.
 
 **Pain Point: "Inconsistent code style across AI-generated code"**
 → Start with: Persistent Instructions
-→ Next: Path-Scoped Rules (if monorepo/multi-language)
+→ Next: Directory/Path Scope Instructions (if monorepo/multi-language)
 → Combine with: Verification/Evals (to catch violations)
 
 **Pain Point: "Repeating the same prompts over and over"**

@@ -43,11 +43,11 @@ test.describe('Provider Comparison', () => {
     // Check for Full Support badges
     await expect(table.getByText('Full Support').first()).toBeVisible()
     // 13 rows x 4 providers: support counts vary by row.
-    // Full support: 49, partial: 2, not available: 1.
+    // Full support: 50, partial: 1, not available: 1.
     const fullSupportBadges = table.getByText('Full Support')
-    await expect(fullSupportBadges).toHaveCount(49)
+    await expect(fullSupportBadges).toHaveCount(50)
     const partialBadges = table.getByText('Partial')
-    await expect(partialBadges).toHaveCount(2)
+    await expect(partialBadges).toHaveCount(1)
     const notAvailableBadges = table.getByText('Not Available')
     await expect(notAvailableBadges).toHaveCount(1)
   })
