@@ -344,7 +344,8 @@ export function commandContainsForcePush(input) {
     token === '--force' ||
     token.startsWith('--force=') ||
     token === '--force-with-lease' ||
-    token.startsWith('--force-with-lease=')
+    token.startsWith('--force-with-lease=') ||
+    token.startsWith('+')
   )
 }
 
@@ -412,6 +413,23 @@ describe('hook policy', () => {
     }
 
     const decision = evaluatePolicy(normalizeCopilotEvent(forcePushFixture))
+
+    expect(decision).toEqual({
+      decision: 'block',
+      message: 'Force-push is disabled for agent runs. Ask for human approval first.',
+    })
+  })
+
+  it('blocks force refspecs before tool use', () => {
+    const forceRefspecFixture = {
+      event: 'preToolUse',
+      toolName: 'bash',
+      toolArgs: {
+        command: 'git push origin +main:main',
+      },
+    }
+
+    const decision = evaluatePolicy(normalizeCopilotEvent(forceRefspecFixture))
 
     expect(decision).toEqual({
       decision: 'block',
