@@ -47,6 +47,7 @@ async function loadData() {
     // Primitives & comparison (homepage)
     primitives: primitives.primitives,
     categories: primitives.categories,
+    scopeModel: primitives.scopeModel,
     comparisonData: comparison.comparisonData,
     // Skills tutorial
     tutorialSections: skillsTutorial.tutorialSections,
@@ -62,7 +63,7 @@ async function loadData() {
   }
 }
 
-function generateLlmsTxt(pages: readonly PageMeta[]): string {
+function generateLlmsTxt(pages: readonly PageMeta[], primitiveCount: number): string {
   // Generate pages list
   const pagesList = [
     '- [Homepage](https://agentconfig.org/): AI primitives reference, interactive file tree, provider comparison matrix',
@@ -78,7 +79,7 @@ function generateLlmsTxt(pages: readonly PageMeta[]): string {
   return `# agentconfig.org
 
 > A reference site for configuring AI coding assistants like GitHub Copilot, Claude Code, Cursor, and OpenAI Codex.
-> Covers 11 AI primitives, provider comparison, config file locations, and tutorials for
+> Covers ${primitiveCount} AI primitives, a scope model, provider comparison, config file locations, and tutorials for
 > skills, agent definitions, and MCP tool integrations.
 
 This file provides a table of contents. For complete content, see /llms-full.txt.
@@ -432,15 +433,18 @@ ${mcpFurtherReadingLinks.map((link: any) => `- [${link.title}](${link.url}): ${l
 }
 
 function generateLlmsFullTxt(data: Awaited<ReturnType<typeof loadData>>): string {
-  const { primitives, comparisonData, pages } = data
-  
+  const { primitives, categories, scopeModel, comparisonData, pages } = data
+
   // Build list of topics from registry
   const topicsList = pages.map(p => `- ${p.title}`).join('\n')
-  
+
+  // Layers to document, in display order, excluding the synthetic "all" filter tab
+  const layers = categories.filter((c: { id: string }) => c.id !== 'all')
+
   let content = `# agentconfig.org - Complete Site Content
 
 > This file contains the complete content of agentconfig.org for AI agents.
-> It includes all AI primitives, provider comparisons, config file locations,
+> It includes all AI primitives, the scope model, provider comparisons, config file locations,
 > and tutorials for skills, agent definitions, and MCP tool integrations.
 
 ## Site Overview
@@ -450,7 +454,8 @@ Claude Code, Cursor, and OpenAI Codex. The site helps developers understand and 
 configuration primitives to get consistent, high-quality assistance from AI tools.
 
 **Key Topics:**
-- 11 AI primitives for configuring agent behavior
+- ${primitives.length} AI primitives for configuring agent behavior, organized into ${layers.length} layers
+- A nine-entry scope model describing where each primitive applies (managed/org through tool invocation)
 - Provider comparison (GitHub Copilot, Claude Code, Cursor, OpenAI Codex)
 - Config file locations and hierarchy
 ${topicsList}
@@ -459,53 +464,48 @@ ${topicsList}
 
 # Part 1: AI Primitives
 
-The site documents 11 AI primitives organized into 3 categories:
-- **Capability (Execution)**: What the AI can do
-- **Customization (Instructions)**: How to shape AI behavior
-- **Control (Safety)**: How to constrain AI actions
+The site documents ${primitives.length} AI primitives organized into ${layers.length} layers:
+${layers.map((l: { name: string }) => `- **${l.name}**`).join('\n')}
+
+Scopes (managed/org, user, repository, local repository, directory/path, agent, session, turn,
+tool invocation) describe *where* a primitive applies. They are not primitives themselves — see
+the Scope Model section below.
 
 `
 
-  // Group primitives by category
-  const byCategory = {
-    execution: primitives.filter(p => p.category === 'execution'),
-    instructions: primitives.filter(p => p.category === 'instructions'),
-    safety: primitives.filter(p => p.category === 'safety'),
-  }
+  for (const layer of layers) {
+    const layerPrimitives = primitives.filter((p: { category: string }) => p.category === layer.id)
 
-  content += `## Capability Primitives (Execution)
-
-These primitives define what the AI can do.
+    content += `## ${layer.name}
 
 `
 
-  for (const p of byCategory.execution) {
-    content += formatPrimitive(p)
-  }
-
-  content += `## Customization Primitives (Instructions)
-
-These primitives shape how the AI behaves.
+    if (layerPrimitives.length === 0) {
+      content += `_No primitives are modeled in this layer yet. It is reserved for future primitives with genuinely distinct semantics for this layer._
 
 `
+      continue
+    }
 
-  for (const p of byCategory.instructions) {
-    content += formatPrimitive(p)
-  }
-
-  content += `## Control Primitives (Safety)
-
-These primitives constrain what the AI is allowed to do.
-
-`
-
-  for (const p of byCategory.safety) {
-    content += formatPrimitive(p)
+    for (const p of layerPrimitives) {
+      content += formatPrimitive(p)
+    }
   }
 
   content += `---
 
-# Part 2: Provider Comparison
+# Part 2: Scope Model
+
+Every primitive can apply at one or more of these scopes. Scopes describe *where* configuration
+lives and takes effect, not a new kind of primitive.
+
+| Scope | Example |
+|-------|---------|
+${scopeModel.map((s: { name: string; example: string }) => `| ${s.name} | ${s.example} |`).join('\n')}
+
+---
+
+# Part 3: Provider Comparison
 
 Support matrix comparing GitHub Copilot, Claude Code, Cursor, and OpenAI Codex:
 
@@ -526,44 +526,67 @@ Support matrix comparing GitHub Copilot, Claude Code, Cursor, and OpenAI Codex:
 
 **GitHub Copilot:**
 - Persistent Instructions: \`AGENTS.md\` or \`.github/copilot-instructions.md\`
-- Path-Scoped Rules: Nested \`AGENTS.md\` files or \`.github/instructions/*.instructions.md\`
+- User Scope Instructions: Personal Copilot settings (no repository file)
+- Directory / Path Scope Instructions: Nested \`AGENTS.md\` files or \`.github/instructions/*.instructions.md\`
+- Skills / Workflows: \`.github/skills/*/SKILL.md\`
 - Slash Commands: \`.github/prompts/*.prompt.md\`
+- Tool Integrations (MCP): \`.vscode/mcp.json\` or VS Code settings
+- Agent Mode: VS Code Copilot Chat (no file; a chat mode)
 - Custom Agents: \`.github/agents/*.agent.md\`
-- Skills: \`.github/skills/*/SKILL.md\`
-- Lifecycle Hooks: \`.github/hooks/*.json\`
+- Permissions & Guardrails: Repository/organization Copilot policies
+- Lifecycle Hooks: GitHub Actions workflows around the coding agent
+- Runtime Sandbox: Actions network firewall allowlist (Copilot coding agent)
+- Configuration Distribution: \`AGENTS.md\` plus nested \`.github/instructions/*.instructions.md\`
+- Verification / Evals: Terminal tools in agent mode
 
 **Claude Code:**
 - Persistent Instructions: \`CLAUDE.md\` (root) or \`.claude/CLAUDE.md\`
-- Global Instructions: \`~/.claude/CLAUDE.md\`
-- Path-Scoped Rules: \`.claude/rules/*.md\`
+- User Scope Instructions: \`~/.claude/CLAUDE.md\`
+- Directory / Path Scope Instructions: \`.claude/rules/*.md\`
+- Skills / Workflows: \`.claude/skills/*/SKILL.md\`
 - Slash Commands: \`.claude/commands/*.md\`
+- Tool Integrations (MCP): \`.mcp.json\` (project) or \`~/.claude.json\` (local/user)
+- Agent Mode: Claude Code CLI (agentic workflows)
 - Custom Agents: \`.claude/agents/*.md\`
-- Skills: \`.claude/skills/*/SKILL.md\`
+- Permissions & Guardrails: \`.claude/settings.json\` allow/deny/ask rules
 - Lifecycle Hooks: \`hooks\` in \`.claude/settings.json\`
-- MCP Settings: \`.mcp.json\` (project) or \`~/.claude.json\` (local/user)
+- Runtime Sandbox: Sandbox modes in \`.claude/settings.json\`
+- Configuration Distribution: \`AGENTS.md\` imported into \`CLAUDE.md\` plus \`.claude/rules/*.md\`
+- Verification / Evals: Bash tool with hooks
 
 **Cursor:**
 - Persistent Instructions: \`.cursor/instructions.md\`
-- Global Settings: \`~/.cursor/settings.json\`
-- Path-Scoped Rules: \`.cursor/rules/*.md\`
+- User Scope Instructions: \`~/.cursor/settings.json\`
+- Directory / Path Scope Instructions: \`.cursor/rules/*.mdc\`
+- Skills / Workflows: \`.cursor/skills/*/SKILL.md\`
 - Slash Commands: \`.cursor/commands/*.md\`
+- Tool Integrations (MCP): \`.cursor/mcp.json\`
+- Agent Mode: Cursor Editor with Agent capabilities
 - Custom Agents: \`.cursor/agents/*.md\`
-- Skills: \`.cursor/skills/*/SKILL.md\`
-- MCP Settings: \`.cursor/mcp.json\`
+- Permissions & Guardrails: Settings > Agents > Approvals & Execution
 - Lifecycle Hooks: \`.cursor/hooks.json\`
+- Runtime Sandbox: Settings > Agents > Approvals & Execution plus \`.cursor/cli-config.json\`
+- Configuration Distribution: \`.cursor/instructions.md\`, \`.cursor/rules/*.mdc\`, \`.cursor/skills/*/SKILL.md\`
+- Verification / Evals: Terminal commands in Agent mode
 
 **OpenAI Codex:**
 - Persistent Instructions: \`AGENTS.md\` (project root)
-- Global Instructions: \`~/.codex/AGENTS.md\`
-- Path-Scoped Rules: Nested \`AGENTS.md\` files in subdirectories
-- Global Config: \`~/.codex/config.toml\`
-- Skills: \`.codex/skills/*/SKILL.md\`
-- Command Rules: \`~/.codex/rules/*.rules\`
-- MCP Settings: \`~/.codex/config.toml\` (mcp_servers section)
+- User Scope Instructions: \`~/.codex/AGENTS.md\`
+- Directory / Path Scope Instructions: Nested \`AGENTS.md\` files in subdirectories
+- Skills / Workflows: \`.codex/skills/*/SKILL.md\`
+- Slash Commands: \`~/.codex/prompts/*.md\`
+- Tool Integrations (MCP): \`~/.codex/config.toml\` (\`mcp_servers\` section)
+- Agent Mode: Codex CLI (agentic coding)
+- Custom Agents: Not yet supported
+- Permissions & Guardrails: \`approval_policy\` in \`~/.codex/config.toml\`
+- Lifecycle Hooks: \`~/.codex/config.toml\` lifecycle notifications
+- Runtime Sandbox: \`sandbox_mode\` and \`sandbox_workspace_write.*\` in \`~/.codex/config.toml\`
+- Configuration Distribution: Hierarchical \`AGENTS.md\` with user + repo layering
+- Verification / Evals: Terminal tools in Codex CLI
 
 ---
 
-# Part 3: Skills Tutorial
+# Part 4: Skills Tutorial
 
 `
 
@@ -572,7 +595,7 @@ Support matrix comparing GitHub Copilot, Claude Code, Cursor, and OpenAI Codex:
   content += `
 ---
 
-# Part 4: Agent Definitions Tutorial
+# Part 5: Agent Definitions Tutorial
 
 `
 
@@ -581,7 +604,7 @@ Support matrix comparing GitHub Copilot, Claude Code, Cursor, and OpenAI Codex:
   content += `
 ---
 
-# Part 5: MCP Tool Integrations Tutorial
+# Part 6: MCP Tool Integrations Tutorial
 
 `
 
@@ -629,7 +652,7 @@ async function main() {
   const data = await loadData()
   
   console.log('Generating llms.txt...')
-  const llmsTxt = generateLlmsTxt(data.pages)
+  const llmsTxt = generateLlmsTxt(data.pages, data.primitives.length)
   writeFileSync(join(publicDir, 'llms.txt'), llmsTxt)
   
   console.log('Generating skills.md...')

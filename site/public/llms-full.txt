@@ -1,7 +1,7 @@
 # agentconfig.org - Complete Site Content
 
 > This file contains the complete content of agentconfig.org for AI agents.
-> It includes all AI primitives, provider comparisons, config file locations,
+> It includes all AI primitives, the scope model, provider comparisons, config file locations,
 > and tutorials for skills, agent definitions, and MCP tool integrations.
 
 ## Site Overview
@@ -11,7 +11,8 @@ Claude Code, Cursor, and OpenAI Codex. The site helps developers understand and 
 configuration primitives to get consistent, high-quality assistance from AI tools.
 
 **Key Topics:**
-- 11 AI primitives for configuring agent behavior
+- 13 AI primitives for configuring agent behavior, organized into 8 layers
+- A nine-entry scope model describing where each primitive applies (managed/org through tool invocation)
 - Provider comparison (GitHub Copilot, Claude Code, Cursor, OpenAI Codex)
 - Config file locations and hierarchy
 - Skills Tutorial
@@ -22,102 +23,27 @@ configuration primitives to get consistent, high-quality assistance from AI tool
 
 # Part 1: AI Primitives
 
-The site documents 11 AI primitives organized into 3 categories:
-- **Capability (Execution)**: What the AI can do
-- **Customization (Instructions)**: How to shape AI behavior
-- **Control (Safety)**: How to constrain AI actions
+The site documents 13 AI primitives organized into 8 layers:
+- **Instructions**
+- **Procedures**
+- **Tools & Context**
+- **Delegation**
+- **Control & Approval**
+- **Memory & State**
+- **Distribution**
+- **Verification & Observability**
 
-## Capability Primitives (Execution)
+Scopes (managed/org, user, repository, local repository, directory/path, agent, session, turn,
+tool invocation) describe *where* a primitive applies. They are not primitives themselves — see
+the Scope Model section below.
 
-These primitives define what the AI can do.
-
-### Agent Mode
-
-Multi-step execution with planning and tool use.
-
-**What it is:** A mode where the AI can plan and execute over multiple steps, often with tools (file edits, searches, running tests). Works until done, not just answers.
-
-**Use when:**
-- The task spans multiple files
-- You need iterative debugging
-- You want the system to keep working until done
-
-**Prevents:** "One-shot" incomplete solutions that require manual follow-up
-
-**Combine with:** Skills, Tools, Verification
-
-**Provider Implementations:**
-
-| Provider | Implementation | Location | Support | Source |
-|----------|---------------|----------|---------|--------|
-| GitHub Copilot | Agent mode in Copilot Chat | VS Code Copilot Chat | full | — |
-| Claude Code | Agentic workflows in Claude Code | Claude Code CLI | full | — |
-| Cursor | Cursor Agent mode for multi-step execution | Cursor Editor with Agent capabilities | full | — |
-| OpenAI Codex | Agentic coding with multi-step execution | Codex CLI | full | — |
-
----
-
-### Skills / Workflows
-
-Reusable multi-step procedures for common tasks.
-
-**What it is:** A packaged procedure the agent can follow ("triage incident", "fix failing CI", "refactor module safely"). Encodes best practices into repeatable workflows.
-
-**Use when:**
-- You want reliability and repeatability across runs
-- The work has a known process with good best practices
-- You want to encode expert knowledge
-
-**Prevents:** Ad-hoc flailing and missed steps in complex tasks
-
-**Combine with:** Agent Mode, Tools
-
-**Provider Implementations:**
-
-| Provider | Implementation | Location | Support | Source |
-|----------|---------------|----------|---------|--------|
-| GitHub Copilot | Skill modules in skills directory | .github/skills/*/SKILL.md | full | — |
-| Claude Code | Skill modules in .claude directory | .claude/skills/*/SKILL.md | full | — |
-| Cursor | Skill modules as portable, reusable packages | .cursor/skills/*/SKILL.md | full | — |
-| OpenAI Codex | Skill modules following agentskills.io specification | .codex/skills/*/SKILL.md | full | — |
-
----
-
-### Tool Integrations (MCP)
-
-External tools for retrieving facts and taking actions.
-
-**What it is:** The AI calling tools to retrieve facts or perform actions (search, DB query, GitHub, CI, observability). Grounds the AI in reality.
-
-**Use when:**
-- "Correct" depends on reality outside the model's weights
-- You need actions: create PRs, comment on issues, run tests
-- You want to query current state (logs, incidents)
-
-**Prevents:** Hallucinated facts and stale guidance
-
-**Combine with:** Guardrails, Verification
-
-**Provider Implementations:**
-
-| Provider | Implementation | Location | Support | Source |
-|----------|---------------|----------|---------|--------|
-| GitHub Copilot | MCP servers and tool calling | VS Code MCP settings | full | — |
-| Claude Code | MCP servers and tool calling | .mcp.json or ~/.claude.json | full | [Provider documentation](https://code.claude.com/docs/en/mcp) |
-| Cursor | MCP servers with stdio, SSE, and HTTP transports | .cursor/mcp.json | full | — |
-| OpenAI Codex | MCP servers with stdio and HTTP transports | ~/.codex/config.toml | full | — |
-
----
-
-## Customization Primitives (Instructions)
-
-These primitives shape how the AI behaves.
+## Instructions
 
 ### Persistent Instructions
 
 A durable set of norms that define "good" for your project.
 
-**What it is:** A durable set of norms: tone, coding standards, constraints, safety rules, and "definition of done." These form the behavioral contract that governs all AI interactions.
+**What it is:** A durable set of norms: tone, coding standards, constraints, safety rules, and "definition of done." These form the behavioral contract that governs all AI interactions. A common usage pattern is a root AGENTS.md plus nested AGENTS.md files where local constraints differ.
 
 **Use when:**
 - You want consistent behavior across many tasks
@@ -139,7 +65,7 @@ A durable set of norms that define "good" for your project.
 
 ---
 
-### Global Instructions
+### User Scope Instructions
 
 User-level preferences that apply across all projects.
 
@@ -165,7 +91,7 @@ User-level preferences that apply across all projects.
 
 ---
 
-### Path-Scoped Rules
+### Directory / Path Scope Instructions
 
 Instructions that apply only to specific file paths.
 
@@ -186,8 +112,36 @@ Instructions that apply only to specific file paths.
 |----------|---------------|----------|---------|--------|
 | GitHub Copilot | Nested AGENTS.md or applyTo instruction files | subdir/AGENTS.md or .github/instructions/*.instructions.md | full | [Provider documentation](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions) |
 | Claude Code | Rule files with globs frontmatter | .claude/rules/*.md | full | — |
-| Cursor | Rules with path patterns | .cursor/rules/*.md | full | — |
+| Cursor | Rules with path patterns | .cursor/rules/*.mdc | full | [Provider documentation](https://cursor.com/docs/context/rules) |
 | OpenAI Codex | Nested AGENTS.md files with hierarchical merge | subdir/AGENTS.md | full | — |
+
+---
+
+## Procedures
+
+### Skills / Workflows
+
+Reusable multi-step procedures for common tasks.
+
+**What it is:** A packaged procedure the agent can follow ("triage incident", "fix failing CI", "refactor module safely"). Encodes best practices into repeatable workflows.
+
+**Use when:**
+- You want reliability and repeatability across runs
+- The work has a known process with good best practices
+- You want to encode expert knowledge
+
+**Prevents:** Ad-hoc flailing and missed steps in complex tasks
+
+**Combine with:** Agent Mode, Tools
+
+**Provider Implementations:**
+
+| Provider | Implementation | Location | Support | Source |
+|----------|---------------|----------|---------|--------|
+| GitHub Copilot | Skill modules in skills directory | .github/skills/*/SKILL.md | full | — |
+| Claude Code | Skill modules in .claude directory | .claude/skills/*/SKILL.md | full | — |
+| Cursor | Skill modules as portable, reusable packages | .cursor/skills/*/SKILL.md | full | — |
+| OpenAI Codex | Skill modules following agentskills.io specification | .codex/skills/*/SKILL.md | full | — |
 
 ---
 
@@ -217,9 +171,61 @@ Repeatable prompts invoked via / commands.
 
 ---
 
-## Control Primitives (Safety)
+## Tools & Context
 
-These primitives constrain what the AI is allowed to do.
+### Tool Integrations (MCP)
+
+External tools for retrieving facts and taking actions.
+
+**What it is:** The AI calling tools to retrieve facts or perform actions (search, DB query, GitHub, CI, observability). Grounds the AI in reality.
+
+**Use when:**
+- "Correct" depends on reality outside the model's weights
+- You need actions: create PRs, comment on issues, run tests
+- You want to query current state (logs, incidents)
+
+**Prevents:** Hallucinated facts and stale guidance
+
+**Combine with:** Guardrails, Verification
+
+**Provider Implementations:**
+
+| Provider | Implementation | Location | Support | Source |
+|----------|---------------|----------|---------|--------|
+| GitHub Copilot | MCP servers and tool calling | VS Code MCP settings | full | — |
+| Claude Code | MCP servers and tool calling | .mcp.json or ~/.claude.json | full | [Provider documentation](https://code.claude.com/docs/en/mcp) |
+| Cursor | MCP servers with stdio, SSE, and HTTP transports | .cursor/mcp.json | full | — |
+| OpenAI Codex | MCP servers with stdio and HTTP transports | ~/.codex/config.toml | full | — |
+
+---
+
+## Delegation
+
+### Agent Mode
+
+Multi-step execution with planning and tool use.
+
+**What it is:** A mode where the AI can plan and execute over multiple steps, often with tools (file edits, searches, running tests). Works until done, not just answers.
+
+**Use when:**
+- The task spans multiple files
+- You need iterative debugging
+- You want the system to keep working until done
+
+**Prevents:** "One-shot" incomplete solutions that require manual follow-up
+
+**Combine with:** Skills, Tools, Verification
+
+**Provider Implementations:**
+
+| Provider | Implementation | Location | Support | Source |
+|----------|---------------|----------|---------|--------|
+| GitHub Copilot | Agent mode in Copilot Chat | VS Code Copilot Chat | full | — |
+| Claude Code | Agentic workflows in Claude Code | Claude Code CLI | full | — |
+| Cursor | Cursor Agent mode for multi-step execution | Cursor Editor with Agent capabilities | full | — |
+| OpenAI Codex | Agentic coding with multi-step execution | Codex CLI | full | — |
+
+---
 
 ### Custom Agents
 
@@ -246,6 +252,8 @@ Specialized agent personas with specific roles and permissions.
 | OpenAI Codex | Multi-agent via Agents SDK (not built-in) | External Agents SDK | diy | — |
 
 ---
+
+## Control & Approval
 
 ### Permissions & Guardrails
 
@@ -295,9 +303,69 @@ Code that runs before/after AI tool execution.
 | GitHub Copilot | Lifecycle hooks for Copilot CLI and cloud agent | .github/hooks/*.json | full | [Provider documentation](https://docs.github.com/en/copilot/reference/hooks-reference) |
 | Claude Code | Lifecycle hooks configured in shared project settings | .claude/settings.json | full | [Provider documentation](https://code.claude.com/docs/en/hooks) |
 | Cursor | Session, execution, and file operation hooks | .cursor/hooks.json | full | — |
-| OpenAI Codex | Notify hooks for external program triggers | ~/.codex/config.toml (notify) | partial | — |
+| OpenAI Codex | Lifecycle hooks (session, subagent, prompt, tool, compaction events) via hooks.json or config.toml | ~/.codex/hooks.json, <repo>/.codex/hooks.json, ~/.codex/config.toml, <repo>/.codex/config.toml | full | [Provider documentation](https://developers.openai.com/codex/hooks) |
 
 ---
+
+### Runtime Sandbox
+
+Execution boundaries that constrain what agent actions can do.
+
+**What it is:** Sandbox and approval policies that restrict filesystem, network, and command capabilities at runtime. This is execution environment context, not just prompt wording.
+
+**Use when:**
+- Agent runs can touch sensitive code or systems
+- You need explicit constraints on network, shell, or write access
+- You want deterministic approval boundaries before side effects
+
+**Prevents:** Accidental high-blast-radius execution
+
+**Combine with:** Permissions & Guardrails, Lifecycle Hooks
+
+**Provider Implementations:**
+
+| Provider | Implementation | Location | Support | Source |
+|----------|---------------|----------|---------|--------|
+| GitHub Copilot | Policy and execution constraints in agent runtime and org settings | Copilot policy/settings surfaces | partial | [Provider documentation](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-the-firewall) |
+| Claude Code | Sandboxing and command allow/deny controls | .claude/settings.json | full | [Provider documentation](https://code.claude.com/docs/en/settings) |
+| Cursor | Run modes with sandboxing, plus allow/deny permissions | Settings > Agents > Approvals & Execution + .cursor/cli-config.json | full | [Provider documentation](https://cursor.com/docs/agent/security/run-modes) |
+| OpenAI Codex | Sandbox modes plus approval policies | ~/.codex/config.toml | full | [Provider documentation](https://developers.openai.com/codex/config-file/config-reference) |
+
+---
+
+## Memory & State
+
+_No primitives are modeled in this layer yet. It is reserved for future primitives with genuinely distinct semantics for this layer._
+
+## Distribution
+
+### Configuration Distribution
+
+How shared agent configuration is packaged and discovered.
+
+**What it is:** The way instructions, skills, and agent definitions are distributed across repositories, directories, and personal environments so teams can share one source and localize where needed.
+
+**Use when:**
+- You want one canonical instruction source with minimal duplication
+- You need shared defaults plus local overrides by path
+- You are rolling standards across many repositories
+
+**Prevents:** Drift caused by copying the same guidance into many files
+
+**Combine with:** Persistent Instructions, Directory / Path Scope Instructions, Skills / Workflows
+
+**Provider Implementations:**
+
+| Provider | Implementation | Location | Support | Source |
+|----------|---------------|----------|---------|--------|
+| GitHub Copilot | Repository plus nested AGENTS.md with optional .instructions.md files | AGENTS.md and .github/instructions/*.instructions.md | full | [Provider documentation](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions) |
+| Claude Code | Shared AGENTS.md imported into CLAUDE.md plus scoped rules files | AGENTS.md, CLAUDE.md, .claude/rules/*.md | full | [Provider documentation](https://code.claude.com/docs/en/memory) |
+| Cursor | Project instructions, rules, and reusable skills packages | .cursor/instructions.md, .cursor/rules/*.mdc, .cursor/skills/*/SKILL.md | full | [Provider documentation](https://cursor.com/docs/skills) |
+| OpenAI Codex | Hierarchical AGENTS.md with user+repo layering | AGENTS.md, subdir/AGENTS.md, ~/.codex/AGENTS.md | full | [Provider documentation](https://developers.openai.com/codex/agent-configuration/agents-md) |
+
+---
+
+## Verification & Observability
 
 ### Verification / Evals
 
@@ -327,7 +395,26 @@ Checks that validate AI outputs before shipping.
 
 ---
 
-# Part 2: Provider Comparison
+# Part 2: Scope Model
+
+Every primitive can apply at one or more of these scopes. Scopes describe *where* configuration
+lives and takes effect, not a new kind of primitive.
+
+| Scope | Example |
+|-------|---------|
+| Managed / organization | Org-level Copilot policies or centrally managed CLAUDE.md |
+| User | ~/.codex/AGENTS.md, ~/.claude/CLAUDE.md, personal Copilot settings |
+| Repository | AGENTS.md, CLAUDE.md, .github/copilot-instructions.md |
+| Local repository | CLAUDE.local.md or workstation-only repo settings |
+| Directory / path | Nested AGENTS.md, .claude/rules/*.md, .instructions.md with applyTo |
+| Agent | .github/agents/*.agent.md or .claude/agents/*.md |
+| Session | Temporary mode selections and live conversation context |
+| Turn | One-off user prompt constraints for the current request |
+| Tool invocation | Per-hook/per-tool policy checks and approval gates |
+
+---
+
+# Part 3: Provider Comparison
 
 Support matrix comparing GitHub Copilot, Claude Code, Cursor, and OpenAI Codex:
 
@@ -337,56 +424,81 @@ Support matrix comparing GitHub Copilot, Claude Code, Cursor, and OpenAI Codex:
 | Skills / Workflows | ✓ Skill modules in skills directory | ✓ Skill modules in .claude directory | ✓ Skill modules as portable, reusable packages | ✓ Skill modules following agentskills.io specification |
 | Tool Integrations (MCP) | ✓ MCP servers and tool calling | ✓ MCP servers and tool calling | ✓ MCP servers with stdio, SSE, and HTTP transports | ✓ MCP servers with stdio and HTTP transports |
 | Persistent Instructions | ✓ AGENTS.md or repository instructions file | ✓ Project memory file with @imports | ✓ Project instructions file | ✓ Project AGENTS.md with hierarchical loading |
-| Global Instructions | ✓ User-level settings in VS Code | ✓ User-level memory and config | ✓ User-level settings and preferences | ✓ User-level AGENTS.md and config.toml |
-| Path-Scoped Rules | ✓ Nested AGENTS.md or applyTo instruction files | ✓ Rule files with globs frontmatter | ✓ Rules with path patterns | ✓ Nested AGENTS.md files with hierarchical merge |
+| User Scope Instructions | ✓ User-level settings in VS Code | ✓ User-level memory and config | ✓ User-level settings and preferences | ✓ User-level AGENTS.md and config.toml |
+| Directory / Path Scope Instructions | ✓ Nested AGENTS.md or applyTo instruction files | ✓ Rule files with globs frontmatter | ✓ Rules with path patterns | ✓ Nested AGENTS.md files with hierarchical merge |
 | Slash Commands | ✓ Prompt files invoked via / commands | ✓ Command files with frontmatter and $ARGUMENTS | ✓ Custom commands with parameters and reusable workflows | ✓ Built-in / commands for session control |
 | Custom Agents | ✓ Agent definition files with roles and tool permissions | ✓ Subagent files with tools restrictions | ✓ Subagents with model selection and context isolation | — Multi-agent via Agents SDK (not built-in) |
 | Permissions & Guardrails | ✓ Org policies and tool permissions | ✓ Allow/deny lists with pattern matching and sandbox | ✓ Approvals, .cursorignore, LLM safety controls, and security hooks | ✓ Sandbox modes, approval policies, and .rules files |
-| Lifecycle Hooks | ✓ Lifecycle hooks for Copilot CLI and cloud agent | ✓ Lifecycle hooks configured in shared project settings | ✓ Session, execution, and file operation hooks | ◐ Notify hooks for external program triggers |
+| Lifecycle Hooks | ✓ Lifecycle hooks for Copilot CLI and cloud agent | ✓ Lifecycle hooks configured in shared project settings | ✓ Session, execution, and file operation hooks | ✓ Lifecycle hooks (session, subagent, prompt, tool, compaction events) via hooks.json or config.toml |
+| Runtime Sandbox | ◐ Policy and execution constraints in agent runtime and org settings | ✓ Sandboxing and command allow/deny controls | ✓ Run modes with sandboxing, plus allow/deny permissions | ✓ Sandbox modes plus approval policies |
+| Configuration Distribution | ✓ Repository plus nested AGENTS.md with optional .instructions.md files | ✓ Shared AGENTS.md imported into CLAUDE.md plus scoped rules files | ✓ Project instructions, rules, and reusable skills packages | ✓ Hierarchical AGENTS.md with user+repo layering |
 | Verification / Evals | ✓ Run tests/lint via terminal tools | ✓ Run tests/lint via Bash tool with hooks | ✓ Integrated terminal for test execution | ✓ Shell tool for running tests/lint in agent mode |
 
 ### Config File Locations
 
 **GitHub Copilot:**
 - Persistent Instructions: `AGENTS.md` or `.github/copilot-instructions.md`
-- Path-Scoped Rules: Nested `AGENTS.md` files or `.github/instructions/*.instructions.md`
+- User Scope Instructions: Personal Copilot settings (no repository file)
+- Directory / Path Scope Instructions: Nested `AGENTS.md` files or `.github/instructions/*.instructions.md`
+- Skills / Workflows: `.github/skills/*/SKILL.md`
 - Slash Commands: `.github/prompts/*.prompt.md`
+- Tool Integrations (MCP): `.vscode/mcp.json` or VS Code settings
+- Agent Mode: VS Code Copilot Chat (no file; a chat mode)
 - Custom Agents: `.github/agents/*.agent.md`
-- Skills: `.github/skills/*/SKILL.md`
-- Lifecycle Hooks: `.github/hooks/*.json`
+- Permissions & Guardrails: Repository/organization Copilot policies
+- Lifecycle Hooks: GitHub Actions workflows around the coding agent
+- Runtime Sandbox: Actions network firewall allowlist (Copilot coding agent)
+- Configuration Distribution: `AGENTS.md` plus nested `.github/instructions/*.instructions.md`
+- Verification / Evals: Terminal tools in agent mode
 
 **Claude Code:**
 - Persistent Instructions: `CLAUDE.md` (root) or `.claude/CLAUDE.md`
-- Global Instructions: `~/.claude/CLAUDE.md`
-- Path-Scoped Rules: `.claude/rules/*.md`
+- User Scope Instructions: `~/.claude/CLAUDE.md`
+- Directory / Path Scope Instructions: `.claude/rules/*.md`
+- Skills / Workflows: `.claude/skills/*/SKILL.md`
 - Slash Commands: `.claude/commands/*.md`
+- Tool Integrations (MCP): `.mcp.json` (project) or `~/.claude.json` (local/user)
+- Agent Mode: Claude Code CLI (agentic workflows)
 - Custom Agents: `.claude/agents/*.md`
-- Skills: `.claude/skills/*/SKILL.md`
+- Permissions & Guardrails: `.claude/settings.json` allow/deny/ask rules
 - Lifecycle Hooks: `hooks` in `.claude/settings.json`
-- MCP Settings: `.mcp.json` (project) or `~/.claude.json` (local/user)
+- Runtime Sandbox: Sandbox modes in `.claude/settings.json`
+- Configuration Distribution: `AGENTS.md` imported into `CLAUDE.md` plus `.claude/rules/*.md`
+- Verification / Evals: Bash tool with hooks
 
 **Cursor:**
 - Persistent Instructions: `.cursor/instructions.md`
-- Global Settings: `~/.cursor/settings.json`
-- Path-Scoped Rules: `.cursor/rules/*.md`
+- User Scope Instructions: `~/.cursor/settings.json`
+- Directory / Path Scope Instructions: `.cursor/rules/*.mdc`
+- Skills / Workflows: `.cursor/skills/*/SKILL.md`
 - Slash Commands: `.cursor/commands/*.md`
+- Tool Integrations (MCP): `.cursor/mcp.json`
+- Agent Mode: Cursor Editor with Agent capabilities
 - Custom Agents: `.cursor/agents/*.md`
-- Skills: `.cursor/skills/*/SKILL.md`
-- MCP Settings: `.cursor/mcp.json`
+- Permissions & Guardrails: Settings > Agents > Approvals & Execution
 - Lifecycle Hooks: `.cursor/hooks.json`
+- Runtime Sandbox: Settings > Agents > Approvals & Execution plus `.cursor/cli-config.json`
+- Configuration Distribution: `.cursor/instructions.md`, `.cursor/rules/*.mdc`, `.cursor/skills/*/SKILL.md`
+- Verification / Evals: Terminal commands in Agent mode
 
 **OpenAI Codex:**
 - Persistent Instructions: `AGENTS.md` (project root)
-- Global Instructions: `~/.codex/AGENTS.md`
-- Path-Scoped Rules: Nested `AGENTS.md` files in subdirectories
-- Global Config: `~/.codex/config.toml`
-- Skills: `.codex/skills/*/SKILL.md`
-- Command Rules: `~/.codex/rules/*.rules`
-- MCP Settings: `~/.codex/config.toml` (mcp_servers section)
+- User Scope Instructions: `~/.codex/AGENTS.md`
+- Directory / Path Scope Instructions: Nested `AGENTS.md` files in subdirectories
+- Skills / Workflows: `.codex/skills/*/SKILL.md`
+- Slash Commands: `~/.codex/prompts/*.md`
+- Tool Integrations (MCP): `~/.codex/config.toml` (`mcp_servers` section)
+- Agent Mode: Codex CLI (agentic coding)
+- Custom Agents: Not yet supported
+- Permissions & Guardrails: `approval_policy` in `~/.codex/config.toml`
+- Lifecycle Hooks: `~/.codex/config.toml` lifecycle notifications
+- Runtime Sandbox: `sandbox_mode` and `sandbox_workspace_write.*` in `~/.codex/config.toml`
+- Configuration Distribution: Hierarchical `AGENTS.md` with user + repo layering
+- Verification / Evals: Terminal tools in Codex CLI
 
 ---
 
-# Part 3: Skills Tutorial
+# Part 4: Skills Tutorial
 
 ## Tutorial Sections
 
@@ -1098,10 +1210,17 @@ Before asking any questions, fetch the complete primitive documentation:
 
 **Read:** https://agentconfig.org/llms-full.txt
 
-This file contains all 11 AI primitives organized into three categories:
-- **Capability (Execution):** Agent Mode, Skills, Tool Integrations (MCP)
-- **Customization (Instructions):** Persistent Instructions, Global Instructions, Path-Scoped Rules, Slash Commands
-- **Control (Safety):** Custom Agents, Permissions & Guardrails, Lifecycle Hooks, Verification/Evals
+This file contains all 13 AI primitives organized into eight layers:
+- **Instructions:** Persistent Instructions, User Scope Instructions, Directory / Path Scope Instructions
+- **Procedures:** Skills / Workflows, Slash Commands
+- **Tools & Context:** Tool Integrations (MCP)
+- **Delegation:** Agent Mode, Custom Agents
+- **Control & Approval:** Permissions & Guardrails, Lifecycle Hooks, Runtime Sandbox
+- **Memory & State:** (reserved; no primitive is modeled here yet)
+- **Distribution:** Configuration Distribution
+- **Verification & Observability:** Verification / Evals
+
+It also documents the nine-entry scope model (managed/org, user, repository, local repository, directory/path, agent, session, turn, tool invocation) — scopes describe *where* a primitive applies and are not primitives themselves.
 
 ## Step 2: Understand the User's Context
 
@@ -1134,7 +1253,7 @@ Based on their answers, recommend **3-5 primitives** in priority order.
 
 **Pain Point: "Inconsistent code style across AI-generated code"**
 → Start with: Persistent Instructions
-→ Next: Path-Scoped Rules (if monorepo/multi-language)
+→ Next: Directory/Path Scope Instructions (if monorepo/multi-language)
 → Combine with: Verification/Evals (to catch violations)
 
 **Pain Point: "Repeating the same prompts over and over"**
@@ -1167,7 +1286,7 @@ This skill works well with:
 
 ---
 
-# Part 4: Agent Definitions Tutorial
+# Part 5: Agent Definitions Tutorial
 
 ## Tutorial Sections
 
@@ -1491,7 +1610,7 @@ This is the REST API package built with Express + TypeScript.
 
 ---
 
-# Part 5: MCP Tool Integrations Tutorial
+# Part 6: MCP Tool Integrations Tutorial
 
 # MCP Tool Integrations Tutorial
 

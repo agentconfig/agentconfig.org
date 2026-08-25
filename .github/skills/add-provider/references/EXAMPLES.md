@@ -53,7 +53,7 @@ const providerLabels: Record<Provider, string> = {
 
 ## Stream 2: Data Layer Updates
 
-### Add Provider Implementation (Repeat for All 11 Primitives)
+### Add Provider Implementation (Repeat for All 13 Primitives)
 
 **File**: `site/src/data/primitives.ts`
 
@@ -90,11 +90,11 @@ const providerLabels: Record<Provider, string> = {
       support: 'full',
     },
   ],
-  category: 'execution',
+  category: 'delegation',  // matches the current agent-mode categorization
 }
 ```
 
-### Add Provider Row (Repeat for All 11 Primitives)
+### Add Provider Row (Repeat for All 13 Primitives)
 
 **File**: `site/src/data/comparison.ts`
 
@@ -531,7 +531,7 @@ ${p.implementations.map((impl: any) => {
 
 ---
 
-## Reference: All 11 Primitives
+## Reference: All 13 Primitives
 
 Use this checklist when adding implementation data. All 11 must be included:
 

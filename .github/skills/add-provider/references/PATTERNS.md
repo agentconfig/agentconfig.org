@@ -4,7 +4,7 @@ Standard conventions and decision guides for adding providers.
 
 ## Support Levels
 
-Use these consistently across all 11 primitives:
+Use these consistently across all 13 primitives:
 
 ### `full` - Native, First-Class Support
 
@@ -173,7 +173,7 @@ const providerLabels: Record<Provider, string> = {
 
 ## Implementation Details: What to Document
 
-For each of the 11 primitives × each provider, document:
+For each of the 13 primitives × each provider, document:
 
 ### `implementation` (string)
 
@@ -382,7 +382,7 @@ Before committing provider data:
   - [ ] `primitives.ts` (Provider type + implementations)
   - [ ] `fileTree.ts` (Provider type)
   - [ ] `comparison.ts` (ComparisonRow interface)
-- [ ] All 11 primitives have provider entries
+- [ ] All 13 primitives have provider entries
 - [ ] All 11 comparison rows have provider field
 - [ ] Support levels are consistent (primitives.ts ↔ comparison.ts)
 - [ ] File locations follow provider's naming conventions

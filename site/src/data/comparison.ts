@@ -330,6 +330,7 @@ export const comparisonData: ComparisonRow[] = [
       level: 'full',
       implementation: 'Hierarchical AGENTS.md with user+repo layering',
       location: 'AGENTS.md, subdir/AGENTS.md, ~/.codex/AGENTS.md',
+      sourceUrl: 'https://developers.openai.com/codex/agent-configuration/agents-md',
     },
   },
   {

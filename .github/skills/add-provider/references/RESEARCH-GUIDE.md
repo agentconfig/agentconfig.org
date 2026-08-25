@@ -9,7 +9,7 @@ This guide helps you gather the information needed to correctly implement a prov
 - [ ] Provider documentation is publicly available
 - [ ] You have access to test the provider (free tier or trial)
 - [ ] You've identified the official config file locations
-- [ ] You've audited support for all 11 primitives
+- [ ] You've audited support for all 13 primitives
 - [ ] You've documented your findings (see template below)
 
 ## Step 1: Official Documentation Audit
@@ -45,7 +45,7 @@ Configuration format:
 
 ## Step 2: Primitive Support Audit
 
-**For each of the 11 primitives, research:**
+**For each of the 13 primitives, research:**
 
 ```markdown
 ### Primitive Name: [e.g., Agent Mode]
@@ -87,7 +87,7 @@ Create a table showing your research results:
 | ... | ... | ... | ... | ... |
 
 **Use this table to verify:**
-- All 11 primitives have a decision
+- All 13 primitives have a decision
 - Each decision has evidence (link to official docs)
 - Config locations are consistent and accurate
 - Support levels match your evidence
@@ -115,7 +115,7 @@ Provider: OpenAI Codex
 Research completed: 2025-01-17
 
 Audit results:
-- All 11 primitives researched
+- All 13 primitives researched
 - Config locations verified against official docs
 - Support levels: 7 full, 4 partial, 0 diy, 0 none
 - 100% coverage with official documentation references
@@ -214,7 +214,7 @@ Here's what the actual research looked like for Codex:
 
 Before moving to Stream 1, verify:
 
-- [ ] All 11 primitives have a support level decision
+- [ ] All 13 primitives have a support level decision
 - [ ] Each support level has evidence (official docs link)
 - [ ] Config file locations are from official sources
 - [ ] You've tested config files where possible

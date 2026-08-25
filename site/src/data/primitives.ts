@@ -537,6 +537,7 @@ export const primitives: Primitive[] = [
         implementation: 'Hierarchical AGENTS.md with user+repo layering',
         location: 'AGENTS.md, subdir/AGENTS.md, ~/.codex/AGENTS.md',
         support: 'full',
+        sourceUrl: 'https://developers.openai.com/codex/agent-configuration/agents-md',
       },
     ],
     category: 'distribution',

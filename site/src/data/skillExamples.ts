@@ -563,10 +563,17 @@ Before asking any questions, fetch the complete primitive documentation:
 
 **Read:** https://agentconfig.org/llms-full.txt
 
-This file contains all 11 AI primitives organized into three categories:
-- **Capability (Execution):** Agent Mode, Skills, Tool Integrations (MCP)
-- **Customization (Instructions):** Persistent Instructions, User Scope Instructions, Directory/Path Scope Instructions, Slash Commands
-- **Control (Safety):** Custom Agents, Permissions & Guardrails, Lifecycle Hooks, Verification/Evals
+This file contains all 13 AI primitives organized into eight layers:
+- **Instructions:** Persistent Instructions, User Scope Instructions, Directory / Path Scope Instructions
+- **Procedures:** Skills / Workflows, Slash Commands
+- **Tools & Context:** Tool Integrations (MCP)
+- **Delegation:** Agent Mode, Custom Agents
+- **Control & Approval:** Permissions & Guardrails, Lifecycle Hooks, Runtime Sandbox
+- **Memory & State:** (reserved; no primitive is modeled here yet)
+- **Distribution:** Configuration Distribution
+- **Verification & Observability:** Verification / Evals
+
+It also documents the nine-entry scope model (managed/org, user, repository, local repository, directory/path, agent, session, turn, tool invocation) — scopes describe *where* a primitive applies and are not primitives themselves.
 
 ## Step 2: Understand the User's Context
 

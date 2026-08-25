@@ -1433,7 +1433,7 @@ Review this PR for:
           children: [
             {
               id: 'cursor-rule-frontend',
-              name: 'frontend.md',
+              name: 'frontend.mdc',
               type: 'file',
               details: {
                 label: 'Path-Specific Rule',
@@ -1460,7 +1460,7 @@ Review this PR for:
             },
             {
               id: 'cursor-rule-backend',
-              name: 'backend.md',
+              name: 'backend.mdc',
               type: 'file',
               details: {
                 label: 'Path-Specific Rule',
