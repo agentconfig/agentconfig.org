@@ -1207,6 +1207,27 @@ export const cursorTree: FileNode = {
           },
         },
         {
+          id: 'cursor-cli-json',
+          name: 'cli.json',
+          type: 'file',
+          details: {
+            label: 'CLI Permissions Override',
+            description: 'Project-level override for the Cursor CLI, merged from the Git root down to the working directory. Only the permissions block is respected here; other settings are global-only.',
+            whatGoesHere: [
+              'permissions.allow / permissions.deny entries',
+              'Shell/Read/Write/WebFetch/Mcp tokens scoped to this project',
+            ],
+            whenLoaded: 'Merged into the session when the Cursor CLI runs in this project; deeper files take precedence, and deny always beats allow.',
+            loadOrder: 0,
+            example: `{
+  "permissions": {
+    "allow": ["Shell(git)", "Read(src/**.ts)", "Write(package.json)"],
+    "deny": ["Shell(rm)", "Read(.env*)"]
+  }
+}`,
+          },
+        },
+        {
           id: 'cursor-agents-folder',
           name: 'agents',
           type: 'folder',
@@ -1617,6 +1638,30 @@ export const cursorGlobalTree: FileNode = {
       }
     }
   }
+}`,
+          },
+        },
+        {
+          id: 'cursor-global-cli-config',
+          name: 'cli-config.json',
+          type: 'file',
+          details: {
+            label: 'Global CLI Config',
+            description: 'Personal Cursor CLI settings that apply across all projects: permissions, sandbox mode, approval mode, and network access.',
+            whatGoesHere: [
+              'permissions.allow / permissions.deny defaults',
+              'sandbox.mode and sandbox.networkAccess',
+              'approvalMode (allowlist, auto-review, unrestricted)',
+            ],
+            whenLoaded: 'Always loaded for the Cursor CLI. Only the permissions block can be overridden per-project via .cursor/cli.json.',
+            loadOrder: 1,
+            example: `{
+  "permissions": {
+    "allow": ["Shell(git)", "Read(**)"],
+    "deny": ["Shell(rm)", "Read(.env*)"]
+  },
+  "sandbox": { "mode": "enabled", "networkAccess": "user_config_only" },
+  "approvalMode": "allowlist"
 }`,
           },
         },
