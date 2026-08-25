@@ -50,12 +50,21 @@ export const pages: readonly PageMeta[] = [
     partNumber: 5,
   },
   {
+    slug: 'hooks',
+    title: 'Hooks Tutorial',
+    description: 'Design, test, and map lifecycle hooks across provider runtimes',
+    features: 'Hooks tutorial with provider panels, policy patterns, and fixture tests',
+    dataFile: 'hooksTutorial.ts',
+    mdFile: 'hooks.md',
+    partNumber: 6,
+  },
+  {
     slug: 'mcp',
     title: 'MCP Tool Integrations',
     description: 'Connect AI assistants to external tools via Model Context Protocol',
     features: 'MCP tutorial with configuration examples',
     dataFile: 'mcpTutorial.ts',
     mdFile: 'mcp.md',
-    partNumber: 6,
+    partNumber: 7,
   },
 ] as const

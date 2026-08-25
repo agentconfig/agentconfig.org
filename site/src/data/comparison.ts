@@ -256,13 +256,13 @@ export const comparisonData: ComparisonRow[] = [
     copilot: {
       level: 'full',
       implementation: 'Lifecycle hooks for Copilot CLI and cloud agent',
-      location: '.github/hooks/*.json',
+      location: '.github/hooks/*.json, ~/.copilot/hooks/*.json',
       sourceUrl: 'https://docs.github.com/en/copilot/reference/hooks-reference',
     },
     claude: {
       level: 'full',
       implementation: 'Lifecycle hooks configured in shared project settings',
-      location: '.claude/settings.json',
+      location: '.claude/settings.json, ~/.claude/settings.json, .claude/settings.local.json',
       sourceUrl: 'https://code.claude.com/docs/en/hooks',
     },
     cursor: {

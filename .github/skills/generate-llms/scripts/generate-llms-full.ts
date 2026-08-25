@@ -38,6 +38,7 @@ async function loadData() {
   const skillsTutorial = await import(join(dataDir, 'skillsTutorial.ts'))
   const skillExamples = await import(join(dataDir, 'skillExamples.ts'))
   const agentsTutorial = await import(join(dataDir, 'agentsTutorial.ts'))
+  const hooksTutorial = await import(join(dataDir, 'hooksTutorial.ts'))
   const mcpTutorial = await import(join(dataDir, 'mcpTutorial.ts'))
   const pagesRegistry = await import(join(dataDir, 'pages.ts'))
   
@@ -56,6 +57,12 @@ async function loadData() {
     agentsTocItems: agentsTutorial.tocItems,
     agentsCodeSamples: agentsTutorial.codeSamples,
     agentsFurtherReadingLinks: agentsTutorial.furtherReadingLinks,
+    // Hooks tutorial
+    hooksTocItems: hooksTutorial.tocItems,
+    hooksCodeSamples: hooksTutorial.codeSamples,
+    hooksFurtherReadingLinks: hooksTutorial.furtherReadingLinks,
+    hooksNormalizedEvents: hooksTutorial.normalizedEvents,
+    hooksProviderPanels: hooksTutorial.providerPanels,
     // MCP tutorial
     mcpTocItems: mcpTutorial.tocItems,
     mcpCodeSamples: mcpTutorial.codeSamples,
@@ -80,7 +87,7 @@ function generateLlmsTxt(pages: readonly PageMeta[], primitiveCount: number): st
 
 > A reference site for configuring AI coding assistants like GitHub Copilot, Claude Code, Cursor, and OpenAI Codex.
 > Covers ${primitiveCount} AI primitives, a scope model, provider comparison, config file locations, and tutorials for
-> skills, agent definitions, and MCP tool integrations.
+> skills, agent definitions, lifecycle hooks, and MCP tool integrations.
 
 This file provides a table of contents. For complete content, see /llms-full.txt.
 
@@ -439,6 +446,174 @@ ${mcpFurtherReadingLinks.map((link: any) => `- [${link.title}](${link.url}): ${l
   return content
 }
 
+function generateHooksMd(data: Awaited<ReturnType<typeof loadData>>): string {
+  const {
+    hooksTocItems,
+    hooksCodeSamples,
+    hooksFurtherReadingLinks,
+    hooksNormalizedEvents,
+    hooksProviderPanels,
+  } = data
+
+  let content = `# Hooks Tutorial
+
+Tutorial for designing, testing, and mapping lifecycle hooks across provider runtimes.
+Covers a vendor-neutral contract model, Copilot and Claude worked implementations,
+provider panels, safety guidance, and fixture-driven tests.
+
+## Tutorial Sections
+
+${hooksTocItems.map((item: any) => `- ${item.label}${item.level ? ` (${item.level})` : ''}`).join('\n')}
+
+## Section Details
+
+### 1. When Hooks Fit
+
+Hooks are deterministic code that runs at defined points in an agent session. Use hooks
+when you need machine-enforced policy, repeatable side effects, compact progress updates,
+or runtime gates around tool calls. Use instructions for judgment guidance, skills for
+human-invoked procedures, and MCP when the agent needs a new tool.
+
+Good hook jobs:
+- Gate risky commands such as force-push, production deploys, secret reads, and destructive migrations.
+- Publish compact progress only when objective, phase, blocker, or attention changes.
+- Preserve continuity before compaction and recover it at session start.
+- Keep local audit trails for tool decisions without exposing private data externally.
+
+### 2. Lifecycle Model
+
+Normalize provider event names into the lifecycle your policy cares about:
+
+| Normalized event | Use it for | Copilot | Claude | Codex |
+| --- | --- | --- | --- | --- |
+${hooksNormalizedEvents.map((event: any) => `| ${event.normalized} | ${event.purpose} | ${event.copilot} | ${event.claude} | ${event.codex} |`).join('\n')}
+
+### 3. Contract Model
+
+A durable hook contract has four parts: JSON input, structured output, an exit-code policy,
+and diagnostics. Keep human-readable logs separate from the final machine-readable decision.
+
+**Normalized payload:**
+\`\`\`json
+${hooksCodeSamples.normalizedPayload}
+\`\`\`
+
+**Decision payload:**
+\`\`\`json
+${hooksCodeSamples.hookDecision}
+\`\`\`
+
+### 4. First Copilot Hook
+
+Copilot repository hooks live under \`.github/hooks/\`. Put provider configuration in a small
+JSON file and keep real policy in a script that can be tested outside the agent runtime.
+
+\`\`\`json
+${hooksCodeSamples.copilotHook}
+\`\`\`
+
+\`\`\`typescript
+${hooksCodeSamples.copilotAdapter}
+\`\`\`
+
+### 5. First Claude Hook
+
+Claude hooks are configured inside settings files rather than a dedicated hooks directory.
+Use shared project settings for team policy and local settings for personal automation.
+
+\`\`\`json
+${hooksCodeSamples.claudeHook}
+\`\`\`
+
+\`\`\`javascript
+${hooksCodeSamples.claudeAdapter}
+\`\`\`
+
+### 6. Provider Panels
+
+These panels are grounded in the provider documentation snapshots used by the documentation
+refresh skill.
+
+${hooksProviderPanels.map((panel: any) => `#### ${panel.provider}
+
+**Scope:** ${panel.scope}
+
+**Locations:** ${panel.locations.map((location: string) => `\`${location}\``).join(', ')}
+
+**Events:** ${panel.events.map((event: string) => `\`${event}\``).join(', ')}
+
+**Contract:** ${panel.contract}
+
+${panel.notes.map((note: string) => `- ${note}`).join('\n')}
+
+Source: [${panel.sourceTitle}](${panel.sourceUrl})
+`).join('\n')}
+
+### 7. Policy Core Pattern
+
+Put reusable decisions in a pure policy core and keep provider adapters thin. The policy core
+takes normalized input and returns a deterministic decision. Provider adapters own I/O, schema
+translation, exit codes, and provider-specific response formats.
+
+\`\`\`typescript
+${hooksCodeSamples.policyCore}
+\`\`\`
+
+\`\`\`json
+${hooksCodeSamples.codexHook}
+\`\`\`
+
+\`\`\`javascript
+${hooksCodeSamples.codexAdapter}
+\`\`\`
+
+### 8. Safe Integrations
+
+Hooks often sit next to shell commands, secrets, and external systems, so they need stricter
+defaults than ordinary scripts.
+
+- Shell injection: pass arguments as arrays and avoid shell interpolation for untrusted input.
+- Shell parsing: do not infer force-push arguments from raw shell text. The example policy blocks every detected git push; use a real shell parser or server-side branch protection when normal pushes must remain available.
+- Secrets: never echo tokens, never put credentials in hook config, and redact environment-derived values from diagnostics.
+- Untrusted content: treat retrieved documents, tool output, and user prompts as data, not hook instructions.
+- Data egress: fail closed before sending repository, user, or customer data externally unless policy allows it.
+- Unavailable services: fail open for optional telemetry, fail closed for policy gates, and test both choices.
+- Copilot timeouts: command hook timeouts are always fail-open, even for preToolUse and administrator policy hooks; use small timeouts and make policy-critical checks fast.
+
+\`\`\`typescript
+${hooksCodeSamples.safeShell}
+\`\`\`
+
+### 9. Testing Hooks
+
+Every example hook should have a fixture test and a host-level smoke test.
+
+**Fixture test:**
+\`\`\`typescript
+${hooksCodeSamples.fixtureTest}
+\`\`\`
+
+**Smoke test:**
+\`\`\`bash
+${hooksCodeSamples.smokeTest}
+\`\`\`
+
+### 10. When Not To Use Hooks
+
+- Do not use a hook for guidance that belongs in AGENTS.md, CLAUDE.md, or another instruction file.
+- Do not use a hook when a skill or slash command is a better human-invoked workflow boundary.
+- Do not call slow external systems on every tool invocation; batch, throttle, or move that work to session boundaries.
+- Do not silently rewrite user intent. Block with a clear message instead.
+- Do not make hooks the only copy of business-critical policy. Keep the policy documented and reviewable.
+
+## Further Reading
+
+${hooksFurtherReadingLinks.map((link: any) => `- [${link.title}](${link.url}): ${link.description}`).join('\n')}
+`
+
+  return content
+}
+
 function generateLlmsFullTxt(data: Awaited<ReturnType<typeof loadData>>): string {
   const { primitives, categories, scopeModel, comparisonData, pages } = data
 
@@ -452,7 +627,7 @@ function generateLlmsFullTxt(data: Awaited<ReturnType<typeof loadData>>): string
 
 > This file contains the complete content of agentconfig.org for AI agents.
 > It includes all AI primitives, the scope model, provider comparisons, config file locations,
-> and tutorials for skills, agent definitions, and MCP tool integrations.
+> and tutorials for skills, agent definitions, lifecycle hooks, and MCP tool integrations.
 
 ## Site Overview
 
@@ -569,7 +744,16 @@ Support matrix comparing GitHub Copilot, Claude Code, Cursor, and OpenAI Codex:
   content += `
 ---
 
-# Part ${pages.find(p => p.slug === 'mcp')?.partNumber ?? 6}: MCP Tool Integrations Tutorial
+# Part ${pages.find(p => p.slug === 'hooks')?.partNumber ?? 6}: Hooks Tutorial
+
+`
+
+  content += generateHooksMd(data).replace(/^# Hooks Tutorial\n\n[^\n]+\n[^\n]+\n[^\n]+\n\n/, '')
+
+  content += `
+---
+
+# Part ${pages.find(p => p.slug === 'mcp')?.partNumber ?? 7}: MCP Tool Integrations Tutorial
 
 `
 
@@ -627,6 +811,10 @@ async function main() {
   console.log('Generating agents.md...')
   const agentsMd = generateAgentsMd(data)
   writeFileSync(join(publicDir, 'agents.md'), agentsMd)
+
+  console.log('Generating hooks.md...')
+  const hooksMd = generateHooksMd(data)
+  writeFileSync(join(publicDir, 'hooks.md'), hooksMd)
   
   console.log('Generating mcp.md...')
   const mcpMd = generateMcpMd(data)

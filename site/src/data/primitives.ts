@@ -428,14 +428,14 @@ export const primitives: Primitive[] = [
       {
         provider: 'copilot',
         implementation: 'Lifecycle hooks for Copilot CLI and cloud agent',
-        location: '.github/hooks/*.json',
+        location: '.github/hooks/*.json, ~/.copilot/hooks/*.json',
         support: 'full',
         sourceUrl: 'https://docs.github.com/en/copilot/reference/hooks-reference',
       },
       {
         provider: 'claude',
         implementation: 'Lifecycle hooks configured in shared project settings',
-        location: '.claude/settings.json',
+        location: '.claude/settings.json, ~/.claude/settings.json, .claude/settings.local.json',
         support: 'full',
         sourceUrl: 'https://code.claude.com/docs/en/hooks',
       },
