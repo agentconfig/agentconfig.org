@@ -364,9 +364,10 @@ export const primitives: Primitive[] = [
       },
       {
         provider: 'codex',
-        implementation: 'Multi-agent via Agents SDK (not built-in)',
-        location: 'External Agents SDK',
-        support: 'diy',
+        implementation: 'Subagent definitions with model selection and delegation',
+        location: '.codex/agents/*.toml, ~/.codex/agents',
+        support: 'full',
+        sourceUrl: 'https://developers.openai.com/codex/agent-configuration/subagents',
       },
     ],
     category: 'delegation',

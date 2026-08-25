@@ -117,7 +117,7 @@ Research completed: 2025-01-17
 Audit results:
 - All 13 primitives researched
 - Config locations verified against official docs
-- Support levels: 9 full, 3 partial, 1 diy
+- Support levels: 13 full, 0 partial, 0 diy
 - 100% coverage with official documentation references
 
 Key findings:
@@ -205,10 +205,9 @@ Here's what the actual research looked like for Codex:
 - Config: `AGENTS.md` in any subdirectory
 - Native support: ✓ documented
 
-**Skills/Workflows**: partial support
-- Official docs: mentions AGENTS.md for workflows
-- Limitation: Uses standard format, not Codex-specific
-- Support level: "partial" (works but through shared standard)
+**Skills/Workflows**: full support
+- Official docs: `.codex/skills/*/SKILL.md` (agentskills.io specification)
+- Native support: ✓ documented as a first-class primitive
 
 ## Validation Checklist
 

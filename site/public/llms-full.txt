@@ -249,7 +249,7 @@ Specialized agent personas with specific roles and permissions.
 | GitHub Copilot | Agent definition files | .github/agents/*.agent.md | full | — |
 | Claude Code | Custom subagents with roles and tool permissions | .claude/agents/*.md | full | — |
 | Cursor | Subagents with model selection and context isolation | .cursor/agents/*.md | full | — |
-| OpenAI Codex | Multi-agent via Agents SDK (not built-in) | External Agents SDK | diy | — |
+| OpenAI Codex | Subagent definitions with model selection and delegation | .codex/agents/*.toml, ~/.codex/agents | full | [Provider documentation](https://developers.openai.com/codex/agent-configuration/subagents) |
 
 ---
 
@@ -427,7 +427,7 @@ Support matrix comparing GitHub Copilot, Claude Code, Cursor, and OpenAI Codex:
 | User Scope Instructions | ✓ User-level settings in VS Code | ✓ User-level memory and config | ✓ User-level settings and preferences | ✓ User-level AGENTS.md and config.toml |
 | Directory / Path Scope Instructions | ✓ Nested AGENTS.md or applyTo instruction files | ✓ Rule files with globs frontmatter | ✓ Rules with path patterns | ✓ Nested AGENTS.md files with hierarchical merge |
 | Slash Commands | ✓ Prompt files invoked via / commands | ✓ Command files with frontmatter and $ARGUMENTS | ✓ Custom commands with parameters and reusable workflows | ✓ Built-in / commands for session control |
-| Custom Agents | ✓ Agent definition files with roles and tool permissions | ✓ Subagent files with tools restrictions | ✓ Subagents with model selection and context isolation | — Multi-agent via Agents SDK (not built-in) |
+| Custom Agents | ✓ Agent definition files with roles and tool permissions | ✓ Subagent files with tools restrictions | ✓ Subagents with model selection and context isolation | ✓ Subagent definitions with model selection and delegation |
 | Permissions & Guardrails | ✓ Org policies and tool permissions | ✓ Allow/deny lists with pattern matching and sandbox | ✓ Approvals, .cursorignore, LLM safety controls, and security hooks | ✓ Sandbox modes, approval policies, and .rules files |
 | Lifecycle Hooks | ✓ Lifecycle hooks for Copilot CLI and cloud agent | ✓ Lifecycle hooks configured in shared project settings | ✓ Session, execution, and file operation hooks | ✓ Lifecycle hooks (session, subagent, prompt, tool, compaction events) via hooks.json or config.toml |
 | Runtime Sandbox | ◐ Policy and execution constraints in agent runtime and org settings | ✓ Sandboxing and command allow/deny controls | ✓ Run modes with sandboxing, plus allow/deny permissions | ✓ Sandbox modes plus approval policies |
@@ -489,7 +489,7 @@ Support matrix comparing GitHub Copilot, Claude Code, Cursor, and OpenAI Codex:
 - User Scope Instructions: `~/.codex/AGENTS.md`
 - Directory / Path Scope Instructions: `subdir/AGENTS.md`
 - Slash Commands: `Codex CLI / commands`
-- Custom Agents: `External Agents SDK`
+- Custom Agents: `.codex/agents/*.toml, ~/.codex/agents`
 - Permissions & Guardrails: `~/.codex/config.toml + ~/.codex/rules/*.rules`
 - Lifecycle Hooks: `~/.codex/hooks.json, <repo>/.codex/hooks.json, ~/.codex/config.toml, <repo>/.codex/config.toml`
 - Runtime Sandbox: `~/.codex/config.toml`

@@ -550,7 +550,7 @@ Support matrix comparing GitHub Copilot, Claude Code, Cursor, and OpenAI Codex:
 
   content += `---
 
-# Part 4: Skills Tutorial
+# Part ${pages.find(p => p.slug === 'skills')?.partNumber ?? 4}: Skills Tutorial
 `
 
   content += generateSkillsMd(data).replace(/^# Skills Tutorial\n\n[^\n]+\n[^\n]+\n[^\n]+\n\n/, '')
@@ -558,7 +558,7 @@ Support matrix comparing GitHub Copilot, Claude Code, Cursor, and OpenAI Codex:
   content += `
 ---
 
-# Part 5: Agent Definitions Tutorial
+# Part ${pages.find(p => p.slug === 'agents')?.partNumber ?? 5}: Agent Definitions Tutorial
 
 `
 
@@ -567,7 +567,7 @@ Support matrix comparing GitHub Copilot, Claude Code, Cursor, and OpenAI Codex:
   content += `
 ---
 
-# Part 6: MCP Tool Integrations Tutorial
+# Part ${pages.find(p => p.slug === 'mcp')?.partNumber ?? 6}: MCP Tool Integrations Tutorial
 
 `
 

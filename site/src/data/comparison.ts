@@ -221,9 +221,9 @@ export const comparisonData: ComparisonRow[] = [
       location: '.cursor/agents/*.md',
     },
     codex: {
-      level: 'none',
-      implementation: 'Multi-agent via Agents SDK (not built-in)',
-      location: 'External Agents SDK',
+      level: 'full',
+      implementation: 'Subagent definitions with model selection and delegation',
+      location: '.codex/agents/*.toml, ~/.codex/agents',
     },
   },
   {

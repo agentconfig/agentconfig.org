@@ -36,7 +36,9 @@ This value is valid **only** in `ProviderImplementation.support` (`primitives.ts
 `ComparisonRow`'s `SupportLevel` type in `comparison.ts`.
 
 **Examples:**
-- Custom Agents in Codex (no built-in feature, but achievable via the Agents SDK)
+- (No primitive currently uses `diy` — all 13 primitives now have `full` or `partial` native support
+  across all 4 providers. Reserved for a provider that requires custom scripting to approximate a
+  primitive, e.g. a future provider with no built-in lifecycle hooks.)
 
 **When to use**: The feature isn't built-in but is achievable through custom setup.
 
@@ -232,7 +234,7 @@ Quick reference for common feature mappings:
 | **User Scope Instructions** | `full` | `full` | `full` | `full` | All support user-level preferences |
 | **Directory / Path Scope Instructions** | `full` | `full` | `full` | `full` | All support directory-specific rules |
 | **Slash Commands** | `full` | `full` | `full` | `full` | Cursor supports custom commands with parameters (.cursor/commands/*.md) |
-| **Custom Agents** | `full` | `full` | `full` | `diy` | Codex has no built-in custom agents (achievable via the Agents SDK) |
+| **Custom Agents** | `full` | `full` | `full` | `full` | Codex has native subagent definitions (.codex/agents/*.toml) |
 | **Permissions & Guardrails** | `full` | `full` | `full` | `full` | Cursor has approvals, .cursorignore, and security hooks |
 | **Lifecycle Hooks** | `full` | `full` | `full` | `full` | All four providers now have built-in hooks |
 | **Runtime Sandbox** | `partial` | `full` | `full` | `full` | Copilot's sandbox controls are policy/settings surfaces, not a dedicated file |

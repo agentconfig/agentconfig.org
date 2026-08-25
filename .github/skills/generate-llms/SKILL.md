@@ -26,7 +26,7 @@ export const pages: readonly PageMeta[] = [
     title: 'Skills Tutorial',
     description: 'How to create agent skills...',
     mdFile: 'skills.md',
-    partNumber: 3,
+    partNumber: 4,
   },
   // ... more pages
 ]
