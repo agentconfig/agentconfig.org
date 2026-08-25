@@ -121,6 +121,8 @@ export interface Finding {
   sourceAuthority: Authority | null
   retrievedAt: string | null
   detail: string
+  /** A qualifier the claim carried. Dropping it would publish incomplete evidence. */
+  notes: string | null
 }
 
 export type ValidationResult<T> = { ok: true; value: T } | { ok: false; errors: string[] }

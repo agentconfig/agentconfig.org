@@ -65,6 +65,7 @@ function makeFinding(
     sourceAuthority: claim.sourceAuthority,
     retrievedAt: claim.retrievedAt,
     detail,
+    notes: claim.notes ?? null,
   }
 }
 
@@ -85,6 +86,40 @@ export function compareClaims(
   const maxAge = options.maxSourceAgeDays ?? loaded.registry.maxSourceAgeDays
   const findings: Finding[] = []
   const answeredSiteKeys = new Set<string>()
+
+  // Site self-contradiction is a property of the site, not of any claim, so it
+  // is detected up front. Checking it only while processing a matching claim
+  // meant a partial refresh could leave `primitives.ts` and `comparison.ts`
+  // disagreeing with nobody told.
+  const siteGroups = new Map<string, typeof site.entries>()
+  for (const entry of site.entries) {
+    const key = `${entry.provider}|${entry.primitive}|${entry.aspect}`
+    const group = siteGroups.get(key)
+    if (group) group.push(entry)
+    else siteGroups.set(key, [entry])
+  }
+
+  const contradictorySiteKeys = new Set<string>()
+  for (const [key, entries] of siteGroups) {
+    if (new Set(entries.map((entry) => canonicalize(entry.value, entry.aspect))).size <= 1) continue
+    contradictorySiteKeys.add(key)
+    const [provider, primitive, aspect] = key.split('|') as [string, string, Claim['aspect']]
+    findings.push({
+      claimId: `site.${key.replace(/\|/g, '.')}`,
+      provider,
+      primitive,
+      aspect,
+      status: 'ambiguous',
+      action: 'human-review',
+      siteValue: entries.map((entry) => entry.value).join(' | '),
+      documentedValue: null,
+      sourceUrl: null,
+      sourceAuthority: null,
+      retrievedAt: null,
+      detail: `The site contradicts itself before any comparison can be made (${entries.map((entry) => `${entry.origin}: ${entry.value}`).join(' vs ')}).`,
+      notes: null,
+    })
+  }
 
   const groups = new Map<string, Claim[]>()
   for (const claim of claims) {
@@ -261,20 +296,9 @@ export function compareClaims(
 
     for (const entry of siteEntries) answeredSiteKeys.add(`${entry.origin}|${entry.provider}|${entry.primitive}|${entry.aspect}`)
 
-    const siteValues = new Set(siteEntries.map((entry) => canonicalize(entry.value, entry.aspect)))
-    if (siteValues.size > 1) {
-      const detail = siteEntries.map((entry) => `${entry.origin}: ${entry.value}`).join(' vs ')
-      findings.push(
-        makeFinding(
-          representative,
-          'ambiguous',
-          'human-review',
-          `The site contradicts itself before any comparison can be made (${detail}).`,
-          siteEntries.map((entry) => entry.value).join(' | '),
-        ),
-      )
-      continue
-    }
+    // The pre-scan already reported this key, and there is no single site
+    // value to compare against.
+    if (contradictorySiteKeys.has(key)) continue
 
     const siteValue = siteEntries[0]!.value
     const matches = canonicalize(siteValue, representative.aspect) === documented

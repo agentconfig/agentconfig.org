@@ -78,10 +78,9 @@ describe('comparison against published site data', () => {
 
 describe('fail-closed behavior', () => {
   test('refuses to choose between conflicting official sources', () => {
-    const result = run('conflicting.json')
-    expect(result.findings).toHaveLength(1)
-    expect(result.findings[0]!.status).toBe('ambiguous')
-    expect(result.findings[0]!.detail).toContain('disagree')
+    const finding = byId(run('conflicting.json').findings, 'c.conflict.a')
+    expect(finding.status).toBe('ambiguous')
+    expect(finding.detail).toContain('disagree')
   })
 
   test('will not publish a claim backed only by a secondary source', () => {
@@ -134,9 +133,19 @@ describe('fail-closed behavior', () => {
   })
 
   test('refuses to compare while the site contradicts itself', () => {
-    const finding = run('site-inconsistent.json').findings[0]!
+    const finding = byId(run('site-inconsistent.json').findings, 'site.testprov.skills.location')
     expect(finding.status).toBe('ambiguous')
     expect(finding.detail).toContain('contradicts itself')
+  })
+
+  test('reports a site contradiction even when no claim covers that key', () => {
+    // valid.json makes no claim about testprov/skills/location, yet the site
+    // disagrees with itself there. A partial refresh must still surface it.
+    const finding = byId(run('valid.json').findings, 'site.testprov.skills.location')
+    expect(finding.status).toBe('ambiguous')
+    expect(finding.action).toBe('human-review')
+    expect(finding.detail).toContain('primitives.ts')
+    expect(finding.detail).toContain('comparison.ts')
   })
 
   test('catches stale evidence regardless of which agreeing claim comes first', () => {
@@ -185,6 +194,12 @@ describe('evidence report', () => {
 
   test('states how much of the site went unverified', () => {
     expect(markdown).toContain('Site assertions this run did not verify')
+  })
+
+  test('carries a claim qualifier into the report rather than dropping it', () => {
+    const finding = byId(result.findings, 'c.unmodeled-aspect')
+    expect(finding.notes).toBe('sessionEnd does not run for subagents.')
+    expect(markdown).toContain('Qualifier from the source: sessionEnd does not run for subagents')
   })
 
   test('does not invent a value that no claim carried', () => {

@@ -2,7 +2,7 @@ import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'fs'
 import { dirname, join } from 'path'
 import { fileURLToPath } from 'url'
-import { fetchSources, markdownUrlFor, newRunDir, snapshotRoot } from '../scripts/lib/fetch.ts'
+import { fetchSources, markdownUrlFor, newRunDir, resolveRunDir, snapshotRoot } from '../scripts/lib/fetch.ts'
 import { allSources, loadRegistry } from '../scripts/lib/registry.ts'
 
 const skillRoot = join(dirname(fileURLToPath(import.meta.url)), '..')
@@ -95,5 +95,47 @@ describe('activation', () => {
     const skill = readFileSync(join(skillRoot, 'SKILL.md'), 'utf8')
     expect(skill).toContain('add-provider')
     expect(skill).toContain('generate-llms')
+  })
+})
+
+describe('snapshot run directories', () => {
+  test('treats --out as a parent so two runs never share a directory', () => {
+    const first = resolveRunDir('/tmp/shared-out', new Date('2026-08-25T10:00:00Z'))
+    const second = resolveRunDir('/tmp/shared-out', new Date('2026-08-25T11:00:00Z'))
+    expect(first.startsWith('/tmp/shared-out/')).toBe(true)
+    expect(second.startsWith('/tmp/shared-out/')).toBe(true)
+    expect(first).not.toBe(second)
+  })
+
+  test('falls back to the default snapshot root when no --out is given', () => {
+    const run = resolveRunDir(undefined, new Date('2026-08-25T10:00:00Z'))
+    expect(run.startsWith(snapshotRoot)).toBe(true)
+  })
+})
+
+describe('CLI argument handling', () => {
+  const cli = join(skillRoot, 'scripts/provider-docs.ts')
+
+  function run(args: string[]): { code: number; output: string } {
+    const result = Bun.spawnSync(['bun', cli, ...args], { stdout: 'pipe', stderr: 'pipe' })
+    return { code: result.exitCode, output: `${result.stdout.toString()}${result.stderr.toString()}` }
+  }
+
+  test('rejects a bare --provider instead of retrieving every provider', () => {
+    const { code, output } = run(['fetch', '--provider'])
+    expect(code).toBe(1)
+    expect(output).toContain('--provider requires a value')
+  })
+
+  test('reads --provider=value rather than mistaking it for an unknown flag', () => {
+    const { code, output } = run(['fetch', '--provider=not-a-provider', '--allow-network'])
+    expect(code).toBe(1)
+    expect(output).toContain('not-a-provider')
+  })
+
+  test('refuses an unrecognized flag rather than ignoring it', () => {
+    const { code, output } = run(['fetch', '--allow-netwrok'])
+    expect(code).toBe(1)
+    expect(output).toContain('Unknown flag')
   })
 })

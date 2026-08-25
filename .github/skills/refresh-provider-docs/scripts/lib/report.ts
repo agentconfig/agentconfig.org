@@ -61,7 +61,7 @@ export function renderReport(result: CompareResult, options: ReportOptions = {})
   lines.push('')
   lines.push(`Generated ${generatedAt} from ${options.claimCount ?? result.findings.length} normalized claims against registry version ${options.registryVersion ?? 'unknown'}.`)
   lines.push('')
-  lines.push('Every row below cites the source it came from and the date that source was retrieved. Confirmed and changed rows rest on a registered primary source; ambiguous rows may cite a secondary, unregistered, or mismatched source, which is precisely why they are unresolved. Rows without a citation are not published.')
+  lines.push('Confirmed and changed rows rest on a registered primary source and cite it with the date it was retrieved. Ambiguous rows are unresolved for one of two reasons: the claim cites a secondary, unregistered, or mismatched source, or the site already contradicts itself on that key, in which case there is no citation to show because no comparison was attempted. No row is published on evidence weaker than a registered primary source.')
   lines.push('')
   lines.push('## Summary')
   lines.push('')
@@ -86,7 +86,8 @@ export function renderReport(result: CompareResult, options: ReportOptions = {})
     for (const finding of rows) lines.push(findingRow(finding))
     lines.push('')
     for (const finding of rows) {
-      lines.push(`- \`${finding.claimId}\`: ${escapeInline(finding.detail)}`)
+      const qualifier = finding.notes ? ` Qualifier from the source: ${escapeInline(finding.notes)}` : ''
+      lines.push(`- \`${finding.claimId}\`: ${escapeInline(finding.detail)}${qualifier}`)
     }
     lines.push('')
   }
