@@ -28,7 +28,7 @@ export type Provider = 'copilot' | 'claude'
 export type Provider = 'copilot' | 'claude' | 'cursor'
 ```
 
-### 1.2 Update Comparison Interface
+### 1.2 Update Comparison Interface and Derivation
 
 Edit `site/src/data/comparison.ts`:
 
@@ -40,7 +40,20 @@ export interface ComparisonRow {
   claude: ProviderSupport
   cursor: ProviderSupport  // Add this
 }
+
+export const comparisonData: ComparisonRow[] = primitives.map((primitive) => ({
+  primitiveId: primitive.id,
+  primitiveName: primitive.name,
+  copilot: buildProviderSupport(primitive.id, 'copilot'),
+  claude: buildProviderSupport(primitive.id, 'claude'),
+  cursor: buildProviderSupport(primitive.id, 'cursor'),  // Add this call
+}))
 ```
+
+`comparisonData` is derived from `primitives.ts` via `buildProviderSupport`, not hand-listed per
+row — once every primitive in `primitives.ts` has a `cursor` implementation, adding the mapping
+call above is the only edit this file needs. Do the same for `providerProfiles.ts` if it maps
+providers individually.
 
 ### 1.3 Update UI Provider Labels
 
@@ -136,19 +149,19 @@ implementations: [
 
 **Research guide for each primitive:**
 1. How does the provider implement this primitive?
-2. Where are the config files? (.cursor/instructions.md, etc.)
+2. Where are the config files? (AGENTS.md, .cursor/rules/*.mdc, etc.)
 3. Is support native (full), limited (partial), or via custom setup (diy)?
 
-**Support level decision tree** (see [PATTERNS.md](PATTERNS.md#support-levels) for detailed explanations):
+**Support level decision tree** (see [PATTERNS.md](PATTERNS.md#support-levels) for detailed explanations — `primitives.ts` and `comparison.ts` share one `SupportLevel` type, so the same value applies to both):
 
 ```
 Does provider natively support this?
 ├─ Yes, well-documented, core feature
-│  └─ primitives.ts support: 'full'   | comparison.ts level: 'full'
+│  └─ support: 'full'
 ├─ Yes, but limited or with workarounds
-│  └─ primitives.ts support: 'partial' | comparison.ts level: 'partial'
-└─ No, not supported (whether via custom setup or not at all)
-   └─ primitives.ts support: 'diy'    | comparison.ts level: 'none'
+│  └─ support: 'partial'
+└─ No — whether via custom setup or not achievable at all
+   └─ support: 'diy'
 ```
 
 All 13 primitives:
@@ -166,25 +179,15 @@ All 13 primitives:
 - Configuration Distribution
 - Verification / Evals
 
-### 2.2 Add Provider Data to Comparison Matrix
+### 2.2 Comparison Matrix and Provider Profiles need no separate edit
 
-Edit `site/src/data/comparison.ts`:
-
-For each of the 13 `ComparisonRow` entries, add cursor field:
-
-```typescript
-{
-  primitiveId: 'agent-mode',
-  primitiveName: 'Agent Mode',
-  copilot: { level: 'full', implementation: '...', location: '...' },
-  claude: { level: 'full', implementation: '...', location: '...' },
-  cursor: {  // Add this
-    level: 'full',  // 'full' | 'partial' | 'none'
-    implementation: 'Cursor Agent mode for multi-step execution',
-    location: 'Cursor Editor with Agent capabilities',
-  },
-}
-```
+`site/src/data/comparison.ts` and `site/src/data/providerProfiles.ts` both compute their rows from
+`primitives.ts` at import time — once step 2.1 adds all 13 implementations for the new provider to
+`primitives.ts`, and step 1.2's `comparisonData` mapping call is added, the comparison matrix and
+provider profiles pick up the new provider automatically. Do not hand-list per-row provider objects
+in either file — doing so duplicates the same fact in two places and reintroduces the drift this
+derivation was built to eliminate (see PR #42's and PR #43's review history for the class of bug
+this prevents).
 
 ### 2.3 Add File Tree Structure
 

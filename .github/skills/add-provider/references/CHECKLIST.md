@@ -31,7 +31,7 @@ Complete verification steps for all 6 work streams, plus pre-implementation rese
 
 ### Documentation
 - [ ] Created research summary with links to official docs
-- [ ] Each primitive has a support level decision (`primitives.ts`: full/partial/diy; `comparison.ts`: full/partial/none)
+- [ ] Each primitive has a support level decision (`full`/`partial`/`diy` — one shared `SupportLevel` type used by both `primitives.ts` and `comparison.ts`)
 - [ ] Each support level decision has evidence (link to docs)
 - [ ] All config file locations are from official sources, not guesses
 - [ ] Verified no overlaps or conflicts between primitives
@@ -45,7 +45,7 @@ Complete verification steps for all 6 work streams, plus pre-implementation rese
 ### Provider Union Types
 - [ ] `site/src/data/primitives.ts` - Added new provider to `Provider` type
 - [ ] `site/src/data/fileTree.ts` - Added new provider to `Provider` type
-- [ ] `site/src/data/comparison.ts` - Added new provider to `Provider` type (check interface)
+- [ ] `site/src/data/comparison.ts` - Added new provider field to the `ComparisonRow` interface and to the `comparisonData` mapping call (no per-row hand-editing needed — rows derive from `primitives.ts`)
 - [ ] Verify all type names use exact same casing (lowercase)
 - [ ] Run `npm run typecheck` - Should show errors about missing data (expected)
 
@@ -83,18 +83,13 @@ Complete verification steps for all 6 work streams, plus pre-implementation rese
 - [ ] `provider` field matches exact type name
 - [ ] `implementation` is 1-2 sentences, descriptive
 - [ ] `location` is either file path or feature name
-- [ ] `support` is one of: 'full' | 'partial' | 'diy' (not 'none')
+- [ ] `support` is one of: 'full' | 'partial' | 'diy'
 
 ### Comparison Matrix
-- [ ] `site/src/data/comparison.ts` - Added provider field to ALL 11 `ComparisonRow` entries
+- [ ] `site/src/data/comparison.ts` and `providerProfiles.ts` require no per-row edits — verify the `comparisonData`/`providerProfiles` mapping calls `buildProviderSupport`/equivalent for the new provider and TypeScript compiles clean
 
-**For each comparison row, verify:**
-- [ ] `primitiveId` matches a primitive id from primitives.ts
-- [ ] Provider object has all 3 fields:
-  - [ ] `level` is 'full' | 'partial' | 'none'
-  - [ ] `implementation` matches primitives.ts (or is very similar)
-  - [ ] `location` matches primitives.ts (or is very similar)
-- [ ] Support levels are consistent between primitives.ts and comparison.ts
+**Spot-check a few rows in the rendered comparison table:**
+- [ ] `level`, `implementation`, and `location` match the corresponding `primitives.ts` implementation exactly (they're derived, so a mismatch means primitives.ts itself has the wrong value)
 
 ### File Tree Structure
 - [ ] `site/src/data/fileTree.ts` - Added `{provider}Tree` constant
@@ -122,7 +117,7 @@ Complete verification steps for all 6 work streams, plus pre-implementation rese
   - Sparse trees make providers look incomplete even with 11/11 support
 
 ### Data Consistency
-- [ ] All 13 primitives have exactly matching IDs between primitives.ts and comparison.ts
+- [ ] All 13 primitives have implementations for the new provider in primitives.ts (comparison.ts and providerProfiles.ts inherit these automatically)
 - [ ] No typos in provider names (must be lowercase)
 - [ ] Run `npm run typecheck` - Should have NO errors now
 
@@ -181,11 +176,11 @@ Complete verification steps for all 6 work streams, plus pre-implementation rese
 - [ ] Updated location assertions to match actual file paths
 
 **Test file locations to verify:**
-- [ ] All primitives referenced in tests exist in comparison.ts
+- [ ] All primitives referenced in tests have an implementation for the new provider in primitives.ts
 - [ ] Test expectations match actual data:
   - [ ] Full Support badge count (e.g., 18 for cursor)
   - [ ] Partial badge count (e.g., 5 for cursor)
-  - [ ] None badge count (if any)
+  - [ ] DIY/no-support badge count (if any)
   - [ ] Implementation text samples
   - [ ] File location samples
 
@@ -341,14 +336,13 @@ Based on real-world provider integrations, avoid these pitfalls:
 
 ### Data & Testing
 - [ ] ❌ **Badge count assertions outdated after support changes**
-  - ✅ Recalculate full/partial/none badges after changing support levels
+  - ✅ Recalculate full/partial/diy badges after changing support levels
   - ✅ Count: primitives × providers with each support level
   - ✅ Update E2E test assertions in comparison.spec.ts
 
-- [ ] ❌ **Support levels inconsistent between primitives.ts and comparison.ts**
-  - ✅ Both files must have matching support levels
-  - ✅ Run typecheck after changes to catch mismatches
-  - ✅ Verify in Stream 2 data consistency checks
+- [ ] ❌ **Hand-edited comparison.ts or providerProfiles.ts directly**
+  - ✅ Both derive from primitives.ts automatically — edit primitives.ts only
+  - ✅ Run typecheck after changes; a missing provider implementation throws at import time
 
 ### LLMs Generation
 - [ ] ❌ **Forgot to regenerate llms-full.txt**

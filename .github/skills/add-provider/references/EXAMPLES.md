@@ -35,7 +35,18 @@ export interface ComparisonRow {
   /** Cursor implementation */
   cursor: ProviderSupport
 }
+
+export const comparisonData: ComparisonRow[] = primitives.map((primitive) => ({
+  primitiveId: primitive.id,
+  primitiveName: primitive.name,
+  copilot: buildProviderSupport(primitive.id, 'copilot'),
+  claude: buildProviderSupport(primitive.id, 'claude'),
+  cursor: buildProviderSupport(primitive.id, 'cursor'),  // Add this call
+}))
 ```
+
+`comparisonData` derives from `primitives.ts` at import time — the mapping call above is the only
+row-level edit `comparison.ts` needs; there is no per-primitive `ComparisonRow` object to hand-write.
 
 ### Update Provider Labels
 
@@ -94,29 +105,37 @@ const providerLabels: Record<Provider, string> = {
 }
 ```
 
-### Add Provider Row (Repeat for All 13 Primitives)
+### Add Provider Implementations (Repeat for All 13 Primitives)
 
-**File**: `site/src/data/comparison.ts`
+**File**: `site/src/data/primitives.ts`
+
+`comparison.ts` and `providerProfiles.ts` derive their rows from these implementations
+automatically — there is no separate row to hand-write in `comparison.ts`.
 
 ```typescript
 {
-  primitiveId: 'agent-mode',
-  primitiveName: 'Agent Mode',
-  copilot: {
-    level: 'full',
-    implementation: 'Agent mode in Copilot Chat',
-    location: 'VS Code Copilot Chat',
-  },
-  claude: {
-    level: 'full',
-    implementation: 'Agentic workflows in Claude Code',
-    location: 'Claude Code CLI',
-  },
-  cursor: {
-    level: 'full',
-    implementation: 'Cursor Agent mode for multi-step execution',
-    location: 'Cursor Editor with Agent capabilities',
-  },
+  id: 'agent-mode',
+  name: 'Agent Mode',
+  implementations: [
+    {
+      provider: 'copilot',
+      implementation: 'Agent mode in Copilot Chat',
+      location: 'VS Code Copilot Chat',
+      support: 'full',
+    },
+    {
+      provider: 'claude',
+      implementation: 'Agentic workflows in Claude Code',
+      location: 'Claude Code CLI',
+      support: 'full',
+    },
+    {
+      provider: 'cursor',
+      implementation: 'Cursor Agent mode for multi-step execution',
+      location: 'Cursor Editor with Agent capabilities',
+      support: 'full',
+    },
+  ],
 }
 ```
 

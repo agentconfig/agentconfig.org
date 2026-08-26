@@ -96,12 +96,14 @@ await expect(fullSupportBadges).toHaveCount(18)  // Update to your actual count
 **Cause**: The implementation text doesn't match what the test expects.
 
 **Solution**:
-1. Check the comparison.ts file for the exact text
+1. Check the `cursor` implementation entry in `primitives.ts` for the exact text (`comparison.ts`
+   renders whatever `primitives.ts` says — it has no separate implementation text to edit)
 2. Update test to match:
 
 ```typescript
-// In comparison.ts:
-cursor: {
+// In primitives.ts:
+{
+  provider: 'cursor',
   implementation: 'Cursor Agent mode for multi-step execution',
   // ...
 }
@@ -230,7 +232,7 @@ For very large tables, consider horizontal scroll:
 </span>
 ```
 
-Check the `supportLevelColors` object in comparison.ts for the right classes.
+Check the `supportLevelColors` object in comparison.ts for the right classes (this mapping is provider-agnostic — it keys off `SupportLevel`, not per-provider data).
 
 ---
 
@@ -246,7 +248,9 @@ npm run typecheck  # See all errors
 ```
 
 Go through each error and:
-1. Add missing provider data to comparison.ts (all 11 rows)
+1. Add missing provider implementations to primitives.ts (all 13 primitives) — comparison.ts and
+   providerProfiles.ts pick these up automatically once the `comparisonData`/mapping call includes
+   the new provider
 2. Add missing provider to fileTree.ts (trees mapping)
 3. Add missing provider label to PrimitiveCard.tsx
 
@@ -363,10 +367,11 @@ bun .github/skills/generate-llms/scripts/generate-llms-full.ts
 
 **Symptoms**: Generated file doesn't include new provider rows
 
-**Cause**: Generation script was already run before adding provider to comparison.ts
+**Cause**: Generation script was already run before adding all 13 provider implementations to
+primitives.ts
 
 **Solution**:
-1. Verify provider data is in comparison.ts (all 11 rows)
+1. Verify provider implementations are in primitives.ts (all 13 primitives)
 2. Regenerate:
 
 ```bash
@@ -458,28 +463,16 @@ Use the [semantic-commit skill](../../semantic-commit) for help.
 ```bash
 # Count provider entries in primitives.ts
 grep "provider: 'cursor'" site/src/data/primitives.ts | wc -l
-# Should be 11
+# Should be 13
 
-# Count rows in comparison.ts
-grep "primitiveId:" site/src/data/comparison.ts | wc -l
-# Should be 11
-
-# Verify all rows have cursor field
-grep -A 10 "primitiveId:" site/src/data/comparison.ts | grep "cursor:" | wc -l
-# Should be 11
+# Count total primitives
+grep "id: '" site/src/data/primitives.ts | wc -l
+# Should be 13
 ```
 
-### Find mismatched IDs
-
-```bash
-# Extract all primitive IDs
-grep "id: '" site/src/data/primitives.ts | sed "s/.*id: '\\([^']*\\).*/\\1/"
-
-# Extract all primitive IDs from comparison
-grep "primitiveId: '" site/src/data/comparison.ts | sed "s/.*primitiveId: '\\([^']*\\).*/\\1/"
-
-# Compare - should be identical
-```
+`comparison.ts` and `providerProfiles.ts` derive their rows from `primitives.ts` at import time —
+there is no separate row count or ID list to reconcile in either file. If TypeScript compiles
+clean, the derived data is in sync by construction.
 
 ### Incorrect Support Levels for Provider
 
@@ -496,9 +489,8 @@ grep "primitiveId: '" site/src/data/comparison.ts | sed "s/.*primitiveId: '\\([^
 3. Update support levels based on actual documentation:
    - `full` - Natively supported, documented, core feature
    - `partial` - Works with limitations or workarounds
-   - `diy` - Custom setup required
-   - `none` - Not possible (rare)
-4. Update both `primitives.ts` and `comparison.ts`
+   - `diy` - Custom setup required, or not possible
+4. Update `primitives.ts` only — `comparison.ts` and `providerProfiles.ts` derive from it
 5. Regenerate llms-full.txt with updated data
 
 **Real example**: Cursor Hooks support was initially missed. Verification against cursor.com/docs/agent/hooks showed full support was available.
