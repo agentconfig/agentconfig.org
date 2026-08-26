@@ -31,6 +31,11 @@ export function CodeBlock({
       if (!cancelled) {
         setHighlighted({ code, language, html })
       }
+    }).catch((err: unknown) => {
+      // Highlighting is a progressive enhancement — if the dynamic Shiki
+      // chunk or highlight call fails, keep the plain <pre> fallback and
+      // just log rather than surfacing an unhandled rejection.
+      console.error('Failed to highlight code block:', err)
     })
 
     return () => {

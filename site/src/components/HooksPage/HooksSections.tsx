@@ -1,4 +1,4 @@
-import { useRef, useState } from 'preact/hooks'
+import { useEffect, useRef, useState } from 'preact/hooks'
 import type { VNode } from 'preact'
 import { Lightbulb, TriangleAlert } from 'lucide-preact'
 import { CodeBlock } from '@/components/CodeBlock'
@@ -85,10 +85,29 @@ interface ProviderExample {
   readonly adapterFile: { readonly path: string; readonly content: string; readonly language: string }
 }
 
-function ProviderExampleTabs({ examples }: { examples: readonly ProviderExample[] }): VNode {
+function ProviderExampleTabs({
+  examples,
+  legacyFragments,
+}: {
+  examples: readonly ProviderExample[]
+  /** Maps a legacy per-provider anchor (e.g. "first-copilot-hook") to the matching example id, so old bookmarks/links still land on the right tab. */
+  legacyFragments?: Record<string, string>
+}): VNode {
   const [activeIndex, setActiveIndex] = useState(0)
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([])
   const current = examples[activeIndex] ?? examples[0]
+
+  useEffect(() => {
+    if (legacyFragments == null) return
+    const hash = window.location.hash.replace('#', '')
+    const targetId = legacyFragments[hash]
+    if (targetId == null) return
+    const index = examples.findIndex((example) => example.id === targetId)
+    if (index >= 0) {
+      setActiveIndex(index)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   if (current == null) {
     return <div className="text-muted-foreground">No provider examples to display</div>
@@ -144,16 +163,20 @@ function ProviderExampleTabs({ examples }: { examples: readonly ProviderExample[
           </button>
         ))}
       </div>
-      <div
-        id={`provider-panel-${current.id}`}
-        role="tabpanel"
-        aria-labelledby={`provider-tab-${current.id}`}
-        tabIndex={0}
-      >
-        <p>{current.intro}</p>
-        <CodeBlock code={current.configFile.content} language={current.configFile.language} filename={current.configFile.path} className="my-6" />
-        <CodeBlock code={current.adapterFile.content} language={current.adapterFile.language} filename={current.adapterFile.path} className="my-6" />
-      </div>
+      {examples.map((example, index) => (
+        <div
+          key={example.id}
+          id={`provider-panel-${example.id}`}
+          role="tabpanel"
+          aria-labelledby={`provider-tab-${example.id}`}
+          tabIndex={0}
+          hidden={index !== activeIndex}
+        >
+          <p>{example.intro}</p>
+          <CodeBlock code={example.configFile.content} language={example.configFile.language} filename={example.configFile.path} className="my-6" />
+          <CodeBlock code={example.adapterFile.content} language={example.adapterFile.language} filename={example.adapterFile.path} className="my-6" />
+        </div>
+      ))}
     </div>
   )
 }
@@ -178,10 +201,18 @@ export function FirstProviderHookSection(): VNode {
 
   return (
     <section id="first-provider-hook" className="scroll-mt-24 mb-16">
+      {/* Preserve old fragment targets (#first-copilot-hook, #first-claude-hook)
+          from before the two provider sections were merged, so existing
+          links/bookmarks still land here (and select the matching tab). */}
+      <span id="first-copilot-hook" className="scroll-mt-24" aria-hidden="true" />
+      <span id="first-claude-hook" className="scroll-mt-24" aria-hidden="true" />
       <h2 className="text-3xl font-bold mb-4">4. First Provider Hook</h2>
       <p className="text-lg text-muted-foreground mb-6">Start with a repository-level pre-tool-use hook that blocks one risky command, then compare how each provider wires it up.</p>
       <p>Every provider adapter below calls the same policy core, so switching providers only changes normalization and response formatting, never the decision logic itself.</p>
-      <ProviderExampleTabs examples={examples} />
+      <ProviderExampleTabs
+        examples={examples}
+        legacyFragments={{ 'first-copilot-hook': 'copilot', 'first-claude-hook': 'claude' }}
+      />
     </section>
   )
 }
