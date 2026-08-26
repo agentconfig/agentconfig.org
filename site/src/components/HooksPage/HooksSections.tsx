@@ -1,4 +1,4 @@
-import { useState } from 'preact/hooks'
+import { useRef, useState } from 'preact/hooks'
 import type { VNode } from 'preact'
 import { Lightbulb, TriangleAlert } from 'lucide-preact'
 import { CodeBlock } from '@/components/CodeBlock'
@@ -87,10 +87,34 @@ interface ProviderExample {
 
 function ProviderExampleTabs({ examples }: { examples: readonly ProviderExample[] }): VNode {
   const [activeIndex, setActiveIndex] = useState(0)
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([])
   const current = examples[activeIndex] ?? examples[0]
 
   if (current == null) {
     return <div className="text-muted-foreground">No provider examples to display</div>
+  }
+
+  const selectTab = (index: number, focus: boolean): void => {
+    setActiveIndex(index)
+    if (focus) {
+      tabRefs.current[index]?.focus()
+    }
+  }
+
+  const handleKeyDown = (event: KeyboardEvent, index: number): void => {
+    if (event.key === 'ArrowRight') {
+      event.preventDefault()
+      selectTab((index + 1) % examples.length, true)
+    } else if (event.key === 'ArrowLeft') {
+      event.preventDefault()
+      selectTab((index - 1 + examples.length) % examples.length, true)
+    } else if (event.key === 'Home') {
+      event.preventDefault()
+      selectTab(0, true)
+    } else if (event.key === 'End') {
+      event.preventDefault()
+      selectTab(examples.length - 1, true)
+    }
   }
 
   return (
@@ -99,10 +123,15 @@ function ProviderExampleTabs({ examples }: { examples: readonly ProviderExample[
         {examples.map((example, index) => (
           <button
             key={example.id}
+            ref={(el) => { tabRefs.current[index] = el }}
+            id={`provider-tab-${example.id}`}
             type="button"
             role="tab"
             aria-selected={index === activeIndex}
-            onClick={() => { setActiveIndex(index) }}
+            aria-controls={`provider-panel-${example.id}`}
+            tabIndex={index === activeIndex ? 0 : -1}
+            onClick={() => { selectTab(index, false) }}
+            onKeyDown={(event) => { handleKeyDown(event, index) }}
             className={cn(
               'px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset',
@@ -115,9 +144,16 @@ function ProviderExampleTabs({ examples }: { examples: readonly ProviderExample[
           </button>
         ))}
       </div>
-      <p>{current.intro}</p>
-      <CodeBlock code={current.configFile.content} language={current.configFile.language} filename={current.configFile.path} className="my-6" />
-      <CodeBlock code={current.adapterFile.content} language={current.adapterFile.language} filename={current.adapterFile.path} className="my-6" />
+      <div
+        id={`provider-panel-${current.id}`}
+        role="tabpanel"
+        aria-labelledby={`provider-tab-${current.id}`}
+        tabIndex={0}
+      >
+        <p>{current.intro}</p>
+        <CodeBlock code={current.configFile.content} language={current.configFile.language} filename={current.configFile.path} className="my-6" />
+        <CodeBlock code={current.adapterFile.content} language={current.adapterFile.language} filename={current.adapterFile.path} className="my-6" />
+      </div>
     </div>
   )
 }

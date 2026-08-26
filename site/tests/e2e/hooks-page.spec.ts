@@ -62,4 +62,27 @@ test.describe('Hooks Page', () => {
     await expect(page.getByRole('heading', { name: '6. Policy Core Pattern' })).toBeVisible()
     await expect(page.locator('pre').first()).toBeVisible()
   })
+
+  test('syntax-highlights code blocks via Shiki', async ({ page }) => {
+    const highlighted = page.locator('.shiki-container pre.shiki').first()
+    await expect(highlighted).toBeVisible()
+    // Shiki emits per-span inline color styles driven by CSS custom
+    // properties; confirm at least one token actually carries color info
+    // rather than falling back to unstyled plain text.
+    const tokenStyle = await highlighted.locator('span[style]').first().getAttribute('style')
+    expect(tokenStyle).toContain('--shiki-light')
+  })
+
+  test('switches provider tabs with arrow keys', async ({ page }) => {
+    await page.getByRole('link', { name: /First Provider Hook/ }).click()
+    const copilotTab = page.getByRole('tab', { name: 'Copilot' })
+    const claudeTab = page.getByRole('tab', { name: 'Claude' })
+
+    await copilotTab.focus()
+    await expect(copilotTab).toHaveAttribute('aria-selected', 'true')
+    await page.keyboard.press('ArrowRight')
+    await expect(claudeTab).toHaveAttribute('aria-selected', 'true')
+    await expect(claudeTab).toBeFocused()
+    await expect(page.getByText('.claude/settings.json', { exact: true })).toBeVisible()
+  })
 })

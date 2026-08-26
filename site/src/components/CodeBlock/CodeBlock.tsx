@@ -22,14 +22,14 @@ export function CodeBlock({
   className,
 }: CodeBlockProps): VNode {
   const [copied, setCopied] = useState(false)
-  const [highlightedHtml, setHighlightedHtml] = useState<string | null>(null)
+  const [highlighted, setHighlighted] = useState<{ code: string; language: string | undefined; html: string } | null>(null)
 
   useEffect(() => {
     let cancelled = false
 
     void highlightCode(code, language).then((html) => {
       if (!cancelled) {
-        setHighlightedHtml(html)
+        setHighlighted({ code, language, html })
       }
     })
 
@@ -37,6 +37,15 @@ export function CodeBlock({
       cancelled = true
     }
   }, [code, language])
+
+  // Only trust the cached highlight result when it matches the current
+  // code/language — CodeTabs reuses this component instance across tab
+  // switches, so a pending highlight from the previous tab must not render
+  // paired with the new tab's header/copy button.
+  const highlightedHtml =
+    highlighted != null && highlighted.code === code && highlighted.language === language
+      ? highlighted.html
+      : null
 
   const handleCopy = async (): Promise<void> => {
     try {
@@ -82,6 +91,7 @@ export function CodeBlock({
       {highlightedHtml != null ? (
         <div
           className="shiki-container overflow-x-auto text-sm bg-muted/50"
+          tabIndex={0}
           dangerouslySetInnerHTML={{ __html: highlightedHtml }}
         />
       ) : (
