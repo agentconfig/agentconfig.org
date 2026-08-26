@@ -62,7 +62,7 @@ test.describe('Provider Comparison', () => {
     await expect(page.getByText('AGENTS.md or repository instructions file')).toBeVisible()
     await expect(page.getByText('Project memory file with @imports')).toBeVisible()
     await expect(page.getByText('Project instructions file')).toBeVisible()
-    await expect(page.getByText('Project AGENTS.md with hierarchical loading')).toBeVisible()
+    await expect(page.getByText('Project AGENTS.md file with hierarchical loading')).toBeVisible()
   })
 
   test('should show file locations when expanded', async ({ page }) => {

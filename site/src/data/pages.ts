@@ -67,4 +67,13 @@ export const pages: readonly PageMeta[] = [
     mdFile: 'mcp.md',
     partNumber: 7,
   },
+  {
+    slug: 'profiles',
+    title: 'Provider Compatibility Profiles',
+    description: 'Per-provider view of every primitive: support level, implementation, location, and source documentation',
+    features: 'Provider compatibility profiles generated from the typed primitives model',
+    dataFile: 'providerProfiles.ts',
+    mdFile: 'profiles.md',
+    partNumber: 8,
+  },
 ] as const

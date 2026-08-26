@@ -1,4 +1,5 @@
 export type Provider = 'copilot' | 'claude' | 'cursor' | 'codex'
+export type SupportLevel = 'full' | 'partial' | 'diy'
 export type LayerId =
   | 'instructions'
   | 'procedures'
@@ -17,7 +18,7 @@ export interface ProviderImplementation {
   /** File location or feature name */
   location: string
   /** Support level */
-  support: 'full' | 'partial' | 'diy'
+  support: SupportLevel
   /** Primary provider documentation */
   sourceUrl?: string
 }
