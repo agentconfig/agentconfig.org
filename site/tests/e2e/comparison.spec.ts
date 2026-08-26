@@ -62,7 +62,7 @@ test.describe('Provider Comparison', () => {
     await expect(page.getByText('AGENTS.md or repository instructions file')).toBeVisible()
     await expect(page.getByText('Project memory file with @imports')).toBeVisible()
     await expect(page.getByText('Project instructions file')).toBeVisible()
-    await expect(page.getByText('Project AGENTS.md with hierarchical loading')).toBeVisible()
+    await expect(page.getByText('Project AGENTS.md file with hierarchical loading')).toBeVisible()
   })
 
   test('should show file locations when expanded', async ({ page }) => {
@@ -71,12 +71,16 @@ test.describe('Provider Comparison', () => {
     const row = table.getByRole('row').filter({ hasText: 'Persistent Instructions' }).first()
     await row.click()
 
-    // Should show file locations for all 4 providers
+    // Should show file locations for all 4 providers. Cursor and Codex both
+    // publish AGENTS.md, so scope each assertion to its own provider card
+    // (identified by its heading) instead of a page-wide text search, which
+    // would otherwise pass even if one provider's location text went stale.
     await expect(page.getByText('AGENTS.md or .github/copilot-instructions.md')).toBeVisible()
-    await expect(page.getByText('CLAUDE.md').first()).toBeVisible()
-    await expect(page.getByText('.cursor/instructions.md')).toBeVisible()
-    // Codex also uses AGENTS.md - check the expanded row shows the Codex section header
-    await expect(page.getByRole('heading', { name: 'OpenAI Codex' })).toBeVisible()
+    await expect(page.getByText('./CLAUDE.md, ./.claude/CLAUDE.md')).toBeVisible()
+    const cursorCard = page.getByRole('heading', { name: 'Cursor', exact: true }).locator('..')
+    await expect(cursorCard.locator('code')).toHaveText('AGENTS.md')
+    const codexCard = page.getByRole('heading', { name: 'OpenAI Codex', exact: true }).locator('..')
+    await expect(codexCard.locator('code')).toHaveText('AGENTS.md, AGENTS.override.md')
   })
 
   test('should collapse row on second click', async ({ page }) => {

@@ -40,6 +40,7 @@ async function loadData() {
   const agentsTutorial = await import(join(dataDir, 'agentsTutorial.ts'))
   const hooksTutorial = await import(join(dataDir, 'hooksTutorial.ts'))
   const mcpTutorial = await import(join(dataDir, 'mcpTutorial.ts'))
+  const providerProfiles = await import(join(dataDir, 'providerProfiles.ts'))
   const pagesRegistry = await import(join(dataDir, 'pages.ts'))
   
   return {
@@ -68,6 +69,8 @@ async function loadData() {
     mcpCodeSamples: mcpTutorial.codeSamples,
     mcpFurtherReadingLinks: mcpTutorial.furtherReadingLinks,
     mcpFeatureComparison: mcpTutorial.mcpFeatureComparison,
+    // Provider compatibility profiles
+    providerProfiles: providerProfiles.providerProfiles,
   }
 }
 
@@ -440,6 +443,37 @@ ${mcpFurtherReadingLinks.map((link: any) => `- [${link.title}](${link.url}): ${l
   return content
 }
 
+function generateProfilesMd(data: Awaited<ReturnType<typeof loadData>>): string {
+  const { providerProfiles } = data
+
+  let content = `# Provider Compatibility Profiles
+
+Per-provider view of every primitive tracked on agentconfig.org: support level, implementation,
+file location, and a citation to the provider's own documentation where one exists. Generated
+directly from the same typed model that powers the homepage comparison table, so the two views
+can never drift apart.
+
+`
+
+  for (const profile of providerProfiles) {
+    content += `## ${profile.name}\n\n`
+    content += `Coverage: ${profile.coverage.total} primitives tracked — ${profile.coverage.full} full, ${profile.coverage.partial} partial, ${profile.coverage.diy} DIY/manual. ${profile.coverage.cited} of ${profile.coverage.total} cited to provider documentation.\n\n`
+
+    for (const category of profile.categories) {
+      content += `### ${category.name}\n\n`
+      content += `| Primitive | Support | Implementation | Location | Source |\n`
+      content += `|-----------|---------|-----------------|----------|--------|\n`
+      for (const entry of category.entries) {
+        const source = entry.sourceUrl != null ? `[Provider documentation](${entry.sourceUrl})` : '—'
+        content += `| ${entry.name} | ${entry.support} | ${entry.implementation} | \`${entry.location}\` | ${source} |\n`
+      }
+      content += '\n'
+    }
+  }
+
+  return content
+}
+
 function generateHooksMd(data: Awaited<ReturnType<typeof loadData>>): string {
   const {
     hooksTocItems,
@@ -756,6 +790,15 @@ Support matrix comparing GitHub Copilot, Claude Code, Cursor, and OpenAI Codex:
 
   content += generateMcpMd(data).replace(/^# MCP Tool Integrations Tutorial\n\n[^\n]+\n[^\n]+\n[^\n]+\n\n/, '')
 
+  content += `
+---
+
+# Part ${pages.find(p => p.slug === 'profiles')?.partNumber ?? 8}: Provider Compatibility Profiles
+
+`
+
+  content += generateProfilesMd(data).replace(/^# Provider Compatibility Profiles\n\n[^\n]+\n[^\n]+\n[^\n]+\n[^\n]+\n\n/, '')
+
   return content
 }
 
@@ -816,7 +859,11 @@ async function main() {
   console.log('Generating mcp.md...')
   const mcpMd = generateMcpMd(data)
   writeFileSync(join(publicDir, 'mcp.md'), mcpMd)
-  
+
+  console.log('Generating profiles.md...')
+  const profilesMd = generateProfilesMd(data)
+  writeFileSync(join(publicDir, 'profiles.md'), profilesMd)
+
   console.log('Generating llms-full.txt...')
   const llmsFullTxt = generateLlmsFullTxt(data)
   writeFileSync(join(publicDir, 'llms-full.txt'), llmsFullTxt)

@@ -35,7 +35,7 @@ Use this skill when:
 Before starting, gather:
 - **Provider capability audit** - Which of the 13 primitives does the provider support?
 - **File path documentation** - Where do config files go (global vs project)?
-- **Support levels** - `primitives.ts` uses `full` (native), `partial` (workarounds), `diy` (custom setup); `comparison.ts` uses `full`, `partial`, `none` (unavailable) — the two files use different enums, do not mix them
+- **Support levels** - `primitives.ts` and `comparison.ts` share one `SupportLevel` type: `full` (native), `partial` (workarounds), `diy` (custom setup or not achievable) — one vocabulary, no separate `none` value
 
 ## The 13 Primitives
 
@@ -91,8 +91,8 @@ Stream 2: Data Layer (Add implementations for all 13 primitives)
 
 | Stream | Files |
 |--------|-------|
-| 1 | `site/src/data/primitives.ts`, `site/src/data/fileTree.ts`, `site/src/data/comparison.ts`, `site/src/components/PrimitiveCards/PrimitiveCard.tsx` |
-| 2 | `site/src/data/primitives.ts`, `site/src/data/comparison.ts`, `site/src/data/fileTree.ts` |
+| 1 | `site/src/data/primitives.ts`, `site/src/data/fileTree.ts`, `site/src/data/comparison.ts` (interface + `comparisonData` mapping call only, not per-row data), `site/src/components/PrimitiveCards/PrimitiveCard.tsx` |
+| 2 | `site/src/data/primitives.ts` (all 13 implementations for the new provider), `site/src/data/fileTree.ts` |
 | 3 | `site/src/components/ProviderComparison/ComparisonTable.tsx` |
 | 4 | `site/tests/e2e/comparison.spec.ts` |
 | 5 | `site/src/App.tsx`, `site/src/components/Hero/Hero.tsx`, `README.md` |
@@ -113,7 +113,7 @@ I've completed Stream 1 (types). Now execute Stream 2 (data layer) to add cursor
 
 **Update existing provider data:**
 ```
-Update Cursor's support level from partial to full for Tool Integrations in the comparison.ts and UI.
+Update Cursor's support level from partial to full for Tool Integrations in primitives.ts.
 ```
 
 ## Success Metrics

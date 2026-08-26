@@ -97,7 +97,7 @@ Exit codes: `0` clean, `1` fail-closed error, `2` findings require action. Exit 
 
 ### 4. Act on the findings
 
-Apply `update-site-data` findings to `site/src/data/primitives.ts` and `site/src/data/comparison.ts` together, then regenerate published files with the `generate-llms` skill. The two data files must stay in sync; the comparison marks internal disagreement as ambiguous and refuses to proceed.
+Apply `update-site-data` findings to `site/src/data/primitives.ts` only, then regenerate published files with the `generate-llms` skill. `site/src/data/comparison.ts` and `site/src/data/providerProfiles.ts` compute their values from `primitives.ts` at import time, so hand-editing them there would duplicate the same fact in two places and reintroduce the drift this derivation was built to eliminate — the edit belongs in `primitives.ts` alone.
 
 Treat `extend-site-model` findings as content design rather than a data edit. They mean the documented behavior has no home in the current taxonomy.
 
@@ -111,7 +111,7 @@ The comparison refuses to guess. It returns `ambiguous` and asks for a person wh
 - The only support for a claim is a secondary source.
 - The cited source is not in the registry, belongs to another provider, or does not match the registered URL.
 - The evidence is older than the registry's freshness limit.
-- The site contradicts itself between `primitives.ts` and `comparison.ts`.
+- The site contradicts itself between what it publishes and any other indexed site data source (a defense against drift, even though `comparison.ts` is now derived from `primitives.ts` and should not diverge in normal operation).
 
 An empty claim set is treated as a failed retrieval, not a clean run.
 

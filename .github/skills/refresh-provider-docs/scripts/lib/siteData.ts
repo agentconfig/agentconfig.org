@@ -32,15 +32,6 @@ interface RawPrimitive {
   implementations: RawImplementation[]
 }
 
-interface RawSupport {
-  level: string
-  implementation: string
-  location: string
-  sourceUrl?: string
-}
-
-const COMPARISON_PROVIDER_KEYS = ['copilot', 'claude', 'cursor', 'codex'] as const
-
 function pushEntries(
   entries: SiteEntry[],
   origin: SiteEntry['origin'],
@@ -54,7 +45,17 @@ function pushEntries(
   entries.push({ provider, primitive, aspect: 'support', value: fields.support, sourceUrl, origin })
 }
 
-export function buildSiteIndex(primitives: RawPrimitive[], comparisonRows: Record<string, unknown>[]): SiteIndex {
+/**
+ * `comparison.ts` is mechanically derived from `primitives.ts` (see its
+ * generation code), so indexing both as independent site assertions would
+ * count every claim twice and overstate the unverified surface in the
+ * report. `origin` stays a field on `SiteEntry` — and the self-contradiction
+ * check in `compare.ts` still groups by it — so a fixture or a future
+ * hand-maintained secondary data file can still be caught disagreeing with
+ * `primitives.ts`, but the live loader below only feeds it the one canonical
+ * source.
+ */
+export function buildSiteIndex(primitives: RawPrimitive[]): SiteIndex {
   const entries: SiteEntry[] = []
 
   for (const primitive of primitives) {
@@ -64,21 +65,6 @@ export function buildSiteIndex(primitives: RawPrimitive[], comparisonRows: Recor
         location: implementation.location,
         support: implementation.support,
         sourceUrl: implementation.sourceUrl,
-      })
-    }
-  }
-
-  for (const row of comparisonRows) {
-    const primitiveId = String(row.primitiveId ?? '')
-    if (primitiveId === '') continue
-    for (const providerKey of COMPARISON_PROVIDER_KEYS) {
-      const support = row[providerKey] as RawSupport | undefined
-      if (!support) continue
-      pushEntries(entries, 'comparison.ts', providerKey, primitiveId, {
-        artifact: support.implementation,
-        location: support.location,
-        support: support.level,
-        sourceUrl: support.sourceUrl,
       })
     }
   }
@@ -94,6 +80,5 @@ export function buildSiteIndex(primitives: RawPrimitive[], comparisonRows: Recor
 export async function loadSiteIndex(root: string = projectRoot): Promise<SiteIndex> {
   const dataDir = join(root, 'site/src/data')
   const primitivesModule = await import(join(dataDir, 'primitives.ts'))
-  const comparisonModule = await import(join(dataDir, 'comparison.ts'))
-  return buildSiteIndex(primitivesModule.primitives as RawPrimitive[], comparisonModule.comparisonData as Record<string, unknown>[])
+  return buildSiteIndex(primitivesModule.primitives as RawPrimitive[])
 }

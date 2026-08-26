@@ -39,6 +39,62 @@ export const copilotGlobalTree: FileNode = {
       type: 'folder',
       children: [
         {
+          id: 'copilot-global-instructions',
+          name: 'copilot-instructions.md',
+          type: 'file',
+          details: {
+            label: 'User Instructions',
+            description: 'Personal instructions applied across every repository you use with Copilot CLI, regardless of which project you\'re in.',
+            whatGoesHere: [
+              'Personal coding preferences and style',
+              'Preferred tools and workflows',
+              'Cross-repo conventions you always want applied',
+            ],
+            whenLoaded: 'Always loaded first for Copilot CLI sessions, before any repository-level instructions.',
+            loadOrder: 1,
+            example: `# My Copilot CLI Instructions
+
+## Preferences
+- Prefer TypeScript over JavaScript for new files
+- Use conventional commits
+- Always run tests before considering a task complete
+
+## Tools
+- Use \`gh\` CLI for GitHub operations
+- Prefer ripgrep over grep for searches`,
+          },
+        },
+        {
+          id: 'copilot-global-instructions-folder',
+          name: 'instructions',
+          type: 'folder',
+          children: [
+            {
+              id: 'copilot-global-instructions-file',
+              name: 'shell.instructions.md',
+              type: 'file',
+              details: {
+                label: 'User Path-Specific',
+                description: 'Personal instructions that apply only to specific directories or file patterns, loaded across every repository.',
+                whatGoesHere: [
+                  'Personal conventions for a recurring directory pattern (e.g. scripts/)',
+                  'Preferences that only make sense for certain file types',
+                ],
+                whenLoaded: 'Loaded when working on files matching the glob pattern in frontmatter, in any repository.',
+                loadOrder: 2,
+                example: `---
+applyTo: "scripts/**"
+---
+
+# Shell Script Instructions
+
+- Always add \`set -euo pipefail\` at the top
+- Quote all variable expansions`,
+              },
+            },
+          ],
+        },
+        {
           id: 'copilot-global-skills',
           name: 'skills',
           type: 'folder',
@@ -565,6 +621,51 @@ export const claudeTree: FileNode = {
     ]
   }
 }`,
+          },
+        },
+        {
+          id: 'claude-settings-local',
+          name: 'settings.local.json',
+          type: 'file',
+          details: {
+            label: 'Local Settings',
+            description: 'Personal, per-checkout overrides for Claude Code settings. Not shared with the team; typically gitignored.',
+            whatGoesHere: [
+              'Personal permission overrides',
+              'Local-only tool allow/deny entries',
+            ],
+            whenLoaded: 'Merged on top of .claude/settings.json for this checkout only.',
+            loadOrder: 3,
+            example: `{
+  "permissions": {
+    "allow": ["Bash(npm run dev:*)"]
+  }
+}`,
+          },
+        },
+        {
+          id: 'claude-dotclaude-claudemd',
+          name: 'CLAUDE.md',
+          type: 'file',
+          details: {
+            label: 'Project Memory (alternate location)',
+            description: 'Equivalent to the root CLAUDE.md; Claude Code loads either location. Some teams prefer keeping it alongside other .claude/ config.',
+            whatGoesHere: [
+              'Project overview and conventions',
+              'Key commands (build, test, run)',
+              'Architecture notes',
+              '@path/to/file imports for additional context',
+            ],
+            whenLoaded: 'Loaded as the shared project instruction file, same as ./CLAUDE.md.',
+            loadOrder: 1,
+            example: `# .claude/CLAUDE.md
+
+## Project Overview
+A web application built with React and Node.js.
+
+## Commands
+- \`npm run dev\` — Start development
+- \`npm test\` — Run tests`,
           },
         },
         {
@@ -1143,27 +1244,22 @@ export const cursorTree: FileNode = {
   type: 'folder',
   children: [
     {
-      id: 'cursor-dotcursor',
-      name: '.cursor',
-      type: 'folder',
-      children: [
-        {
-          id: 'cursor-instructions',
-          name: 'instructions.md',
-          type: 'file',
-          details: {
-            label: 'Project Instructions',
-            description: 'Cursor\'s primary file for project context. Automatically loaded for all AI interactions.',
-            whatGoesHere: [
-              'Project overview and tech stack',
-              'Coding conventions (naming, formatting, patterns)',
-              'Testing requirements and how to run tests',
-              'Build/deploy commands',
-              'Security constraints',
-            ],
-            whenLoaded: 'Always loaded first. Forms the baseline context for all Cursor interactions.',
-            loadOrder: 1,
-            example: `# Cursor Instructions
+      id: 'cursor-agents-md',
+      name: 'AGENTS.md',
+      type: 'file',
+      details: {
+        label: 'Project Instructions',
+        description: 'Cursor\'s primary file for project context. Automatically loaded for all AI interactions.',
+        whatGoesHere: [
+          'Project overview and tech stack',
+          'Coding conventions (naming, formatting, patterns)',
+          'Testing requirements and how to run tests',
+          'Build/deploy commands',
+          'Security constraints',
+        ],
+        whenLoaded: 'Always loaded first. Forms the baseline context for all Cursor interactions.',
+        loadOrder: 1,
+        example: `# AGENTS.md
 
 ## Tech Stack
 - TypeScript, React 18, Node.js 20
@@ -1177,8 +1273,13 @@ export const cursorTree: FileNode = {
 ## Testing
 - Run tests: \`npm test\`
 - All PRs must have tests for new functionality`,
-          },
-        },
+      },
+    },
+    {
+      id: 'cursor-dotcursor',
+      name: '.cursor',
+      type: 'folder',
+      children: [
         {
           id: 'cursor-mcp',
           name: 'mcp.json',
@@ -1242,22 +1343,48 @@ export const cursorTree: FileNode = {
           },
         },
         {
-          id: 'cursor-cli-json',
-          name: 'cli.json',
+          id: 'cursor-permissions-json',
+          name: 'permissions.json',
           type: 'file',
           details: {
-            label: 'CLI Permissions Override',
-            description: 'Project-level override for the Cursor CLI, merged from the Git root down to the working directory. Only the permissions block is respected here; other settings are global-only.',
+            label: 'Auto-review Permissions',
+            description: 'Project-level guidance for the Auto-review classifier: plain-English instructions for which actions to lean toward allowing or blocking.',
             whatGoesHere: [
-              'permissions.allow / permissions.deny entries',
-              'Shell/Read/Write/WebFetch/Mcp tokens scoped to this project',
+              'autoRun.allow_instructions — actions to lean toward allowing',
+              'autoRun.block_instructions — actions to lean toward blocking (e.g. "every AWS CLI command should go through approval")',
             ],
-            whenLoaded: 'Merged into the session when the Cursor CLI runs in this project; deeper files take precedence, and deny always beats allow.',
+            whenLoaded: 'Merged with ~/.cursor/permissions.json when Cursor runs in this project; both apply together.',
             loadOrder: 0,
             example: `{
-  "permissions": {
-    "allow": ["Shell(git)", "Read(src/**.ts)", "Write(package.json)"],
-    "deny": ["Shell(rm)", "Read(.env*)"]
+  "autoRun": {
+    "allow_instructions": [],
+    "block_instructions": [
+      "Every AWS CLI command should go through approval first.",
+      "Every command that modifies Kubernetes resources should go through approval first."
+    ]
+  }
+}`,
+          },
+        },
+        {
+          id: 'cursor-sandbox-json',
+          name: 'sandbox.json',
+          type: 'file',
+          details: {
+            label: 'Sandbox Config',
+            description: 'Project-level sandbox mode, extra paths, and network policy for sandboxed shell commands.',
+            whatGoesHere: [
+              'type ("workspace_readwrite", "workspace_readonly", or "insecure_none")',
+              'additionalReadwritePaths / additionalReadonlyPaths',
+              'networkPolicy.default, .allow, and .deny domain patterns',
+            ],
+            whenLoaded: 'Merged with ~/.cursor/sandbox.json when Cursor runs in this project; the project file takes priority on conflicts.',
+            loadOrder: 0,
+            example: `{
+  "type": "workspace_readwrite",
+  "networkPolicy": {
+    "default": "deny",
+    "allow": ["registry.npmjs.org"]
   }
 }`,
           },
@@ -1551,25 +1678,20 @@ Review this PR for:
       type: 'folder',
       children: [
         {
-          id: 'cursor-frontend-instructions',
-          name: '.cursor',
-          type: 'folder',
-          children: [
-            {
-              id: 'cursor-frontend-instructions-file',
-              name: 'instructions.md',
-              type: 'file',
-              details: {
-                label: 'Nested Instructions',
-                description: 'Additional context for this directory. Cursor reads this when working in this area.',
-                whatGoesHere: [
-                  'Directory-specific stack info',
-                  'Local conventions',
-                  'Relevant commands',
-                ],
-                whenLoaded: 'Loaded when working in this directory. Adds to root context.',
-                loadOrder: 2,
-                example: `# Frontend Instructions
+          id: 'cursor-frontend-agents',
+          name: 'AGENTS.md',
+          type: 'file',
+          details: {
+            label: 'Nested Instructions',
+            description: 'Additional context for this directory. Cursor reads this when working in this area.',
+            whatGoesHere: [
+              'Directory-specific stack info',
+              'Local conventions',
+              'Relevant commands',
+            ],
+            whenLoaded: 'Loaded when working in this directory. Adds to root context.',
+            loadOrder: 2,
+            example: `# Frontend AGENTS.md
 
 ## Stack
 - React 18 with TypeScript
@@ -1579,9 +1701,7 @@ Review this PR for:
 ## Key Directories
 - \`/src/components\` — UI components
 - \`/src/hooks\` — Custom hooks`,
-              },
-            },
-          ],
+          },
         },
         {
           id: 'cursor-frontend-src',
@@ -1597,25 +1717,20 @@ Review this PR for:
       type: 'folder',
       children: [
         {
-          id: 'cursor-backend-instructions',
-          name: '.cursor',
-          type: 'folder',
-          children: [
-            {
-              id: 'cursor-backend-instructions-file',
-              name: 'instructions.md',
-              type: 'file',
-              details: {
-                label: 'Nested Instructions',
-                description: 'Additional context for this directory. Cursor reads this when working in this area.',
-                whatGoesHere: [
-                  'Directory-specific stack info',
-                  'Local conventions',
-                  'Relevant commands',
-                ],
-                whenLoaded: 'Loaded when working in this directory. Adds to root context.',
-                loadOrder: 2,
-                example: `# Backend Instructions
+          id: 'cursor-backend-agents',
+          name: 'AGENTS.md',
+          type: 'file',
+          details: {
+            label: 'Nested Instructions',
+            description: 'Additional context for this directory. Cursor reads this when working in this area.',
+            whatGoesHere: [
+              'Directory-specific stack info',
+              'Local conventions',
+              'Relevant commands',
+            ],
+            whenLoaded: 'Loaded when working in this directory. Adds to root context.',
+            loadOrder: 2,
+            example: `# Backend AGENTS.md
 
 ## Stack
 - Node.js with Express
@@ -1624,9 +1739,7 @@ Review this PR for:
 ## Key Directories
 - \`/src/routes\` — API routes
 - \`/src/services\` — Business logic`,
-              },
-            },
-          ],
+          },
         },
         {
           id: 'cursor-backend-src',
@@ -1677,26 +1790,43 @@ export const cursorGlobalTree: FileNode = {
           },
         },
         {
-          id: 'cursor-global-cli-config',
-          name: 'cli-config.json',
+          id: 'cursor-global-permissions-json',
+          name: 'permissions.json',
           type: 'file',
           details: {
-            label: 'Global CLI Config',
-            description: 'Personal Cursor CLI settings that apply across all projects: permissions, sandbox mode, approval mode, and network access.',
+            label: 'Global Auto-review Permissions',
+            description: 'Personal guidance for the Auto-review classifier that applies to all project directories on your machine.',
             whatGoesHere: [
-              'permissions.allow / permissions.deny defaults',
-              'sandbox.mode and sandbox.networkAccess',
-              'approvalMode (allowlist, auto-review, unrestricted)',
+              'autoRun.allow_instructions — actions to lean toward allowing everywhere',
+              'autoRun.block_instructions — actions to lean toward blocking everywhere',
             ],
-            whenLoaded: 'Always loaded for the Cursor CLI. Only the permissions block can be overridden per-project via .cursor/cli.json.',
+            whenLoaded: 'Always loaded. Merged with a project-level permissions.json when one exists; both apply together.',
             loadOrder: 1,
             example: `{
-  "permissions": {
-    "allow": ["Shell(git)", "Read(**)"],
-    "deny": ["Shell(rm)", "Read(.env*)"]
-  },
-  "sandbox": { "mode": "enabled", "networkAccess": "user_config_only" },
-  "approvalMode": "allowlist"
+  "autoRun": {
+    "allow_instructions": [],
+    "block_instructions": ["Every command that modifies production infrastructure should go through approval first."]
+  }
+}`,
+          },
+        },
+        {
+          id: 'cursor-global-sandbox-json',
+          name: 'sandbox.json',
+          type: 'file',
+          details: {
+            label: 'Global Sandbox Config',
+            description: 'Personal sandbox mode, extra paths, and network policy that apply to all projects on your machine.',
+            whatGoesHere: [
+              'type ("workspace_readwrite", "workspace_readonly", or "insecure_none")',
+              'disableTmpWrite, enableSharedBuildCache',
+              'networkPolicy.default, .allow, and .deny domain patterns',
+            ],
+            whenLoaded: 'Always loaded. Merged with a project-level sandbox.json when one exists (project file takes priority on conflicts).',
+            loadOrder: 1,
+            example: `{
+  "type": "workspace_readwrite",
+  "networkPolicy": { "default": "deny" }
 }`,
           },
         },
@@ -2034,14 +2164,14 @@ description: Refactor code while maintaining tests and functionality.
       type: 'file',
       details: {
         label: 'Project Instructions',
-        description: 'Codex\'s primary file for project context. Supports hierarchical loading from parent directories.',
+        description: 'Codex\'s primary file for project context. Supports hierarchical loading from parent directories. Ignored if an AGENTS.override.md exists at the same directory.',
         whatGoesHere: [
           'Project overview and tech stack',
           'Build and test commands',
           'Coding conventions',
           'Project structure notes',
         ],
-        whenLoaded: 'Always loaded first. Codex walks from project root to current directory, merging AGENTS.md files.',
+        whenLoaded: 'Always loaded first (unless an AGENTS.override.md is present at this level). Codex walks from project root to current directory, merging AGENTS.md files.',
         loadOrder: 1,
         example: `# AGENTS.md
 
@@ -2061,23 +2191,62 @@ description: Refactor code while maintaining tests and functionality.
       },
     },
     {
+      id: 'codex-agents-override-md',
+      name: 'AGENTS.override.md',
+      type: 'file',
+      details: {
+        label: 'Override Instructions',
+        description: 'When present, Codex reads this instead of AGENTS.md at the repository root — only the first non-empty file at each level is used, never both.',
+        whatGoesHere: [
+          'Non-negotiable repo-wide rules',
+          'A temporary full replacement for the root AGENTS.md (e.g. during an incident or migration)',
+        ],
+        whenLoaded: 'Loaded at the repository root instead of AGENTS.md when present. Root AGENTS.md is ignored while this file exists.',
+        loadOrder: 1,
+        example: `# AGENTS.override.md
+
+## Non-negotiable
+- Never commit directly to main
+- All schema changes require a migration file`,
+      },
+    },
+    {
       id: 'codex-frontend',
       name: 'frontend',
       type: 'folder',
       children: [
+        {
+          id: 'codex-frontend-agents-override',
+          name: 'AGENTS.override.md',
+          type: 'file',
+          details: {
+            label: 'Nested Override Instructions',
+            description: 'When present, Codex reads this instead of this directory\'s AGENTS.md — the two are never combined at the same directory level.',
+            whatGoesHere: [
+              'Non-negotiable rules specific to this directory',
+              'A temporary full replacement for this directory\'s AGENTS.md',
+            ],
+            whenLoaded: 'Loaded in this directory instead of its AGENTS.md when present; the result is still concatenated with AGENTS.md files from parent directories.',
+            loadOrder: 2,
+            example: `# Frontend AGENTS.override.md
+
+## Non-negotiable
+- Never bypass the design system components`,
+          },
+        },
         {
           id: 'codex-frontend-agents',
           name: 'AGENTS.md',
           type: 'file',
           details: {
             label: 'Nested Instructions',
-            description: 'Path-scoped instructions that apply to this directory. Merged with parent AGENTS.md files.',
+            description: 'Path-scoped instructions that apply to this directory. Merged with parent AGENTS.md files. Ignored if an AGENTS.override.md exists in this same directory.',
             whatGoesHere: [
               'Directory-specific stack info',
               'Local conventions',
               'Relevant commands',
             ],
-            whenLoaded: 'Loaded when working in this directory. Appended to parent context (closer files override).',
+            whenLoaded: 'Loaded when working in this directory (unless an AGENTS.override.md is present). Appended to parent context (closer files override).',
             loadOrder: 2,
             example: `# Frontend AGENTS.md
 
@@ -2104,6 +2273,25 @@ description: Refactor code while maintaining tests and functionality.
       name: 'backend',
       type: 'folder',
       children: [
+        {
+          id: 'codex-backend-agents-override',
+          name: 'AGENTS.override.md',
+          type: 'file',
+          details: {
+            label: 'Nested Override Instructions',
+            description: 'When present, Codex reads this instead of this directory\'s AGENTS.md — the two are never combined at the same directory level.',
+            whatGoesHere: [
+              'Non-negotiable rules specific to this directory',
+              'A temporary full replacement for this directory\'s AGENTS.md',
+            ],
+            whenLoaded: 'Loaded in this directory instead of its AGENTS.md when present; the result is still concatenated with AGENTS.md files from parent directories.',
+            loadOrder: 2,
+            example: `# Backend AGENTS.override.md
+
+## Non-negotiable
+- Never bypass parameterized queries`,
+          },
+        },
         {
           id: 'codex-backend-agents',
           name: 'AGENTS.md',
@@ -2188,13 +2376,13 @@ args = ["-y", "@upstash/context7-mcp"]`,
           type: 'file',
           details: {
             label: 'User Scope Instructions',
-            description: 'Personal instructions that apply to all your Codex sessions, regardless of project.',
+            description: 'Personal instructions that apply to all your Codex sessions, regardless of project. Ignored if ~/.codex/AGENTS.override.md exists.',
             whatGoesHere: [
               'Your preferred coding style',
               'Common conventions you follow',
               'Personal preferences (commit style, testing approach)',
             ],
-            whenLoaded: 'Always loaded first, before any project-specific context.',
+            whenLoaded: 'Always loaded first, before any project-specific context (unless an AGENTS.override.md is present at this level).',
             loadOrder: 2,
             example: `# My Global Codex Preferences
 
@@ -2206,6 +2394,46 @@ args = ["-y", "@upstash/context7-mcp"]`,
 - Prefer functional programming patterns
 - Always add JSDoc comments to public APIs
 - Use early returns to reduce nesting`,
+          },
+        },
+        {
+          id: 'codex-global-agents-override-md',
+          name: 'AGENTS.override.md',
+          type: 'file',
+          details: {
+            label: 'User Scope Override Instructions',
+            description: 'When present, Codex reads this instead of ~/.codex/AGENTS.md at the global scope only. Repository and nested AGENTS.md files are still layered on top afterward and can override it, since they come later in the merge order.',
+            whatGoesHere: [
+              'Personal rules you want as your default starting point across every project',
+              'A temporary full replacement for your global AGENTS.md',
+            ],
+            whenLoaded: 'Loaded first, in place of ~/.codex/AGENTS.md, when present. Project and nested AGENTS.md files are concatenated afterward and take precedence on conflicts.',
+            loadOrder: 2,
+            example: `# My Global Codex Overrides
+
+## Non-negotiable
+- Always confirm before force-pushing`,
+          },
+        },
+        {
+          id: 'codex-global-requirements-toml',
+          name: 'requirements.toml',
+          type: 'file',
+          details: {
+            label: 'Admin Requirements (/etc/codex/)',
+            description: 'Admin-enforced settings deployed to /etc/codex/requirements.toml (or the platform equivalent), not the user\'s home directory. Shown here for comparison since it always wins over user and project config.',
+            whatGoesHere: [
+              'Approval policy and sandbox mode locked at the fleet level',
+              'Permission profiles and managed hooks that users cannot override',
+              'Allowed MCP server allowlists',
+            ],
+            whenLoaded: 'Loaded first, ahead of user and project config; enforced values cannot be overridden by ~/.codex/config.toml or .codex/config.toml.',
+            loadOrder: 0,
+            example: `# /etc/codex/requirements.toml
+
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+allow_managed_hooks_only = true`,
           },
         },
         {

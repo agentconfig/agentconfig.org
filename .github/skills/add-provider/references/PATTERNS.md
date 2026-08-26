@@ -4,22 +4,23 @@ Standard conventions and decision guides for adding providers.
 
 ## Support Levels
 
-`primitives.ts` and `comparison.ts` use two different, non-interchangeable support enums — always
-check which file you're editing before picking a value. See PROCESS.md's decision tree for the
-side-by-side mapping.
+`primitives.ts` and `comparison.ts` share **one** `SupportLevel` type (`full | partial | diy`).
+`comparison.ts`'s `SupportLevel` is a type alias of `primitives.ts`'s enum — there is no separate
+`none` value and no second enum to keep in sync. See PROCESS.md's decision tree for the single
+vocabulary.
 
-### `full` - Native, First-Class Support (both files)
+### `full` - Native, First-Class Support
 
 The provider has built-in, well-documented support for this primitive.
 
 **Examples:**
 - Agent Mode in Cursor Editor (native multi-step execution)
-- Persistent Instructions in .cursor/instructions.md (first-class config file)
+- Persistent Instructions in AGENTS.md (first-class config file)
 - Tool Integrations in Claude Code (MCP support built-in)
 
 **When to use**: The feature is natively available, documented, and part of the provider's core offering.
 
-### `partial` - Works with Limitations or Workarounds (both files)
+### `partial` - Works with Limitations or Workarounds
 
 The provider supports the primitive but with limitations, workarounds, or indirect approaches.
 
@@ -29,27 +30,22 @@ The provider supports the primitive but with limitations, workarounds, or indire
 
 **When to use**: The primitive works but requires workarounds, isn't as feature-complete, or needs custom configuration.
 
-### `diy` - DIY (Do It Yourself) Workaround (`primitives.ts` only)
+### `diy` - DIY (Do It Yourself) Workaround
 
 Not natively available, but users can implement custom configuration to achieve similar functionality.
-This value is valid **only** in `ProviderImplementation.support` (`primitives.ts`) — it is rejected by
-`ComparisonRow`'s `SupportLevel` type in `comparison.ts`.
+Since `comparison.ts`'s `SupportLevel` is the same type as `primitives.ts`'s, a `diy` value in
+`primitives.ts` shows up as `diy` in the comparison table too — there's no separate "not available"
+value to translate it to.
 
 **Examples:**
 - (No primitive currently uses `diy` — all 13 primitives now have `full` or `partial` native support
   across all 4 providers. Reserved for a provider that requires custom scripting to approximate a
   primitive, e.g. a future provider with no built-in lifecycle hooks.)
 
-**When to use**: The feature isn't built-in but is achievable through custom setup.
-
-### `none` - Not Available (`comparison.ts` only)
-
-The provider cannot support this primitive in any form. This value is valid **only** in
-`ComparisonRow[provider].level` (`comparison.ts`) — it is rejected by `ProviderImplementation.support`
-in `primitives.ts`; use `diy` there for the equivalent "no built-in support" case.
-
-**When to use**: The primitive is fundamentally incompatible with the provider's architecture, or has
-no viable custom-setup path.
+**When to use**: The feature isn't built-in but is achievable through custom setup. If a provider
+truly cannot support a primitive in any form, that is also expressed as `diy` (with an
+`implementation`/`location` explaining why no workaround exists) — there is no separate
+"unavailable" enum value to fall back to.
 
 ---
 
@@ -148,11 +144,12 @@ Follows Claude's `.claude/` pattern with `.cursor/` directory:
 - **Lowercase with hyphens** for most files: `copilot-instructions.md`, `code-reviewer.md`
 - **Folders match content type**: `agents/`, `rules/`, `commands/`, `skills/`
 - **SKILL.md** (uppercase) for reusable skill definitions (agentskills convention)
-- **CLAUDE.md**, **.cursor/instructions.md** for memory/context files
+- **CLAUDE.md**, **AGENTS.md** for memory/context files
 
 ### Primitive IDs
 
-Used in `primitives.ts` and `comparison.ts` - must be consistent:
+Used in `primitives.ts` (and read automatically by `comparison.ts`/`providerProfiles.ts`) — must be
+consistent:
 
 ```typescript
 // Use kebab-case, lowercase
@@ -213,15 +210,13 @@ Does provider natively support this?
 │  └─ support: 'full'
 ├─ Yes, but limited or with workarounds
 │  └─ support: 'partial'
-├─ No, but achievable with custom setup
-│  └─ support: 'diy'
-└─ No, impossible
-   └─ support: 'none'  (rare)
+└─ No — whether via custom setup or not achievable at all
+   └─ support: 'diy'
 ```
 
 ---
 
-## Comparison Matrix: Full vs Partial vs None
+## Comparison Matrix: Full vs Partial vs DIY
 
 Quick reference for common feature mappings:
 
@@ -387,10 +382,9 @@ Before committing provider data:
 - [ ] Provider name appears consistently in all 3 files:
   - [ ] `primitives.ts` (Provider type + implementations)
   - [ ] `fileTree.ts` (Provider type)
-  - [ ] `comparison.ts` (ComparisonRow interface)
-- [ ] All 13 primitives have provider entries
-- [ ] All 13 comparison rows have provider field
-- [ ] Support levels are consistent (primitives.ts ↔ comparison.ts)
+  - [ ] `comparison.ts` (`Provider` union re-export and the `comparisonData` mapping call the new
+    provider — no per-row hand-editing needed since rows derive from `primitives.ts`)
+- [ ] All 13 primitives have provider entries in `primitives.ts`
 - [ ] File locations follow provider's naming conventions
 - [ ] Provider display name is added to PrimitiveCard labels
 - [ ] combineWith references only valid primitives
@@ -403,11 +397,12 @@ Before committing provider data:
 
 If you need to update an existing provider (e.g., Cursor gains new features):
 
-1. Update `primitives.ts` - change support level and implementation details
-2. Update `comparison.ts` - change level and implementation details
-3. Update `fileTree.ts` if new file locations were added
-4. Update E2E tests if support badge counts changed
-5. Regenerate llms-full.txt
-6. Create semantic commit message with scope: `feat(data): update cursor support for Tool Integrations`
+1. Update `primitives.ts` - change support level and implementation details. `comparison.ts` and
+   `providerProfiles.ts` pick up the change automatically at import time — do not hand-edit either
+   file, or the same fact ends up duplicated and can drift.
+2. Update `fileTree.ts` if new file locations were added
+3. Update E2E tests if support badge counts changed
+4. Regenerate llms-full.txt
+5. Create semantic commit message with scope: `feat(data): update cursor support for Tool Integrations`
 
 All files must stay in sync - if you miss any, TypeScript will catch it.

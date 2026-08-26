@@ -19,6 +19,7 @@ test.describe('Navigation', () => {
       await expect(nav.getByRole('link', { name: 'Agents' })).toBeVisible()
       await expect(nav.getByRole('link', { name: 'Hooks' })).toBeVisible()
       await expect(nav.getByRole('link', { name: 'MCP' })).toBeVisible()
+      await expect(nav.getByRole('link', { name: 'Profiles' })).toBeVisible()
     })
 
     test('should navigate to Skills page', async ({ page }) => {
@@ -48,6 +49,15 @@ test.describe('Navigation', () => {
       await expect(page.getByRole('heading', { name: 'Lifecycle Hooks', exact: true })).toBeVisible()
     })
 
+    test('should navigate to Profiles page', async ({ page }) => {
+      const navLink = page.getByLabel('Main navigation').getByRole('link', { name: 'Profiles' })
+      await navLink.click()
+
+      // Should navigate to /profiles/
+      await expect(page).toHaveURL(/\/profiles\/?/)
+      await expect(page.getByRole('heading', { name: 'Provider Compatibility Profiles' })).toBeVisible()
+    })
+
     test('should navigate back to Overview from Skills', async ({ page }) => {
       // Go to Skills page first
       await page.goto('/skills/')
@@ -75,6 +85,7 @@ test.describe('Navigation', () => {
       await expect(page.getByRole('menuitem', { name: 'Skills' })).toBeVisible()
       await expect(page.getByRole('menuitem', { name: 'Agents' })).toBeVisible()
       await expect(page.getByRole('menuitem', { name: 'Hooks' })).toBeVisible()
+      await expect(page.getByRole('menuitem', { name: 'Profiles' })).toBeVisible()
       await expect(page.getByRole('button', { name: 'Close menu' })).toBeVisible()
     })
 
