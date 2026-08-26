@@ -546,9 +546,19 @@ Hooks work well for:
 
 ### 3. Lifecycle Events
 
-Normalize provider event names into the lifecycle your policy cares about:
+Lifecycle events are checkpoints where a hook can observe, allow, block, or record what
+happens next. Start with the boundary your policy needs instead of wiring every event.
 
-| Normalized event | Use it for | Copilot | Claude | Codex |
+A typical session moves through:
+1. **Begin** — Session start
+2. **Ask** — User prompt submitted
+3. **Act** — Before tool use, then after tool use or tool failure
+4. **Preserve** — Compaction when the runtime condenses context
+5. **Finish** — Agent stop
+
+Normalize that intent first, then translate it into each provider's event name:
+
+| Policy boundary | Use it for | GitHub Copilot | Claude Code | OpenAI Codex |
 | --- | --- | --- | --- | --- |
 ${hooksNormalizedEvents.map((event: any) => `| ${event.normalized} | ${event.purpose} | ${event.copilot} | ${event.claude} | ${event.codex} |`).join('\n')}
 

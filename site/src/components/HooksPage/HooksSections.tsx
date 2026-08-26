@@ -5,6 +5,60 @@ import { CodeTabs } from '@/components/CodeBlock/CodeTabs'
 import { codeSamples, furtherReadingLinks, normalizedEvents, providerPanels } from '@/data/hooksTutorial'
 import { ProviderTabs, type ProviderTone } from './ProviderTabs'
 
+const lifecycleStages = [
+  {
+    number: '1',
+    label: 'Begin',
+    events: ['Session start'],
+    description: 'Load concise context and verify prerequisites.',
+    className: 'border-sky-200 bg-sky-50/70 dark:border-sky-900 dark:bg-sky-950/20',
+    accentClassName: 'bg-sky-100 text-sky-900 dark:bg-sky-900/60 dark:text-sky-100',
+    layoutClassName: 'lg:col-span-2',
+  },
+  {
+    number: '2',
+    label: 'Ask',
+    events: ['User prompt submitted'],
+    description: 'Inspect the request before planning begins.',
+    className: 'border-violet-200 bg-violet-50/70 dark:border-violet-900 dark:bg-violet-950/20',
+    accentClassName: 'bg-violet-100 text-violet-900 dark:bg-violet-900/60 dark:text-violet-100',
+    layoutClassName: 'lg:col-span-2',
+  },
+  {
+    number: '3',
+    label: 'Act',
+    events: ['Before tool use', 'After tool use', 'Tool failure'],
+    description: 'Gate side effects, then record the outcome.',
+    className: 'border-orange-200 bg-orange-50/70 dark:border-orange-900 dark:bg-orange-950/20',
+    accentClassName: 'bg-orange-100 text-orange-900 dark:bg-orange-900/60 dark:text-orange-100',
+    layoutClassName: 'lg:col-span-2',
+  },
+  {
+    number: '4',
+    label: 'Preserve',
+    events: ['Compaction'],
+    description: 'Save the state needed after context is condensed.',
+    className: 'border-emerald-200 bg-emerald-50/70 dark:border-emerald-900 dark:bg-emerald-950/20',
+    accentClassName: 'bg-emerald-100 text-emerald-900 dark:bg-emerald-900/60 dark:text-emerald-100',
+    layoutClassName: 'lg:col-span-3',
+  },
+  {
+    number: '5',
+    label: 'Finish',
+    events: ['Agent stop'],
+    description: 'Clean up state and publish the final signal.',
+    className: 'border-rose-200 bg-rose-50/70 dark:border-rose-900 dark:bg-rose-950/20',
+    accentClassName: 'bg-rose-100 text-rose-900 dark:bg-rose-900/60 dark:text-rose-100',
+    layoutClassName: 'lg:col-span-3',
+  },
+] as const
+
+const lifecycleProviders = [
+  { id: 'copilot', label: 'GitHub Copilot', tone: 'copilot' as const, eventKey: 'copilot' as const },
+  { id: 'claude', label: 'Claude Code', tone: 'claude' as const, eventKey: 'claude' as const },
+  { id: 'codex', label: 'OpenAI Codex', tone: 'codex' as const, eventKey: 'codex' as const },
+] as const
+
 export function WhenHooksFitSection(): VNode {
   return (
     <section id="when-hooks" className="scroll-mt-24 mb-16">
@@ -31,31 +85,50 @@ export function LifecycleModelSection(): VNode {
   return (
     <section id="lifecycle-model" className="scroll-mt-24 mb-16">
       <h2 className="text-3xl font-bold mb-4">3. Lifecycle Events</h2>
-      <p className="text-lg text-muted-foreground mb-6">Normalize provider-specific event names into the lifecycle your policy actually cares about.</p>
-      <p>Providers use different names and event coverage, but most hook systems fit the same model: session boundaries, prompt boundaries, tool boundaries, compaction, and agent stop. Design around normalized events first, then write thin provider adapters.</p>
-      <div className="overflow-x-auto my-6">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b">
-              <th className="text-left py-2 pr-4">Normalized event</th>
-              <th className="text-left py-2 pr-4">Use it for</th>
-              <th className="text-left py-2 pr-4">Copilot</th>
-              <th className="text-left py-2 pr-4">Claude</th>
-              <th className="text-left py-2">Codex</th>
-            </tr>
-          </thead>
-          <tbody>
-            {normalizedEvents.map((event) => (
-              <tr key={event.normalized} className="border-b">
-                <td className="py-2 pr-4 font-medium">{event.normalized}</td>
-                <td className="py-2 pr-4">{event.purpose}</td>
-                <td className="py-2 pr-4 font-mono text-xs">{event.copilot}</td>
-                <td className="py-2 pr-4 font-mono text-xs">{event.claude}</td>
-                <td className="py-2 font-mono text-xs">{event.codex}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <p className="text-lg text-muted-foreground mb-6">Lifecycle events are checkpoints where a hook can observe, allow, block, or record what happens next.</p>
+      <p>Start with the boundary your policy needs instead of wiring every event. A command gate belongs before tool use; progress capture belongs after tool use; continuity belongs around compaction and session boundaries. Normalize that intent first, then translate it into each provider's event name.</p>
+      <div className="not-prose my-8">
+        <p className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">A typical agent session</p>
+        <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
+          {lifecycleStages.map((stage) => (
+            <li key={stage.label} className={`rounded-xl border p-4 ${stage.className} ${stage.layoutClassName}`}>
+              <div className="mb-4 flex items-center gap-3">
+                <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold ${stage.accentClassName}`}>{stage.number}</span>
+                <h3 className="font-semibold">{stage.label}</h3>
+              </div>
+              <div className="mb-3 flex flex-wrap gap-1.5">
+                {stage.events.map((event) => <code key={event} className="rounded-md border border-current/15 bg-background/80 px-2 py-1 text-xs">{event}</code>)}
+              </div>
+              <p className="text-sm text-muted-foreground">{stage.description}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+      <div className="not-prose my-8">
+        <p className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">Provider event names</p>
+        <ProviderTabs
+          tabs={lifecycleProviders}
+          idPrefix="lifecycle-provider"
+          ariaLabel="Lifecycle provider event names"
+          renderPanel={(provider) => (
+            <ul className="grid gap-3 sm:grid-cols-2">
+              {normalizedEvents.map((event) => {
+                const eventName = event[provider.eventKey]
+                return (
+                  <li key={event.normalized} className="rounded-lg border border-current/10 bg-background/70 p-4">
+                    <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                      <h3 className="font-semibold">{event.normalized}</h3>
+                      {eventName === 'No direct equivalent'
+                        ? <span className="text-xs italic text-muted-foreground">{eventName}</span>
+                        : <code className="rounded-md border border-current/15 bg-background px-2 py-1 text-xs">{eventName}</code>}
+                    </div>
+                    <p className="text-sm text-muted-foreground">{event.purpose}</p>
+                  </li>
+                )
+              })}
+            </ul>
+          )}
+        />
       </div>
     </section>
   )

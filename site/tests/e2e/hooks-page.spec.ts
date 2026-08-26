@@ -12,9 +12,20 @@ test.describe('Hooks Page', () => {
 
   test('shows the lifecycle and provider mappings', async ({ page }) => {
     await expect(page.getByRole('link', { name: /Lifecycle Events/ })).toBeVisible()
-    await expect(page.getByRole('cell', { name: 'preToolUse', exact: true })).toBeVisible()
-    await expect(page.getByRole('cell', { name: 'PreToolUse' }).first()).toBeVisible()
-    await expect(page.getByRole('cell', { name: 'PostCompact' })).toBeVisible()
+    const lifecycleSection = page.locator('#lifecycle-model')
+
+    await expect(lifecycleSection.getByText('A typical agent session')).toBeVisible()
+    await expect(lifecycleSection.getByRole('heading', { name: 'Begin', exact: true })).toBeVisible()
+    await expect(lifecycleSection.getByRole('heading', { name: 'Act', exact: true })).toBeVisible()
+    await expect(lifecycleSection.getByRole('heading', { name: 'Finish', exact: true })).toBeVisible()
+    await expect(lifecycleSection.getByRole('tablist', { name: 'Lifecycle provider event names' })).toBeVisible()
+    await expect(lifecycleSection.getByText('preToolUse', { exact: true })).toHaveCSS('font-family', /mono/i)
+
+    await lifecycleSection.getByRole('tab', { name: 'Claude Code', exact: true }).click()
+    await expect(lifecycleSection.locator('[role="tabpanel"]:visible').getByText('PreToolUse', { exact: true })).toBeVisible()
+
+    await lifecycleSection.getByRole('tab', { name: 'OpenAI Codex', exact: true }).click()
+    await expect(lifecycleSection.locator('[role="tabpanel"]:visible').getByText('PreCompact, PostCompact', { exact: true })).toBeVisible()
   })
 
   test('shows provider details as tabs with code-styled paths', async ({ page }) => {
