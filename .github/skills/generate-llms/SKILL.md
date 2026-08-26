@@ -51,6 +51,7 @@ The llms files are generated from these TypeScript data files:
 | `site/src/data/pages.ts` | **Page registry** - lists all pages for llms generation |
 | `site/src/data/primitives.ts` | 13 AI primitives with descriptions, use cases, and provider implementations |
 | `site/src/data/comparison.ts` | Provider comparison matrix (Copilot vs Claude) |
+| `site/src/data/providerProfiles.ts` | Per-provider compatibility profiles (derived from `primitives.ts`) |
 | `site/src/data/skillsTutorial.ts` | Skills tutorial sections and concepts |
 | `site/src/data/skillExamples.ts` | 5 example skills with full code |
 | `site/src/data/agentsTutorial.ts` | Agent definitions tutorial with code samples |
@@ -66,7 +67,8 @@ site/public/
 ├── skills.md          # Skills page content (rich markdown)
 ├── agents.md          # Agents page content (rich markdown)
 ├── hooks.md           # Hooks page content (rich markdown)
-└── mcp.md             # MCP page content (rich markdown)
+├── mcp.md             # MCP page content (rich markdown)
+└── profiles.md        # Provider compatibility profiles content (rich markdown)
 ```
 
 ## Generation Process

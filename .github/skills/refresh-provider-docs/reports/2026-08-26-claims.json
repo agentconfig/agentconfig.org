@@ -9,7 +9,7 @@
     "sourceUrl": "https://docs.github.com/en/copilot/concepts/agents/cloud-agent/about-cloud-agent",
     "sourceAuthority": "primary",
     "retrievedAt": "2026-08-25",
-    "notes": "The docs name IDE agent mode as the surface and distinguish it from Copilot cloud agent; the current site text is narrower and VS Code-specific."
+    "notes": "The docs name IDE agent mode as the surface and distinguish it from Copilot cloud agent; the site was corrected to describe agent mode generically rather than tying it to VS Code."
   },
   {
     "id": "copilot.persistent-instructions.location",
@@ -54,7 +54,7 @@
     "sourceUrl": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions",
     "sourceAuthority": "primary",
     "retrievedAt": "2026-08-25",
-    "notes": "The docs allow AGENTS.md anywhere in the repository and NAME.instructions.md files within or below .github/instructions; the current site text under-specifies the recursive instruction-file location."
+    "notes": "The docs allow AGENTS.md anywhere in the repository and NAME.instructions.md files within or below .github/instructions; the site was corrected to name the recursive instruction-file location."
   },
   {
     "id": "copilot.custom-agents.location",
@@ -105,7 +105,7 @@
     "sourceUrl": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-the-firewall",
     "sourceAuthority": "primary",
     "retrievedAt": "2026-08-25",
-    "notes": "The documented runtime boundary is the cloud-agent firewall managed from Internet access settings; the current site value is too generic to cite precisely."
+    "notes": "The documented runtime boundary is the cloud-agent firewall managed from Internet access settings; the site was corrected to cite that setting precisely."
   },
   {
     "id": "copilot.distribution.location",
@@ -121,7 +121,7 @@
     "sourceUrl": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions",
     "sourceAuthority": "primary",
     "retrievedAt": "2026-08-25",
-    "notes": "The distribution model in the docs spans repository-wide instructions, path-specific instruction files, and nested AGENTS.md files; the current site omits .github/copilot-instructions.md and the recursive instruction-file path."
+    "notes": "The distribution model in the docs spans repository-wide instructions, path-specific instruction files, and nested AGENTS.md files; the site was corrected to include .github/copilot-instructions.md and the recursive instruction-file path."
   },
   {
     "id": "copilot.verification.location",
@@ -160,7 +160,7 @@
     "sourceUrl": "https://code.claude.com/docs/en/memory",
     "sourceAuthority": "primary",
     "retrievedAt": "2026-08-25",
-    "notes": "Project CLAUDE.md files can live at either root or .claude/CLAUDE.md; the current site collapses that to one path."
+    "notes": "Project CLAUDE.md files can live at either root or .claude/CLAUDE.md; the site was corrected to list both paths."
   },
   {
     "id": "claude.global-instructions.location",
@@ -199,7 +199,7 @@
     "sourceUrl": "https://code.claude.com/docs/en/sub-agents",
     "sourceAuthority": "primary",
     "retrievedAt": "2026-08-25",
-    "notes": "The subagents docs preserve both project-scoped and user-scoped agent directories; the current site only names the project directory."
+    "notes": "The subagents docs preserve both project-scoped and user-scoped agent directories; the site was corrected to list both."
   },
   {
     "id": "claude.guardrails.location",
