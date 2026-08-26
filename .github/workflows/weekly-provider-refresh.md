@@ -32,7 +32,7 @@ skills:
 
 steps:
   - name: Set up Bun
-    uses: oven-sh/setup-bun@3d267786b128fe76c2f16a390aa2448b815359f3
+    uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
     with:
       bun-version: 1.x
   - name: Preserve the committed baseline
