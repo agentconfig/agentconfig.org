@@ -19,7 +19,8 @@ test.describe('Navigation', () => {
       await expect(nav.getByRole('link', { name: 'Agents' })).toBeVisible()
       await expect(nav.getByRole('link', { name: 'Hooks' })).toBeVisible()
       await expect(nav.getByRole('link', { name: 'MCP' })).toBeVisible()
-      await expect(nav.getByRole('link', { name: 'Profiles' })).toBeVisible()
+      await expect(nav.getByRole('link', { name: 'Profiles' })).toHaveCount(0)
+      await expect(nav.getByRole('combobox', { name: 'Provider' })).toHaveValue('')
     })
 
     test('should navigate to Skills page', async ({ page }) => {
@@ -49,13 +50,14 @@ test.describe('Navigation', () => {
       await expect(page.getByRole('heading', { name: 'Lifecycle Hooks', exact: true })).toBeVisible()
     })
 
-    test('should navigate to Profiles page', async ({ page }) => {
-      const navLink = page.getByLabel('Main navigation').getByRole('link', { name: 'Profiles' })
-      await navLink.click()
+    test('should select a provider and carry it into site navigation', async ({ page }) => {
+      const nav = page.getByLabel('Main navigation')
+      await nav.getByRole('combobox', { name: 'Provider' }).selectOption('cursor')
 
-      // Should navigate to /profiles/
-      await expect(page).toHaveURL(/\/profiles\/?/)
-      await expect(page.getByRole('heading', { name: 'Provider Compatibility Profiles' })).toBeVisible()
+      await expect(page).toHaveURL(/.*[?&]provider=cursor(?:&|#|$)/)
+      await nav.getByRole('link', { name: 'Hooks' }).click()
+      await expect(page).toHaveURL(/\/hooks\/\?provider=cursor/)
+      await expect(page.locator('#first-provider-hook').getByRole('tab', { name: 'Cursor', exact: true })).toHaveAttribute('aria-selected', 'true')
     })
 
     test('should navigate back to Overview from Skills', async ({ page }) => {
@@ -82,10 +84,11 @@ test.describe('Navigation', () => {
       const menuButton = page.getByRole('button', { name: 'Open menu' })
       await menuButton.click()
 
-      await expect(page.getByRole('menuitem', { name: 'Skills' })).toBeVisible()
-      await expect(page.getByRole('menuitem', { name: 'Agents' })).toBeVisible()
-      await expect(page.getByRole('menuitem', { name: 'Hooks' })).toBeVisible()
-      await expect(page.getByRole('menuitem', { name: 'Profiles' })).toBeVisible()
+      await expect(page.getByRole('link', { name: 'Skills' })).toBeVisible()
+      await expect(page.getByRole('link', { name: 'Agents' })).toBeVisible()
+      await expect(page.getByRole('link', { name: 'Hooks' })).toBeVisible()
+      await expect(page.getByRole('link', { name: 'Profiles' })).toHaveCount(0)
+      await expect(page.getByRole('combobox', { name: 'Provider' })).toHaveValue('')
       await expect(page.getByRole('button', { name: 'Close menu' })).toBeVisible()
     })
 
@@ -93,11 +96,23 @@ test.describe('Navigation', () => {
       const menuButton = page.getByRole('button', { name: 'Open menu' })
       await menuButton.click()
 
-      const navLink = page.getByRole('menuitem', { name: 'Skills' })
+      const navLink = page.getByRole('link', { name: 'Skills' })
       await navLink.click()
 
       // Menu should close and navigate
       await expect(page).toHaveURL(/\/skills\/?/)
+    })
+
+    test('should expose the provider chooser inside the mobile menu', async ({ page }) => {
+      await page.getByRole('button', { name: 'Open menu' }).click()
+      const providerChooser = page.getByRole('combobox', { name: 'Provider' })
+
+      await providerChooser.selectOption('claude')
+
+      await expect(providerChooser).toHaveValue('claude')
+      await expect(page).toHaveURL(/.*[?&]provider=claude(?:&|#|$)/)
+      await page.getByRole('link', { name: 'Hooks' }).click()
+      await expect(page).toHaveURL(/\/hooks\/\?provider=claude/)
     })
   })
 })

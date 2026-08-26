@@ -91,9 +91,10 @@ test.describe('Primitive Cards', () => {
     await card.click()
 
     // Should show implementation details
-    await expect(page.getByText(/Implementation by provider/i)).toBeVisible()
-    await expect(page.getByText(/GitHub Copilot/i).first()).toBeVisible()
-    await expect(page.getByText(/Claude Code/i).first()).toBeVisible()
+    const implementations = page.getByText(/Implementation by provider/i).locator('..')
+    await expect(implementations).toBeVisible()
+    await expect(implementations.getByText(/GitHub Copilot/i)).toBeVisible()
+    await expect(implementations.getByText(/Claude Code/i)).toBeVisible()
   })
 
   test('should show support badges', async ({ page }) => {

@@ -8,21 +8,21 @@ test.describe('Hooks Page', () => {
   test('loads the hooks page with hero section', async ({ page }) => {
     await expect(page.getByRole('heading', { name: 'Lifecycle Hooks', exact: true })).toBeVisible()
     await expect(page.getByText('Start with one small hook for Copilot, Claude Code, Cursor, or Codex')).toBeVisible()
-    await expect(page.getByRole('group', { name: 'Hooks provider' })).toBeVisible()
+    await expect(page.getByRole('combobox', { name: 'Provider' })).toHaveValue('')
   })
 
   test('synchronizes provider selection through the URL', async ({ page }) => {
-    const headerSelector = page.getByRole('group', { name: 'Hooks provider' })
-    await headerSelector.getByRole('button', { name: 'Cursor', exact: true }).click()
+    const headerSelector = page.getByRole('combobox', { name: 'Provider' })
+    await headerSelector.selectOption('cursor')
 
     await expect(page).toHaveURL(/.*[?&]provider=cursor(?:&|#|$)/)
-    await expect(headerSelector.getByRole('button', { name: 'Cursor', exact: true })).toHaveAttribute('aria-pressed', 'true')
+    await expect(headerSelector).toHaveValue('cursor')
     await expect(page.locator('#first-provider-hook').getByRole('tab', { name: 'Cursor', exact: true })).toHaveAttribute('aria-selected', 'true')
     await expect(page.locator('#lifecycle-model').getByRole('tab', { name: 'Cursor', exact: true })).toHaveAttribute('aria-selected', 'true')
     await expect(page.locator('#provider-panels').getByRole('tab', { name: 'Cursor', exact: true })).toHaveAttribute('aria-selected', 'true')
 
     await page.reload()
-    await expect(headerSelector.getByRole('button', { name: 'Cursor', exact: true })).toHaveAttribute('aria-pressed', 'true')
+    await expect(headerSelector).toHaveValue('cursor')
     await expect(page.locator('#first-provider-hook').getByText('.cursor/hooks.json', { exact: true }).last()).toBeVisible()
   })
 
@@ -150,7 +150,7 @@ test.describe('Hooks Page', () => {
     await expect(claudeTab).toHaveAttribute('aria-selected', 'true')
     await expect(claudeTab).toBeFocused()
     await expect(firstSection.getByText('.claude/settings.json', { exact: true }).last()).toBeVisible()
-    await expect(page.getByRole('group', { name: 'Hooks provider' }).getByRole('button', { name: 'Claude Code', exact: true })).toHaveAttribute('aria-pressed', 'true')
+    await expect(page.getByRole('combobox', { name: 'Provider' })).toHaveValue('claude')
   })
 
   test('preserves legacy provider anchors and stable tab panel relationships', async ({ page }) => {

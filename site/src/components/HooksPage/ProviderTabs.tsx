@@ -1,6 +1,10 @@
 import type { ComponentChildren, VNode } from 'preact'
 import { useEffect, useRef, useState } from 'preact/hooks'
 import { cn } from '@/lib/utils'
+import {
+  providerSelectionEvent,
+  writeProviderSelection,
+} from '@/lib/providerSelection'
 
 export type ProviderTone = 'copilot' | 'claude' | 'cursor' | 'codex'
 
@@ -17,14 +21,6 @@ interface ProviderTabsProps<T extends ProviderTab> {
   readonly renderPanel: (tab: T) => ComponentChildren
   readonly legacyFragments?: Record<string, string>
   readonly queryParam?: string
-}
-
-interface ProviderSelectorProps<T extends ProviderTab> {
-  readonly tabs: readonly T[]
-  readonly idPrefix: string
-  readonly ariaLabel: string
-  readonly queryParam?: string
-  readonly className?: string
 }
 
 const toneClasses: Record<ProviderTone, { active: string; panel: string }> = {
@@ -45,8 +41,6 @@ const toneClasses: Record<ProviderTone, { active: string; panel: string }> = {
     panel: 'border-emerald-200 bg-emerald-50/70 dark:border-emerald-900 dark:bg-emerald-950/20',
   },
 }
-
-const providerSelectionEvent = 'hooks-provider-selection'
 
 function findProviderIndex<T extends ProviderTab>(
   tabs: readonly T[],
@@ -101,10 +95,7 @@ function useProviderSelection<T extends ProviderTab>(
 
     setActiveIndex(index)
     if (queryParam != null && typeof window !== 'undefined') {
-      const url = new URL(window.location.href)
-      url.searchParams.set(queryParam, tab.id)
-      window.history.replaceState(window.history.state, '', url)
-      window.dispatchEvent(new Event(providerSelectionEvent))
+      writeProviderSelection(tab.id, queryParam)
     }
     if (focus) tabRefs.current[index]?.focus()
   }
@@ -137,7 +128,11 @@ function ProviderTabButtons<T extends ProviderTab>({
   handleKeyDown,
   tabRefs,
   className,
-}: Omit<ProviderSelectorProps<T>, 'queryParam'> & {
+}: {
+  readonly tabs: readonly T[]
+  readonly idPrefix: string
+  readonly ariaLabel: string
+  readonly className?: string
   readonly activeIndex: number
   readonly selectTab: (index: number, focus: boolean) => void
   readonly handleKeyDown: (event: KeyboardEvent, index: number) => void
@@ -161,41 +156,6 @@ function ProviderTabButtons<T extends ProviderTab>({
             'rounded-lg border px-4 py-2 text-sm font-semibold transition-colors',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
             index === activeIndex
-              ? toneClasses[tab.tone].active
-              : 'border-transparent text-muted-foreground hover:border-border hover:bg-background/70 hover:text-foreground'
-          )}
-        >
-          {tab.label}
-        </button>
-      ))}
-    </div>
-  )
-}
-
-export function ProviderSelector<T extends ProviderTab>({
-  tabs,
-  idPrefix,
-  ariaLabel,
-  queryParam,
-  className,
-}: ProviderSelectorProps<T>): VNode {
-  const selection = useProviderSelection(tabs, queryParam)
-
-  return (
-    <div className={cn('flex flex-wrap gap-2 rounded-xl bg-muted/60 p-2', className)} role="group" aria-label={ariaLabel}>
-      {tabs.map((tab, index) => (
-        <button
-          key={tab.id}
-          ref={(element) => { selection.tabRefs.current[index] = element }}
-          id={`${idPrefix}-${tab.id}`}
-          type="button"
-          aria-pressed={index === selection.activeIndex}
-          onClick={() => { selection.selectTab(index, false) }}
-          onKeyDown={(event) => { selection.handleKeyDown(event, index) }}
-          className={cn(
-            'rounded-lg border px-4 py-2 text-sm font-semibold transition-colors',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-            index === selection.activeIndex
               ? toneClasses[tab.tone].active
               : 'border-transparent text-muted-foreground hover:border-border hover:bg-background/70 hover:text-foreground'
           )}

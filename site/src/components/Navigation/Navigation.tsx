@@ -3,6 +3,8 @@ import type { VNode } from 'preact'
 import { Menu, X, Github } from 'lucide-preact'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { cn } from '@/lib/utils'
+import { ProviderChooser } from './ProviderChooser'
+import { useSelectedProvider } from './useSelectedProvider'
 
 // Page-based navigation items
 const navItems = [
@@ -11,7 +13,6 @@ const navItems = [
   { href: '/agents/', label: 'Agents' },
   { href: '/hooks/', label: 'Hooks' },
   { href: '/mcp/', label: 'MCP' },
-  { href: '/profiles/', label: 'Profiles' },
 ] as const
 
 export interface NavigationProps {
@@ -20,9 +21,18 @@ export interface NavigationProps {
 
 export function Navigation({ className }: NavigationProps): VNode {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const selectedProvider = useSelectedProvider()
 
   const toggleMenu = (): void => {
     setIsMenuOpen(!isMenuOpen)
+  }
+
+  const providerAwareHref = (href: string): string => {
+    if (selectedProvider === '') return href
+
+    const url = new URL(href, window.location.origin)
+    url.searchParams.set('provider', selectedProvider)
+    return `${url.pathname}${url.search}`
   }
 
   return (
@@ -46,7 +56,7 @@ export function Navigation({ className }: NavigationProps): VNode {
           {navItems.map((item) => (
             <a
               key={item.href}
-              href={item.href}
+              href={providerAwareHref(item.href)}
               className={cn(
                 'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
                 'hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
@@ -55,6 +65,7 @@ export function Navigation({ className }: NavigationProps): VNode {
               {item.label}
             </a>
           ))}
+          <ProviderChooser id="desktop-provider-chooser" selectedProvider={selectedProvider} />
           <a
             href="https://github.com/agentconfig/agentconfig.org"
             target="_blank"
@@ -105,14 +116,12 @@ export function Navigation({ className }: NavigationProps): VNode {
         <div
           id="mobile-menu"
           className="md:hidden border-t border-border bg-background"
-          role="menu"
         >
           <div className="container mx-auto px-4 py-4 flex flex-col gap-2">
             {navItems.map((item) => (
               <a
                 key={item.href}
-                href={item.href}
-                role="menuitem"
+                href={providerAwareHref(item.href)}
                 onClick={() => { setIsMenuOpen(false) }}
                 className={cn(
                   'px-4 py-3 rounded-lg text-left font-medium transition-colors',
@@ -122,6 +131,7 @@ export function Navigation({ className }: NavigationProps): VNode {
                 {item.label}
               </a>
             ))}
+            <ProviderChooser id="mobile-provider-chooser" selectedProvider={selectedProvider} mobile />
           </div>
         </div>
       )}
