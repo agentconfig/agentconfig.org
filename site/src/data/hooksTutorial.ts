@@ -30,13 +30,12 @@ export const tocItems: readonly TocItem[] = [
   { id: 'when-hooks', label: '1. When Hooks Fit', level: 'beginner' },
   { id: 'lifecycle-model', label: '2. Lifecycle Model', level: 'beginner' },
   { id: 'contract-model', label: '3. Contract Model', level: 'intermediate' },
-  { id: 'first-copilot-hook', label: '4. First Copilot Hook', level: 'intermediate' },
-  { id: 'first-claude-hook', label: '5. First Claude Hook', level: 'intermediate' },
-  { id: 'provider-panels', label: '6. Provider Panels', level: 'intermediate' },
-  { id: 'policy-core', label: '7. Policy Core Pattern', level: 'advanced' },
-  { id: 'safe-integrations', label: '8. Safe Integrations', level: 'advanced' },
-  { id: 'testing-hooks', label: '9. Testing Hooks', level: 'advanced' },
-  { id: 'when-not-hooks', label: '10. When Not To Use Hooks' },
+  { id: 'first-provider-hook', label: '4. First Provider Hook', level: 'intermediate' },
+  { id: 'provider-panels', label: '5. Provider Panels', level: 'intermediate' },
+  { id: 'policy-core', label: '6. Policy Core Pattern', level: 'advanced' },
+  { id: 'safe-integrations', label: '7. Safe Integrations', level: 'advanced' },
+  { id: 'testing-hooks', label: '8. Testing Hooks', level: 'advanced' },
+  { id: 'when-not-hooks', label: '9. When Not To Use Hooks' },
 ] as const
 
 export const normalizedEvents: readonly HookEvent[] = [

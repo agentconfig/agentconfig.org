@@ -4,8 +4,7 @@ import { TableOfContents } from '@/components/TableOfContents'
 import { tocItems } from '@/data/hooksTutorial'
 import {
   ContractModelSection,
-  FirstClaudeHookSection,
-  FirstCopilotHookSection,
+  FirstProviderHookSection,
   FurtherReadingSection,
   LifecycleModelSection,
   PolicyCoreSection,
@@ -54,8 +53,7 @@ export function HooksPage(): VNode {
               <WhenHooksFitSection />
               <LifecycleModelSection />
               <ContractModelSection />
-              <FirstCopilotHookSection />
-              <FirstClaudeHookSection />
+              <FirstProviderHookSection />
               <ProviderPanelsSection />
               <PolicyCoreSection />
               <SafeIntegrationsSection />

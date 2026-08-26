@@ -97,3 +97,36 @@
     max-width: 69.25rem;
   }
 }
+
+/*
+ * Shiki dual-theme syntax highlighting. Shiki emits `--shiki-light` and
+ * `--shiki-dark` CSS variables on every span; toggle between them with the
+ * site's existing `.dark` class instead of re-highlighting on theme change.
+ */
+.shiki-container pre.shiki {
+  margin: 0;
+  padding: 1rem;
+  background-color: transparent !important;
+}
+
+.shiki-container code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  counter-reset: line;
+}
+
+.shiki-container .line {
+  display: inline-block;
+  width: 100%;
+}
+
+.shiki,
+.shiki span {
+  color: var(--shiki-light);
+  background-color: var(--shiki-light-bg) !important;
+}
+
+.dark .shiki,
+.dark .shiki span {
+  color: var(--shiki-dark);
+  background-color: var(--shiki-dark-bg) !important;
+}

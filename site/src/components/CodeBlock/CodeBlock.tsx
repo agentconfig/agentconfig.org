@@ -1,7 +1,8 @@
-import { useState } from 'preact/hooks'
+import { useEffect, useState } from 'preact/hooks'
 import type { VNode } from 'preact'
 import { Check, Copy } from 'lucide-preact'
 import { cn } from '@/lib/utils'
+import { highlightCode } from '@/lib/highlighter'
 
 export interface CodeBlockProps {
   /** The code content to display */
@@ -21,6 +22,21 @@ export function CodeBlock({
   className,
 }: CodeBlockProps): VNode {
   const [copied, setCopied] = useState(false)
+  const [highlightedHtml, setHighlightedHtml] = useState<string | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+
+    void highlightCode(code, language).then((html) => {
+      if (!cancelled) {
+        setHighlightedHtml(html)
+      }
+    })
+
+    return () => {
+      cancelled = true
+    }
+  }, [code, language])
 
   const handleCopy = async (): Promise<void> => {
     try {
@@ -63,9 +79,16 @@ export function CodeBlock({
       </div>
 
       {/* Code content */}
-      <pre className="p-4 overflow-x-auto bg-muted/50 text-sm" tabIndex={0}>
-        <code className="font-mono text-foreground whitespace-pre">{code}</code>
-      </pre>
+      {highlightedHtml != null ? (
+        <div
+          className="shiki-container overflow-x-auto text-sm bg-muted/50"
+          dangerouslySetInnerHTML={{ __html: highlightedHtml }}
+        />
+      ) : (
+        <pre className="p-4 overflow-x-auto bg-muted/50 text-sm" tabIndex={0}>
+          <code className="font-mono text-foreground whitespace-pre">{code}</code>
+        </pre>
+      )}
     </div>
   )
 }

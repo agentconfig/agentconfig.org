@@ -9,13 +9,12 @@ provider panels, safety guidance, and fixture-driven tests.
 - 1. When Hooks Fit (beginner)
 - 2. Lifecycle Model (beginner)
 - 3. Contract Model (intermediate)
-- 4. First Copilot Hook (intermediate)
-- 5. First Claude Hook (intermediate)
-- 6. Provider Panels (intermediate)
-- 7. Policy Core Pattern (advanced)
-- 8. Safe Integrations (advanced)
-- 9. Testing Hooks (advanced)
-- 10. When Not To Use Hooks
+- 4. First Provider Hook (intermediate)
+- 5. Provider Panels (intermediate)
+- 6. Policy Core Pattern (advanced)
+- 7. Safe Integrations (advanced)
+- 8. Testing Hooks (advanced)
+- 9. When Not To Use Hooks
 
 ## Section Details
 
@@ -84,10 +83,14 @@ and diagnostics. Keep human-readable logs separate from the final machine-readab
 }
 ```
 
-### 4. First Copilot Hook
+### 4. First Provider Hook
 
-Copilot repository hooks live under `.github/hooks/`. Put provider configuration in a small
-JSON file and keep real policy in a script that can be tested outside the agent runtime.
+Start with a repository-level pre-tool-use hook that blocks one risky command, then compare
+how each provider wires it up. Every provider adapter calls the same policy core, so switching
+providers only changes normalization and response formatting, never the decision logic itself.
+
+**Copilot** — repository hooks live under `.github/hooks/`. Put provider configuration in a
+small JSON file and keep real policy in a script that can be tested outside the agent runtime.
 
 ```json
 {
@@ -127,10 +130,9 @@ if (decision.decision === 'block') {
 }
 ```
 
-### 5. First Claude Hook
-
-Claude hooks are configured inside settings files rather than a dedicated hooks directory.
-Use shared project settings for team policy and local settings for personal automation.
+**Claude** — hooks are configured inside settings files rather than a dedicated hooks
+directory. Use shared project settings for team policy and local settings for personal
+automation.
 
 ```json
 {
@@ -191,10 +193,10 @@ if (decision.decision === 'block') {
 }
 ```
 
-### 6. Provider Panels
+### 5. Provider Panels
 
-These panels are grounded in the provider documentation snapshots used by the documentation
-refresh skill.
+Compare hook lifecycle events, config locations, and contracts across Copilot, Claude Code,
+and Codex.
 
 #### GitHub Copilot
 
@@ -246,7 +248,7 @@ Source: [Claude Code hooks documentation](https://code.claude.com/docs/en/hooks)
 Source: [OpenAI Codex hooks documentation](https://developers.openai.com/codex/hooks)
 
 
-### 7. Policy Core Pattern
+### 6. Policy Core Pattern
 
 Put reusable decisions in a pure policy core and keep provider adapters thin. The policy core
 takes normalized input and returns a deterministic decision. Provider adapters own I/O, schema
@@ -368,7 +370,7 @@ if (decision.decision === 'block') {
 }
 ```
 
-### 8. Safe Integrations
+### 7. Safe Integrations
 
 Hooks often sit next to shell commands, secrets, and external systems, so they need stricter
 defaults than ordinary scripts.
@@ -391,7 +393,7 @@ spawn('/usr/bin/git', ['status', '--short'], {
 })
 ```
 
-### 9. Testing Hooks
+### 8. Testing Hooks
 
 Every example hook should have a fixture test and a host-level smoke test.
 
@@ -456,7 +458,7 @@ test "$?" -eq 0
 node -e 'const out = JSON.parse(process.argv[1]); if (out.permissionDecision !== "deny") process.exit(1)' "$output"
 ```
 
-### 10. When Not To Use Hooks
+### 9. When Not To Use Hooks
 
 - Do not use a hook for guidance that belongs in AGENTS.md, CLAUDE.md, or another instruction file.
 - Do not use a hook when a skill or slash command is a better human-invoked workflow boundary.
