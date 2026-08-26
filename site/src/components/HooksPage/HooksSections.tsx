@@ -1,23 +1,22 @@
-import { useEffect, useRef, useState } from 'preact/hooks'
 import type { VNode } from 'preact'
 import { Lightbulb, TriangleAlert } from 'lucide-preact'
 import { CodeBlock } from '@/components/CodeBlock'
 import { CodeTabs } from '@/components/CodeBlock/CodeTabs'
-import { cn } from '@/lib/utils'
 import { codeSamples, furtherReadingLinks, normalizedEvents, providerPanels } from '@/data/hooksTutorial'
+import { ProviderTabs, type ProviderTone } from './ProviderTabs'
 
 export function WhenHooksFitSection(): VNode {
   return (
     <section id="when-hooks" className="scroll-mt-24 mb-16">
-      <h2 className="text-3xl font-bold mb-4">1. When Hooks Fit</h2>
+      <h2 className="text-3xl font-bold mb-4">2. When Hooks Fit</h2>
       <p className="text-lg text-muted-foreground mb-6">Hooks are deterministic code that runs at defined points in an agent session.</p>
       <p>Use hooks when you need a machine-enforced policy, a repeatable side effect, or a concise progress signal that should not depend on the model remembering instructions. Use instructions when you need judgment guidance, skills when you need reusable procedures, and MCP when the agent needs a new tool. Hooks are the right primitive for runtime checks around tool calls, session boundaries, compaction, and externally visible actions.</p>
-      <div className="my-8 pl-5 py-1 border-l-4 border-primary/60">
+      <div className="not-prose my-8 rounded-xl border border-cyan-200 bg-cyan-50/70 p-5 dark:border-cyan-900 dark:bg-cyan-950/20">
         <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-primary mb-3">
           <Lightbulb className="h-4 w-4" aria-hidden="true" />
-          Good hook jobs
+          Hooks work well for
         </p>
-        <ul className="space-y-2">
+        <ul className="list-disc space-y-2 pl-5">
           <li><strong>Gate risky commands:</strong> block force-push, production deploys, secret reads, or destructive migrations unless policy allows them.</li>
           <li><strong>Publish compact progress:</strong> emit updates only when objective, phase, blocker, or attention changes.</li>
           <li><strong>Preserve continuity:</strong> checkpoint state before compaction and recover it at session start.</li>
@@ -31,7 +30,7 @@ export function WhenHooksFitSection(): VNode {
 export function LifecycleModelSection(): VNode {
   return (
     <section id="lifecycle-model" className="scroll-mt-24 mb-16">
-      <h2 className="text-3xl font-bold mb-4">2. Lifecycle Model</h2>
+      <h2 className="text-3xl font-bold mb-4">3. Lifecycle Events</h2>
       <p className="text-lg text-muted-foreground mb-6">Normalize provider-specific event names into the lifecycle your policy actually cares about.</p>
       <p>Providers use different names and event coverage, but most hook systems fit the same model: session boundaries, prompt boundaries, tool boundaries, compaction, and agent stop. Design around normalized events first, then write thin provider adapters.</p>
       <div className="overflow-x-auto my-6">
@@ -65,7 +64,7 @@ export function LifecycleModelSection(): VNode {
 export function ContractModelSection(): VNode {
   return (
     <section id="contract-model" className="scroll-mt-24 mb-16">
-      <h2 className="text-3xl font-bold mb-4">3. Contract Model</h2>
+      <h2 className="text-3xl font-bold mb-4">4. Hook Contracts</h2>
       <p className="text-lg text-muted-foreground mb-6">Keep hook input, output, exit status, and diagnostics explicit.</p>
       <p>A durable hook contract has four parts: a JSON input payload, a structured output payload, an exit-code policy, and a diagnostics channel. The policy core should not know which provider invoked it. It should receive a normalized payload and return a decision that the provider adapter can translate.</p>
       <CodeTabs files={[{ path: 'normalized-event.json', content: codeSamples.normalizedPayload ?? '', language: 'json' }, { path: 'decision.json', content: codeSamples.hookDecision ?? '', language: 'json' }]} className="my-6" />
@@ -80,122 +79,37 @@ export function ContractModelSection(): VNode {
 interface ProviderExample {
   readonly id: string
   readonly label: string
-  readonly intro: string
+  readonly tone: ProviderTone
+  readonly intro: VNode
   readonly configFile: { readonly path: string; readonly content: string; readonly language: string }
   readonly adapterFile: { readonly path: string; readonly content: string; readonly language: string }
-}
-
-function ProviderExampleTabs({
-  examples,
-  legacyFragments,
-}: {
-  examples: readonly ProviderExample[]
-  /** Maps a legacy per-provider anchor (e.g. "first-copilot-hook") to the matching example id, so old bookmarks/links still land on the right tab. */
-  legacyFragments?: Record<string, string>
-}): VNode {
-  const [activeIndex, setActiveIndex] = useState(0)
-  const tabRefs = useRef<(HTMLButtonElement | null)[]>([])
-  const current = examples[activeIndex] ?? examples[0]
-
-  useEffect(() => {
-    if (legacyFragments == null) return
-    const hash = window.location.hash.replace('#', '')
-    const targetId = legacyFragments[hash]
-    if (targetId == null) return
-    const index = examples.findIndex((example) => example.id === targetId)
-    if (index >= 0) {
-      setActiveIndex(index)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  if (current == null) {
-    return <div className="text-muted-foreground">No provider examples to display</div>
-  }
-
-  const selectTab = (index: number, focus: boolean): void => {
-    setActiveIndex(index)
-    if (focus) {
-      tabRefs.current[index]?.focus()
-    }
-  }
-
-  const handleKeyDown = (event: KeyboardEvent, index: number): void => {
-    if (event.key === 'ArrowRight') {
-      event.preventDefault()
-      selectTab((index + 1) % examples.length, true)
-    } else if (event.key === 'ArrowLeft') {
-      event.preventDefault()
-      selectTab((index - 1 + examples.length) % examples.length, true)
-    } else if (event.key === 'Home') {
-      event.preventDefault()
-      selectTab(0, true)
-    } else if (event.key === 'End') {
-      event.preventDefault()
-      selectTab(examples.length - 1, true)
-    }
-  }
-
-  return (
-    <div>
-      <div className="flex gap-1 border-b border-border mb-4" role="tablist" aria-label="Provider">
-        {examples.map((example, index) => (
-          <button
-            key={example.id}
-            ref={(el) => { tabRefs.current[index] = el }}
-            id={`provider-tab-${example.id}`}
-            type="button"
-            role="tab"
-            aria-selected={index === activeIndex}
-            aria-controls={`provider-panel-${example.id}`}
-            tabIndex={index === activeIndex ? 0 : -1}
-            onClick={() => { selectTab(index, false) }}
-            onKeyDown={(event) => { handleKeyDown(event, index) }}
-            className={cn(
-              'px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset',
-              index === activeIndex
-                ? 'border-primary text-foreground'
-                : 'border-transparent text-muted-foreground hover:text-foreground'
-            )}
-          >
-            {example.label}
-          </button>
-        ))}
-      </div>
-      {examples.map((example, index) => (
-        <div
-          key={example.id}
-          id={`provider-panel-${example.id}`}
-          role="tabpanel"
-          aria-labelledby={`provider-tab-${example.id}`}
-          tabIndex={0}
-          hidden={index !== activeIndex}
-        >
-          <p>{example.intro}</p>
-          <CodeBlock code={example.configFile.content} language={example.configFile.language} filename={example.configFile.path} className="my-6" />
-          <CodeBlock code={example.adapterFile.content} language={example.adapterFile.language} filename={example.adapterFile.path} className="my-6" />
-        </div>
-      ))}
-    </div>
-  )
 }
 
 export function FirstProviderHookSection(): VNode {
   const examples: readonly ProviderExample[] = [
     {
       id: 'copilot',
-      label: 'Copilot',
-      intro: 'Copilot repository hooks live under .github/hooks/. Put the provider config in a small JSON file and keep real policy in a script that can be tested outside the agent runtime.',
+      label: 'GitHub Copilot',
+      tone: 'copilot',
+      intro: <p>Copilot repository hooks live under <code>.github/hooks/</code>. Put the provider config in a small JSON file and keep the policy in a script you can test outside the agent runtime.</p>,
       configFile: { path: '.github/hooks/pre-tool-use.json', language: 'json', content: codeSamples.copilotHook ?? '' },
       adapterFile: { path: '.github/hooks/policy.mjs', language: 'javascript', content: codeSamples.copilotAdapter ?? '' },
     },
     {
       id: 'claude',
-      label: 'Claude',
-      intro: 'Claude hooks are configured inside settings files rather than a dedicated hooks directory. Use shared project settings for team policy and keep personal or machine-specific automation in local settings.',
+      label: 'Claude Code',
+      tone: 'claude',
+      intro: <p>Claude hooks are configured in <code>.claude/settings.json</code>. Use shared project settings for team policy and keep personal or machine-specific automation in <code>.claude/settings.local.json</code>.</p>,
       configFile: { path: '.claude/settings.json', language: 'json', content: codeSamples.claudeHook ?? '' },
       adapterFile: { path: '.claude/hooks/adapter.mjs', language: 'javascript', content: codeSamples.claudeAdapter ?? '' },
+    },
+    {
+      id: 'codex',
+      label: 'OpenAI Codex',
+      tone: 'codex',
+      intro: <p>Codex reads repository hooks from <code>.codex/hooks.json</code>. Keep the adapter in the repository so the same fixture tests can run locally and in automation.</p>,
+      configFile: { path: '.codex/hooks.json', language: 'json', content: codeSamples.codexHook ?? '' },
+      adapterFile: { path: '.codex/hooks/policy.mjs', language: 'javascript', content: codeSamples.codexAdapter ?? '' },
     },
   ]
 
@@ -206,12 +120,21 @@ export function FirstProviderHookSection(): VNode {
           links/bookmarks still land here (and select the matching tab). */}
       <span id="first-copilot-hook" className="scroll-mt-24" aria-hidden="true" />
       <span id="first-claude-hook" className="scroll-mt-24" aria-hidden="true" />
-      <h2 className="text-3xl font-bold mb-4">4. First Provider Hook</h2>
-      <p className="text-lg text-muted-foreground mb-6">Start with a repository-level pre-tool-use hook that blocks one risky command, then compare how each provider wires it up.</p>
-      <p>Every provider adapter below calls the same policy core, so switching providers only changes normalization and response formatting, never the decision logic itself.</p>
-      <ProviderExampleTabs
-        examples={examples}
+      <h2 className="text-3xl font-bold mb-4">1. Block One Risky Command</h2>
+      <p className="text-lg text-muted-foreground mb-6">Start with a repository hook that blocks <code>git push</code>. It is deliberately small, easy to test, and easy to remove.</p>
+      <p>Pick the provider you use. Each example connects a provider config file to a small adapter. Later sections show how to share the decision logic without making this first hook harder to understand.</p>
+      <ProviderTabs
+        tabs={examples}
+        idPrefix="first-hook-provider"
+        ariaLabel="First hook provider"
         legacyFragments={{ 'first-copilot-hook': 'copilot', 'first-claude-hook': 'claude' }}
+        renderPanel={(example) => (
+          <>
+            {example.intro}
+            <CodeBlock code={example.configFile.content} language={example.configFile.language} filename={example.configFile.path} className="my-6" />
+            <CodeBlock code={example.adapterFile.content} language={example.adapterFile.language} filename={example.adapterFile.path} className="my-6" />
+          </>
+        )}
       />
     </section>
   )
@@ -220,23 +143,36 @@ export function FirstProviderHookSection(): VNode {
 export function ProviderPanelsSection(): VNode {
   return (
     <section id="provider-panels" className="scroll-mt-24 mb-16">
-      <h2 className="text-3xl font-bold mb-4">5. Provider Panels</h2>
-      <p className="text-lg text-muted-foreground mb-6">Compare hook lifecycle events, config locations, and contracts across Copilot, Claude Code, and Codex.</p>
-      <div className="space-y-6">
-        {providerPanels.map((panel) => (
-          <div key={panel.provider} className="p-6 rounded-lg border border-border bg-muted/30">
-            <h3 className="text-xl font-semibold mb-2">{panel.provider}</h3>
-            <p className="mb-4">{panel.scope}</p>
-            <dl className="space-y-4">
-              <div><dt className="font-semibold">Locations</dt><dd className="mt-1 font-mono text-sm">{panel.locations.join(', ')}</dd></div>
-              <div><dt className="font-semibold">Events</dt><dd className="mt-1 font-mono text-sm">{panel.events.join(', ')}</dd></div>
+      <h2 className="text-3xl font-bold mb-4">5. Providers</h2>
+      <p className="text-lg text-muted-foreground mb-6">Choose a provider to see its hook files, lifecycle events, and runtime contract in one focused view.</p>
+      <ProviderTabs
+        tabs={providerPanels}
+        idPrefix="provider-details"
+        ariaLabel="Provider details"
+        renderPanel={(panel) => (
+          <>
+            <h3 className="text-xl font-semibold mb-2">{panel.label}</h3>
+            <p className="mb-5">{panel.scope}</p>
+            <dl className="space-y-5">
+              <div>
+                <dt className="font-semibold">Locations</dt>
+                <dd className="mt-2 flex flex-wrap gap-2">
+                  {panel.locations.map((location) => <code key={location} className="rounded-md border border-current/15 bg-background/80 px-2 py-1 text-xs">{location}</code>)}
+                </dd>
+              </div>
+              <div>
+                <dt className="font-semibold">Events</dt>
+                <dd className="mt-2 flex flex-wrap gap-2">
+                  {panel.events.map((event) => <code key={event} className="rounded-md border border-current/15 bg-background/80 px-2 py-1 text-xs">{event}</code>)}
+                </dd>
+              </div>
               <div><dt className="font-semibold">Contract</dt><dd className="mt-1">{panel.contract}</dd></div>
             </dl>
-            <ul className="mt-4 space-y-2">{panel.notes.map((note) => <li key={note}>{note}</li>)}</ul>
-            <p className="mt-4 text-sm text-muted-foreground">Source: <a href={panel.sourceUrl}>{panel.sourceTitle}</a></p>
-          </div>
-        ))}
-      </div>
+            <ul className="mt-5 list-disc space-y-2 pl-5">{panel.notes.map((note) => <li key={note}>{note}</li>)}</ul>
+            <p className="mt-5 text-sm text-muted-foreground">Source: <a href={panel.sourceUrl}>{panel.sourceTitle}</a></p>
+          </>
+        )}
+      />
     </section>
   )
 }
@@ -244,12 +180,10 @@ export function ProviderPanelsSection(): VNode {
 export function PolicyCoreSection(): VNode {
   return (
     <section id="policy-core" className="scroll-mt-24 mb-16">
-      <h2 className="text-3xl font-bold mb-4">6. Policy Core Pattern</h2>
-      <p className="text-lg text-muted-foreground mb-6">Put reusable decisions in a pure policy core and keep provider adapters thin.</p>
-      <p>A pure policy core takes normalized input and returns a deterministic decision. It does not read environment variables, shell out, call external APIs, or print progress. Provider adapters own I/O, schema translation, exit codes, and provider-specific response formats.</p>
-      <CodeBlock code={codeSamples.policyCore ?? ''} language="javascript" filename="policy-core.mjs" className="my-6" />
-      <CodeBlock code={codeSamples.codexHook ?? ''} language="json" filename=".codex/hooks.json" className="my-6" />
-      <CodeBlock code={codeSamples.codexAdapter ?? ''} language="javascript" filename=".codex/hooks/policy.mjs" className="my-6" />
+      <h2 className="text-3xl font-bold mb-4">6. Reuse Policy Logic</h2>
+      <p className="text-lg text-muted-foreground mb-6">Once the first hook works, move the repeated command check into a pure policy core and keep each provider adapter thin.</p>
+      <p>The shared <code>hooks/policy-core.mjs</code> module takes normalized input and returns a deterministic decision. It does not read environment variables, shell out, call external APIs, or print progress. Provider adapters own I/O, schema translation, exit codes, and provider-specific response formats.</p>
+      <CodeBlock code={codeSamples.policyCore ?? ''} language="javascript" filename="hooks/policy-core.mjs" className="my-6" />
     </section>
   )
 }
@@ -257,9 +191,9 @@ export function PolicyCoreSection(): VNode {
 export function SafeIntegrationsSection(): VNode {
   return (
     <section id="safe-integrations" className="scroll-mt-24 mb-16">
-      <h2 className="text-3xl font-bold mb-4">7. Safe Integrations</h2>
+      <h2 className="text-3xl font-bold mb-4">7. Keep Integrations Safe</h2>
       <p className="text-lg text-muted-foreground mb-6">Hooks often sit next to shell commands, secrets, and external systems, so they need stricter defaults than ordinary scripts.</p>
-      <ul className="my-6 space-y-3">
+      <ul className="my-6 list-disc space-y-3 pl-5">
         <li><strong>Shell injection:</strong> pass arguments as arrays and avoid shell interpolation for untrusted input.</li>
         <li><strong>Shell parsing:</strong> do not infer force-push arguments from raw shell text. The example policy blocks every detected <code>git push</code>; use a real shell parser or server-side branch protection when normal pushes must remain available.</li>
         <li><strong>Secrets:</strong> never echo tokens, never put credentials in hook config, and redact environment-derived values from diagnostics.</li>
@@ -276,7 +210,7 @@ export function SafeIntegrationsSection(): VNode {
 export function TestingHooksSection(): VNode {
   return (
     <section id="testing-hooks" className="scroll-mt-24 mb-16">
-      <h2 className="text-3xl font-bold mb-4">8. Testing Hooks</h2>
+      <h2 className="text-3xl font-bold mb-4">8. Test the Hook</h2>
       <p className="text-lg text-muted-foreground mb-6">Every example hook should have a fixture test and a host-level smoke test.</p>
       <p>Fixture tests prove the policy core handles known provider payloads. Smoke tests prove the provider adapter can read stdin, emit the expected output, and return the expected exit status in the host environment.</p>
       <CodeTabs files={[{ path: 'policy-core.test.ts', content: codeSamples.fixtureTest ?? '', language: 'typescript' }, { path: 'smoke-test.sh', content: codeSamples.smokeTest ?? '', language: 'bash' }]} className="my-6" />
@@ -287,16 +221,32 @@ export function TestingHooksSection(): VNode {
 export function WhenNotHooksSection(): VNode {
   return (
     <section id="when-not-hooks" className="scroll-mt-24 mb-16">
-      <h2 className="text-3xl font-bold mb-4">9. When Not To Use Hooks</h2>
-      <p className="text-lg text-muted-foreground mb-6">Hooks are powerful because they run automatically, which also makes them easy to overuse.</p>
-      <div className="my-6 p-6 rounded-lg border border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30">
+      <h2 className="text-3xl font-bold mb-4">9. Use Another Primitive</h2>
+      <p className="text-lg text-muted-foreground mb-6">A hook should enforce runtime behavior. Pick the simpler primitive when the agent needs guidance, a reusable procedure, or a new tool.</p>
+      <div className="not-prose my-6 grid gap-4 sm:grid-cols-2">
+        <div className="rounded-xl border border-blue-200 bg-blue-50/70 p-5 dark:border-cyan-900 dark:bg-cyan-950/20">
+          <h3 className="mb-2 text-lg font-semibold text-blue-900 dark:text-cyan-200">Use instructions for judgment</h3>
+          <p className="text-sm text-muted-foreground">Put coding conventions, review guidance, and repository context in <code>AGENTS.md</code>, <code>CLAUDE.md</code>, or another instruction file.</p>
+        </div>
+        <div className="rounded-xl border border-violet-200 bg-violet-50/70 p-5 dark:border-violet-900 dark:bg-violet-950/20">
+          <h3 className="mb-2 text-lg font-semibold text-violet-900 dark:text-violet-200">Use a skill for a procedure</h3>
+          <p className="text-sm text-muted-foreground">Package a repeatable workflow as a skill or slash command when a person or agent should choose when it runs.</p>
+        </div>
+        <div className="rounded-xl border border-emerald-200 bg-emerald-50/70 p-5 dark:border-emerald-900 dark:bg-emerald-950/20">
+          <h3 className="mb-2 text-lg font-semibold text-emerald-900 dark:text-emerald-200">Use MCP for a new tool</h3>
+          <p className="text-sm text-muted-foreground">Connect an MCP server when the agent needs structured access to an API, database, or external system.</p>
+        </div>
+        <div className="rounded-xl border border-orange-200 bg-orange-50/70 p-5 dark:border-orange-900 dark:bg-orange-950/20">
+          <h3 className="mb-2 text-lg font-semibold text-orange-900 dark:text-orange-200">Keep the hook for enforcement</h3>
+          <p className="text-sm text-muted-foreground">Use a hook when the check must run at a lifecycle boundary even if the model forgets or chooses another path.</p>
+        </div>
+      </div>
+      <div className="not-prose my-6 rounded-xl border border-amber-300 bg-amber-50 p-5 dark:border-amber-800 dark:bg-amber-950/30">
         <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-amber-800 dark:text-amber-400 mb-3">
           <TriangleAlert className="h-4 w-4" aria-hidden="true" />
-          Reconsider before reaching for a hook
+          Hook traps
         </p>
-        <ul className="space-y-3">
-          <li>Do not use a hook for guidance that belongs in <code>AGENTS.md</code>, <code>CLAUDE.md</code>, or another instruction file.</li>
-          <li>Do not use a hook when a skill or slash command is a better human-invoked workflow boundary.</li>
+        <ul className="list-disc space-y-3 pl-5">
           <li>Do not call slow external systems on every tool invocation; batch, throttle, or move that work to session boundaries.</li>
           <li>Do not silently rewrite user intent. Block with a clear message instead.</li>
           <li>Do not make hooks the only copy of business-critical policy. Keep the policy documented and reviewable.</li>

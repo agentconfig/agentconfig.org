@@ -48,6 +48,16 @@ bun run typecheck    # TypeScript type checking
 bun run test         # Run Playwright E2E tests
 ```
 
+### Local Preview
+
+For every change that affects rendered pages, start the local Vite server and keep it running so @jonmagic can inspect the result:
+
+```bash
+bun run dev --host 127.0.0.1
+```
+
+Use `http://127.0.0.1:5173/` by default. If that port is unavailable, use the port Vite selects and report the exact URL. After making visual or content changes, verify the affected pages in the browser, then direct @jonmagic to the relevant local URL before asking for review. Do not stop the preview server at handoff unless @jonmagic asks.
+
 ## Code Standards
 
 ### TypeScript
@@ -188,6 +198,7 @@ Before considering any task complete:
 3. `bun run test` - All Playwright tests pass
 4. Manual check of responsive behavior
 5. Manual check of light/dark modes
+6. For rendered changes, leave the local preview server running and give @jonmagic the exact page URL to review
 
 ## Design Guidelines
 

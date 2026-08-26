@@ -21,15 +21,6 @@ export function App(): VNode {
       </Section>
 
       <Section
-        id="scope-model"
-        title="Scope Model"
-        description="See where each primitive applies: from managed policy and user scope to repository, path, session, and tool invocation."
-        className="bg-muted/30"
-      >
-        <ScopeModelSection />
-      </Section>
-
-      <Section
         id="file-tree"
         title="Interactive File Tree"
         description="See exactly where AI primitive files live in your project. Click on any file to learn more about its purpose and how to configure it."
@@ -43,6 +34,15 @@ export function App(): VNode {
         description="Compare how primitives are implemented across GitHub Copilot, Claude Code, Cursor, and OpenAI Codex."
       >
         <ProviderComparisonSection />
+      </Section>
+
+      <Section
+        id="scope-model"
+        title="Choose the Right Scope"
+        description="Once you know which file or setting you need, decide whether it belongs to one user, a repository, a directory, a session, or a single tool call."
+        className="bg-muted/30"
+      >
+        <ScopeModelSection />
       </Section>
     </PageLayout>
   )

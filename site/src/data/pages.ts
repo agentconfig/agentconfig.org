@@ -53,7 +53,7 @@ export const pages: readonly PageMeta[] = [
     slug: 'hooks',
     title: 'Hooks Tutorial',
     description: 'Design, test, and map lifecycle hooks across provider runtimes',
-    features: 'Hooks tutorial with provider panels, policy patterns, and fixture tests',
+    features: 'Hooks tutorial with provider tabs, reusable policy logic, and fixture tests',
     dataFile: 'hooksTutorial.ts',
     mdFile: 'hooks.md',
     partNumber: 6,

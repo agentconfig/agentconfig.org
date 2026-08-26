@@ -13,11 +13,6 @@ const navItems = [
     className: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
   },
   {
-    href: '#scope-model',
-    label: 'Scopes',
-    className: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-400',
-  },
-  {
     href: '#file-tree',
     label: 'File Tree',
     className: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
@@ -26,6 +21,11 @@ const navItems = [
     href: '#comparison',
     label: 'Comparison',
     className: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
+  },
+  {
+    href: '#scope-model',
+    label: 'Scopes',
+    className: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-400',
   },
 ] as const
 
@@ -44,11 +44,11 @@ export function Hero({ className }: HeroProps): VNode {
     <header className={cn('border-b border-border bg-muted/30', className)}>
       <div className="container mx-auto px-4 py-12 md:py-16">
         <h1 className="text-4xl md:text-5xl font-bold mb-4">
-          Elevate AI Assistants
+          Configure AI Coding Assistants
         </h1>
         <p className="text-xl text-muted-foreground max-w-2xl mb-6">
-          Configure GitHub Copilot, Claude Code, Cursor, and OpenAI Codex for any role or workflow.
-          Explore the primitives that unlock their full potential.
+          See the files, settings, and reusable patterns that shape how GitHub Copilot, Claude Code,
+          Cursor, and OpenAI Codex work in your projects.
         </p>
         <div className="flex gap-2 flex-wrap">
           {navItems.map((item) => (

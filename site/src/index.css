@@ -106,6 +106,8 @@
 .shiki-container pre.shiki {
   margin: 0;
   padding: 1rem;
+  width: max-content;
+  min-width: 100%;
   background-color: transparent !important;
 }
 
@@ -119,14 +121,22 @@
   width: 100%;
 }
 
-.shiki,
-.shiki span {
+.shiki {
   color: var(--shiki-light);
-  background-color: var(--shiki-light-bg) !important;
+  background-color: transparent !important;
 }
 
-.dark .shiki,
+.shiki span {
+  color: var(--shiki-light);
+  background-color: transparent !important;
+}
+
+.dark .shiki {
+  color: var(--shiki-dark);
+  background-color: transparent !important;
+}
+
 .dark .shiki span {
   color: var(--shiki-dark);
-  background-color: var(--shiki-dark-bg) !important;
+  background-color: transparent !important;
 }

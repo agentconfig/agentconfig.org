@@ -1,37 +1,200 @@
 # Hooks Tutorial
 
 Tutorial for designing, testing, and mapping lifecycle hooks across provider runtimes.
-Covers a vendor-neutral contract model, Copilot and Claude worked implementations,
-provider panels, safety guidance, and fixture-driven tests.
+Starts with a small working hook, then covers provider setup, reusable policy logic,
+safety guidance, and fixture-driven tests.
 
 ## Tutorial Sections
 
-- 1. When Hooks Fit (beginner)
-- 2. Lifecycle Model (beginner)
-- 3. Contract Model (intermediate)
-- 4. First Provider Hook (intermediate)
-- 5. Provider Panels (intermediate)
-- 6. Policy Core Pattern (advanced)
-- 7. Safe Integrations (advanced)
-- 8. Testing Hooks (advanced)
-- 9. When Not To Use Hooks
+- 1. Block One Risky Command (beginner)
+- 2. When Hooks Fit (beginner)
+- 3. Lifecycle Events (beginner)
+- 4. Hook Contracts (intermediate)
+- 5. Providers (intermediate)
+- 6. Reuse Policy Logic (advanced)
+- 7. Keep Integrations Safe (advanced)
+- 8. Test the Hook (advanced)
+- 9. Use Another Primitive
 
 ## Section Details
 
-### 1. When Hooks Fit
+### 1. Block One Risky Command
+
+Start with a repository hook that blocks `git push`. It is deliberately small, easy to
+test, and easy to remove. Pick the provider you use, then connect its config file to a small
+adapter.
+
+**Copilot** — repository hooks live under `.github/hooks/`.
+
+```json
+{
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "type": "command",
+        "bash": "node .github/hooks/policy.mjs",
+        "timeoutSec": 30
+      }
+    ]
+  }
+}
+```
+
+```javascript
+import { Buffer } from 'node:buffer'
+
+function isGitPush(input) {
+  const command = typeof input === 'string' ? input : input?.command
+  if (typeof command !== 'string') return false
+
+  const tokens = command.match(/"[^"]*"|'[^']*'|\S+/g) ?? []
+  const gitIndex = tokens.findIndex((token) => token === 'git' || token.endsWith('/git'))
+  return gitIndex >= 0 && tokens.slice(gitIndex + 1).includes('push')
+}
+
+const chunks = []
+for await (const chunk of process.stdin) {
+  chunks.push(chunk)
+}
+
+const input = Buffer.concat(chunks).toString('utf8')
+const payload = JSON.parse(input)
+
+if (payload.toolName === 'bash' && isGitPush(payload.toolArgs)) {
+  console.log(JSON.stringify({
+    permissionDecision: 'deny',
+    permissionDecisionReason: 'Git push is disabled for agent runs.',
+  }))
+} else {
+  console.log(JSON.stringify({ permissionDecision: 'allow' }))
+}
+```
+
+**Claude** — shared project hooks live in `.claude/settings.json`.
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/adapter.mjs"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+```javascript
+import { Buffer } from 'node:buffer'
+
+function isGitPush(input) {
+  const command = typeof input === 'string' ? input : input?.command
+  if (typeof command !== 'string') return false
+
+  const tokens = command.match(/"[^"]*"|'[^']*'|\S+/g) ?? []
+  const gitIndex = tokens.findIndex((token) => token === 'git' || token.endsWith('/git'))
+  return gitIndex >= 0 && tokens.slice(gitIndex + 1).includes('push')
+}
+
+const chunks = []
+for await (const chunk of process.stdin) {
+  chunks.push(chunk)
+}
+
+const input = Buffer.concat(chunks).toString('utf8')
+const payload = JSON.parse(input)
+if (payload.tool_name === 'Bash' && isGitPush(payload.tool_input)) {
+  console.log(JSON.stringify({
+    hookSpecificOutput: {
+      hookEventName: 'PreToolUse',
+      permissionDecision: 'deny',
+      permissionDecisionReason: 'Git push is disabled for agent runs.',
+    },
+  }))
+} else {
+  console.log(JSON.stringify({
+    hookSpecificOutput: {
+      hookEventName: 'PreToolUse',
+      permissionDecision: 'allow',
+    },
+  }))
+}
+```
+
+**Codex** — repository hooks live in `.codex/hooks.json`.
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$(git rev-parse --show-toplevel)/.codex/hooks/policy.mjs\"",
+            "statusMessage": "Checking Bash command"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+```javascript
+import { Buffer } from 'node:buffer'
+
+function isGitPush(input) {
+  const command = typeof input === 'string' ? input : input?.command
+  if (typeof command !== 'string') return false
+
+  const tokens = command.match(/"[^"]*"|'[^']*'|\S+/g) ?? []
+  const gitIndex = tokens.findIndex((token) => token === 'git' || token.endsWith('/git'))
+  return gitIndex >= 0 && tokens.slice(gitIndex + 1).includes('push')
+}
+
+const chunks = []
+for await (const chunk of process.stdin) {
+  chunks.push(chunk)
+}
+
+const input = Buffer.concat(chunks).toString('utf8')
+const payload = JSON.parse(input)
+if (payload.tool_name === 'Bash' && isGitPush(payload.tool_input)) {
+  console.log(JSON.stringify({
+    hookSpecificOutput: {
+      hookEventName: 'PreToolUse',
+      permissionDecision: 'deny',
+      permissionDecisionReason: 'Git push is disabled for agent runs.',
+    },
+  }))
+} else {
+  console.log(JSON.stringify({ systemMessage: 'Policy hook allowed the tool call.' }))
+}
+```
+
+### 2. When Hooks Fit
 
 Hooks are deterministic code that runs at defined points in an agent session. Use hooks
 when you need machine-enforced policy, repeatable side effects, compact progress updates,
 or runtime gates around tool calls. Use instructions for judgment guidance, skills for
 human-invoked procedures, and MCP when the agent needs a new tool.
 
-Good hook jobs:
+Hooks work well for:
 - Gate risky commands such as force-push, production deploys, secret reads, and destructive migrations.
 - Publish compact progress only when objective, phase, blocker, or attention changes.
 - Preserve continuity before compaction and recover it at session start.
 - Keep local audit trails for tool decisions without exposing private data externally.
 
-### 2. Lifecycle Model
+### 3. Lifecycle Events
 
 Normalize provider event names into the lifecycle your policy cares about:
 
@@ -45,7 +208,7 @@ Normalize provider event names into the lifecycle your policy cares about:
 | Compaction | Persist or restore compact state around context compaction. | No direct equivalent | PreCompact | PreCompact, PostCompact |
 | Agent stop | Finalize state, clean temporary locks, or report completion once the agent stops. | agentStop, subagentStop | Stop, SubagentStop | Stop, SubagentStop |
 
-### 3. Contract Model
+### 4. Hook Contracts
 
 A durable hook contract has four parts: JSON input, structured output, an exit-code policy,
 and diagnostics. Keep human-readable logs separate from the final machine-readable decision.
@@ -83,117 +246,7 @@ and diagnostics. Keep human-readable logs separate from the final machine-readab
 }
 ```
 
-### 4. First Provider Hook
-
-Start with a repository-level pre-tool-use hook that blocks one risky command, then compare
-how each provider wires it up. Every provider adapter calls the same policy core, so switching
-providers only changes normalization and response formatting, never the decision logic itself.
-
-**Copilot** — repository hooks live under `.github/hooks/`. Put provider configuration in a
-small JSON file and keep real policy in a script that can be tested outside the agent runtime.
-
-```json
-{
-  "version": 1,
-  "hooks": {
-    "preToolUse": [
-      {
-        "type": "command",
-        "bash": "node .github/hooks/policy.mjs",
-        "timeoutSec": 30
-      }
-    ]
-  }
-}
-```
-
-```typescript
-import { Buffer } from 'node:buffer'
-import { evaluatePolicy, normalizeCopilotEvent } from './policy-core.mjs'
-
-const chunks = []
-for await (const chunk of process.stdin) {
-  chunks.push(chunk)
-}
-
-const input = Buffer.concat(chunks).toString('utf8')
-const event = normalizeCopilotEvent(JSON.parse(input))
-const decision = evaluatePolicy(event)
-
-if (decision.decision === 'block') {
-  console.log(JSON.stringify({
-    permissionDecision: 'deny',
-    permissionDecisionReason: decision.message,
-  }))
-} else {
-  console.log(JSON.stringify({ permissionDecision: 'allow' }))
-}
-```
-
-**Claude** — hooks are configured inside settings files rather than a dedicated hooks
-directory. Use shared project settings for team policy and local settings for personal
-automation.
-
-```json
-{
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node .claude/hooks/adapter.mjs"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-```javascript
-import { Buffer } from 'node:buffer'
-import { evaluatePolicy } from './policy-core.mjs'
-
-const chunks = []
-for await (const chunk of process.stdin) {
-  chunks.push(chunk)
-}
-
-const input = Buffer.concat(chunks).toString('utf8')
-const payload = JSON.parse(input)
-const event = {
-  normalizedEvent: payload.hook_event_name === 'PreToolUse'
-    ? 'before_tool_use'
-    : payload.hook_event_name,
-  tool: {
-    name: payload.tool_name,
-    input: payload.tool_input,
-  },
-}
-
-const decision = evaluatePolicy(event)
-
-if (decision.decision === 'block') {
-  console.log(JSON.stringify({
-    hookSpecificOutput: {
-      hookEventName: 'PreToolUse',
-      permissionDecision: 'deny',
-      permissionDecisionReason: decision.message,
-    },
-  }))
-} else {
-  console.log(JSON.stringify({
-    hookSpecificOutput: {
-      hookEventName: 'PreToolUse',
-      permissionDecision: 'allow',
-    },
-  }))
-}
-```
-
-### 5. Provider Panels
+### 5. Providers
 
 Compare hook lifecycle events, config locations, and contracts across Copilot, Claude Code,
 and Codex.
@@ -248,11 +301,12 @@ Source: [Claude Code hooks documentation](https://code.claude.com/docs/en/hooks)
 Source: [OpenAI Codex hooks documentation](https://developers.openai.com/codex/hooks)
 
 
-### 6. Policy Core Pattern
+### 6. Reuse Policy Logic
 
-Put reusable decisions in a pure policy core and keep provider adapters thin. The policy core
-takes normalized input and returns a deterministic decision. Provider adapters own I/O, schema
-translation, exit codes, and provider-specific response formats.
+Once the first hook works, move the repeated command check into a pure policy core and keep
+provider adapters thin. The shared `hooks/policy-core.mjs` module takes normalized input and
+returns a deterministic decision. Provider adapters own I/O, schema translation, exit codes,
+and provider-specific response formats.
 
 ```typescript
 function tokenizeCommand(command) {
@@ -315,62 +369,7 @@ export function evaluatePolicy(event) {
 }
 ```
 
-```json
-{
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node \"$(git rev-parse --show-toplevel)/.codex/hooks/policy.mjs\"",
-            "statusMessage": "Checking Bash command"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-```javascript
-import { Buffer } from 'node:buffer'
-import { evaluatePolicy } from './policy-core.mjs'
-
-const chunks = []
-for await (const chunk of process.stdin) {
-  chunks.push(chunk)
-}
-
-const input = Buffer.concat(chunks).toString('utf8')
-const payload = JSON.parse(input)
-const event = {
-  normalizedEvent: payload.hook_event_name === 'PreToolUse'
-    ? 'before_tool_use'
-    : payload.hook_event_name,
-  tool: {
-    name: payload.tool_name,
-    input: payload.tool_input,
-  },
-}
-
-const decision = evaluatePolicy(event)
-
-if (decision.decision === 'block') {
-  console.log(JSON.stringify({
-    hookSpecificOutput: {
-      hookEventName: 'PreToolUse',
-      permissionDecision: 'deny',
-      permissionDecisionReason: decision.message,
-    },
-  }))
-} else {
-  console.log(JSON.stringify({ systemMessage: 'Policy hook allowed the tool call.' }))
-}
-```
-
-### 7. Safe Integrations
+### 7. Keep Integrations Safe
 
 Hooks often sit next to shell commands, secrets, and external systems, so they need stricter
 defaults than ordinary scripts.
@@ -393,7 +392,7 @@ spawn('/usr/bin/git', ['status', '--short'], {
 })
 ```
 
-### 8. Testing Hooks
+### 8. Test the Hook
 
 Every example hook should have a fixture test and a host-level smoke test.
 
@@ -458,10 +457,18 @@ test "$?" -eq 0
 node -e 'const out = JSON.parse(process.argv[1]); if (out.permissionDecision !== "deny") process.exit(1)' "$output"
 ```
 
-### 9. When Not To Use Hooks
+### 9. Use Another Primitive
 
-- Do not use a hook for guidance that belongs in AGENTS.md, CLAUDE.md, or another instruction file.
-- Do not use a hook when a skill or slash command is a better human-invoked workflow boundary.
+A hook should enforce runtime behavior. Pick the simpler primitive when the agent needs guidance,
+a reusable procedure, or a new tool:
+
+- **Instructions for judgment:** Put coding conventions, review guidance, and repository context in AGENTS.md, CLAUDE.md, or another instruction file.
+- **A skill for a procedure:** Package a repeatable workflow as a skill or slash command when a person or agent should choose when it runs.
+- **MCP for a new tool:** Connect an MCP server when the agent needs structured access to an API, database, or external system.
+- **A hook for enforcement:** Keep the hook when the check must run at a lifecycle boundary even if the model forgets or chooses another path.
+
+Hook traps:
+
 - Do not call slow external systems on every tool invocation; batch, throttle, or move that work to session boundaries.
 - Do not silently rewrite user intent. Block with a clear message instead.
 - Do not make hooks the only copy of business-critical policy. Keep the policy documented and reviewable.

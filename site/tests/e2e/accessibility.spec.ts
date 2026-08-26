@@ -4,7 +4,7 @@ import AxeBuilder from '@axe-core/playwright'
 test.describe('Accessibility', () => {
   test('home page should have no accessibility violations', async ({ page }) => {
     await page.goto('/')
-    await expect(page.getByRole('heading', { name: 'Elevate AI Assistants' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Configure AI Coding Assistants' })).toBeVisible()
 
     const results = await new AxeBuilder({ page }).analyze()
 

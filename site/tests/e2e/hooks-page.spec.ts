@@ -7,40 +7,53 @@ test.describe('Hooks Page', () => {
 
   test('loads the hooks page with hero section', async ({ page }) => {
     await expect(page.getByRole('heading', { name: 'Lifecycle Hooks', exact: true })).toBeVisible()
-    await expect(page.getByText('Build deterministic automation around agent lifecycle events')).toBeVisible()
+    await expect(page.getByText('Start with one small hook for Copilot, Claude Code, or Codex')).toBeVisible()
   })
 
   test('shows the lifecycle and provider mappings', async ({ page }) => {
-    await expect(page.getByRole('link', { name: /Lifecycle Model/ })).toBeVisible()
+    await expect(page.getByRole('link', { name: /Lifecycle Events/ })).toBeVisible()
     await expect(page.getByRole('cell', { name: 'preToolUse', exact: true })).toBeVisible()
     await expect(page.getByRole('cell', { name: 'PreToolUse' }).first()).toBeVisible()
     await expect(page.getByRole('cell', { name: 'PostCompact' })).toBeVisible()
   })
 
-  test('shows Copilot, Claude, and Codex provider panels', async ({ page }) => {
-    await expect(page.getByRole('heading', { name: 'GitHub Copilot', exact: true })).toBeVisible()
-    await expect(page.getByRole('heading', { name: 'Claude Code', exact: true })).toBeVisible()
-    await expect(page.getByRole('heading', { name: 'OpenAI Codex', exact: true })).toBeVisible()
-    await expect(page.getByText('.github/hooks/*.json')).toBeVisible()
-    await expect(page.getByText('.claude/settings.local.json')).toBeVisible()
+  test('shows provider details as tabs with code-styled paths', async ({ page }) => {
+    await page.getByRole('link', { name: /5\. Providers/ }).click()
+    const providerSection = page.locator('#provider-panels')
+
+    await expect(providerSection.getByRole('heading', { name: 'GitHub Copilot', exact: true })).toBeVisible()
+    await expect(providerSection.getByText('.github/hooks/*.json')).toHaveCSS('font-family', /mono/i)
+
+    await providerSection.getByRole('tab', { name: 'Claude Code', exact: true }).click()
+    await expect(providerSection.getByRole('heading', { name: 'Claude Code', exact: true })).toBeVisible()
+    await expect(providerSection.getByText('.claude/settings.local.json')).toHaveCSS('font-family', /mono/i)
+
+    await providerSection.getByRole('tab', { name: 'OpenAI Codex', exact: true }).click()
+    await expect(providerSection.getByRole('heading', { name: 'OpenAI Codex', exact: true })).toBeVisible()
   })
 
-  test('switches provider tabs in the first-provider-hook example', async ({ page }) => {
-    await page.getByRole('link', { name: /First Provider Hook/ }).click()
+  test('starts with a provider-specific working example', async ({ page }) => {
+    const firstSection = page.locator('article section').first()
+    await expect(firstSection).toHaveAttribute('id', 'first-provider-hook')
+    await expect(firstSection.getByRole('heading', { name: '1. Block One Risky Command' })).toBeVisible()
     await expect(page.getByText('.github/hooks/pre-tool-use.json')).toBeVisible()
-    await page.getByRole('tab', { name: 'Claude' }).click()
-    await expect(page.getByText('.claude/settings.json', { exact: true })).toBeVisible()
+    await firstSection.getByRole('tab', { name: 'Claude Code', exact: true }).click()
+    await expect(firstSection.getByText('.claude/settings.json', { exact: true }).last()).toBeVisible()
+    await firstSection.getByRole('tab', { name: 'OpenAI Codex', exact: true }).click()
+    await expect(firstSection.getByText('.codex/hooks.json', { exact: true }).last()).toBeVisible()
   })
 
   test('includes fixture testing and safety guidance', async ({ page }) => {
-    await expect(page.getByRole('heading', { name: '7. Safe Integrations' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: '7. Keep Integrations Safe' })).toBeVisible()
     await expect(page.getByText('Shell injection:')).toBeVisible()
-    await expect(page.getByRole('heading', { name: '8. Testing Hooks' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: '8. Test the Hook' })).toBeVisible()
     await expect(page.getByText('policy-core.test.ts')).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Use instructions for judgment' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Use MCP for a new tool' })).toBeVisible()
   })
 
   test('navigates to sections from the table of contents', async ({ page }) => {
-    await page.getByRole('link', { name: /Policy Core Pattern/ }).click()
+    await page.getByRole('link', { name: /Reuse Policy Logic/ }).click()
     await expect(page).toHaveURL(/.*#policy-core/)
     await expect(page.locator('#policy-core')).toBeInViewport()
   })
@@ -59,7 +72,7 @@ test.describe('Hooks Page', () => {
     await page.reload()
 
     await expect(page.locator('html')).toHaveClass(/dark/)
-    await expect(page.getByRole('heading', { name: '6. Policy Core Pattern' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: '6. Reuse Policy Logic' })).toBeVisible()
     await expect(page.locator('pre').first()).toBeVisible()
   })
 
@@ -71,18 +84,46 @@ test.describe('Hooks Page', () => {
     // rather than falling back to unstyled plain text.
     const tokenStyle = await highlighted.locator('span[style]').first().getAttribute('style')
     expect(tokenStyle).toContain('--shiki-light')
+    await expect(highlighted).toHaveCSS('padding', '16px')
+    await expect(highlighted.locator('span[style]').first()).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)')
+
+    const container = highlighted.locator('xpath=..')
+    const lastToken = highlighted.locator('span[style]').last()
+    await container.evaluate((element) => { element.scrollLeft = element.scrollWidth })
+    const preBox = await highlighted.boundingBox()
+    const tokenBox = await lastToken.boundingBox()
+    if (preBox == null || tokenBox == null) {
+      throw new Error('Highlighted code block did not produce measurable boxes')
+    }
+    const rightPadding = preBox.x + preBox.width - (tokenBox.x + tokenBox.width)
+    expect(rightPadding).toBeGreaterThanOrEqual(15)
   })
 
   test('switches provider tabs with arrow keys', async ({ page }) => {
-    await page.getByRole('link', { name: /First Provider Hook/ }).click()
-    const copilotTab = page.getByRole('tab', { name: 'Copilot' })
-    const claudeTab = page.getByRole('tab', { name: 'Claude' })
+    await page.getByRole('link', { name: /Block One Risky Command/ }).click()
+    const firstSection = page.locator('#first-provider-hook')
+    const copilotTab = firstSection.getByRole('tab', { name: 'GitHub Copilot', exact: true })
+    const claudeTab = firstSection.getByRole('tab', { name: 'Claude Code', exact: true })
 
     await copilotTab.focus()
     await expect(copilotTab).toHaveAttribute('aria-selected', 'true')
     await page.keyboard.press('ArrowRight')
     await expect(claudeTab).toHaveAttribute('aria-selected', 'true')
     await expect(claudeTab).toBeFocused()
-    await expect(page.getByText('.claude/settings.json', { exact: true })).toBeVisible()
+    await expect(firstSection.getByText('.claude/settings.json', { exact: true }).last()).toBeVisible()
+  })
+
+  test('preserves legacy provider anchors and stable tab panel relationships', async ({ page }) => {
+    await page.goto('/hooks/?from=legacy#first-claude-hook')
+
+    const firstSection = page.locator('#first-provider-hook')
+    const claudeTab = firstSection.getByRole('tab', { name: 'Claude Code', exact: true })
+    await expect(claudeTab).toHaveAttribute('aria-selected', 'true')
+
+    for (const tab of await firstSection.getByRole('tab').all()) {
+      const panelId = await tab.getAttribute('aria-controls')
+      expect(panelId).not.toBeNull()
+      await expect(page.locator(`#${panelId ?? ''}`)).toHaveCount(1)
+    }
   })
 })

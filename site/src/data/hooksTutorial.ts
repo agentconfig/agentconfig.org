@@ -9,7 +9,9 @@ export interface HookEvent {
 }
 
 export interface ProviderHookPanel {
-  provider: string
+  id: 'copilot' | 'claude' | 'codex'
+  label: string
+  tone: 'copilot' | 'claude' | 'codex'
   scope: string
   locations: readonly string[]
   events: readonly string[]
@@ -27,15 +29,15 @@ export interface FurtherReadingLink {
 }
 
 export const tocItems: readonly TocItem[] = [
-  { id: 'when-hooks', label: '1. When Hooks Fit', level: 'beginner' },
-  { id: 'lifecycle-model', label: '2. Lifecycle Model', level: 'beginner' },
-  { id: 'contract-model', label: '3. Contract Model', level: 'intermediate' },
-  { id: 'first-provider-hook', label: '4. First Provider Hook', level: 'intermediate' },
-  { id: 'provider-panels', label: '5. Provider Panels', level: 'intermediate' },
-  { id: 'policy-core', label: '6. Policy Core Pattern', level: 'advanced' },
-  { id: 'safe-integrations', label: '7. Safe Integrations', level: 'advanced' },
-  { id: 'testing-hooks', label: '8. Testing Hooks', level: 'advanced' },
-  { id: 'when-not-hooks', label: '9. When Not To Use Hooks' },
+  { id: 'first-provider-hook', label: '1. Block One Risky Command', level: 'beginner' },
+  { id: 'when-hooks', label: '2. When Hooks Fit', level: 'beginner' },
+  { id: 'lifecycle-model', label: '3. Lifecycle Events', level: 'beginner' },
+  { id: 'contract-model', label: '4. Hook Contracts', level: 'intermediate' },
+  { id: 'provider-panels', label: '5. Providers', level: 'intermediate' },
+  { id: 'policy-core', label: '6. Reuse Policy Logic', level: 'advanced' },
+  { id: 'safe-integrations', label: '7. Keep Integrations Safe', level: 'advanced' },
+  { id: 'testing-hooks', label: '8. Test the Hook', level: 'advanced' },
+  { id: 'when-not-hooks', label: '9. Use Another Primitive' },
 ] as const
 
 export const normalizedEvents: readonly HookEvent[] = [
@@ -92,7 +94,9 @@ export const normalizedEvents: readonly HookEvent[] = [
 
 export const providerPanels: readonly ProviderHookPanel[] = [
   {
-    provider: 'GitHub Copilot',
+    id: 'copilot',
+    label: 'GitHub Copilot',
+    tone: 'copilot',
     scope: 'Repository hooks apply to Copilot agents in that repository; personal hooks apply to Copilot CLI.',
     locations: ['.github/hooks/*.json', '~/.copilot/hooks/*.json'],
     events: ['sessionStart', 'sessionEnd', 'userPromptSubmitted', 'preToolUse', 'postToolUse', 'postToolUseFailure', 'errorOccurred', 'agentStop', 'subagentStop'],
@@ -107,7 +111,9 @@ export const providerPanels: readonly ProviderHookPanel[] = [
     sourceUrl: 'https://docs.github.com/en/copilot/reference/hooks-reference',
   },
   {
-    provider: 'Claude Code',
+    id: 'claude',
+    label: 'Claude Code',
+    tone: 'claude',
     scope: 'Hooks live inside settings files at project, local project, and user scope.',
     locations: ['.claude/settings.json', '.claude/settings.local.json', '~/.claude/settings.json'],
     events: ['PreToolUse', 'PostToolUse', 'PostToolUseFailure', 'UserPromptSubmit', 'Stop', 'SubagentStop', 'PreCompact', 'SessionStart', 'SessionEnd'],
@@ -121,7 +127,9 @@ export const providerPanels: readonly ProviderHookPanel[] = [
     sourceUrl: 'https://code.claude.com/docs/en/hooks',
   },
   {
-    provider: 'OpenAI Codex',
+    id: 'codex',
+    label: 'OpenAI Codex',
+    tone: 'codex',
     scope: 'Hooks can be configured in repository or user hooks files and in config.toml.',
     locations: ['<repo>/.codex/hooks.json', '~/.codex/hooks.json', '<repo>/.codex/config.toml', '~/.codex/config.toml'],
     events: ['SessionStart', 'SessionEnd', 'SubagentStart', 'SubagentStop', 'UserPromptSubmit', 'PreToolUse', 'PostToolUse', 'PermissionRequest', 'PreCompact', 'PostCompact', 'Stop'],
@@ -238,7 +246,15 @@ export const codeSamples: Record<string, string> = {
 }`,
 
   claudeAdapter: `import { Buffer } from 'node:buffer'
-import { evaluatePolicy } from './policy-core.mjs'
+
+function isGitPush(input) {
+  const command = typeof input === 'string' ? input : input?.command
+  if (typeof command !== 'string') return false
+
+  const tokens = command.match(/"[^"]*"|'[^']*'|\\S+/g) ?? []
+  const gitIndex = tokens.findIndex((token) => token === 'git' || token.endsWith('/git'))
+  return gitIndex >= 0 && tokens.slice(gitIndex + 1).includes('push')
+}
 
 const chunks = []
 for await (const chunk of process.stdin) {
@@ -247,24 +263,12 @@ for await (const chunk of process.stdin) {
 
 const input = Buffer.concat(chunks).toString('utf8')
 const payload = JSON.parse(input)
-const event = {
-  normalizedEvent: payload.hook_event_name === 'PreToolUse'
-    ? 'before_tool_use'
-    : payload.hook_event_name,
-  tool: {
-    name: payload.tool_name,
-    input: payload.tool_input,
-  },
-}
-
-const decision = evaluatePolicy(event)
-
-if (decision.decision === 'block') {
+if (payload.tool_name === 'Bash' && isGitPush(payload.tool_input)) {
   console.log(JSON.stringify({
     hookSpecificOutput: {
       hookEventName: 'PreToolUse',
       permissionDecision: 'deny',
-      permissionDecisionReason: decision.message,
+      permissionDecisionReason: 'Git push is disabled for agent runs.',
     },
   }))
 } else {
@@ -277,7 +281,15 @@ if (decision.decision === 'block') {
 }`,
 
   codexAdapter: `import { Buffer } from 'node:buffer'
-import { evaluatePolicy } from './policy-core.mjs'
+
+function isGitPush(input) {
+  const command = typeof input === 'string' ? input : input?.command
+  if (typeof command !== 'string') return false
+
+  const tokens = command.match(/"[^"]*"|'[^']*'|\\S+/g) ?? []
+  const gitIndex = tokens.findIndex((token) => token === 'git' || token.endsWith('/git'))
+  return gitIndex >= 0 && tokens.slice(gitIndex + 1).includes('push')
+}
 
 const chunks = []
 for await (const chunk of process.stdin) {
@@ -286,24 +298,12 @@ for await (const chunk of process.stdin) {
 
 const input = Buffer.concat(chunks).toString('utf8')
 const payload = JSON.parse(input)
-const event = {
-  normalizedEvent: payload.hook_event_name === 'PreToolUse'
-    ? 'before_tool_use'
-    : payload.hook_event_name,
-  tool: {
-    name: payload.tool_name,
-    input: payload.tool_input,
-  },
-}
-
-const decision = evaluatePolicy(event)
-
-if (decision.decision === 'block') {
+if (payload.tool_name === 'Bash' && isGitPush(payload.tool_input)) {
   console.log(JSON.stringify({
     hookSpecificOutput: {
       hookEventName: 'PreToolUse',
       permissionDecision: 'deny',
-      permissionDecisionReason: decision.message,
+      permissionDecisionReason: 'Git push is disabled for agent runs.',
     },
   }))
 } else {
@@ -370,7 +370,15 @@ export function evaluatePolicy(event) {
 }`,
 
   copilotAdapter: `import { Buffer } from 'node:buffer'
-import { evaluatePolicy, normalizeCopilotEvent } from './policy-core.mjs'
+
+function isGitPush(input) {
+  const command = typeof input === 'string' ? input : input?.command
+  if (typeof command !== 'string') return false
+
+  const tokens = command.match(/"[^"]*"|'[^']*'|\\S+/g) ?? []
+  const gitIndex = tokens.findIndex((token) => token === 'git' || token.endsWith('/git'))
+  return gitIndex >= 0 && tokens.slice(gitIndex + 1).includes('push')
+}
 
 const chunks = []
 for await (const chunk of process.stdin) {
@@ -378,13 +386,12 @@ for await (const chunk of process.stdin) {
 }
 
 const input = Buffer.concat(chunks).toString('utf8')
-const event = normalizeCopilotEvent(JSON.parse(input))
-const decision = evaluatePolicy(event)
+const payload = JSON.parse(input)
 
-if (decision.decision === 'block') {
+if (payload.toolName === 'bash' && isGitPush(payload.toolArgs)) {
   console.log(JSON.stringify({
     permissionDecision: 'deny',
-    permissionDecisionReason: decision.message,
+    permissionDecisionReason: 'Git push is disabled for agent runs.',
   }))
 } else {
   console.log(JSON.stringify({ permissionDecision: 'allow' }))

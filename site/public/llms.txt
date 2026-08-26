@@ -20,7 +20,7 @@ This file provides a table of contents. For complete content, see /llms-full.txt
 - [Full site content](/llms-full.txt): Complete content for deep context (recommended for agents)
 - [Skills Tutorial content](/skills.md): Skills tutorial with 5 example skills
 - [Agents Tutorial content](/agents.md): Agents tutorial with code samples
-- [Hooks Tutorial content](/hooks.md): Hooks tutorial with provider panels, policy patterns, and fixture tests
+- [Hooks Tutorial content](/hooks.md): Hooks tutorial with provider tabs, reusable policy logic, and fixture tests
 - [MCP Tool Integrations content](/mcp.md): MCP tutorial with configuration examples
 - [Provider Compatibility Profiles content](/profiles.md): Provider compatibility profiles generated from the typed primitives model
 

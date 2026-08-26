@@ -63,9 +63,9 @@ export function CodeBlock({
   }
 
   return (
-    <div className={cn('relative group rounded-lg overflow-hidden', className)}>
+    <div className={cn('not-prose relative group overflow-hidden rounded-xl border border-border bg-[#f6f8fa] shadow-sm dark:bg-[#0d1117]', className)}>
       {/* Header with filename/language and copy button */}
-      <div className="flex items-center justify-between px-4 py-2 bg-muted/80 border-b border-border">
+      <div className="flex items-center justify-between border-b border-border bg-muted/70 px-4 py-2">
         <span className="text-sm text-muted-foreground font-mono">
           {filename ?? language ?? 'code'}
         </span>
@@ -95,12 +95,12 @@ export function CodeBlock({
       {/* Code content */}
       {highlightedHtml != null ? (
         <div
-          className="shiki-container overflow-x-auto text-sm bg-muted/50"
+          className="shiki-container overflow-x-auto bg-[#f6f8fa] text-sm dark:bg-[#0d1117]"
           tabIndex={0}
           dangerouslySetInnerHTML={{ __html: highlightedHtml }}
         />
       ) : (
-        <pre className="p-4 overflow-x-auto bg-muted/50 text-sm" tabIndex={0}>
+        <pre className="overflow-x-auto bg-[#f6f8fa] p-4 text-sm dark:bg-[#0d1117]" tabIndex={0}>
           <code className="font-mono text-foreground whitespace-pre">{code}</code>
         </pre>
       )}

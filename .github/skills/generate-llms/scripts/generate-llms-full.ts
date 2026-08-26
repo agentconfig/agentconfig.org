@@ -486,8 +486,8 @@ function generateHooksMd(data: Awaited<ReturnType<typeof loadData>>): string {
   let content = `# Hooks Tutorial
 
 Tutorial for designing, testing, and mapping lifecycle hooks across provider runtimes.
-Covers a vendor-neutral contract model, Copilot and Claude worked implementations,
-provider panels, safety guidance, and fixture-driven tests.
+Starts with a small working hook, then covers provider setup, reusable policy logic,
+safety guidance, and fixture-driven tests.
 
 ## Tutorial Sections
 
@@ -495,20 +495,56 @@ ${hooksTocItems.map((item: any) => `- ${item.label}${item.level ? ` (${item.leve
 
 ## Section Details
 
-### 1. When Hooks Fit
+### 1. Block One Risky Command
+
+Start with a repository hook that blocks \`git push\`. It is deliberately small, easy to
+test, and easy to remove. Pick the provider you use, then connect its config file to a small
+adapter.
+
+**Copilot** — repository hooks live under \`.github/hooks/\`.
+
+\`\`\`json
+${hooksCodeSamples.copilotHook}
+\`\`\`
+
+\`\`\`javascript
+${hooksCodeSamples.copilotAdapter}
+\`\`\`
+
+**Claude** — shared project hooks live in \`.claude/settings.json\`.
+
+\`\`\`json
+${hooksCodeSamples.claudeHook}
+\`\`\`
+
+\`\`\`javascript
+${hooksCodeSamples.claudeAdapter}
+\`\`\`
+
+**Codex** — repository hooks live in \`.codex/hooks.json\`.
+
+\`\`\`json
+${hooksCodeSamples.codexHook}
+\`\`\`
+
+\`\`\`javascript
+${hooksCodeSamples.codexAdapter}
+\`\`\`
+
+### 2. When Hooks Fit
 
 Hooks are deterministic code that runs at defined points in an agent session. Use hooks
 when you need machine-enforced policy, repeatable side effects, compact progress updates,
 or runtime gates around tool calls. Use instructions for judgment guidance, skills for
 human-invoked procedures, and MCP when the agent needs a new tool.
 
-Good hook jobs:
+Hooks work well for:
 - Gate risky commands such as force-push, production deploys, secret reads, and destructive migrations.
 - Publish compact progress only when objective, phase, blocker, or attention changes.
 - Preserve continuity before compaction and recover it at session start.
 - Keep local audit trails for tool decisions without exposing private data externally.
 
-### 2. Lifecycle Model
+### 3. Lifecycle Events
 
 Normalize provider event names into the lifecycle your policy cares about:
 
@@ -516,7 +552,7 @@ Normalize provider event names into the lifecycle your policy cares about:
 | --- | --- | --- | --- | --- |
 ${hooksNormalizedEvents.map((event: any) => `| ${event.normalized} | ${event.purpose} | ${event.copilot} | ${event.claude} | ${event.codex} |`).join('\n')}
 
-### 3. Contract Model
+### 4. Hook Contracts
 
 A durable hook contract has four parts: JSON input, structured output, an exit-code policy,
 and diagnostics. Keep human-readable logs separate from the final machine-readable decision.
@@ -531,41 +567,12 @@ ${hooksCodeSamples.normalizedPayload}
 ${hooksCodeSamples.hookDecision}
 \`\`\`
 
-### 4. First Provider Hook
-
-Start with a repository-level pre-tool-use hook that blocks one risky command, then compare
-how each provider wires it up. Every provider adapter calls the same policy core, so switching
-providers only changes normalization and response formatting, never the decision logic itself.
-
-**Copilot** — repository hooks live under \`.github/hooks/\`. Put provider configuration in a
-small JSON file and keep real policy in a script that can be tested outside the agent runtime.
-
-\`\`\`json
-${hooksCodeSamples.copilotHook}
-\`\`\`
-
-\`\`\`typescript
-${hooksCodeSamples.copilotAdapter}
-\`\`\`
-
-**Claude** — hooks are configured inside settings files rather than a dedicated hooks
-directory. Use shared project settings for team policy and local settings for personal
-automation.
-
-\`\`\`json
-${hooksCodeSamples.claudeHook}
-\`\`\`
-
-\`\`\`javascript
-${hooksCodeSamples.claudeAdapter}
-\`\`\`
-
-### 5. Provider Panels
+### 5. Providers
 
 Compare hook lifecycle events, config locations, and contracts across Copilot, Claude Code,
 and Codex.
 
-${hooksProviderPanels.map((panel: any) => `#### ${panel.provider}
+${hooksProviderPanels.map((panel: any) => `#### ${panel.label}
 
 **Scope:** ${panel.scope}
 
@@ -580,25 +587,18 @@ ${panel.notes.map((note: string) => `- ${note}`).join('\n')}
 Source: [${panel.sourceTitle}](${panel.sourceUrl})
 `).join('\n')}
 
-### 6. Policy Core Pattern
+### 6. Reuse Policy Logic
 
-Put reusable decisions in a pure policy core and keep provider adapters thin. The policy core
-takes normalized input and returns a deterministic decision. Provider adapters own I/O, schema
-translation, exit codes, and provider-specific response formats.
+Once the first hook works, move the repeated command check into a pure policy core and keep
+provider adapters thin. The shared \`hooks/policy-core.mjs\` module takes normalized input and
+returns a deterministic decision. Provider adapters own I/O, schema translation, exit codes,
+and provider-specific response formats.
 
 \`\`\`typescript
 ${hooksCodeSamples.policyCore}
 \`\`\`
 
-\`\`\`json
-${hooksCodeSamples.codexHook}
-\`\`\`
-
-\`\`\`javascript
-${hooksCodeSamples.codexAdapter}
-\`\`\`
-
-### 7. Safe Integrations
+### 7. Keep Integrations Safe
 
 Hooks often sit next to shell commands, secrets, and external systems, so they need stricter
 defaults than ordinary scripts.
@@ -615,7 +615,7 @@ defaults than ordinary scripts.
 ${hooksCodeSamples.safeShell}
 \`\`\`
 
-### 8. Testing Hooks
+### 8. Test the Hook
 
 Every example hook should have a fixture test and a host-level smoke test.
 
@@ -629,10 +629,18 @@ ${hooksCodeSamples.fixtureTest}
 ${hooksCodeSamples.smokeTest}
 \`\`\`
 
-### 9. When Not To Use Hooks
+### 9. Use Another Primitive
 
-- Do not use a hook for guidance that belongs in AGENTS.md, CLAUDE.md, or another instruction file.
-- Do not use a hook when a skill or slash command is a better human-invoked workflow boundary.
+A hook should enforce runtime behavior. Pick the simpler primitive when the agent needs guidance,
+a reusable procedure, or a new tool:
+
+- **Instructions for judgment:** Put coding conventions, review guidance, and repository context in AGENTS.md, CLAUDE.md, or another instruction file.
+- **A skill for a procedure:** Package a repeatable workflow as a skill or slash command when a person or agent should choose when it runs.
+- **MCP for a new tool:** Connect an MCP server when the agent needs structured access to an API, database, or external system.
+- **A hook for enforcement:** Keep the hook when the check must run at a lifecycle boundary even if the model forgets or chooses another path.
+
+Hook traps:
+
 - Do not call slow external systems on every tool invocation; batch, throttle, or move that work to session boundaries.
 - Do not silently rewrite user intent. Block with a clear message instead.
 - Do not make hooks the only copy of business-critical policy. Keep the policy documented and reviewable.
@@ -682,7 +690,7 @@ ${layers.map((l: { name: string }) => `- **${l.name}**`).join('\n')}
 
 Scopes (managed/org, user, repository, local repository, directory/path, agent, session, turn,
 tool invocation) describe *where* a primitive applies. They are not primitives themselves — see
-the Scope Model section below.
+the Choose the Right Scope section after the provider comparison.
 
 `
 
@@ -707,18 +715,7 @@ the Scope Model section below.
 
   content += `---
 
-# Part 2: Scope Model
-
-Every primitive can apply at one or more of these scopes. Scopes describe *where* configuration
-lives and takes effect, not a new kind of primitive.
-
-| Scope | Example |
-|-------|---------|
-${scopeModel.map((s: { name: string; example: string }) => `| ${s.name} | ${s.example} |`).join('\n')}
-
----
-
-# Part 3: Provider Comparison
+# Part 2: Provider Comparison
 
 Support matrix comparing GitHub Copilot, Claude Code, Cursor, and OpenAI Codex:
 
@@ -755,6 +752,19 @@ Support matrix comparing GitHub Copilot, Claude Code, Cursor, and OpenAI Codex:
     }
     content += '\n'
   }
+
+  content += `---
+
+# Part 3: Choose the Right Scope
+
+Once you know which primitive you need, decide where its configuration should live and take
+effect. Scopes describe *where* configuration applies, not a new kind of primitive.
+
+| Scope | Example |
+|-------|---------|
+${scopeModel.map((s: { name: string; example: string }) => `| ${s.name} | ${s.example} |`).join('\n')}
+
+`
 
   content += `---
 
