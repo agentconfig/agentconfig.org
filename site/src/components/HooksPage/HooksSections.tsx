@@ -1,6 +1,9 @@
+import { useEffect, useRef, useState } from 'preact/hooks'
 import type { VNode } from 'preact'
+import { Lightbulb, TriangleAlert } from 'lucide-preact'
 import { CodeBlock } from '@/components/CodeBlock'
 import { CodeTabs } from '@/components/CodeBlock/CodeTabs'
+import { cn } from '@/lib/utils'
 import { codeSamples, furtherReadingLinks, normalizedEvents, providerPanels } from '@/data/hooksTutorial'
 
 export function WhenHooksFitSection(): VNode {
@@ -9,8 +12,11 @@ export function WhenHooksFitSection(): VNode {
       <h2 className="text-3xl font-bold mb-4">1. When Hooks Fit</h2>
       <p className="text-lg text-muted-foreground mb-6">Hooks are deterministic code that runs at defined points in an agent session.</p>
       <p>Use hooks when you need a machine-enforced policy, a repeatable side effect, or a concise progress signal that should not depend on the model remembering instructions. Use instructions when you need judgment guidance, skills when you need reusable procedures, and MCP when the agent needs a new tool. Hooks are the right primitive for runtime checks around tool calls, session boundaries, compaction, and externally visible actions.</p>
-      <div className="my-8 p-6 bg-muted/50 rounded-lg border border-border">
-        <h3 className="text-lg font-semibold mb-3">Good hook jobs</h3>
+      <div className="my-8 pl-5 py-1 border-l-4 border-primary/60">
+        <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-primary mb-3">
+          <Lightbulb className="h-4 w-4" aria-hidden="true" />
+          Good hook jobs
+        </p>
         <ul className="space-y-2">
           <li><strong>Gate risky commands:</strong> block force-push, production deploys, secret reads, or destructive migrations unless policy allows them.</li>
           <li><strong>Publish compact progress:</strong> emit updates only when objective, phase, blocker, or attention changes.</li>
@@ -71,27 +77,142 @@ export function ContractModelSection(): VNode {
   )
 }
 
-export function FirstCopilotHookSection(): VNode {
+interface ProviderExample {
+  readonly id: string
+  readonly label: string
+  readonly intro: string
+  readonly configFile: { readonly path: string; readonly content: string; readonly language: string }
+  readonly adapterFile: { readonly path: string; readonly content: string; readonly language: string }
+}
+
+function ProviderExampleTabs({
+  examples,
+  legacyFragments,
+}: {
+  examples: readonly ProviderExample[]
+  /** Maps a legacy per-provider anchor (e.g. "first-copilot-hook") to the matching example id, so old bookmarks/links still land on the right tab. */
+  legacyFragments?: Record<string, string>
+}): VNode {
+  const [activeIndex, setActiveIndex] = useState(0)
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([])
+  const current = examples[activeIndex] ?? examples[0]
+
+  useEffect(() => {
+    if (legacyFragments == null) return
+    const hash = window.location.hash.replace('#', '')
+    const targetId = legacyFragments[hash]
+    if (targetId == null) return
+    const index = examples.findIndex((example) => example.id === targetId)
+    if (index >= 0) {
+      setActiveIndex(index)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  if (current == null) {
+    return <div className="text-muted-foreground">No provider examples to display</div>
+  }
+
+  const selectTab = (index: number, focus: boolean): void => {
+    setActiveIndex(index)
+    if (focus) {
+      tabRefs.current[index]?.focus()
+    }
+  }
+
+  const handleKeyDown = (event: KeyboardEvent, index: number): void => {
+    if (event.key === 'ArrowRight') {
+      event.preventDefault()
+      selectTab((index + 1) % examples.length, true)
+    } else if (event.key === 'ArrowLeft') {
+      event.preventDefault()
+      selectTab((index - 1 + examples.length) % examples.length, true)
+    } else if (event.key === 'Home') {
+      event.preventDefault()
+      selectTab(0, true)
+    } else if (event.key === 'End') {
+      event.preventDefault()
+      selectTab(examples.length - 1, true)
+    }
+  }
+
   return (
-    <section id="first-copilot-hook" className="scroll-mt-24 mb-16">
-      <h2 className="text-3xl font-bold mb-4">4. First Copilot Hook</h2>
-      <p className="text-lg text-muted-foreground mb-6">Start with a repository-level pre-tool-use hook that blocks one risky command.</p>
-      <p>Copilot repository hooks live under <code>.github/hooks/</code>. Put the provider config in a small JSON file and keep real policy in a script that can be tested outside the agent runtime.</p>
-      <CodeBlock code={codeSamples.copilotHook ?? ''} language="json" filename=".github/hooks/pre-tool-use.json" className="my-6" />
-      <CodeBlock code={codeSamples.copilotAdapter ?? ''} language="javascript" filename=".github/hooks/policy.mjs" className="my-6" />
-    </section>
+    <div>
+      <div className="flex gap-1 border-b border-border mb-4" role="tablist" aria-label="Provider">
+        {examples.map((example, index) => (
+          <button
+            key={example.id}
+            ref={(el) => { tabRefs.current[index] = el }}
+            id={`provider-tab-${example.id}`}
+            type="button"
+            role="tab"
+            aria-selected={index === activeIndex}
+            aria-controls={`provider-panel-${example.id}`}
+            tabIndex={index === activeIndex ? 0 : -1}
+            onClick={() => { selectTab(index, false) }}
+            onKeyDown={(event) => { handleKeyDown(event, index) }}
+            className={cn(
+              'px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset',
+              index === activeIndex
+                ? 'border-primary text-foreground'
+                : 'border-transparent text-muted-foreground hover:text-foreground'
+            )}
+          >
+            {example.label}
+          </button>
+        ))}
+      </div>
+      {examples.map((example, index) => (
+        <div
+          key={example.id}
+          id={`provider-panel-${example.id}`}
+          role="tabpanel"
+          aria-labelledby={`provider-tab-${example.id}`}
+          tabIndex={0}
+          hidden={index !== activeIndex}
+        >
+          <p>{example.intro}</p>
+          <CodeBlock code={example.configFile.content} language={example.configFile.language} filename={example.configFile.path} className="my-6" />
+          <CodeBlock code={example.adapterFile.content} language={example.adapterFile.language} filename={example.adapterFile.path} className="my-6" />
+        </div>
+      ))}
+    </div>
   )
 }
 
-export function FirstClaudeHookSection(): VNode {
+export function FirstProviderHookSection(): VNode {
+  const examples: readonly ProviderExample[] = [
+    {
+      id: 'copilot',
+      label: 'Copilot',
+      intro: 'Copilot repository hooks live under .github/hooks/. Put the provider config in a small JSON file and keep real policy in a script that can be tested outside the agent runtime.',
+      configFile: { path: '.github/hooks/pre-tool-use.json', language: 'json', content: codeSamples.copilotHook ?? '' },
+      adapterFile: { path: '.github/hooks/policy.mjs', language: 'javascript', content: codeSamples.copilotAdapter ?? '' },
+    },
+    {
+      id: 'claude',
+      label: 'Claude',
+      intro: 'Claude hooks are configured inside settings files rather than a dedicated hooks directory. Use shared project settings for team policy and keep personal or machine-specific automation in local settings.',
+      configFile: { path: '.claude/settings.json', language: 'json', content: codeSamples.claudeHook ?? '' },
+      adapterFile: { path: '.claude/hooks/adapter.mjs', language: 'javascript', content: codeSamples.claudeAdapter ?? '' },
+    },
+  ]
+
   return (
-    <section id="first-claude-hook" className="scroll-mt-24 mb-16">
-      <h2 className="text-3xl font-bold mb-4">5. First Claude Hook</h2>
-      <p className="text-lg text-muted-foreground mb-6">Map the same policy into Claude settings with a PreToolUse matcher.</p>
-      <p>Claude hooks are configured inside settings files rather than a dedicated hooks directory. Use shared project settings for team policy and keep personal or machine-specific automation in local settings.</p>
-      <CodeBlock code={codeSamples.claudeHook ?? ''} language="json" filename=".claude/settings.json" className="my-6" />
-      <CodeBlock code={codeSamples.claudeAdapter ?? ''} language="javascript" filename=".claude/hooks/adapter.mjs" className="my-6" />
-      <p>The adapter calls the same policy core as the Copilot hook. Only the normalization and provider response mapping change.</p>
+    <section id="first-provider-hook" className="scroll-mt-24 mb-16">
+      {/* Preserve old fragment targets (#first-copilot-hook, #first-claude-hook)
+          from before the two provider sections were merged, so existing
+          links/bookmarks still land here (and select the matching tab). */}
+      <span id="first-copilot-hook" className="scroll-mt-24" aria-hidden="true" />
+      <span id="first-claude-hook" className="scroll-mt-24" aria-hidden="true" />
+      <h2 className="text-3xl font-bold mb-4">4. First Provider Hook</h2>
+      <p className="text-lg text-muted-foreground mb-6">Start with a repository-level pre-tool-use hook that blocks one risky command, then compare how each provider wires it up.</p>
+      <p>Every provider adapter below calls the same policy core, so switching providers only changes normalization and response formatting, never the decision logic itself.</p>
+      <ProviderExampleTabs
+        examples={examples}
+        legacyFragments={{ 'first-copilot-hook': 'copilot', 'first-claude-hook': 'claude' }}
+      />
     </section>
   )
 }
@@ -99,8 +220,8 @@ export function FirstClaudeHookSection(): VNode {
 export function ProviderPanelsSection(): VNode {
   return (
     <section id="provider-panels" className="scroll-mt-24 mb-16">
-      <h2 className="text-3xl font-bold mb-4">6. Provider Panels</h2>
-      <p className="text-lg text-muted-foreground mb-6">These panels are grounded in the provider documentation snapshots used by the documentation refresh skill.</p>
+      <h2 className="text-3xl font-bold mb-4">5. Provider Panels</h2>
+      <p className="text-lg text-muted-foreground mb-6">Compare hook lifecycle events, config locations, and contracts across Copilot, Claude Code, and Codex.</p>
       <div className="space-y-6">
         {providerPanels.map((panel) => (
           <div key={panel.provider} className="p-6 rounded-lg border border-border bg-muted/30">
@@ -123,7 +244,7 @@ export function ProviderPanelsSection(): VNode {
 export function PolicyCoreSection(): VNode {
   return (
     <section id="policy-core" className="scroll-mt-24 mb-16">
-      <h2 className="text-3xl font-bold mb-4">7. Policy Core Pattern</h2>
+      <h2 className="text-3xl font-bold mb-4">6. Policy Core Pattern</h2>
       <p className="text-lg text-muted-foreground mb-6">Put reusable decisions in a pure policy core and keep provider adapters thin.</p>
       <p>A pure policy core takes normalized input and returns a deterministic decision. It does not read environment variables, shell out, call external APIs, or print progress. Provider adapters own I/O, schema translation, exit codes, and provider-specific response formats.</p>
       <CodeBlock code={codeSamples.policyCore ?? ''} language="javascript" filename="policy-core.mjs" className="my-6" />
@@ -136,7 +257,7 @@ export function PolicyCoreSection(): VNode {
 export function SafeIntegrationsSection(): VNode {
   return (
     <section id="safe-integrations" className="scroll-mt-24 mb-16">
-      <h2 className="text-3xl font-bold mb-4">8. Safe Integrations</h2>
+      <h2 className="text-3xl font-bold mb-4">7. Safe Integrations</h2>
       <p className="text-lg text-muted-foreground mb-6">Hooks often sit next to shell commands, secrets, and external systems, so they need stricter defaults than ordinary scripts.</p>
       <ul className="my-6 space-y-3">
         <li><strong>Shell injection:</strong> pass arguments as arrays and avoid shell interpolation for untrusted input.</li>
@@ -155,7 +276,7 @@ export function SafeIntegrationsSection(): VNode {
 export function TestingHooksSection(): VNode {
   return (
     <section id="testing-hooks" className="scroll-mt-24 mb-16">
-      <h2 className="text-3xl font-bold mb-4">9. Testing Hooks</h2>
+      <h2 className="text-3xl font-bold mb-4">8. Testing Hooks</h2>
       <p className="text-lg text-muted-foreground mb-6">Every example hook should have a fixture test and a host-level smoke test.</p>
       <p>Fixture tests prove the policy core handles known provider payloads. Smoke tests prove the provider adapter can read stdin, emit the expected output, and return the expected exit status in the host environment.</p>
       <CodeTabs files={[{ path: 'policy-core.test.ts', content: codeSamples.fixtureTest ?? '', language: 'typescript' }, { path: 'smoke-test.sh', content: codeSamples.smokeTest ?? '', language: 'bash' }]} className="my-6" />
@@ -166,15 +287,21 @@ export function TestingHooksSection(): VNode {
 export function WhenNotHooksSection(): VNode {
   return (
     <section id="when-not-hooks" className="scroll-mt-24 mb-16">
-      <h2 className="text-3xl font-bold mb-4">10. When Not To Use Hooks</h2>
+      <h2 className="text-3xl font-bold mb-4">9. When Not To Use Hooks</h2>
       <p className="text-lg text-muted-foreground mb-6">Hooks are powerful because they run automatically, which also makes them easy to overuse.</p>
-      <ul className="my-6 space-y-3">
-        <li>Do not use a hook for guidance that belongs in <code>AGENTS.md</code>, <code>CLAUDE.md</code>, or another instruction file.</li>
-        <li>Do not use a hook when a skill or slash command is a better human-invoked workflow boundary.</li>
-        <li>Do not call slow external systems on every tool invocation; batch, throttle, or move that work to session boundaries.</li>
-        <li>Do not silently rewrite user intent. Block with a clear message instead.</li>
-        <li>Do not make hooks the only copy of business-critical policy. Keep the policy documented and reviewable.</li>
-      </ul>
+      <div className="my-6 p-6 rounded-lg border border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30">
+        <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-amber-800 dark:text-amber-400 mb-3">
+          <TriangleAlert className="h-4 w-4" aria-hidden="true" />
+          Reconsider before reaching for a hook
+        </p>
+        <ul className="space-y-3">
+          <li>Do not use a hook for guidance that belongs in <code>AGENTS.md</code>, <code>CLAUDE.md</code>, or another instruction file.</li>
+          <li>Do not use a hook when a skill or slash command is a better human-invoked workflow boundary.</li>
+          <li>Do not call slow external systems on every tool invocation; batch, throttle, or move that work to session boundaries.</li>
+          <li>Do not silently rewrite user intent. Block with a clear message instead.</li>
+          <li>Do not make hooks the only copy of business-critical policy. Keep the policy documented and reviewable.</li>
+        </ul>
+      </div>
     </section>
   )
 }

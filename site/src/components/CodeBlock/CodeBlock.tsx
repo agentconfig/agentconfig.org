@@ -1,7 +1,8 @@
-import { useState } from 'preact/hooks'
+import { useEffect, useState } from 'preact/hooks'
 import type { VNode } from 'preact'
 import { Check, Copy } from 'lucide-preact'
 import { cn } from '@/lib/utils'
+import { highlightCode } from '@/lib/highlighter'
 
 export interface CodeBlockProps {
   /** The code content to display */
@@ -21,6 +22,35 @@ export function CodeBlock({
   className,
 }: CodeBlockProps): VNode {
   const [copied, setCopied] = useState(false)
+  const [highlighted, setHighlighted] = useState<{ code: string; language: string | undefined; html: string } | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+
+    void highlightCode(code, language).then((html) => {
+      if (!cancelled) {
+        setHighlighted({ code, language, html })
+      }
+    }).catch((err: unknown) => {
+      // Highlighting is a progressive enhancement — if the dynamic Shiki
+      // chunk or highlight call fails, keep the plain <pre> fallback and
+      // just log rather than surfacing an unhandled rejection.
+      console.error('Failed to highlight code block:', err)
+    })
+
+    return () => {
+      cancelled = true
+    }
+  }, [code, language])
+
+  // Only trust the cached highlight result when it matches the current
+  // code/language — CodeTabs reuses this component instance across tab
+  // switches, so a pending highlight from the previous tab must not render
+  // paired with the new tab's header/copy button.
+  const highlightedHtml =
+    highlighted != null && highlighted.code === code && highlighted.language === language
+      ? highlighted.html
+      : null
 
   const handleCopy = async (): Promise<void> => {
     try {
@@ -63,9 +93,17 @@ export function CodeBlock({
       </div>
 
       {/* Code content */}
-      <pre className="p-4 overflow-x-auto bg-muted/50 text-sm" tabIndex={0}>
-        <code className="font-mono text-foreground whitespace-pre">{code}</code>
-      </pre>
+      {highlightedHtml != null ? (
+        <div
+          className="shiki-container overflow-x-auto text-sm bg-muted/50"
+          tabIndex={0}
+          dangerouslySetInnerHTML={{ __html: highlightedHtml }}
+        />
+      ) : (
+        <pre className="p-4 overflow-x-auto bg-muted/50 text-sm" tabIndex={0}>
+          <code className="font-mono text-foreground whitespace-pre">{code}</code>
+        </pre>
+      )}
     </div>
   )
 }
