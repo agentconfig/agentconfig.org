@@ -111,7 +111,7 @@ Coverage: 13 primitives tracked — 13 full, 0 partial, 0 DIY/manual. 12 of 13 c
 
 ## Cursor
 
-Coverage: 13 primitives tracked — 13 full, 0 partial, 0 DIY/manual. 11 of 13 cited to provider documentation.
+Coverage: 13 primitives tracked — 13 full, 0 partial, 0 DIY/manual. 10 of 13 cited to provider documentation.
 
 ### Instructions
 
@@ -126,7 +126,7 @@ Coverage: 13 primitives tracked — 13 full, 0 partial, 0 DIY/manual. 11 of 13 c
 | Primitive | Support | Implementation | Location | Source |
 |-----------|---------|-----------------|----------|--------|
 | Skills / Workflows | full | Skill modules as portable, reusable packages | `.cursor/skills/<name>/SKILL.md (also discovers .agents/skills, .claude/skills, .codex/skills, and their ~/ personal equivalents)` | [Provider documentation](https://cursor.com/docs/skills) |
-| Slash Commands | full | Custom commands with parameters and reusable workflows | `.cursor/rules/*.mdc` | — |
+| Slash Commands | full | Custom commands with parameters and reusable workflows | `.cursor/commands/*.md` | — |
 
 ### Tools & Context
 
@@ -153,13 +153,13 @@ Coverage: 13 primitives tracked — 13 full, 0 partial, 0 DIY/manual. 11 of 13 c
 
 | Primitive | Support | Implementation | Location | Source |
 |-----------|---------|-----------------|----------|--------|
-| Configuration Distribution | full | Project instructions, rules, and reusable skills packages | `AGENTS.md, .cursor/rules/*.mdc` | [Provider documentation](https://cursor.com/docs/context/rules) |
+| Configuration Distribution | full | Project instructions, rules, and reusable skills packages | `AGENTS.md, .cursor/rules/*.mdc, .cursor/skills/*/SKILL.md` | [Provider documentation](https://cursor.com/docs/context/rules) |
 
 ### Verification & Observability
 
 | Primitive | Support | Implementation | Location | Source |
 |-----------|---------|-----------------|----------|--------|
-| Verification / Evals | full | Integrated terminal for test execution | `.cursor/hooks.json` | [Provider documentation](https://cursor.com/docs/agent/hooks) |
+| Verification / Evals | full | Integrated terminal for test execution | `Cursor Editor integrated terminal` | — |
 
 ## OpenAI Codex
 

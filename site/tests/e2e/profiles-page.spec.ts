@@ -52,4 +52,26 @@ test.describe('Provider Compatibility Profiles Page', () => {
       await expect(page.getByRole('tabpanel')).toContainText('Persistent Instructions')
     }
   })
+
+  test('renders representative content on mobile without page-level overflow', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 667 })
+    await page.goto('/profiles/')
+
+    await expect(page.getByRole('heading', { name: 'Provider Compatibility Profiles' })).toBeVisible()
+    await expect(page.getByRole('tab', { name: /GitHub Copilot/ })).toBeVisible()
+    await expect(page.getByRole('tab', { name: /OpenAI Codex/ })).toBeVisible()
+
+    const documentWidth = await page.evaluate(() => document.documentElement.scrollWidth)
+    const viewportWidth = await page.evaluate(() => window.innerWidth)
+    expect(documentWidth).toBeLessThanOrEqual(viewportWidth + 1)
+  })
+
+  test('renders in dark mode', async ({ page }) => {
+    await page.emulateMedia({ colorScheme: 'dark' })
+    await page.reload()
+
+    await expect(page.locator('html')).toHaveClass(/dark/)
+    await expect(page.getByRole('heading', { name: 'Provider Compatibility Profiles' })).toBeVisible()
+    await expect(page.getByRole('tab', { name: /GitHub Copilot/ })).toBeVisible()
+  })
 })

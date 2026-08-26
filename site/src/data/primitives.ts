@@ -339,7 +339,7 @@ export const primitives: Primitive[] = [
       {
         provider: 'cursor',
         implementation: 'Custom commands with parameters and reusable workflows',
-        location: '.cursor/rules/*.mdc',
+        location: '.cursor/commands/*.md',
         support: 'full',
       },
       {
@@ -558,7 +558,7 @@ export const primitives: Primitive[] = [
       {
         provider: 'cursor',
         implementation: 'Project instructions, rules, and reusable skills packages',
-        location: 'AGENTS.md, .cursor/rules/*.mdc',
+        location: 'AGENTS.md, .cursor/rules/*.mdc, .cursor/skills/*/SKILL.md',
         support: 'full',
         sourceUrl: 'https://cursor.com/docs/context/rules',
       },
@@ -602,9 +602,8 @@ export const primitives: Primitive[] = [
       {
         provider: 'cursor',
         implementation: 'Integrated terminal for test execution',
-        location: '.cursor/hooks.json',
+        location: 'Cursor Editor integrated terminal',
         support: 'full',
-        sourceUrl: 'https://cursor.com/docs/agent/hooks',
       },
       {
         provider: 'codex',

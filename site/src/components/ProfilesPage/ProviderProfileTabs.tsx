@@ -56,46 +56,48 @@ function CategorySection({ category }: { category: ProfileCategory }): VNode {
     <div className="mb-8">
       <h3 className="text-lg font-semibold mb-3 text-foreground">{category.name}</h3>
       <div className="rounded-xl border border-border overflow-hidden">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="bg-secondary/50">
-              <th className="px-4 py-2 text-left font-semibold text-foreground">Primitive</th>
-              <th className="px-4 py-2 text-left font-semibold text-foreground">Support</th>
-              <th className="px-4 py-2 text-left font-semibold text-foreground">Implementation</th>
-              <th className="px-4 py-2 text-left font-semibold text-foreground">Location</th>
-              <th className="px-4 py-2 text-left font-semibold text-foreground">Source</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border">
-            {category.entries.map((entry) => (
-              <tr key={entry.id} className="hover:bg-muted/30 align-top">
-                <td className="px-4 py-3 font-medium text-foreground whitespace-nowrap">{entry.name}</td>
-                <td className="px-4 py-3"><SupportBadge level={entry.support} /></td>
-                <td className="px-4 py-3 text-muted-foreground">{entry.implementation}</td>
-                <td className="px-4 py-3">
-                  <code className="text-xs bg-background px-2 py-1 rounded font-mono text-foreground border border-border">
-                    {entry.location}
-                  </code>
-                </td>
-                <td className="px-4 py-3">
-                  {entry.sourceUrl != null ? (
-                    <a
-                      href={entry.sourceUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-xs text-primary hover:underline whitespace-nowrap"
-                    >
-                      Docs
-                      <ExternalLink className="h-3 w-3" aria-hidden="true" />
-                    </a>
-                  ) : (
-                    <span className="text-xs text-muted-foreground">—</span>
-                  )}
-                </td>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="bg-secondary/50">
+                <th className="px-4 py-2 text-left font-semibold text-foreground">Primitive</th>
+                <th className="px-4 py-2 text-left font-semibold text-foreground">Support</th>
+                <th className="px-4 py-2 text-left font-semibold text-foreground">Implementation</th>
+                <th className="px-4 py-2 text-left font-semibold text-foreground">Location</th>
+                <th className="px-4 py-2 text-left font-semibold text-foreground">Source</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {category.entries.map((entry) => (
+                <tr key={entry.id} className="hover:bg-muted/30 align-top">
+                  <td className="px-4 py-3 font-medium text-foreground whitespace-nowrap">{entry.name}</td>
+                  <td className="px-4 py-3"><SupportBadge level={entry.support} /></td>
+                  <td className="px-4 py-3 text-muted-foreground">{entry.implementation}</td>
+                  <td className="px-4 py-3">
+                    <code className="text-xs bg-background px-2 py-1 rounded font-mono text-foreground border border-border whitespace-nowrap">
+                      {entry.location}
+                    </code>
+                  </td>
+                  <td className="px-4 py-3">
+                    {entry.sourceUrl != null ? (
+                      <a
+                        href={entry.sourceUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-xs text-primary hover:underline whitespace-nowrap"
+                      >
+                        Docs
+                        <ExternalLink className="h-3 w-3" aria-hidden="true" />
+                      </a>
+                    ) : (
+                      <span className="text-xs text-muted-foreground">—</span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   )
@@ -135,31 +137,33 @@ export function ProviderProfileTabs(): VNode {
 
   return (
     <div>
-      <div className="flex gap-1 border-b border-border mb-6" role="tablist" aria-label="Provider">
-        {providerProfiles.map((profile, index) => (
-          <button
-            key={profile.provider}
-            ref={(el) => { tabRefs.current[index] = el }}
-            id={`profile-tab-${profile.provider}`}
-            type="button"
-            role="tab"
-            aria-selected={index === activeIndex}
-            aria-controls={`profile-panel-${profile.provider}`}
-            tabIndex={index === activeIndex ? 0 : -1}
-            onClick={() => { selectTab(index, false) }}
-            onKeyDown={(event) => { handleKeyDown(event, index) }}
-            className={cn(
-              'px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors inline-flex items-center gap-2',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset',
-              index === activeIndex
-                ? 'border-primary text-foreground'
-                : 'border-transparent text-muted-foreground hover:text-foreground'
-            )}
-          >
-            <span aria-hidden="true">{profile.icon}</span>
-            {profile.name}
-          </button>
-        ))}
+      <div className="overflow-x-auto mb-6">
+        <div className="flex gap-1 border-b border-border w-max min-w-full" role="tablist" aria-label="Provider">
+          {providerProfiles.map((profile, index) => (
+            <button
+              key={profile.provider}
+              ref={(el) => { tabRefs.current[index] = el }}
+              id={`profile-tab-${profile.provider}`}
+              type="button"
+              role="tab"
+              aria-selected={index === activeIndex}
+              aria-controls={`profile-panel-${profile.provider}`}
+              tabIndex={index === activeIndex ? 0 : -1}
+              onClick={() => { selectTab(index, false) }}
+              onKeyDown={(event) => { handleKeyDown(event, index) }}
+              className={cn(
+                'px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors inline-flex items-center gap-2 whitespace-nowrap',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset',
+                index === activeIndex
+                  ? 'border-primary text-foreground'
+                  : 'border-transparent text-muted-foreground hover:text-foreground'
+              )}
+            >
+              <span aria-hidden="true">{profile.icon}</span>
+              {profile.name}
+            </button>
+          ))}
+        </div>
       </div>
       {providerProfiles.map((profile, index) => (
         <div
