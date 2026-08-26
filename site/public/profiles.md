@@ -14,7 +14,7 @@ Coverage: 13 primitives tracked — 12 full, 1 partial, 0 DIY/manual. 12 of 13 c
 | Primitive | Support | Implementation | Location | Source |
 |-----------|---------|-----------------|----------|--------|
 | Persistent Instructions | full | AGENTS.md or repository instructions file | `AGENTS.md or .github/copilot-instructions.md` | [Provider documentation](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions) |
-| User Scope Instructions | full | User-level settings in VS Code | `$HOME/.copilot/copilot-instructions.md, $HOME/.copilot/instructions/**/*.instructions.md` | [Provider documentation](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-custom-instructions) |
+| User Scope Instructions | full | User-level Copilot CLI instruction files | `$HOME/.copilot/copilot-instructions.md, $HOME/.copilot/instructions/**/*.instructions.md` | [Provider documentation](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-custom-instructions) |
 | Directory / Path Scope Instructions | full | Nested AGENTS.md or applyTo instruction files | `subdir/AGENTS.md, .github/instructions/**/*.instructions.md` | [Provider documentation](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions) |
 
 ### Procedures
@@ -95,7 +95,7 @@ Coverage: 13 primitives tracked — 13 full, 0 partial, 0 DIY/manual. 12 of 13 c
 |-----------|---------|-----------------|----------|--------|
 | Permissions & Guardrails | full | Allow/deny lists with pattern matching and sandbox | `.claude/settings.json, .claude/settings.local.json, ~/.claude/settings.json` | [Provider documentation](https://code.claude.com/docs/en/settings) |
 | Lifecycle Hooks | full | Lifecycle hooks configured in shared project settings | `.claude/settings.json, ~/.claude/settings.json, .claude/settings.local.json` | [Provider documentation](https://code.claude.com/docs/en/hooks) |
-| Runtime Sandbox | full | Sandboxing and command allow/deny controls | `.claude/settings.json` | [Provider documentation](https://code.claude.com/docs/en/settings) |
+| Runtime Sandbox | full | Sandboxing and command allow/deny controls | `.claude/settings.json, .claude/settings.local.json, ~/.claude/settings.json` | [Provider documentation](https://code.claude.com/docs/en/settings) |
 
 ### Distribution
 
@@ -111,7 +111,7 @@ Coverage: 13 primitives tracked — 13 full, 0 partial, 0 DIY/manual. 12 of 13 c
 
 ## Cursor
 
-Coverage: 13 primitives tracked — 13 full, 0 partial, 0 DIY/manual. 10 of 13 cited to provider documentation.
+Coverage: 13 primitives tracked — 13 full, 0 partial, 0 DIY/manual. 9 of 13 cited to provider documentation.
 
 ### Instructions
 
@@ -153,7 +153,7 @@ Coverage: 13 primitives tracked — 13 full, 0 partial, 0 DIY/manual. 10 of 13 c
 
 | Primitive | Support | Implementation | Location | Source |
 |-----------|---------|-----------------|----------|--------|
-| Configuration Distribution | full | Project instructions, rules, and reusable skills packages | `AGENTS.md, .cursor/rules/*.mdc, .cursor/skills/*/SKILL.md` | [Provider documentation](https://cursor.com/docs/context/rules) |
+| Configuration Distribution | full | Project instructions, rules, and reusable skills packages | `AGENTS.md, .cursor/rules/*.mdc, .cursor/skills/*/SKILL.md` | — |
 
 ### Verification & Observability
 
@@ -170,7 +170,7 @@ Coverage: 13 primitives tracked — 13 full, 0 partial, 0 DIY/manual. 13 of 13 c
 | Primitive | Support | Implementation | Location | Source |
 |-----------|---------|-----------------|----------|--------|
 | Persistent Instructions | full | Project AGENTS.md file with hierarchical loading | `AGENTS.md, AGENTS.override.md` | [Provider documentation](https://developers.openai.com/codex/agent-configuration/agents-md) |
-| User Scope Instructions | full | User-level AGENTS.md and config.toml | `~/.codex/AGENTS.md, ~/.codex/AGENTS.override.md` | [Provider documentation](https://developers.openai.com/codex/agent-configuration/agents-md) |
+| User Scope Instructions | full | User-level AGENTS.md with override precedence | `~/.codex/AGENTS.md, ~/.codex/AGENTS.override.md` | [Provider documentation](https://developers.openai.com/codex/agent-configuration/agents-md) |
 | Directory / Path Scope Instructions | full | Nested AGENTS.md files with hierarchical merge | `subdir/AGENTS.md, subdir/AGENTS.override.md` | [Provider documentation](https://developers.openai.com/codex/agent-configuration/agents-md) |
 
 ### Procedures
@@ -197,7 +197,7 @@ Coverage: 13 primitives tracked — 13 full, 0 partial, 0 DIY/manual. 13 of 13 c
 
 | Primitive | Support | Implementation | Location | Source |
 |-----------|---------|-----------------|----------|--------|
-| Permissions & Guardrails | full | Sandbox modes, approval policies, and .rules files | `~/.codex/config.toml, .codex/config.toml, requirements.toml` | [Provider documentation](https://developers.openai.com/codex/config-file/config-reference) |
+| Permissions & Guardrails | full | Sandbox modes, approval policies, and admin-enforced requirements | `~/.codex/config.toml, .codex/config.toml, requirements.toml` | [Provider documentation](https://developers.openai.com/codex/config-file/config-reference) |
 | Lifecycle Hooks | full | Lifecycle hooks (session, subagent, prompt, tool, compaction events) via hooks.json or config.toml | `~/.codex/hooks.json, .codex/hooks.json, ~/.codex/config.toml, .codex/config.toml` | [Provider documentation](https://developers.openai.com/codex/hooks) |
 | Runtime Sandbox | full | Sandbox modes plus approval policies | `~/.codex/config.toml, .codex/config.toml, requirements.toml` | [Provider documentation](https://developers.openai.com/codex/config-file/config-reference) |
 

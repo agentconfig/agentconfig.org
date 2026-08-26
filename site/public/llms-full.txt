@@ -86,10 +86,10 @@ User-level preferences that apply across all projects.
 
 | Provider | Implementation | Location | Support | Source |
 |----------|---------------|----------|---------|--------|
-| GitHub Copilot | User-level settings in VS Code | `$HOME/.copilot/copilot-instructions.md, $HOME/.copilot/instructions/**/*.instructions.md` | full | [Provider documentation](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-custom-instructions) |
+| GitHub Copilot | User-level Copilot CLI instruction files | `$HOME/.copilot/copilot-instructions.md, $HOME/.copilot/instructions/**/*.instructions.md` | full | [Provider documentation](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-custom-instructions) |
 | Claude Code | User-level memory and config | `~/.claude/CLAUDE.md` | full | [Provider documentation](https://code.claude.com/docs/en/memory) |
 | Cursor | User-level settings and preferences | `User Rules (global to your Cursor environment; not stored on the file system)` | full | [Provider documentation](https://cursor.com/docs/skills) |
-| OpenAI Codex | User-level AGENTS.md and config.toml | `~/.codex/AGENTS.md, ~/.codex/AGENTS.override.md` | full | [Provider documentation](https://developers.openai.com/codex/agent-configuration/agents-md) |
+| OpenAI Codex | User-level AGENTS.md with override precedence | `~/.codex/AGENTS.md, ~/.codex/AGENTS.override.md` | full | [Provider documentation](https://developers.openai.com/codex/agent-configuration/agents-md) |
 
 ---
 
@@ -279,7 +279,7 @@ Explicit constraints on what the AI can do.
 | GitHub Copilot | Org policies and tool permissions | `Organization or repository Settings > Copilot > Internet access` | full | [Provider documentation](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-the-firewall) |
 | Claude Code | Allow/deny lists with pattern matching and sandbox | `.claude/settings.json, .claude/settings.local.json, ~/.claude/settings.json` | full | [Provider documentation](https://code.claude.com/docs/en/settings) |
 | Cursor | Approvals, .cursorignore, LLM safety controls, and security hooks | `Settings > Agents > Approvals & Execution, .cursorignore, permissions.json, sandbox.json` | full | [Provider documentation](https://cursor.com/docs/agent/security/run-modes) |
-| OpenAI Codex | Sandbox modes, approval policies, and .rules files | `~/.codex/config.toml, .codex/config.toml, requirements.toml` | full | [Provider documentation](https://developers.openai.com/codex/config-file/config-reference) |
+| OpenAI Codex | Sandbox modes, approval policies, and admin-enforced requirements | `~/.codex/config.toml, .codex/config.toml, requirements.toml` | full | [Provider documentation](https://developers.openai.com/codex/config-file/config-reference) |
 
 ---
 
@@ -329,7 +329,7 @@ Execution boundaries that constrain what agent actions can do.
 | Provider | Implementation | Location | Support | Source |
 |----------|---------------|----------|---------|--------|
 | GitHub Copilot | Policy and execution constraints in agent runtime and org settings | `Organization or repository Settings > Copilot > Internet access` | partial | [Provider documentation](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-the-firewall) |
-| Claude Code | Sandboxing and command allow/deny controls | `.claude/settings.json` | full | [Provider documentation](https://code.claude.com/docs/en/settings) |
+| Claude Code | Sandboxing and command allow/deny controls | `.claude/settings.json, .claude/settings.local.json, ~/.claude/settings.json` | full | [Provider documentation](https://code.claude.com/docs/en/settings) |
 | Cursor | Run modes with sandboxing, plus allow/deny permissions | `Settings > Agents > Approvals & Execution, permissions.json, sandbox.json` | full | [Provider documentation](https://cursor.com/docs/agent/security/run-modes) |
 | OpenAI Codex | Sandbox modes plus approval policies | `~/.codex/config.toml, .codex/config.toml, requirements.toml` | full | [Provider documentation](https://developers.openai.com/codex/config-file/config-reference) |
 
@@ -362,7 +362,7 @@ How shared agent configuration is packaged and discovered.
 |----------|---------------|----------|---------|--------|
 | GitHub Copilot | Repository plus nested AGENTS.md with optional .instructions.md files | `AGENTS.md, .github/copilot-instructions.md, .github/instructions/**/*.instructions.md` | full | [Provider documentation](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions) |
 | Claude Code | Shared AGENTS.md imported into CLAUDE.md plus scoped rules files | `~/.claude/CLAUDE.md, ./CLAUDE.md, ./.claude/CLAUDE.md, ./CLAUDE.local.md, .claude/rules/*.md` | full | [Provider documentation](https://code.claude.com/docs/en/memory) |
-| Cursor | Project instructions, rules, and reusable skills packages | `AGENTS.md, .cursor/rules/*.mdc, .cursor/skills/*/SKILL.md` | full | [Provider documentation](https://cursor.com/docs/context/rules) |
+| Cursor | Project instructions, rules, and reusable skills packages | `AGENTS.md, .cursor/rules/*.mdc, .cursor/skills/*/SKILL.md` | full | — |
 | OpenAI Codex | Hierarchical AGENTS.md with user+repo layering | `~/.codex/AGENTS.md, ~/.codex/AGENTS.override.md, AGENTS.md, AGENTS.override.md, subdir/AGENTS.md, subdir/AGENTS.override.md` | full | [Provider documentation](https://developers.openai.com/codex/agent-configuration/agents-md) |
 
 ---
@@ -426,11 +426,11 @@ Support matrix comparing GitHub Copilot, Claude Code, Cursor, and OpenAI Codex:
 | Skills / Workflows | ✓ Skill modules in skills directory | ✓ Skill modules in .claude directory | ✓ Skill modules as portable, reusable packages | ✓ Skill modules following agentskills.io specification |
 | Tool Integrations (MCP) | ✓ MCP servers and tool calling | ✓ MCP servers and tool calling | ✓ MCP servers with stdio, SSE, and Streamable HTTP transports | ✓ MCP servers with stdio and Streamable HTTP transports |
 | Persistent Instructions | ✓ AGENTS.md or repository instructions file | ✓ Project memory file with @imports | ✓ Project instructions file | ✓ Project AGENTS.md file with hierarchical loading |
-| User Scope Instructions | ✓ User-level settings in VS Code | ✓ User-level memory and config | ✓ User-level settings and preferences | ✓ User-level AGENTS.md and config.toml |
+| User Scope Instructions | ✓ User-level Copilot CLI instruction files | ✓ User-level memory and config | ✓ User-level settings and preferences | ✓ User-level AGENTS.md with override precedence |
 | Directory / Path Scope Instructions | ✓ Nested AGENTS.md or applyTo instruction files | ✓ Rule files with globs frontmatter | ✓ Rules with path patterns | ✓ Nested AGENTS.md files with hierarchical merge |
 | Slash Commands | ✓ Prompt files invoked via / commands | ✓ Command files with frontmatter and $ARGUMENTS | ✓ Custom commands with parameters and reusable workflows | ✓ Built-in / commands for session control |
 | Custom Agents | ✓ Agent definition files | ✓ Custom subagents with roles and tool permissions | ✓ Subagents with model selection and context isolation | ✓ Subagent definitions with model selection and delegation |
-| Permissions & Guardrails | ✓ Org policies and tool permissions | ✓ Allow/deny lists with pattern matching and sandbox | ✓ Approvals, .cursorignore, LLM safety controls, and security hooks | ✓ Sandbox modes, approval policies, and .rules files |
+| Permissions & Guardrails | ✓ Org policies and tool permissions | ✓ Allow/deny lists with pattern matching and sandbox | ✓ Approvals, .cursorignore, LLM safety controls, and security hooks | ✓ Sandbox modes, approval policies, and admin-enforced requirements |
 | Lifecycle Hooks | ✓ Lifecycle hooks for Copilot CLI and cloud agent | ✓ Lifecycle hooks configured in shared project settings | ✓ Session, execution, and file operation hooks | ✓ Lifecycle hooks (session, subagent, prompt, tool, compaction events) via hooks.json or config.toml |
 | Runtime Sandbox | ◐ Policy and execution constraints in agent runtime and org settings | ✓ Sandboxing and command allow/deny controls | ✓ Run modes with sandboxing, plus allow/deny permissions | ✓ Sandbox modes plus approval policies |
 | Configuration Distribution | ✓ Repository plus nested AGENTS.md with optional .instructions.md files | ✓ Shared AGENTS.md imported into CLAUDE.md plus scoped rules files | ✓ Project instructions, rules, and reusable skills packages | ✓ Hierarchical AGENTS.md with user+repo layering |
@@ -464,7 +464,7 @@ Support matrix comparing GitHub Copilot, Claude Code, Cursor, and OpenAI Codex:
 - Custom Agents: `.claude/agents/*.md, ~/.claude/agents/*.md`
 - Permissions & Guardrails: `.claude/settings.json, .claude/settings.local.json, ~/.claude/settings.json`
 - Lifecycle Hooks: `.claude/settings.json, ~/.claude/settings.json, .claude/settings.local.json`
-- Runtime Sandbox: `.claude/settings.json`
+- Runtime Sandbox: `.claude/settings.json, .claude/settings.local.json, ~/.claude/settings.json`
 - Configuration Distribution: `~/.claude/CLAUDE.md, ./CLAUDE.md, ./.claude/CLAUDE.md, ./CLAUDE.local.md, .claude/rules/*.md`
 - Verification / Evals: `Bash tool + hooks`
 
@@ -2472,7 +2472,7 @@ Coverage: 13 primitives tracked — 12 full, 1 partial, 0 DIY/manual. 12 of 13 c
 | Primitive | Support | Implementation | Location | Source |
 |-----------|---------|-----------------|----------|--------|
 | Persistent Instructions | full | AGENTS.md or repository instructions file | `AGENTS.md or .github/copilot-instructions.md` | [Provider documentation](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions) |
-| User Scope Instructions | full | User-level settings in VS Code | `$HOME/.copilot/copilot-instructions.md, $HOME/.copilot/instructions/**/*.instructions.md` | [Provider documentation](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-custom-instructions) |
+| User Scope Instructions | full | User-level Copilot CLI instruction files | `$HOME/.copilot/copilot-instructions.md, $HOME/.copilot/instructions/**/*.instructions.md` | [Provider documentation](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-custom-instructions) |
 | Directory / Path Scope Instructions | full | Nested AGENTS.md or applyTo instruction files | `subdir/AGENTS.md, .github/instructions/**/*.instructions.md` | [Provider documentation](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions) |
 
 ### Procedures
@@ -2553,7 +2553,7 @@ Coverage: 13 primitives tracked — 13 full, 0 partial, 0 DIY/manual. 12 of 13 c
 |-----------|---------|-----------------|----------|--------|
 | Permissions & Guardrails | full | Allow/deny lists with pattern matching and sandbox | `.claude/settings.json, .claude/settings.local.json, ~/.claude/settings.json` | [Provider documentation](https://code.claude.com/docs/en/settings) |
 | Lifecycle Hooks | full | Lifecycle hooks configured in shared project settings | `.claude/settings.json, ~/.claude/settings.json, .claude/settings.local.json` | [Provider documentation](https://code.claude.com/docs/en/hooks) |
-| Runtime Sandbox | full | Sandboxing and command allow/deny controls | `.claude/settings.json` | [Provider documentation](https://code.claude.com/docs/en/settings) |
+| Runtime Sandbox | full | Sandboxing and command allow/deny controls | `.claude/settings.json, .claude/settings.local.json, ~/.claude/settings.json` | [Provider documentation](https://code.claude.com/docs/en/settings) |
 
 ### Distribution
 
@@ -2569,7 +2569,7 @@ Coverage: 13 primitives tracked — 13 full, 0 partial, 0 DIY/manual. 12 of 13 c
 
 ## Cursor
 
-Coverage: 13 primitives tracked — 13 full, 0 partial, 0 DIY/manual. 10 of 13 cited to provider documentation.
+Coverage: 13 primitives tracked — 13 full, 0 partial, 0 DIY/manual. 9 of 13 cited to provider documentation.
 
 ### Instructions
 
@@ -2611,7 +2611,7 @@ Coverage: 13 primitives tracked — 13 full, 0 partial, 0 DIY/manual. 10 of 13 c
 
 | Primitive | Support | Implementation | Location | Source |
 |-----------|---------|-----------------|----------|--------|
-| Configuration Distribution | full | Project instructions, rules, and reusable skills packages | `AGENTS.md, .cursor/rules/*.mdc, .cursor/skills/*/SKILL.md` | [Provider documentation](https://cursor.com/docs/context/rules) |
+| Configuration Distribution | full | Project instructions, rules, and reusable skills packages | `AGENTS.md, .cursor/rules/*.mdc, .cursor/skills/*/SKILL.md` | — |
 
 ### Verification & Observability
 
@@ -2628,7 +2628,7 @@ Coverage: 13 primitives tracked — 13 full, 0 partial, 0 DIY/manual. 13 of 13 c
 | Primitive | Support | Implementation | Location | Source |
 |-----------|---------|-----------------|----------|--------|
 | Persistent Instructions | full | Project AGENTS.md file with hierarchical loading | `AGENTS.md, AGENTS.override.md` | [Provider documentation](https://developers.openai.com/codex/agent-configuration/agents-md) |
-| User Scope Instructions | full | User-level AGENTS.md and config.toml | `~/.codex/AGENTS.md, ~/.codex/AGENTS.override.md` | [Provider documentation](https://developers.openai.com/codex/agent-configuration/agents-md) |
+| User Scope Instructions | full | User-level AGENTS.md with override precedence | `~/.codex/AGENTS.md, ~/.codex/AGENTS.override.md` | [Provider documentation](https://developers.openai.com/codex/agent-configuration/agents-md) |
 | Directory / Path Scope Instructions | full | Nested AGENTS.md files with hierarchical merge | `subdir/AGENTS.md, subdir/AGENTS.override.md` | [Provider documentation](https://developers.openai.com/codex/agent-configuration/agents-md) |
 
 ### Procedures
@@ -2655,7 +2655,7 @@ Coverage: 13 primitives tracked — 13 full, 0 partial, 0 DIY/manual. 13 of 13 c
 
 | Primitive | Support | Implementation | Location | Source |
 |-----------|---------|-----------------|----------|--------|
-| Permissions & Guardrails | full | Sandbox modes, approval policies, and .rules files | `~/.codex/config.toml, .codex/config.toml, requirements.toml` | [Provider documentation](https://developers.openai.com/codex/config-file/config-reference) |
+| Permissions & Guardrails | full | Sandbox modes, approval policies, and admin-enforced requirements | `~/.codex/config.toml, .codex/config.toml, requirements.toml` | [Provider documentation](https://developers.openai.com/codex/config-file/config-reference) |
 | Lifecycle Hooks | full | Lifecycle hooks (session, subagent, prompt, tool, compaction events) via hooks.json or config.toml | `~/.codex/hooks.json, .codex/hooks.json, ~/.codex/config.toml, .codex/config.toml` | [Provider documentation](https://developers.openai.com/codex/hooks) |
 | Runtime Sandbox | full | Sandbox modes plus approval policies | `~/.codex/config.toml, .codex/config.toml, requirements.toml` | [Provider documentation](https://developers.openai.com/codex/config-file/config-reference) |
 

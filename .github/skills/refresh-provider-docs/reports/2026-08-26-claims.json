@@ -16,7 +16,10 @@
     "provider": "copilot",
     "primitive": "persistent-instructions",
     "aspect": "location",
-    "value": ["AGENTS.md", ".github/copilot-instructions.md"],
+    "value": [
+      "AGENTS.md",
+      ".github/copilot-instructions.md"
+    ],
     "sourceId": "copilot.repository-instructions",
     "sourceUrl": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions",
     "sourceAuthority": "primary",
@@ -28,7 +31,10 @@
     "provider": "copilot",
     "primitive": "global-instructions",
     "aspect": "location",
-    "value": ["$HOME/.copilot/copilot-instructions.md", "$HOME/.copilot/instructions/**/*.instructions.md"],
+    "value": [
+      "$HOME/.copilot/copilot-instructions.md",
+      "$HOME/.copilot/instructions/**/*.instructions.md"
+    ],
     "sourceId": "copilot.cli-instructions",
     "sourceUrl": "https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-custom-instructions",
     "sourceAuthority": "primary",
@@ -40,24 +46,15 @@
     "provider": "copilot",
     "primitive": "scope-specific-instructions",
     "aspect": "location",
-    "value": ["subdir/AGENTS.md", ".github/instructions/**/*.instructions.md"],
+    "value": [
+      "subdir/AGENTS.md",
+      ".github/instructions/**/*.instructions.md"
+    ],
     "sourceId": "copilot.repository-instructions",
     "sourceUrl": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions",
     "sourceAuthority": "primary",
     "retrievedAt": "2026-08-25",
     "notes": "The docs allow AGENTS.md anywhere in the repository and NAME.instructions.md files within or below .github/instructions; the current site text under-specifies the recursive instruction-file location."
-  },
-  {
-    "id": "copilot.prompt-templates.location",
-    "provider": "copilot",
-    "primitive": "prompt-templates",
-    "aspect": "location",
-    "value": "Prompt files are mentioned in the customizations editor, but the retrieved snapshots do not document an on-disk path for them",
-    "sourceId": "copilot.instructions-support",
-    "sourceUrl": "https://docs.github.com/en/copilot/reference/custom-instructions-support",
-    "sourceAuthority": "primary",
-    "retrievedAt": "2026-08-25",
-    "notes": "verdict: unsupported — the snapshot set mentions prompt files in the IDE customizations editor but does not include a primary page naming a .github/prompts/*.prompt.md location, so the current path claim is unproven."
   },
   {
     "id": "copilot.custom-agents.location",
@@ -88,7 +85,10 @@
     "provider": "copilot",
     "primitive": "hooks",
     "aspect": "location",
-    "value": [".github/hooks/*.json", "~/.copilot/hooks/*.json"],
+    "value": [
+      ".github/hooks/*.json",
+      "~/.copilot/hooks/*.json"
+    ],
     "sourceId": "copilot.about-hooks",
     "sourceUrl": "https://docs.github.com/en/copilot/concepts/agents/hooks",
     "sourceAuthority": "primary",
@@ -112,7 +112,11 @@
     "provider": "copilot",
     "primitive": "distribution",
     "aspect": "location",
-    "value": ["AGENTS.md", ".github/copilot-instructions.md", ".github/instructions/**/*.instructions.md"],
+    "value": [
+      "AGENTS.md",
+      ".github/copilot-instructions.md",
+      ".github/instructions/**/*.instructions.md"
+    ],
     "sourceId": "copilot.repository-instructions",
     "sourceUrl": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions",
     "sourceAuthority": "primary",
@@ -131,7 +135,6 @@
     "retrievedAt": "2026-08-25",
     "notes": "The retrieved primary docs explicitly scope firewall and command execution to processes started via the agent's Bash tool; that is the verifiable execution surface rather than a generic terminal claim."
   },
-
   {
     "id": "claude.agent-mode.location",
     "provider": "claude",
@@ -149,7 +152,10 @@
     "provider": "claude",
     "primitive": "persistent-instructions",
     "aspect": "location",
-    "value": ["./CLAUDE.md", "./.claude/CLAUDE.md"],
+    "value": [
+      "./CLAUDE.md",
+      "./.claude/CLAUDE.md"
+    ],
     "sourceId": "claude.memory",
     "sourceUrl": "https://code.claude.com/docs/en/memory",
     "sourceAuthority": "primary",
@@ -181,23 +187,14 @@
     "notes": "The memory docs direct path-scoped rules into .claude/rules/."
   },
   {
-    "id": "claude.prompt-templates.location",
-    "provider": "claude",
-    "primitive": "prompt-templates",
-    "aspect": "location",
-    "value": "No retrieved snapshot documents custom command files such as .claude/commands/*.md",
-    "sourceId": "claude.memory",
-    "sourceUrl": "https://code.claude.com/docs/en/memory",
-    "sourceAuthority": "primary",
-    "retrievedAt": "2026-08-25",
-    "notes": "verdict: unsupported — the fetched Claude snapshots cover memory, skills, hooks, settings, MCP, and subagents, but none of them document the .claude/commands/*.md location used by the current site."
-  },
-  {
     "id": "claude.custom-agents.location",
     "provider": "claude",
     "primitive": "custom-agents",
     "aspect": "location",
-    "value": [".claude/agents/*.md", "~/.claude/agents/*.md"],
+    "value": [
+      ".claude/agents/*.md",
+      "~/.claude/agents/*.md"
+    ],
     "sourceId": "claude.sub-agents",
     "sourceUrl": "https://code.claude.com/docs/en/sub-agents",
     "sourceAuthority": "primary",
@@ -209,7 +206,11 @@
     "provider": "claude",
     "primitive": "guardrails",
     "aspect": "location",
-    "value": [".claude/settings.json", ".claude/settings.local.json", "~/.claude/settings.json"],
+    "value": [
+      ".claude/settings.json",
+      ".claude/settings.local.json",
+      "~/.claude/settings.json"
+    ],
     "sourceId": "claude.settings",
     "sourceUrl": "https://code.claude.com/docs/en/settings",
     "sourceAuthority": "primary",
@@ -221,7 +222,11 @@
     "provider": "claude",
     "primitive": "hooks",
     "aspect": "location",
-    "value": [".claude/settings.json", "~/.claude/settings.json", ".claude/settings.local.json"],
+    "value": [
+      ".claude/settings.json",
+      "~/.claude/settings.json",
+      ".claude/settings.local.json"
+    ],
     "sourceId": "claude.hooks",
     "sourceUrl": "https://code.claude.com/docs/en/hooks",
     "sourceAuthority": "primary",
@@ -233,7 +238,11 @@
     "provider": "claude",
     "primitive": "runtime-sandbox",
     "aspect": "location",
-    "value": [".claude/settings.json", ".claude/settings.local.json", "~/.claude/settings.json"],
+    "value": [
+      ".claude/settings.json",
+      ".claude/settings.local.json",
+      "~/.claude/settings.json"
+    ],
     "sourceId": "claude.settings",
     "sourceUrl": "https://code.claude.com/docs/en/settings",
     "sourceAuthority": "primary",
@@ -245,7 +254,13 @@
     "provider": "claude",
     "primitive": "distribution",
     "aspect": "location",
-    "value": ["~/.claude/CLAUDE.md", "./CLAUDE.md", "./.claude/CLAUDE.md", "./CLAUDE.local.md", ".claude/rules/*.md"],
+    "value": [
+      "~/.claude/CLAUDE.md",
+      "./CLAUDE.md",
+      "./.claude/CLAUDE.md",
+      "./CLAUDE.local.md",
+      ".claude/rules/*.md"
+    ],
     "sourceId": "claude.memory",
     "sourceUrl": "https://code.claude.com/docs/en/memory",
     "sourceAuthority": "primary",
@@ -264,7 +279,6 @@
     "retrievedAt": "2026-08-25",
     "notes": "The hooks docs explicitly show stop-hook and async hook patterns that run npm test and feed results back into Claude."
   },
-
   {
     "id": "cursor.agent-mode.location",
     "provider": "cursor",
@@ -314,35 +328,16 @@
     "notes": "Project rules live in .cursor/rules and must use the .mdc extension."
   },
   {
-    "id": "cursor.prompt-templates.location",
-    "provider": "cursor",
-    "primitive": "prompt-templates",
-    "aspect": "location",
-    "value": ".cursor/rules/*.mdc",
-    "sourceId": "cursor.rules",
-    "sourceUrl": "https://cursor.com/docs/context/rules",
-    "sourceAuthority": "primary",
-    "retrievedAt": "2026-08-25",
-    "notes": "The retrieved Cursor snapshots document project rules that can automate workflows or templates, but they do not document .cursor/commands/*.md command files."
-  },
-  {
-    "id": "cursor.custom-agents.location",
-    "provider": "cursor",
-    "primitive": "custom-agents",
-    "aspect": "location",
-    "value": "No retrieved snapshot documents a .cursor/agents file location",
-    "sourceId": "cursor.hooks",
-    "sourceUrl": "https://cursor.com/docs/agent/hooks",
-    "sourceAuthority": "primary",
-    "retrievedAt": "2026-08-25",
-    "notes": "verdict: unsupported — the fetched Cursor snapshots discuss subagent lifecycle events, rules, skills, hooks, and run modes, but none of the retrieved pages document the .cursor/agents/*.md location used by the current site."
-  },
-  {
     "id": "cursor.guardrails.location",
     "provider": "cursor",
     "primitive": "guardrails",
     "aspect": "location",
-    "value": ["Settings > Agents > Approvals & Execution", ".cursorignore", "permissions.json", "sandbox.json"],
+    "value": [
+      "Settings > Agents > Approvals & Execution",
+      ".cursorignore",
+      "permissions.json",
+      "sandbox.json"
+    ],
     "sourceId": "cursor.run-modes",
     "sourceUrl": "https://cursor.com/docs/agent/security/run-modes",
     "sourceAuthority": "primary",
@@ -366,38 +361,17 @@
     "provider": "cursor",
     "primitive": "runtime-sandbox",
     "aspect": "location",
-    "value": ["Settings > Agents > Approvals & Execution", "permissions.json", "sandbox.json"],
+    "value": [
+      "Settings > Agents > Approvals & Execution",
+      "permissions.json",
+      "sandbox.json"
+    ],
     "sourceId": "cursor.run-modes",
     "sourceUrl": "https://cursor.com/docs/agent/security/run-modes",
     "sourceAuthority": "primary",
     "retrievedAt": "2026-08-25",
     "notes": "The retrieved runtime-sandbox docs document run modes, sandbox.json, and permissions.json rather than ~/.cursor/cli-config.json or .cursor/cli.json."
   },
-  {
-    "id": "cursor.distribution.location",
-    "provider": "cursor",
-    "primitive": "distribution",
-    "aspect": "location",
-    "value": ["AGENTS.md", ".cursor/rules/*.mdc"],
-    "sourceId": "cursor.rules",
-    "sourceUrl": "https://cursor.com/docs/context/rules",
-    "sourceAuthority": "primary",
-    "retrievedAt": "2026-08-25",
-    "notes": "The retrieved primary rules docs cover AGENTS.md and project rules. The current site's .cursor/instructions.md path is not documented in the fetched snapshots, and skills are already covered by the separate verified skills primitive."
-  },
-  {
-    "id": "cursor.verification.location",
-    "provider": "cursor",
-    "primitive": "verification",
-    "aspect": "location",
-    "value": ".cursor/hooks.json",
-    "sourceId": "cursor.hooks",
-    "sourceUrl": "https://cursor.com/docs/agent/hooks",
-    "sourceAuthority": "primary",
-    "retrievedAt": "2026-08-25",
-    "notes": "The retrieved hooks docs provide the concrete documented execution surface for validation logic; the current integrated-terminal claim is not directly documented in the fetched snapshots."
-  },
-
   {
     "id": "codex.agent-mode.location",
     "provider": "codex",
@@ -415,7 +389,10 @@
     "provider": "codex",
     "primitive": "persistent-instructions",
     "aspect": "location",
-    "value": ["AGENTS.md", "AGENTS.override.md"],
+    "value": [
+      "AGENTS.md",
+      "AGENTS.override.md"
+    ],
     "sourceId": "codex.agents-md",
     "sourceUrl": "https://developers.openai.com/codex/agent-configuration/agents-md",
     "sourceAuthority": "primary",
@@ -427,7 +404,10 @@
     "provider": "codex",
     "primitive": "global-instructions",
     "aspect": "location",
-    "value": ["~/.codex/AGENTS.md", "~/.codex/AGENTS.override.md"],
+    "value": [
+      "~/.codex/AGENTS.md",
+      "~/.codex/AGENTS.override.md"
+    ],
     "sourceId": "codex.agents-md",
     "sourceUrl": "https://developers.openai.com/codex/agent-configuration/agents-md",
     "sourceAuthority": "primary",
@@ -439,7 +419,10 @@
     "provider": "codex",
     "primitive": "scope-specific-instructions",
     "aspect": "location",
-    "value": ["subdir/AGENTS.md", "subdir/AGENTS.override.md"],
+    "value": [
+      "subdir/AGENTS.md",
+      "subdir/AGENTS.override.md"
+    ],
     "sourceId": "codex.agents-md",
     "sourceUrl": "https://developers.openai.com/codex/agent-configuration/agents-md",
     "sourceAuthority": "primary",
@@ -463,7 +446,10 @@
     "provider": "codex",
     "primitive": "custom-agents",
     "aspect": "location",
-    "value": [".codex/agents/*.toml", "~/.codex/agents/*.toml"],
+    "value": [
+      ".codex/agents/*.toml",
+      "~/.codex/agents/*.toml"
+    ],
     "sourceId": "codex.subagents",
     "sourceUrl": "https://developers.openai.com/codex/agent-configuration/subagents",
     "sourceAuthority": "primary",
@@ -475,7 +461,11 @@
     "provider": "codex",
     "primitive": "guardrails",
     "aspect": "location",
-    "value": ["~/.codex/config.toml", ".codex/config.toml", "requirements.toml"],
+    "value": [
+      "~/.codex/config.toml",
+      ".codex/config.toml",
+      "requirements.toml"
+    ],
     "sourceId": "codex.config-reference",
     "sourceUrl": "https://developers.openai.com/codex/config-file/config-reference",
     "sourceAuthority": "primary",
@@ -487,7 +477,12 @@
     "provider": "codex",
     "primitive": "hooks",
     "aspect": "location",
-    "value": ["~/.codex/hooks.json", ".codex/hooks.json", "~/.codex/config.toml", ".codex/config.toml"],
+    "value": [
+      "~/.codex/hooks.json",
+      ".codex/hooks.json",
+      "~/.codex/config.toml",
+      ".codex/config.toml"
+    ],
     "sourceId": "codex.hooks",
     "sourceUrl": "https://developers.openai.com/codex/hooks",
     "sourceAuthority": "primary",
@@ -499,7 +494,11 @@
     "provider": "codex",
     "primitive": "runtime-sandbox",
     "aspect": "location",
-    "value": ["~/.codex/config.toml", ".codex/config.toml", "requirements.toml"],
+    "value": [
+      "~/.codex/config.toml",
+      ".codex/config.toml",
+      "requirements.toml"
+    ],
     "sourceId": "codex.config-reference",
     "sourceUrl": "https://developers.openai.com/codex/config-file/config-reference",
     "sourceAuthority": "primary",
@@ -511,7 +510,14 @@
     "provider": "codex",
     "primitive": "distribution",
     "aspect": "location",
-    "value": ["~/.codex/AGENTS.md", "~/.codex/AGENTS.override.md", "AGENTS.md", "AGENTS.override.md", "subdir/AGENTS.md", "subdir/AGENTS.override.md"],
+    "value": [
+      "~/.codex/AGENTS.md",
+      "~/.codex/AGENTS.override.md",
+      "AGENTS.md",
+      "AGENTS.override.md",
+      "subdir/AGENTS.md",
+      "subdir/AGENTS.override.md"
+    ],
     "sourceId": "codex.agents-md",
     "sourceUrl": "https://developers.openai.com/codex/agent-configuration/agents-md",
     "sourceAuthority": "primary",

@@ -238,7 +238,7 @@ export const primitives: Primitive[] = [
     implementations: [
       {
         provider: 'copilot',
-        implementation: 'User-level settings in VS Code',
+        implementation: 'User-level Copilot CLI instruction files',
         location: '$HOME/.copilot/copilot-instructions.md, $HOME/.copilot/instructions/**/*.instructions.md',
         support: 'full',
         sourceUrl: 'https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-custom-instructions',
@@ -259,7 +259,7 @@ export const primitives: Primitive[] = [
       },
       {
         provider: 'codex',
-        implementation: 'User-level AGENTS.md and config.toml',
+        implementation: 'User-level AGENTS.md with override precedence',
         location: '~/.codex/AGENTS.md, ~/.codex/AGENTS.override.md',
         support: 'full',
         sourceUrl: 'https://developers.openai.com/codex/agent-configuration/agents-md',
@@ -432,7 +432,7 @@ export const primitives: Primitive[] = [
       },
       {
         provider: 'codex',
-        implementation: 'Sandbox modes, approval policies, and .rules files',
+        implementation: 'Sandbox modes, approval policies, and admin-enforced requirements',
         location: '~/.codex/config.toml, .codex/config.toml, requirements.toml',
         support: 'full',
         sourceUrl: 'https://developers.openai.com/codex/config-file/config-reference',
@@ -507,7 +507,7 @@ export const primitives: Primitive[] = [
       {
         provider: 'claude',
         implementation: 'Sandboxing and command allow/deny controls',
-        location: '.claude/settings.json',
+        location: '.claude/settings.json, .claude/settings.local.json, ~/.claude/settings.json',
         support: 'full',
         sourceUrl: 'https://code.claude.com/docs/en/settings',
       },
@@ -560,7 +560,6 @@ export const primitives: Primitive[] = [
         implementation: 'Project instructions, rules, and reusable skills packages',
         location: 'AGENTS.md, .cursor/rules/*.mdc, .cursor/skills/*/SKILL.md',
         support: 'full',
-        sourceUrl: 'https://cursor.com/docs/context/rules',
       },
       {
         provider: 'codex',
