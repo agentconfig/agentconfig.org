@@ -9,10 +9,11 @@ Add or modify AI primitive definitions for agentconfig.org.
 
 ## Overview
 
-Primitives appear in three places that must stay synchronized:
-1. **Primitive Cards** - `site/src/data/primitives.ts`
+Primitives appear in these places:
+1. **Primitive Cards** - `site/src/data/primitives.ts` (the single canonical source)
 2. **File Tree** - `site/src/data/fileTree.ts`
-3. **Provider Comparison** - `site/src/data/comparison.ts`
+3. **Provider Comparison** - `site/src/data/comparison.ts` (derived automatically from `primitives.ts`; never hand-edited)
+4. **Provider Profiles** - `site/src/data/providerProfiles.ts` (also derived automatically from `primitives.ts`; never hand-edited)
 
 ## Step-by-Step Process
 
@@ -91,42 +92,9 @@ If the primitive has associated files, add nodes to both trees in `site/src/data
 
 **For Claude, Cursor, and Codex** - Add to the corresponding tree (`claudeTree`, `cursorTree`, `codexTree`) with equivalent structure.
 
-### 3. Add to Comparison Matrix
+### 3. Comparison Matrix and Provider Profiles need no separate edit
 
-Edit `site/src/data/comparison.ts`. Every row needs all four providers:
-
-```typescript
-{
-  primitiveId: 'your-primitive-id',  // Must match primitives.ts
-  primitiveName: 'Display Name',
-  copilot: {
-    level: 'full',  // 'full' | 'partial' | 'none'
-    implementation: 'How Copilot does it',
-    location: '.github/path',
-    sourceUrl: 'https://docs.github.com/...',
-  },
-  claude: {
-    level: 'full',
-    implementation: 'How Claude does it',
-    location: '.claude/path',
-    sourceUrl: 'https://code.claude.com/docs/...',
-  },
-  cursor: {
-    level: 'full',
-    implementation: 'How Cursor does it',
-    location: '.cursor/path',
-    sourceUrl: 'https://cursor.com/docs/...',
-  },
-  codex: {
-    level: 'full',
-    implementation: 'How Codex does it',
-    location: '~/.codex/path',
-    sourceUrl: 'https://developers.openai.com/codex/...',
-  },
-}
-```
-
-Keep `implementation`, `location`, and `support`/`level` text identical (word-for-word) between `primitives.ts` and `comparison.ts` for the same provider and primitive. The `refresh-provider-docs` compare tool treats any mismatch between the two files as a self-contradiction and reports it `ambiguous` rather than letting a stale duplicate slip through.
+`site/src/data/comparison.ts` and `site/src/data/providerProfiles.ts` both compute their rows from `primitives.ts` at import time (`comparisonData` maps every entry in the `primitives` array). Once step 1 adds all four provider implementations to `primitives.ts`, the comparison matrix and provider profiles pick up the new primitive automatically. Do not hand-edit either file — doing so would duplicate the same fact in two places and reintroduce the drift this derivation was built to eliminate (see PR #42's review history for the class of bug this prevents).
 
 ### 4. Add scope metadata, not a new primitive, when the concept is "where this applies"
 
@@ -162,18 +130,13 @@ interface ProviderImplementation {
 
 ### Support Levels
 
-`primitives.ts` (`ProviderImplementation.support`) and `comparison.ts` (`ComparisonRow[provider].level`) use two different, non-interchangeable enums — do not copy one file's values into the other:
+`primitives.ts` (`ProviderImplementation.support`) uses one shared enum: `'full' | 'partial' | 'diy'`:
 
-- `primitives.ts` uses `'full' | 'partial' | 'diy'`:
-  - `full` - Native, well-documented support
-  - `partial` - Works but with limitations
-  - `diy` - No built-in support; requires custom setup to approximate
-- `comparison.ts` uses `'full' | 'partial' | 'none'`:
-  - `full` - Native, well-documented support
-  - `partial` - Works but with limitations
-  - `none` - Not supported; documentation states the capability is unavailable
+- `full` - Native, well-documented support
+- `partial` - Works but with limitations
+- `diy` - No built-in support; requires custom setup to approximate
 
-If you're documenting a provider that genuinely has zero support for a primitive, use `diy` in `primitives.ts` and `none` in `comparison.ts` for the same row — this is expected, not a self-contradiction.
+`comparison.ts`'s `SupportLevel` type is now a type alias for this same enum (`ComparisonRow[provider].level` derives directly from `ProviderImplementation.support`), so a row with `diy` in `primitives.ts` also shows `diy` in the comparison table — there is no separate `none` value to translate to.
 
 ### Categories (Layers)
 
@@ -196,16 +159,15 @@ Before considering the primitive complete:
 
 - [ ] Added to `primitives.ts` with all required fields, all four providers, and a `sourceUrl` per implementation
 - [ ] Added to `fileTree.ts` for each provider with associated files
-- [ ] Added to `comparison.ts` with accurate support levels, matching wording, and a `sourceUrl` per provider
-- [ ] `id` is unique and matches across all three files
+- [ ] `id` is unique and matches across `primitives.ts` and `fileTree.ts`
 - [ ] `combineWith` references valid primitive names
 - [ ] Examples in file tree are accurate and helpful
 - [ ] Run `bun run typecheck` - No TypeScript errors
-- [ ] Visually verify in all three site sections
+- [ ] Visually verify the primitive on the Primitive Cards, Provider Comparison, and Provider Profiles sections (the latter two derive automatically from `primitives.ts` — verifying them confirms the derivation picked up the new row, not that you need to edit them)
 
 ## Common Mistakes
 
-1. **Mismatched IDs** - The `id` in primitives.ts must match `primitiveId` in comparison.ts
+1. **Hand-editing `comparison.ts` or `providerProfiles.ts`** - Both derive from `primitives.ts`; edit only `primitives.ts` and the derived views update automatically
 2. **Missing file tree entries** - If the primitive has files, both trees need updates
 3. **Stale combineWith** - Referencing primitives that don't exist
 4. **Incorrect load order** - File tree `loadOrder` should reflect actual precedence

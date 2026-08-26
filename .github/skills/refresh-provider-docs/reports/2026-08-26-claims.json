@@ -313,7 +313,7 @@
     "sourceUrl": "https://cursor.com/docs/skills",
     "sourceAuthority": "primary",
     "retrievedAt": "2026-08-25",
-    "notes": "The fetched docs describe global User Rules and explicitly say user rules are not stored on the file system; the current ~/.cursor/settings.json claim is not supported by the retrieved snapshots."
+    "notes": "The fetched docs describe global User Rules and explicitly say user rules are not stored on the file system; the site was corrected from a ~/.cursor/settings.json claim to User Rules."
   },
   {
     "id": "cursor.scope-specific-instructions.location",
