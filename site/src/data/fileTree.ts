@@ -1347,18 +1347,21 @@ export const cursorTree: FileNode = {
           name: 'permissions.json',
           type: 'file',
           details: {
-            label: 'Permissions',
-            description: 'Project-level allow/deny rules for the Cursor Agent, merged from the Git root down to the working directory.',
+            label: 'Auto-review Permissions',
+            description: 'Project-level guidance for the Auto-review classifier: plain-English instructions for which actions to lean toward allowing or blocking.',
             whatGoesHere: [
-              'permissions.allow / permissions.deny entries',
-              'Shell/Read/Write/WebFetch/Mcp tokens scoped to this project',
+              'autoRun.allow_instructions — actions to lean toward allowing',
+              'autoRun.block_instructions — actions to lean toward blocking (e.g. "every AWS CLI command should go through approval")',
             ],
-            whenLoaded: 'Merged into the session when Cursor runs in this project; deeper files take precedence, and deny always beats allow.',
+            whenLoaded: 'Merged with ~/.cursor/permissions.json when Cursor runs in this project; both apply together.',
             loadOrder: 0,
             example: `{
-  "permissions": {
-    "allow": ["Shell(git)", "Read(src/**.ts)", "Write(package.json)"],
-    "deny": ["Shell(rm)", "Read(.env*)"]
+  "autoRun": {
+    "allow_instructions": [],
+    "block_instructions": [
+      "Every AWS CLI command should go through approval first.",
+      "Every command that modifies Kubernetes resources should go through approval first."
+    ]
   }
 }`,
           },
@@ -1369,17 +1372,19 @@ export const cursorTree: FileNode = {
           type: 'file',
           details: {
             label: 'Sandbox Config',
-            description: 'Project-level sandbox mode and network access controls for the Cursor Agent.',
+            description: 'Project-level sandbox mode, extra paths, and network policy for sandboxed shell commands.',
             whatGoesHere: [
-              'sandbox.mode (enabled/disabled)',
-              'sandbox.networkAccess restrictions',
+              'type ("workspace_readwrite", "workspace_readonly", or "insecure_none")',
+              'additionalReadwritePaths / additionalReadonlyPaths',
+              'networkPolicy.default, .allow, and .deny domain patterns',
             ],
-            whenLoaded: 'Merged into the session when Cursor runs in this project.',
+            whenLoaded: 'Merged with ~/.cursor/sandbox.json when Cursor runs in this project; the project file takes priority on conflicts.',
             loadOrder: 0,
             example: `{
-  "sandbox": {
-    "mode": "enabled",
-    "networkAccess": "user_config_only"
+  "type": "workspace_readwrite",
+  "networkPolicy": {
+    "default": "deny",
+    "allow": ["registry.npmjs.org"]
   }
 }`,
           },
@@ -1789,17 +1794,18 @@ export const cursorGlobalTree: FileNode = {
           name: 'permissions.json',
           type: 'file',
           details: {
-            label: 'Global Permissions',
-            description: 'Personal allow/deny rules for the Cursor Agent that apply across all projects.',
+            label: 'Global Auto-review Permissions',
+            description: 'Personal guidance for the Auto-review classifier that applies to all project directories on your machine.',
             whatGoesHere: [
-              'permissions.allow / permissions.deny defaults',
+              'autoRun.allow_instructions — actions to lean toward allowing everywhere',
+              'autoRun.block_instructions — actions to lean toward blocking everywhere',
             ],
-            whenLoaded: 'Always loaded. Can be narrowed (but not widened) by a project-level permissions.json.',
+            whenLoaded: 'Always loaded. Merged with a project-level permissions.json when one exists; both apply together.',
             loadOrder: 1,
             example: `{
-  "permissions": {
-    "allow": ["Shell(git)", "Read(**)"],
-    "deny": ["Shell(rm)", "Read(.env*)"]
+  "autoRun": {
+    "allow_instructions": [],
+    "block_instructions": ["Every command that modifies production infrastructure should go through approval first."]
   }
 }`,
           },
@@ -1810,16 +1816,17 @@ export const cursorGlobalTree: FileNode = {
           type: 'file',
           details: {
             label: 'Global Sandbox Config',
-            description: 'Personal sandbox mode and approval mode settings that apply across all projects.',
+            description: 'Personal sandbox mode, extra paths, and network policy that apply to all projects on your machine.',
             whatGoesHere: [
-              'sandbox.mode and sandbox.networkAccess',
-              'approvalMode (allowlist, auto-review, unrestricted)',
+              'type ("workspace_readwrite", "workspace_readonly", or "insecure_none")',
+              'disableTmpWrite, enableSharedBuildCache',
+              'networkPolicy.default, .allow, and .deny domain patterns',
             ],
-            whenLoaded: 'Always loaded for the Cursor Agent and CLI.',
+            whenLoaded: 'Always loaded. Merged with a project-level sandbox.json when one exists (project file takes priority on conflicts).',
             loadOrder: 1,
             example: `{
-  "sandbox": { "mode": "enabled", "networkAccess": "user_config_only" },
-  "approvalMode": "allowlist"
+  "type": "workspace_readwrite",
+  "networkPolicy": { "default": "deny" }
 }`,
           },
         },
@@ -2157,14 +2164,14 @@ description: Refactor code while maintaining tests and functionality.
       type: 'file',
       details: {
         label: 'Project Instructions',
-        description: 'Codex\'s primary file for project context. Supports hierarchical loading from parent directories.',
+        description: 'Codex\'s primary file for project context. Supports hierarchical loading from parent directories. Ignored if an AGENTS.override.md exists at the same directory.',
         whatGoesHere: [
           'Project overview and tech stack',
           'Build and test commands',
           'Coding conventions',
           'Project structure notes',
         ],
-        whenLoaded: 'Always loaded first. Codex walks from project root to current directory, merging AGENTS.md files.',
+        whenLoaded: 'Always loaded first (unless an AGENTS.override.md is present at this level). Codex walks from project root to current directory, merging AGENTS.md files.',
         loadOrder: 1,
         example: `# AGENTS.md
 
@@ -2189,12 +2196,12 @@ description: Refactor code while maintaining tests and functionality.
       type: 'file',
       details: {
         label: 'Override Instructions',
-        description: 'Repo-scoped instructions that take precedence over AGENTS.md at the same directory level, for rules that should not be diluted by merging.',
+        description: 'When present, Codex reads this instead of AGENTS.md at the repository root — only the first non-empty file at each level is used, never both.',
         whatGoesHere: [
           'Non-negotiable repo-wide rules',
-          'Guidance that should win over any conflicting AGENTS.md content',
+          'A temporary full replacement for the root AGENTS.md (e.g. during an incident or migration)',
         ],
-        whenLoaded: 'Loaded alongside AGENTS.md at this directory level; its content takes precedence on conflicts.',
+        whenLoaded: 'Loaded at the repository root instead of AGENTS.md when present. Root AGENTS.md is ignored while this file exists.',
         loadOrder: 1,
         example: `# AGENTS.override.md
 
@@ -2214,12 +2221,12 @@ description: Refactor code while maintaining tests and functionality.
           type: 'file',
           details: {
             label: 'Nested Override Instructions',
-            description: 'Directory-scoped override that takes precedence over this directory\'s AGENTS.md.',
+            description: 'When present, Codex reads this instead of this directory\'s AGENTS.md — the two are never combined at the same directory level.',
             whatGoesHere: [
               'Non-negotiable rules specific to this directory',
-              'Guidance that should win over conflicting nested AGENTS.md content',
+              'A temporary full replacement for this directory\'s AGENTS.md',
             ],
-            whenLoaded: 'Loaded alongside this directory\'s AGENTS.md; its content takes precedence on conflicts.',
+            whenLoaded: 'Loaded in this directory instead of its AGENTS.md when present; the result is still concatenated with AGENTS.md files from parent directories.',
             loadOrder: 2,
             example: `# Frontend AGENTS.override.md
 
@@ -2233,13 +2240,13 @@ description: Refactor code while maintaining tests and functionality.
           type: 'file',
           details: {
             label: 'Nested Instructions',
-            description: 'Path-scoped instructions that apply to this directory. Merged with parent AGENTS.md files.',
+            description: 'Path-scoped instructions that apply to this directory. Merged with parent AGENTS.md files. Ignored if an AGENTS.override.md exists in this same directory.',
             whatGoesHere: [
               'Directory-specific stack info',
               'Local conventions',
               'Relevant commands',
             ],
-            whenLoaded: 'Loaded when working in this directory. Appended to parent context (closer files override).',
+            whenLoaded: 'Loaded when working in this directory (unless an AGENTS.override.md is present). Appended to parent context (closer files override).',
             loadOrder: 2,
             example: `# Frontend AGENTS.md
 
@@ -2272,12 +2279,12 @@ description: Refactor code while maintaining tests and functionality.
           type: 'file',
           details: {
             label: 'Nested Override Instructions',
-            description: 'Directory-scoped override that takes precedence over this directory\'s AGENTS.md.',
+            description: 'When present, Codex reads this instead of this directory\'s AGENTS.md — the two are never combined at the same directory level.',
             whatGoesHere: [
               'Non-negotiable rules specific to this directory',
-              'Guidance that should win over conflicting nested AGENTS.md content',
+              'A temporary full replacement for this directory\'s AGENTS.md',
             ],
-            whenLoaded: 'Loaded alongside this directory\'s AGENTS.md; its content takes precedence on conflicts.',
+            whenLoaded: 'Loaded in this directory instead of its AGENTS.md when present; the result is still concatenated with AGENTS.md files from parent directories.',
             loadOrder: 2,
             example: `# Backend AGENTS.override.md
 
@@ -2369,13 +2376,13 @@ args = ["-y", "@upstash/context7-mcp"]`,
           type: 'file',
           details: {
             label: 'User Scope Instructions',
-            description: 'Personal instructions that apply to all your Codex sessions, regardless of project.',
+            description: 'Personal instructions that apply to all your Codex sessions, regardless of project. Ignored if ~/.codex/AGENTS.override.md exists.',
             whatGoesHere: [
               'Your preferred coding style',
               'Common conventions you follow',
               'Personal preferences (commit style, testing approach)',
             ],
-            whenLoaded: 'Always loaded first, before any project-specific context.',
+            whenLoaded: 'Always loaded first, before any project-specific context (unless an AGENTS.override.md is present at this level).',
             loadOrder: 2,
             example: `# My Global Codex Preferences
 
@@ -2395,12 +2402,12 @@ args = ["-y", "@upstash/context7-mcp"]`,
           type: 'file',
           details: {
             label: 'User Scope Override Instructions',
-            description: 'Personal override instructions that take precedence over ~/.codex/AGENTS.md, and over any repo AGENTS.md merged beneath it.',
+            description: 'When present, Codex reads this instead of ~/.codex/AGENTS.md at the global scope only. Repository and nested AGENTS.md files are still layered on top afterward and can override it, since they come later in the merge order.',
             whatGoesHere: [
-              'Personal rules you never want a project to silently override',
-              'Guidance that should win on conflicts across every project',
+              'Personal rules you want as your default starting point across every project',
+              'A temporary full replacement for your global AGENTS.md',
             ],
-            whenLoaded: 'Loaded alongside ~/.codex/AGENTS.md; its content takes precedence on conflicts.',
+            whenLoaded: 'Loaded first, in place of ~/.codex/AGENTS.md, when present. Project and nested AGENTS.md files are concatenated afterward and take precedence on conflicts.',
             loadOrder: 2,
             example: `# My Global Codex Overrides
 

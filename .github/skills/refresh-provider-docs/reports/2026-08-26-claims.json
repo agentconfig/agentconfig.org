@@ -397,7 +397,7 @@
     "sourceUrl": "https://developers.openai.com/codex/agent-configuration/agents-md",
     "sourceAuthority": "primary",
     "retrievedAt": "2026-08-25",
-    "notes": "The AGENTS.md docs say Codex checks AGENTS.override.md first, then AGENTS.md, for project-scope instructions."
+    "notes": "The AGENTS.md docs say Codex checks for AGENTS.override.md first at each directory level; only if it is absent does Codex fall back to AGENTS.md at that level. Only one file per level is ever loaded \u2014 never both."
   },
   {
     "id": "codex.global-instructions.location",
