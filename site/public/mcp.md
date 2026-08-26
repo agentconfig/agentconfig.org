@@ -227,7 +227,7 @@ Both providers support multiple configuration scopes:
 
 | Feature | Claude Code | VS Code/Copilot |
 |---------|-------------|-----------------|
-| Transports | stdio, http, sse | stdio, http, sse |
+| Transports | stdio, http, sse, websocket | stdio, http, sse |
 | Tools | ✓ | ✓ |
 | Resources | ✓ | ✓ |
 | Prompts | ✓ (/mcp) | ✓ (/mcp.*) |
@@ -358,7 +358,7 @@ claude mcp add --transport http sentry https://mcp.sentry.dev/mcp
 ## Further Reading
 
 - [Model Context Protocol Introduction](https://modelcontextprotocol.io/introduction): The official introduction to MCP—an open standard for connecting AI to external tools.
-- [Claude Code MCP Documentation](https://docs.anthropic.com/en/docs/claude-code/mcp): Complete guide to using MCP servers with Claude Code, including installation and configuration.
+- [Claude Code MCP Documentation](https://code.claude.com/docs/en/mcp): Complete guide to using MCP servers with Claude Code, including installation and configuration.
 - [VS Code MCP Servers](https://code.visualstudio.com/docs/copilot/chat/mcp-servers): How to configure and use MCP servers with GitHub Copilot in VS Code.
 - [MCP Specification](https://modelcontextprotocol.io/specification/latest): The complete technical specification for the Model Context Protocol.
 - [Official MCP Servers](https://github.com/modelcontextprotocol/servers): Repository of official and community-contributed MCP server implementations.

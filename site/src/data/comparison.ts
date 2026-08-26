@@ -58,22 +58,26 @@ export const comparisonData: ComparisonRow[] = [
     copilot: {
       level: 'full',
       implementation: 'Skill modules in skills directory',
-      location: '.github/skills/*/SKILL.md',
+      location: '.github/skills/<name>/SKILL.md (also .claude/skills, .agents/skills; personal: ~/.copilot/skills, ~/.agents/skills)',
+      sourceUrl: 'https://docs.github.com/en/copilot/concepts/agents/about-agent-skills',
     },
     claude: {
       level: 'full',
       implementation: 'Skill modules in .claude directory',
-      location: '.claude/skills/*/SKILL.md',
+      location: '.claude/skills/<name>/SKILL.md (also ~/.claude/skills/<name>/SKILL.md for personal skills)',
+      sourceUrl: 'https://code.claude.com/docs/en/skills',
     },
     cursor: {
       level: 'full',
       implementation: 'Skill modules as portable, reusable packages',
-      location: '.cursor/skills/*/SKILL.md',
+      location: '.cursor/skills/<name>/SKILL.md (also discovers .agents/skills, .claude/skills, .codex/skills, and their ~/ personal equivalents)',
+      sourceUrl: 'https://cursor.com/docs/skills',
     },
     codex: {
       level: 'full',
       implementation: 'Skill modules following agentskills.io specification',
-      location: '.codex/skills/*/SKILL.md',
+      location: '.agents/skills/<name>/SKILL.md (repo scope, up to repo root); personal: ~/.agents/skills; admin: /etc/codex/skills',
+      sourceUrl: 'https://developers.openai.com/codex/build-skills',
     },
   },
   {
@@ -82,7 +86,8 @@ export const comparisonData: ComparisonRow[] = [
     copilot: {
       level: 'full',
       implementation: 'MCP servers and tool calling',
-      location: 'VS Code MCP settings',
+      location: '.vscode/mcp.json, VS Code settings.json (also Visual Studio, JetBrains IDEs, Xcode, Eclipse)',
+      sourceUrl: 'https://docs.github.com/en/copilot/how-tos/provide-context/use-mcp-in-your-ide/extend-copilot-chat-with-mcp',
     },
     claude: {
       level: 'full',
@@ -92,13 +97,15 @@ export const comparisonData: ComparisonRow[] = [
     },
     cursor: {
       level: 'full',
-      implementation: 'MCP servers with stdio, SSE, and HTTP transports',
-      location: '.cursor/mcp.json',
+      implementation: 'MCP servers with stdio, SSE, and Streamable HTTP transports',
+      location: '.cursor/mcp.json, ~/.cursor/mcp.json',
+      sourceUrl: 'https://cursor.com/docs/context/mcp',
     },
     codex: {
       level: 'full',
-      implementation: 'MCP servers with stdio and HTTP transports',
-      location: '~/.codex/config.toml',
+      implementation: 'MCP servers with stdio and Streamable HTTP transports',
+      location: '~/.codex/config.toml, .codex/config.toml',
+      sourceUrl: 'https://developers.openai.com/codex/extend/mcp',
     },
   },
   // === CUSTOMIZATION ===

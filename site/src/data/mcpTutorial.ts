@@ -28,7 +28,7 @@ export const furtherReadingLinks: readonly FurtherReadingLink[] = [
   },
   {
     title: 'Claude Code MCP Documentation',
-    url: 'https://docs.anthropic.com/en/docs/claude-code/mcp',
+    url: 'https://code.claude.com/docs/en/mcp',
     source: 'Anthropic',
     description: 'Complete guide to using MCP servers with Claude Code, including installation and configuration.',
   },
@@ -56,6 +56,28 @@ export const furtherReadingLinks: readonly FurtherReadingLink[] = [
     source: 'GitHub',
     description: 'Browse and discover MCP servers from the official GitHub registry.',
   },
+] as const
+
+export interface McpFeatureRow {
+  feature: string
+  claudeCode: string
+  vsCodeCopilot: string
+}
+
+/**
+ * Single source of truth for the Claude Code / VS Code+Copilot MCP feature
+ * comparison. Consumed by both the rendered MCPFeatureTable component and
+ * the llms.txt/mcp.md generator so the two never drift out of sync.
+ */
+export const mcpFeatureComparison: readonly McpFeatureRow[] = [
+  { feature: 'Transports', claudeCode: 'stdio, http, sse, websocket', vsCodeCopilot: 'stdio, http, sse' },
+  { feature: 'Tools', claudeCode: '✓', vsCodeCopilot: '✓' },
+  { feature: 'Resources', claudeCode: '✓', vsCodeCopilot: '✓' },
+  { feature: 'Prompts', claudeCode: '✓ (/mcp)', vsCodeCopilot: '✓ (/mcp.*)' },
+  { feature: 'Configuration', claudeCode: 'CLI + JSON', vsCodeCopilot: 'JSON + UI' },
+  { feature: 'Server Discovery', claudeCode: 'Manual', vsCodeCopilot: 'Gallery + Auto' },
+  { feature: 'Tool Search', claudeCode: '✓ (auto 10%+)', vsCodeCopilot: 'Via tool picker' },
+  { feature: 'Enterprise Control', claudeCode: 'managed-mcp.json', vsCodeCopilot: 'Settings + MDM' },
 ] as const
 
 export const codeSamples: Record<string, string> = {
@@ -301,7 +323,7 @@ Commands:
         "servers": {
           "playwright": {
             "command": "npx",
-            "args": ["-y", "@microsoft/mcp-server-playwright"]
+            "args": ["-y", "@playwright/mcp"]
           },
           "database": {
             "command": "npx",
@@ -315,27 +337,6 @@ Commands:
     }
   }
 }`,
-
-  providerComparison: `┌────────────────────┬─────────────────┬─────────────────┐
-│ Feature            │ Claude Code     │ VS Code/Copilot │
-├────────────────────┼─────────────────┼─────────────────┤
-│ Transports         │ stdio, http,    │ stdio, http,    │
-│                    │ sse             │ sse             │
-├────────────────────┼─────────────────┼─────────────────┤
-│ Tools              │ ✓               │ ✓               │
-├────────────────────┼─────────────────┼─────────────────┤
-│ Resources          │ ✓               │ ✓               │
-├────────────────────┼─────────────────┼─────────────────┤
-│ Prompts            │ ✓ (/mcp)        │ ✓ (/mcp.*)      │
-├────────────────────┼─────────────────┼─────────────────┤
-│ Configuration      │ CLI + JSON      │ JSON + UI       │
-├────────────────────┼─────────────────┼─────────────────┤
-│ Server Discovery   │ Manual          │ Gallery + Auto  │
-├────────────────────┼─────────────────┼─────────────────┤
-│ Tool Search        │ ✓ (auto 10%+)   │ Via tool picker │
-├────────────────────┼─────────────────┼─────────────────┤
-│ Enterprise Control │ managed-mcp.json│ Settings + MDM  │
-└────────────────────┴─────────────────┴─────────────────┘`,
 
   securityTrust: `Security Checklist:
 

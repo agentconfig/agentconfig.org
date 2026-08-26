@@ -67,6 +67,7 @@ async function loadData() {
     mcpTocItems: mcpTutorial.tocItems,
     mcpCodeSamples: mcpTutorial.codeSamples,
     mcpFurtherReadingLinks: mcpTutorial.furtherReadingLinks,
+    mcpFeatureComparison: mcpTutorial.mcpFeatureComparison,
   }
 }
 
@@ -313,7 +314,7 @@ ${furtherReadingLinks.map(link => `- [${link.title}](${link.url}): ${link.descri
 }
 
 function generateMcpMd(data: Awaited<ReturnType<typeof loadData>>): string {
-  const { mcpTocItems, mcpCodeSamples, mcpFurtherReadingLinks } = data
+  const { mcpTocItems, mcpCodeSamples, mcpFurtherReadingLinks, mcpFeatureComparison } = data
   
   let content = `# MCP Tool Integrations Tutorial
 
@@ -401,14 +402,7 @@ Both providers support multiple configuration scopes:
 
 | Feature | Claude Code | VS Code/Copilot |
 |---------|-------------|-----------------|
-| Transports | stdio, http, sse | stdio, http, sse |
-| Tools | ✓ | ✓ |
-| Resources | ✓ | ✓ |
-| Prompts | ✓ (/mcp) | ✓ (/mcp.*) |
-| Configuration | CLI + JSON | JSON + UI |
-| Server Discovery | Manual | Gallery + Auto |
-| Tool Search | ✓ (auto 10%+) | Via tool picker |
-| Enterprise Control | managed-mcp.json | Settings + MDM |
+${mcpFeatureComparison.map((row: { feature: string; claudeCode: string; vsCodeCopilot: string }) => `| ${row.feature} | ${row.claudeCode} | ${row.vsCodeCopilot} |`).join('\n')}
 
 ### 7. Security Considerations
 
@@ -791,7 +785,7 @@ ${p.implementations.map((impl: any) => {
     impl.provider === 'codex' ? 'OpenAI Codex' :
     impl.provider;
   const source = impl.sourceUrl != null ? `[Provider documentation](${impl.sourceUrl})` : '—'
-  return `| ${providerName} | ${impl.implementation} | ${impl.location} | ${impl.support} | ${source} |`
+  return `| ${providerName} | ${impl.implementation} | \`${impl.location}\` | ${impl.support} | ${source} |`
 }).join('\n')}
 
 ---

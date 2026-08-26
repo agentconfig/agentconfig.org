@@ -1,21 +1,5 @@
 import type { VNode } from 'preact'
-
-interface FeatureRow {
-  feature: string
-  claudeCode: string
-  vsCodeCopilot: string
-}
-
-const features: FeatureRow[] = [
-  { feature: 'Transports', claudeCode: 'stdio, http, sse', vsCodeCopilot: 'stdio, http, sse' },
-  { feature: 'Tools', claudeCode: '✓', vsCodeCopilot: '✓' },
-  { feature: 'Resources', claudeCode: '✓', vsCodeCopilot: '✓' },
-  { feature: 'Prompts', claudeCode: '✓ (/mcp)', vsCodeCopilot: '✓ (/mcp.*)' },
-  { feature: 'Configuration', claudeCode: 'CLI + JSON', vsCodeCopilot: 'JSON + UI' },
-  { feature: 'Server Discovery', claudeCode: 'Manual', vsCodeCopilot: 'Gallery + Auto' },
-  { feature: 'Tool Search', claudeCode: '✓ (auto 10%+)', vsCodeCopilot: 'Via tool picker' },
-  { feature: 'Enterprise Control', claudeCode: 'managed-mcp.json', vsCodeCopilot: 'Settings + MDM' },
-]
+import { mcpFeatureComparison } from '@/data/mcpTutorial'
 
 export function MCPFeatureTable(): VNode {
   return (
@@ -30,7 +14,7 @@ export function MCPFeatureTable(): VNode {
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
-            {features.map((row) => (
+            {mcpFeatureComparison.map((row) => (
               <tr key={row.feature} className="hover:bg-muted/30">
                 <td className="px-4 py-3 font-medium text-foreground">{row.feature}</td>
                 <td className="px-4 py-3 text-muted-foreground">{row.claudeCode}</td>
