@@ -97,7 +97,7 @@ Exit codes: `0` clean, `1` fail-closed error, `2` findings require action. Exit 
 
 ### 4. Act on the findings
 
-Apply `update-site-data` findings to `site/src/data/primitives.ts` only, then regenerate published files with the `generate-llms` skill. `site/src/data/comparison.ts` and `site/src/data/providerProfiles.ts` derive from `primitives.ts` automatically and must never be hand-edited — doing so would just be overwritten by the next generation pass and could silently reintroduce drift.
+Apply `update-site-data` findings to `site/src/data/primitives.ts` only, then regenerate published files with the `generate-llms` skill. `site/src/data/comparison.ts` and `site/src/data/providerProfiles.ts` compute their values from `primitives.ts` at import time, so hand-editing them there would duplicate the same fact in two places and reintroduce the drift this derivation was built to eliminate — the edit belongs in `primitives.ts` alone.
 
 Treat `extend-site-model` findings as content design rather than a data edit. They mean the documented behavior has no home in the current taxonomy.
 

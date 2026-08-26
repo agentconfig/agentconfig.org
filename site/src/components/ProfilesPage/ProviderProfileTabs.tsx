@@ -54,7 +54,7 @@ function CoverageSummary({ profile }: { profile: ProviderProfile }): VNode {
 function CategorySection({ category }: { category: ProfileCategory }): VNode {
   return (
     <div className="mb-8">
-      <h3 className="text-lg font-semibold mb-3 text-foreground">{category.name}</h3>
+      <h2 className="text-lg font-semibold mb-3 text-foreground">{category.name}</h2>
       <div className="rounded-xl border border-border overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">

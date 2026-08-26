@@ -46,4 +46,13 @@ test.describe('Accessibility', () => {
 
     expect(results.violations).toEqual([])
   })
+
+  test('profiles page should have no accessibility violations', async ({ page }) => {
+    await page.goto('/profiles/')
+    await expect(page.getByRole('heading', { name: 'Provider Compatibility Profiles' })).toBeVisible()
+
+    const results = await new AxeBuilder({ page }).analyze()
+
+    expect(results.violations).toEqual([])
+  })
 })
