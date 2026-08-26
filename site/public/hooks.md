@@ -128,6 +128,54 @@ if (payload.tool_name === 'Bash' && isGitPush(payload.tool_input)) {
 }
 ```
 
+**Cursor** — repository hooks live in `.cursor/hooks.json`.
+
+```json
+{
+  "version": 1,
+  "hooks": {
+    "beforeShellExecution": [
+      {
+        "command": "node .cursor/hooks/policy.mjs"
+      }
+    ]
+  }
+}
+```
+
+```javascript
+import { Buffer } from 'node:buffer'
+
+function isGitPush(command) {
+  if (typeof command !== 'string') return false
+
+  const tokens = command.match(/"[^"]*"|'[^']*'|\S+/g) ?? []
+  const gitIndex = tokens.findIndex((token) => token === 'git' || token.endsWith('/git'))
+  return gitIndex >= 0 && tokens.slice(gitIndex + 1).includes('push')
+}
+
+const chunks = []
+for await (const chunk of process.stdin) {
+  chunks.push(chunk)
+}
+
+const input = Buffer.concat(chunks).toString('utf8')
+const payload = JSON.parse(input)
+if (isGitPush(payload.command)) {
+  console.log(JSON.stringify({
+    continue: true,
+    permission: 'deny',
+    user_message: 'Git push is disabled for agent runs.',
+    agent_message: 'Ask for human approval before pushing.',
+  }))
+} else {
+  console.log(JSON.stringify({
+    continue: true,
+    permission: 'allow',
+  }))
+}
+```
+
 **Codex** — repository hooks live in `.codex/hooks.json`.
 
 ```json
@@ -208,15 +256,15 @@ A typical session moves through:
 
 Normalize that intent first, then translate it into each provider's event name:
 
-| Policy boundary | Use it for | GitHub Copilot | Claude Code | OpenAI Codex |
-| --- | --- | --- | --- | --- |
-| Session start | Initialize state, print concise context, or validate local prerequisites before work begins. | sessionStart | SessionStart | SessionStart |
-| User prompt submitted | Inspect or enrich a new prompt before the agent plans work. | userPromptSubmitted | UserPromptSubmit | UserPromptSubmit |
-| Before tool use | Allow, block, rewrite, or require approval before a tool side effect happens. | preToolUse | PreToolUse | PreToolUse |
-| After tool use | Record results, update compact state, or run postconditions after a successful tool call. | postToolUse | PostToolUse | PostToolUse |
-| Tool failure | Surface diagnostics or recovery guidance after a tool call fails. | postToolUseFailure | PostToolUseFailure | PostToolUse |
-| Compaction | Persist or restore compact state around context compaction. | No direct equivalent | PreCompact | PreCompact, PostCompact |
-| Agent stop | Finalize state, clean temporary locks, or report completion once the agent stops. | agentStop, subagentStop | Stop, SubagentStop | Stop, SubagentStop |
+| Policy boundary | Use it for | GitHub Copilot | Claude Code | Cursor | OpenAI Codex |
+| --- | --- | --- | --- | --- | --- |
+| Session start | Initialize state, print concise context, or validate local prerequisites before work begins. | sessionStart | SessionStart | sessionStart | SessionStart |
+| User prompt submitted | Inspect or enrich a new prompt before the agent plans work. | userPromptSubmitted | UserPromptSubmit | beforeSubmitPrompt | UserPromptSubmit |
+| Before tool use | Allow, block, rewrite, or require approval before a tool side effect happens. | preToolUse | PreToolUse | preToolUse | PreToolUse |
+| After tool use | Record results, update compact state, or run postconditions after a successful tool call. | postToolUse | PostToolUse | postToolUse | PostToolUse |
+| Tool failure | Surface diagnostics or recovery guidance after a tool call fails. | postToolUseFailure | PostToolUseFailure | postToolUseFailure | PostToolUse |
+| Compaction | Persist or restore compact state around context compaction. | No direct equivalent | PreCompact | preCompact | PreCompact, PostCompact |
+| Agent stop | Finalize state, clean temporary locks, or report completion once the agent stops. | agentStop, subagentStop | Stop, SubagentStop | stop, subagentStop | Stop, SubagentStop |
 
 ### 4. Hook Contracts
 
@@ -259,7 +307,7 @@ and diagnostics. Keep human-readable logs separate from the final machine-readab
 ### 5. Providers
 
 Compare hook lifecycle events, config locations, and contracts across Copilot, Claude Code,
-and Codex.
+Cursor, and Codex.
 
 #### GitHub Copilot
 
@@ -293,6 +341,23 @@ Source: [GitHub Copilot hooks reference](https://docs.github.com/en/copilot/refe
 - Prefer shared project settings for team policy and local settings for personal automation.
 
 Source: [Claude Code hooks documentation](https://code.claude.com/docs/en/hooks)
+
+#### Cursor
+
+**Scope:** Project hooks apply from .cursor/hooks.json; user hooks apply globally from ~/.cursor/hooks.json. Enterprise plans can also distribute team and managed hooks.
+
+**Locations:** `.cursor/hooks.json`, `~/.cursor/hooks.json`
+
+**Events:** `sessionStart`, `sessionEnd`, `preToolUse`, `postToolUse`, `postToolUseFailure`, `subagentStart`, `subagentStop`, `beforeShellExecution`, `afterShellExecution`, `beforeMCPExecution`, `afterMCPExecution`, `beforeReadFile`, `afterFileEdit`, `beforeSubmitPrompt`, `preCompact`, `stop`
+
+**Contract:** Cursor command hooks receive JSON on stdin and return JSON on stdout. Exit code 0 uses the structured response, exit code 2 blocks the action, and other failures proceed by default.
+
+- Use beforeShellExecution when a policy needs the parsed shell command directly; use preToolUse when the same policy should cover every tool.
+- Project hook commands run from the project root, so repository scripts should use .cursor/hooks/... paths.
+- Cloud agents run repository, team, and managed command hooks after the environment becomes writable, but they do not load user hooks or IDE-only lifecycle events.
+- Prompt-based hooks are available locally; cloud agents run command-based hooks only.
+
+Source: [Cursor hooks documentation](https://cursor.com/docs/hooks)
 
 #### OpenAI Codex
 
@@ -488,4 +553,5 @@ Hook traps:
 - [GitHub Copilot hooks](https://docs.github.com/en/copilot/concepts/agents/hooks): Conceptual overview for Copilot repository and personal hooks.
 - [GitHub Copilot hooks reference](https://docs.github.com/en/copilot/reference/hooks-reference): Lifecycle events, input/output contracts, and hook examples for Copilot.
 - [Claude Code hooks](https://code.claude.com/docs/en/hooks): Official settings schema, lifecycle events, and hook behavior for Claude Code.
+- [Cursor hooks](https://cursor.com/docs/hooks): Official hook locations, lifecycle events, JSON contracts, and cloud-agent limitations.
 - [OpenAI Codex hooks](https://developers.openai.com/codex/hooks): Codex hook locations, events, review model, and hooks.json schema.

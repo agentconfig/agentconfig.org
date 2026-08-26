@@ -7,7 +7,23 @@ test.describe('Hooks Page', () => {
 
   test('loads the hooks page with hero section', async ({ page }) => {
     await expect(page.getByRole('heading', { name: 'Lifecycle Hooks', exact: true })).toBeVisible()
-    await expect(page.getByText('Start with one small hook for Copilot, Claude Code, or Codex')).toBeVisible()
+    await expect(page.getByText('Start with one small hook for Copilot, Claude Code, Cursor, or Codex')).toBeVisible()
+    await expect(page.getByRole('group', { name: 'Hooks provider' })).toBeVisible()
+  })
+
+  test('synchronizes provider selection through the URL', async ({ page }) => {
+    const headerSelector = page.getByRole('group', { name: 'Hooks provider' })
+    await headerSelector.getByRole('button', { name: 'Cursor', exact: true }).click()
+
+    await expect(page).toHaveURL(/.*[?&]provider=cursor(?:&|#|$)/)
+    await expect(headerSelector.getByRole('button', { name: 'Cursor', exact: true })).toHaveAttribute('aria-pressed', 'true')
+    await expect(page.locator('#first-provider-hook').getByRole('tab', { name: 'Cursor', exact: true })).toHaveAttribute('aria-selected', 'true')
+    await expect(page.locator('#lifecycle-model').getByRole('tab', { name: 'Cursor', exact: true })).toHaveAttribute('aria-selected', 'true')
+    await expect(page.locator('#provider-panels').getByRole('tab', { name: 'Cursor', exact: true })).toHaveAttribute('aria-selected', 'true')
+
+    await page.reload()
+    await expect(headerSelector.getByRole('button', { name: 'Cursor', exact: true })).toHaveAttribute('aria-pressed', 'true')
+    await expect(page.locator('#first-provider-hook').getByText('.cursor/hooks.json', { exact: true }).last()).toBeVisible()
   })
 
   test('shows the lifecycle and provider mappings', async ({ page }) => {
@@ -19,10 +35,14 @@ test.describe('Hooks Page', () => {
     await expect(lifecycleSection.getByRole('heading', { name: 'Act', exact: true })).toBeVisible()
     await expect(lifecycleSection.getByRole('heading', { name: 'Finish', exact: true })).toBeVisible()
     await expect(lifecycleSection.getByRole('tablist', { name: 'Lifecycle provider event names' })).toBeVisible()
-    await expect(lifecycleSection.getByText('preToolUse', { exact: true })).toHaveCSS('font-family', /mono/i)
+    await expect(lifecycleSection.locator('[role="tabpanel"]:visible').getByText('preToolUse', { exact: true })).toHaveCSS('font-family', /mono/i)
 
     await lifecycleSection.getByRole('tab', { name: 'Claude Code', exact: true }).click()
     await expect(lifecycleSection.locator('[role="tabpanel"]:visible').getByText('PreToolUse', { exact: true })).toBeVisible()
+
+    await lifecycleSection.getByRole('tab', { name: 'Cursor', exact: true }).click()
+    await expect(lifecycleSection.locator('[role="tabpanel"]:visible').getByText('beforeSubmitPrompt', { exact: true })).toBeVisible()
+    await expect(lifecycleSection.locator('[role="tabpanel"]:visible').getByText('preCompact', { exact: true })).toBeVisible()
 
     await lifecycleSection.getByRole('tab', { name: 'OpenAI Codex', exact: true }).click()
     await expect(lifecycleSection.locator('[role="tabpanel"]:visible').getByText('PreCompact, PostCompact', { exact: true })).toBeVisible()
@@ -39,6 +59,10 @@ test.describe('Hooks Page', () => {
     await expect(providerSection.getByRole('heading', { name: 'Claude Code', exact: true })).toBeVisible()
     await expect(providerSection.getByText('.claude/settings.local.json')).toHaveCSS('font-family', /mono/i)
 
+    await providerSection.getByRole('tab', { name: 'Cursor', exact: true }).click()
+    await expect(providerSection.getByRole('heading', { name: 'Cursor', exact: true })).toBeVisible()
+    await expect(providerSection.locator('[role="tabpanel"]:visible').getByText('.cursor/hooks.json', { exact: true })).toHaveCSS('font-family', /mono/i)
+
     await providerSection.getByRole('tab', { name: 'OpenAI Codex', exact: true }).click()
     await expect(providerSection.getByRole('heading', { name: 'OpenAI Codex', exact: true })).toBeVisible()
   })
@@ -50,6 +74,9 @@ test.describe('Hooks Page', () => {
     await expect(page.getByText('.github/hooks/pre-tool-use.json')).toBeVisible()
     await firstSection.getByRole('tab', { name: 'Claude Code', exact: true }).click()
     await expect(firstSection.getByText('.claude/settings.json', { exact: true }).last()).toBeVisible()
+    await firstSection.getByRole('tab', { name: 'Cursor', exact: true }).click()
+    await expect(firstSection.getByText('.cursor/hooks.json', { exact: true }).last()).toBeVisible()
+    await expect(firstSection.getByText('.cursor/hooks/policy.mjs', { exact: true }).last()).toBeVisible()
     await firstSection.getByRole('tab', { name: 'OpenAI Codex', exact: true }).click()
     await expect(firstSection.getByText('.codex/hooks.json', { exact: true }).last()).toBeVisible()
   })
@@ -119,9 +146,11 @@ test.describe('Hooks Page', () => {
     await copilotTab.focus()
     await expect(copilotTab).toHaveAttribute('aria-selected', 'true')
     await page.keyboard.press('ArrowRight')
+    await expect(page).toHaveURL(/.*[?&]provider=claude(?:&|#|$)/)
     await expect(claudeTab).toHaveAttribute('aria-selected', 'true')
     await expect(claudeTab).toBeFocused()
     await expect(firstSection.getByText('.claude/settings.json', { exact: true }).last()).toBeVisible()
+    await expect(page.getByRole('group', { name: 'Hooks provider' }).getByRole('button', { name: 'Claude Code', exact: true })).toHaveAttribute('aria-pressed', 'true')
   })
 
   test('preserves legacy provider anchors and stable tab panel relationships', async ({ page }) => {

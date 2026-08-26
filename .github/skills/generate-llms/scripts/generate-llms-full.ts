@@ -521,6 +521,16 @@ ${hooksCodeSamples.claudeHook}
 ${hooksCodeSamples.claudeAdapter}
 \`\`\`
 
+**Cursor** — repository hooks live in \`.cursor/hooks.json\`.
+
+\`\`\`json
+${hooksCodeSamples.cursorHook}
+\`\`\`
+
+\`\`\`javascript
+${hooksCodeSamples.cursorAdapter}
+\`\`\`
+
 **Codex** — repository hooks live in \`.codex/hooks.json\`.
 
 \`\`\`json
@@ -558,9 +568,9 @@ A typical session moves through:
 
 Normalize that intent first, then translate it into each provider's event name:
 
-| Policy boundary | Use it for | GitHub Copilot | Claude Code | OpenAI Codex |
-| --- | --- | --- | --- | --- |
-${hooksNormalizedEvents.map((event: any) => `| ${event.normalized} | ${event.purpose} | ${event.copilot} | ${event.claude} | ${event.codex} |`).join('\n')}
+| Policy boundary | Use it for | GitHub Copilot | Claude Code | Cursor | OpenAI Codex |
+| --- | --- | --- | --- | --- | --- |
+${hooksNormalizedEvents.map((event: any) => `| ${event.normalized} | ${event.purpose} | ${event.copilot} | ${event.claude} | ${event.cursor} | ${event.codex} |`).join('\n')}
 
 ### 4. Hook Contracts
 
@@ -580,7 +590,7 @@ ${hooksCodeSamples.hookDecision}
 ### 5. Providers
 
 Compare hook lifecycle events, config locations, and contracts across Copilot, Claude Code,
-and Codex.
+Cursor, and Codex.
 
 ${hooksProviderPanels.map((panel: any) => `#### ${panel.label}
 

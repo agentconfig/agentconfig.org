@@ -56,6 +56,7 @@ const lifecycleStages = [
 const lifecycleProviders = [
   { id: 'copilot', label: 'GitHub Copilot', tone: 'copilot' as const, eventKey: 'copilot' as const },
   { id: 'claude', label: 'Claude Code', tone: 'claude' as const, eventKey: 'claude' as const },
+  { id: 'cursor', label: 'Cursor', tone: 'cursor' as const, eventKey: 'cursor' as const },
   { id: 'codex', label: 'OpenAI Codex', tone: 'codex' as const, eventKey: 'codex' as const },
 ] as const
 
@@ -110,6 +111,7 @@ export function LifecycleModelSection(): VNode {
           tabs={lifecycleProviders}
           idPrefix="lifecycle-provider"
           ariaLabel="Lifecycle provider event names"
+          queryParam="provider"
           renderPanel={(provider) => (
             <ul className="grid gap-3 sm:grid-cols-2">
               {normalizedEvents.map((event) => {
@@ -177,6 +179,14 @@ export function FirstProviderHookSection(): VNode {
       adapterFile: { path: '.claude/hooks/adapter.mjs', language: 'javascript', content: codeSamples.claudeAdapter ?? '' },
     },
     {
+      id: 'cursor',
+      label: 'Cursor',
+      tone: 'cursor',
+      intro: <p>Cursor repository hooks live in <code>.cursor/hooks.json</code>. A <code>beforeShellExecution</code> hook receives the command directly, which keeps this first command gate small and explicit.</p>,
+      configFile: { path: '.cursor/hooks.json', language: 'json', content: codeSamples.cursorHook ?? '' },
+      adapterFile: { path: '.cursor/hooks/policy.mjs', language: 'javascript', content: codeSamples.cursorAdapter ?? '' },
+    },
+    {
       id: 'codex',
       label: 'OpenAI Codex',
       tone: 'codex',
@@ -200,6 +210,7 @@ export function FirstProviderHookSection(): VNode {
         tabs={examples}
         idPrefix="first-hook-provider"
         ariaLabel="First hook provider"
+        queryParam="provider"
         legacyFragments={{ 'first-copilot-hook': 'copilot', 'first-claude-hook': 'claude' }}
         renderPanel={(example) => (
           <>
@@ -222,6 +233,7 @@ export function ProviderPanelsSection(): VNode {
         tabs={providerPanels}
         idPrefix="provider-details"
         ariaLabel="Provider details"
+        queryParam="provider"
         renderPanel={(panel) => (
           <>
             <h3 className="text-xl font-semibold mb-2">{panel.label}</h3>

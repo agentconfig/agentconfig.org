@@ -1,7 +1,8 @@
 import type { VNode } from 'preact'
 import { PageLayout } from '@/layouts'
 import { TableOfContents } from '@/components/TableOfContents'
-import { tocItems } from '@/data/hooksTutorial'
+import { providerPanels, tocItems } from '@/data/hooksTutorial'
+import { ProviderSelector } from './ProviderTabs'
 import {
   ContractModelSection,
   FirstProviderHookSection,
@@ -24,8 +25,12 @@ export function HooksPage(): VNode {
             Lifecycle Hooks
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl">
-            Start with one small hook for Copilot, Claude Code, or Codex. Then test it, share the policy logic, and add stricter integrations only when you need them.
+            Start with one small hook for Copilot, Claude Code, Cursor, or Codex. Then test it, share the policy logic, and add stricter integrations only when you need them.
           </p>
+          <div className="mt-6 max-w-2xl">
+            <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">Choose a provider</p>
+            <ProviderSelector tabs={providerPanels} idPrefix="hooks-provider" ariaLabel="Hooks provider" queryParam="provider" />
+          </div>
           <div className="flex gap-2 mt-6 flex-wrap">
             <span className="px-3 py-1 rounded-full text-sm bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
               Start small

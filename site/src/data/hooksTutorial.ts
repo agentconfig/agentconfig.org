@@ -5,13 +5,14 @@ export interface HookEvent {
   purpose: string
   copilot: string
   claude: string
+  cursor: string
   codex: string
 }
 
 export interface ProviderHookPanel {
-  id: 'copilot' | 'claude' | 'codex'
+  id: 'copilot' | 'claude' | 'cursor' | 'codex'
   label: string
-  tone: 'copilot' | 'claude' | 'codex'
+  tone: 'copilot' | 'claude' | 'cursor' | 'codex'
   scope: string
   locations: readonly string[]
   events: readonly string[]
@@ -46,6 +47,7 @@ export const normalizedEvents: readonly HookEvent[] = [
     purpose: 'Initialize state, print concise context, or validate local prerequisites before work begins.',
     copilot: 'sessionStart',
     claude: 'SessionStart',
+    cursor: 'sessionStart',
     codex: 'SessionStart',
   },
   {
@@ -53,6 +55,7 @@ export const normalizedEvents: readonly HookEvent[] = [
     purpose: 'Inspect or enrich a new prompt before the agent plans work.',
     copilot: 'userPromptSubmitted',
     claude: 'UserPromptSubmit',
+    cursor: 'beforeSubmitPrompt',
     codex: 'UserPromptSubmit',
   },
   {
@@ -60,6 +63,7 @@ export const normalizedEvents: readonly HookEvent[] = [
     purpose: 'Allow, block, rewrite, or require approval before a tool side effect happens.',
     copilot: 'preToolUse',
     claude: 'PreToolUse',
+    cursor: 'preToolUse',
     codex: 'PreToolUse',
   },
   {
@@ -67,6 +71,7 @@ export const normalizedEvents: readonly HookEvent[] = [
     purpose: 'Record results, update compact state, or run postconditions after a successful tool call.',
     copilot: 'postToolUse',
     claude: 'PostToolUse',
+    cursor: 'postToolUse',
     codex: 'PostToolUse',
   },
   {
@@ -74,6 +79,7 @@ export const normalizedEvents: readonly HookEvent[] = [
     purpose: 'Surface diagnostics or recovery guidance after a tool call fails.',
     copilot: 'postToolUseFailure',
     claude: 'PostToolUseFailure',
+    cursor: 'postToolUseFailure',
     codex: 'PostToolUse',
   },
   {
@@ -81,6 +87,7 @@ export const normalizedEvents: readonly HookEvent[] = [
     purpose: 'Persist or restore compact state around context compaction.',
     copilot: 'No direct equivalent',
     claude: 'PreCompact',
+    cursor: 'preCompact',
     codex: 'PreCompact, PostCompact',
   },
   {
@@ -88,6 +95,7 @@ export const normalizedEvents: readonly HookEvent[] = [
     purpose: 'Finalize state, clean temporary locks, or report completion once the agent stops.',
     copilot: 'agentStop, subagentStop',
     claude: 'Stop, SubagentStop',
+    cursor: 'stop, subagentStop',
     codex: 'Stop, SubagentStop',
   },
 ] as const
@@ -127,6 +135,23 @@ export const providerPanels: readonly ProviderHookPanel[] = [
     sourceUrl: 'https://code.claude.com/docs/en/hooks',
   },
   {
+    id: 'cursor',
+    label: 'Cursor',
+    tone: 'cursor',
+    scope: 'Project hooks apply from .cursor/hooks.json; user hooks apply globally from ~/.cursor/hooks.json. Enterprise plans can also distribute team and managed hooks.',
+    locations: ['.cursor/hooks.json', '~/.cursor/hooks.json'],
+    events: ['sessionStart', 'sessionEnd', 'preToolUse', 'postToolUse', 'postToolUseFailure', 'subagentStart', 'subagentStop', 'beforeShellExecution', 'afterShellExecution', 'beforeMCPExecution', 'afterMCPExecution', 'beforeReadFile', 'afterFileEdit', 'beforeSubmitPrompt', 'preCompact', 'stop'],
+    contract: 'Cursor command hooks receive JSON on stdin and return JSON on stdout. Exit code 0 uses the structured response, exit code 2 blocks the action, and other failures proceed by default.',
+    notes: [
+      'Use beforeShellExecution when a policy needs the parsed shell command directly; use preToolUse when the same policy should cover every tool.',
+      'Project hook commands run from the project root, so repository scripts should use .cursor/hooks/... paths.',
+      'Cloud agents run repository, team, and managed command hooks after the environment becomes writable, but they do not load user hooks or IDE-only lifecycle events.',
+      'Prompt-based hooks are available locally; cloud agents run command-based hooks only.',
+    ],
+    sourceTitle: 'Cursor hooks documentation',
+    sourceUrl: 'https://cursor.com/docs/hooks',
+  },
+  {
     id: 'codex',
     label: 'OpenAI Codex',
     tone: 'codex',
@@ -162,6 +187,12 @@ export const furtherReadingLinks: readonly FurtherReadingLink[] = [
     url: 'https://code.claude.com/docs/en/hooks',
     source: 'Anthropic',
     description: 'Official settings schema, lifecycle events, and hook behavior for Claude Code.',
+  },
+  {
+    title: 'Cursor hooks',
+    url: 'https://cursor.com/docs/hooks',
+    source: 'Cursor',
+    description: 'Official hook locations, lifecycle events, JSON contracts, and cloud-agent limitations.',
   },
   {
     title: 'OpenAI Codex hooks',
@@ -228,6 +259,17 @@ export const codeSamples: Record<string, string> = {
   }
 }`,
 
+  cursorHook: `{
+  "version": 1,
+  "hooks": {
+    "beforeShellExecution": [
+      {
+        "command": "node .cursor/hooks/policy.mjs"
+      }
+    ]
+  }
+}`,
+
   codexHook: `{
   "hooks": {
     "PreToolUse": [
@@ -243,6 +285,37 @@ export const codeSamples: Record<string, string> = {
       }
     ]
   }
+}`,
+
+  cursorAdapter: `import { Buffer } from 'node:buffer'
+
+function isGitPush(command) {
+  if (typeof command !== 'string') return false
+
+  const tokens = command.match(/"[^"]*"|'[^']*'|\\S+/g) ?? []
+  const gitIndex = tokens.findIndex((token) => token === 'git' || token.endsWith('/git'))
+  return gitIndex >= 0 && tokens.slice(gitIndex + 1).includes('push')
+}
+
+const chunks = []
+for await (const chunk of process.stdin) {
+  chunks.push(chunk)
+}
+
+const input = Buffer.concat(chunks).toString('utf8')
+const payload = JSON.parse(input)
+if (isGitPush(payload.command)) {
+  console.log(JSON.stringify({
+    continue: true,
+    permission: 'deny',
+    user_message: 'Git push is disabled for agent runs.',
+    agent_message: 'Ask for human approval before pushing.',
+  }))
+} else {
+  console.log(JSON.stringify({
+    continue: true,
+    permission: 'allow',
+  }))
 }`,
 
   claudeAdapter: `import { Buffer } from 'node:buffer'
