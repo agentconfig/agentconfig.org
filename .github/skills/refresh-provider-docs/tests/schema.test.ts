@@ -2,7 +2,7 @@ import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'fs'
 import { dirname, join } from 'path'
 import { fileURLToPath } from 'url'
-import { canonicalize, validateClaims, validateRegistry } from '../scripts/lib/schema.ts'
+import { canonicalize, validateClaims, validateEvidence, validateManifest, validateRegistry, type FetchManifest } from '../scripts/lib/schema.ts'
 
 const fixtures = join(dirname(fileURLToPath(import.meta.url)), '../fixtures')
 
@@ -54,6 +54,11 @@ describe('claim schema', () => {
     expect(validateClaims(supportClaim('full')).ok).toBe(true)
   })
 
+  test('rejects duplicate claim ids', () => {
+    const claims = readFixture('claims/valid.json') as unknown[]
+    expect(validateClaims([claims[0], claims[0]]).ok).toBe(false)
+  })
+
   test('rejects an impossible calendar date that JavaScript would silently roll forward', () => {
     const claim = (retrievedAt: string) => [
       {
@@ -100,6 +105,95 @@ describe('claim schema', () => {
 describe('registry schema', () => {
   test('accepts the fixture registry', () => {
     expect(validateRegistry(readFixture('registry.json')).ok).toBe(true)
+  })
+
+  describe('manifest-bound evidence', () => {
+    const claims = readFixture('claims/valid.json')
+    const manifest: FetchManifest = {
+      retrievedAt: '2026-08-25T12:00:00Z',
+      results: [
+        {
+          sourceId: 'testprov.hooks',
+          provider: 'testprov',
+          url: 'https://docs.example.com/testprov/hooks',
+          requestedUrl: 'https://docs.example.com/testprov/hooks',
+          finalUrl: 'https://docs.example.com/testprov/hooks',
+          status: 200,
+          ok: true,
+          bytes: 100,
+          contentType: 'text/html',
+          retrievedAt: '2026-08-25T12:00:00Z',
+          snapshotPath: '/tmp/testprov.hooks.md',
+        },
+        {
+          sourceId: 'testprov.instructions',
+          provider: 'testprov',
+          url: 'https://docs.example.com/testprov/instructions',
+          requestedUrl: 'https://docs.example.com/testprov/instructions',
+          finalUrl: 'https://docs.example.com/testprov/instructions',
+          status: 200,
+          ok: true,
+          bytes: 100,
+          contentType: 'text/html',
+          retrievedAt: '2026-08-25T12:00:00Z',
+          snapshotPath: '/tmp/testprov.instructions.md',
+        },
+        {
+          sourceId: 'otherprov.docs',
+          provider: 'otherprov',
+          url: 'https://docs.example.com/otherprov/instructions',
+          requestedUrl: 'https://docs.example.com/otherprov/instructions',
+          finalUrl: 'https://docs.example.com/otherprov/instructions',
+          status: 200,
+          ok: true,
+          bytes: 100,
+          contentType: 'text/html',
+          retrievedAt: '2026-08-25T12:00:00Z',
+          snapshotPath: '/tmp/otherprov.docs.md',
+        },
+      ],
+    }
+
+    test('accepts claims bound to successful sources in the exact manifest', () => {
+      const parsed = validateClaims(claims)
+      expect(parsed.ok).toBe(true)
+      if (!parsed.ok) return
+      expect(validateManifest(manifest).ok).toBe(true)
+      expect(validateEvidence(parsed.value, manifest, parsed.value).ok).toBe(true)
+    })
+
+    test('rejects claims whose source is absent or unsuccessful', () => {
+      const parsed = validateClaims(claims)
+      if (!parsed.ok) throw new Error(parsed.errors.join('\n'))
+      const absent = { ...manifest, results: manifest.results.filter((result) => result.sourceId !== 'testprov.hooks') }
+      expect(validateEvidence(parsed.value, absent, parsed.value).ok).toBe(false)
+      const failed = {
+        ...manifest,
+        results: manifest.results.map((result) => (result.sourceId === 'testprov.hooks' ? { ...result, ok: false } : result)),
+      }
+      expect(validateEvidence(parsed.value, failed, parsed.value).ok).toBe(false)
+    })
+
+    test('rejects retrieval dates that do not match the manifest', () => {
+      const parsed = validateClaims(claims)
+      if (!parsed.ok) throw new Error(parsed.errors.join('\n'))
+      const stale = parsed.value.map((claim) => ({ ...claim, retrievedAt: '2026-08-24' }))
+      expect(validateEvidence(stale, manifest, parsed.value).ok).toBe(false)
+    })
+
+    test('rejects a claim set missing a baseline claim id', () => {
+      const parsed = validateClaims(claims)
+      if (!parsed.ok) throw new Error(parsed.errors.join('\n'))
+      expect(validateEvidence(parsed.value.slice(1), manifest, parsed.value).ok).toBe(false)
+    })
+
+    test('rejects a successful manifest entry without complete retrieval evidence', () => {
+      const incomplete = {
+        ...manifest,
+        results: manifest.results.map((result, index) => (index === 0 ? { ...result, finalUrl: null } : result)),
+      }
+      expect(validateManifest(incomplete).ok).toBe(false)
+    })
   })
 
   test('requires a tracked provider to have a primary source', () => {

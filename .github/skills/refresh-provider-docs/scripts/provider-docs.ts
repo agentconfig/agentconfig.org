@@ -14,6 +14,7 @@
 
 import { readFileSync, writeFileSync } from 'fs'
 import { compareClaims } from './lib/compare.ts'
+import { assertEvidence } from './lib/evidence.ts'
 import { fetchSources, resolveRunDir } from './lib/fetch.ts'
 import { allSources, FailClosedError, loadRegistry } from './lib/registry.ts'
 import { renderReport } from './lib/report.ts'
@@ -32,8 +33,8 @@ interface Args {
 
 /** Flags this CLI understands. An unrecognized flag is a typo, and silently
  * ignoring it can widen the scope of a run, so parsing fails closed instead. */
-const KNOWN_FLAGS = new Set(['allow-network', 'check-urls', 'json', 'out', 'provider'])
-const VALUE_FLAGS = new Set(['json', 'out', 'provider'])
+const KNOWN_FLAGS = new Set(['allow-network', 'baseline', 'check-urls', 'json', 'manifest', 'out', 'provider', 'tracked-only'])
+const VALUE_FLAGS = new Set(['baseline', 'json', 'manifest', 'out', 'provider'])
 
 function parseArgs(argv: string[]): Args {
   const [command = 'help', ...rest] = argv
@@ -86,6 +87,16 @@ function readClaimsFile(path: string | undefined): Claim[] {
   } catch (error) {
     throw new FailClosedError(`Could not read claims from ${path}`, [String(error)])
   }
+
+  function requireEvidenceFlags(flags: Args['flags']): { manifest: string; baseline: string } {
+    if (typeof flags.manifest !== 'string') {
+      throw new FailClosedError('--manifest requires a value', ['Pass the manifest.json produced by the exact fetch run used for these claims.'])
+    }
+    if (typeof flags.baseline !== 'string') {
+      throw new FailClosedError('--baseline requires a value', ['Pass the committed baseline claims file whose claim IDs must remain covered.'])
+    }
+    return { manifest: flags.manifest, baseline: flags.baseline }
+  }
   const result = validateClaims(raw)
   if (!result.ok) {
     throw new FailClosedError('Claims failed schema validation; nothing was compared', result.errors)
@@ -101,9 +112,9 @@ function printUsage(): void {
       'Commands:',
       '  sources [--check-urls --allow-network]   List registered sources; optionally verify each URL resolves.',
       '  fetch --allow-network [--provider ID] [--out DIR]   Snapshot registered sources for reading.',
-      '  validate <claims.json>                   Schema-check normalized claims.',
-      '  compare <claims.json> [--json OUT]       Compare claims against published site data.',
-      '  report <claims.json> [--out REPORT.md]   Render the evidence report.',
+      '  validate <claims.json> --manifest FILE --baseline FILE   Validate normalized claims and evidence.',
+      '  compare <claims.json> --manifest FILE --baseline FILE [--json OUT]   Compare verified claims.',
+      '  report <claims.json> --manifest FILE --baseline FILE [--out REPORT.md]   Render the verified evidence report.',
       '',
       'Exit codes: 0 clean, 1 fail-closed error, 2 findings require action.',
     ].join('\n'),
@@ -156,6 +167,7 @@ async function commandFetch(flags: Args['flags']): Promise<number> {
     allowNetwork: flags['allow-network'] === true,
     runDir: outDir,
     ...(providers ? { providers } : {}),
+    trackedOnly: flags['tracked-only'] === true,
   })
 
   const failed = results.filter((result) => !result.ok)
@@ -173,14 +185,18 @@ async function commandFetch(flags: Args['flags']): Promise<number> {
   return EXIT_OK
 }
 
-function commandValidate(positional: string[]): number {
+function commandValidate(positional: string[], flags: Args['flags']): number {
   const claims = readClaimsFile(positional[0])
-  console.log(`${claims.length} claims passed schema validation.`)
+  const evidence = requireEvidenceFlags(flags)
+  assertEvidence(claims, evidence.manifest, evidence.baseline)
+  console.log(`${claims.length} claims passed schema and evidence validation.`)
   return EXIT_OK
 }
 
-async function runComparison(positional: string[]) {
+async function runComparison(positional: string[], flags: Args['flags']) {
   const claims = readClaimsFile(positional[0])
+  const evidence = requireEvidenceFlags(flags)
+  assertEvidence(claims, evidence.manifest, evidence.baseline)
   const loaded = loadRegistry()
   const site = await loadSiteIndex()
   const result = compareClaims(claims, site, loaded)
@@ -188,7 +204,7 @@ async function runComparison(positional: string[]) {
 }
 
 async function commandCompare(positional: string[], flags: Args['flags']): Promise<number> {
-  const { result } = await runComparison(positional)
+  const { result } = await runComparison(positional, flags)
 
   for (const finding of result.findings) {
     console.log(`${finding.status.padEnd(11)} ${finding.action.padEnd(18)} ${finding.provider}/${finding.primitive}/${finding.aspect} — ${finding.detail}`)
@@ -206,7 +222,7 @@ async function commandCompare(positional: string[], flags: Args['flags']): Promi
 }
 
 async function commandReport(positional: string[], flags: Args['flags']): Promise<number> {
-  const { claims, loaded, result } = await runComparison(positional)
+  const { claims, loaded, result } = await runComparison(positional, flags)
   const markdown = renderReport(result, { registryVersion: loaded.registry.version, claimCount: claims.length })
 
   if (typeof flags.out === 'string') {
@@ -228,7 +244,7 @@ async function main(): Promise<number> {
     case 'fetch':
       return commandFetch(flags)
     case 'validate':
-      return commandValidate(positional)
+      return commandValidate(positional, flags)
     case 'compare':
       return commandCompare(positional, flags)
     case 'report':

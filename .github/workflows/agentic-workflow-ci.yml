@@ -1,0 +1,63 @@
+name: Agentic workflow CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/weekly-provider-refresh.md'
+      - '.github/workflows/weekly-provider-refresh.lock.yml'
+      - '.github/workflows/agentic-workflow-ci.yml'
+      - '.github/aw/actions-lock.json'
+      - '.gitattributes'
+      - '.github/skills/refresh-provider-docs/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/weekly-provider-refresh.md'
+      - '.github/workflows/weekly-provider-refresh.lock.yml'
+      - '.github/workflows/agentic-workflow-ci.yml'
+      - '.github/aw/actions-lock.json'
+      - '.gitattributes'
+      - '.github/skills/refresh-provider-docs/**'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - uses: oven-sh/setup-bun@3d267786b128fe76c2f16a390aa2448b815359f3 # v2.1.2
+        with:
+          bun-version: 1.x
+
+      - name: Test deterministic provider refresh
+        working-directory: .github/skills/refresh-provider-docs
+        run: bun test
+
+      - name: Install pinned Agentic Workflows compiler
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh extension install github/gh-aw --pin v0.86.2
+
+      - name: Verify compiled workflow is current
+        run: |
+          set -euo pipefail
+          gh aw compile weekly-provider-refresh
+          git diff --exit-code -- \
+            .github/workflows/weekly-provider-refresh.lock.yml \
+            .github/aw/actions-lock.json \
+            .gitattributes
+
+      - name: Reject issue-write capability
+        run: |
+          set -euo pipefail
+          if grep -Eq '^[[:space:]]+issues:[[:space:]]+write$' .github/workflows/weekly-provider-refresh.lock.yml; then
+            echo "The provider refresh workflow must not request issues: write." >&2
+            exit 1
+          fi

@@ -108,6 +108,26 @@ export interface Claim {
   notes?: string
 }
 
+export interface ManifestSource {
+  sourceId: string
+  provider: string
+  url: string
+  requestedUrl: string
+  finalUrl: string | null
+  status: number
+  ok: boolean
+  bytes: number
+  contentType: string | null
+  retrievedAt: string
+  snapshotPath: string | null
+  error?: string
+}
+
+export interface FetchManifest {
+  retrievedAt: string
+  results: ManifestSource[]
+}
+
 export interface Finding {
   claimId: string
   provider: string
@@ -271,6 +291,7 @@ export function validateClaims(input: unknown): ValidationResult<Claim[]> {
   }
 
   const claims: Claim[] = []
+  const seenClaimIds = new Set<string>()
   input.forEach((rawClaim, index) => {
     if (!isRecord(rawClaim)) {
       errors.push(`claim[${index}]: expected an object`)
@@ -278,6 +299,10 @@ export function validateClaims(input: unknown): ValidationResult<Claim[]> {
     }
     const id = requireString(rawClaim, 'id', `claim[${index}]`, errors)
     const where = `claim "${id || index}"`
+    if (id !== '') {
+      if (seenClaimIds.has(id)) errors.push(`${where}: duplicate claim id`)
+      seenClaimIds.add(id)
+    }
     requireString(rawClaim, 'provider', where, errors)
     requireString(rawClaim, 'primitive', where, errors)
     const aspect = requireEnum(rawClaim, 'aspect', ASPECTS, where, errors)
@@ -313,6 +338,102 @@ export function validateClaims(input: unknown): ValidationResult<Claim[]> {
 
   if (errors.length > 0) return { ok: false, errors }
   return { ok: true, value: claims }
+}
+
+export function validateManifest(input: unknown): ValidationResult<FetchManifest> {
+  const errors: string[] = []
+  if (!isRecord(input)) return { ok: false, errors: ['manifest: expected an object'] }
+
+  const retrievedAt = requireString(input, 'retrievedAt', 'manifest', errors)
+  if (retrievedAt !== '' && !isRealCalendarDate(retrievedAt)) {
+    errors.push(`manifest: "retrievedAt" must be a real ISO 8601 calendar date, got "${retrievedAt}"`)
+  }
+  if (!Array.isArray(input.results) || input.results.length === 0) {
+    errors.push('manifest: "results" must be a non-empty array')
+    return { ok: false, errors }
+  }
+
+  const seen = new Set<string>()
+  for (const [index, rawResult] of input.results.entries()) {
+    if (!isRecord(rawResult)) {
+      errors.push(`manifest result[${index}]: expected an object`)
+      continue
+    }
+    const sourceId = requireString(rawResult, 'sourceId', `manifest result[${index}]`, errors)
+    const where = `manifest source "${sourceId || index}"`
+    requireString(rawResult, 'provider', where, errors)
+    requireHttpsUrl(rawResult, 'url', where, errors)
+    requireHttpsUrl(rawResult, 'requestedUrl', where, errors)
+    if (rawResult.finalUrl !== null) requireHttpsUrl(rawResult, 'finalUrl', where, errors)
+    if (typeof rawResult.status !== 'number') errors.push(`${where}: "status" must be a number`)
+    if (typeof rawResult.ok !== 'boolean') errors.push(`${where}: "ok" must be a boolean`)
+    if (typeof rawResult.bytes !== 'number' || rawResult.bytes < 0) errors.push(`${where}: "bytes" must be a non-negative number`)
+    if (rawResult.contentType !== null && typeof rawResult.contentType !== 'string') {
+      errors.push(`${where}: "contentType" must be a string or null`)
+    }
+    const sourceRetrievedAt = requireString(rawResult, 'retrievedAt', where, errors)
+    if (sourceRetrievedAt !== '' && !isRealCalendarDate(sourceRetrievedAt)) {
+      errors.push(`${where}: "retrievedAt" must be a real ISO 8601 calendar date, got "${sourceRetrievedAt}"`)
+    }
+    if (rawResult.snapshotPath !== null && typeof rawResult.snapshotPath !== 'string') {
+      errors.push(`${where}: "snapshotPath" must be a string or null`)
+    }
+    if (rawResult.ok === true) {
+      if (typeof rawResult.finalUrl !== 'string' || rawResult.finalUrl.trim() === '') {
+        errors.push(`${where}: a successful result must include "finalUrl"`)
+      }
+      if (typeof rawResult.snapshotPath !== 'string' || rawResult.snapshotPath.trim() === '') {
+        errors.push(`${where}: a successful result must include "snapshotPath"`)
+      }
+      if (typeof rawResult.contentType !== 'string' || rawResult.contentType.trim() === '') {
+        errors.push(`${where}: a successful result must include "contentType"`)
+      }
+      if (typeof rawResult.status !== 'number' || rawResult.status < 200 || rawResult.status >= 300) {
+        errors.push(`${where}: a successful result must have a 2xx "status"`)
+      }
+      if (typeof rawResult.bytes !== 'number' || rawResult.bytes <= 0) {
+        errors.push(`${where}: a successful result must have a positive "bytes" count`)
+      }
+    }
+    if (sourceId !== '') {
+      if (seen.has(sourceId)) errors.push(`${where}: duplicate source id`)
+      seen.add(sourceId)
+    }
+  }
+
+  if (errors.length > 0) return { ok: false, errors }
+  return { ok: true, value: input as unknown as FetchManifest }
+}
+
+export function validateEvidence(claims: Claim[], manifest: FetchManifest, baselineClaims: Claim[]): ValidationResult<Claim[]> {
+  const errors: string[] = []
+  const manifestBySource = new Map(manifest.results.map((result) => [result.sourceId, result]))
+
+  for (const claim of claims) {
+    const source = manifestBySource.get(claim.sourceId)
+    if (!source) {
+      errors.push(`claim "${claim.id}": source "${claim.sourceId}" is absent from this fetch manifest`)
+      continue
+    }
+    if (!source.ok) {
+      errors.push(`claim "${claim.id}": source "${claim.sourceId}" did not fetch successfully in this manifest`)
+    }
+    if (source.provider !== claim.provider) {
+      errors.push(`claim "${claim.id}": manifest source "${claim.sourceId}" belongs to "${source.provider}", not "${claim.provider}"`)
+    }
+    if (claim.retrievedAt.slice(0, 10) !== source.retrievedAt.slice(0, 10)) {
+      errors.push(
+        `claim "${claim.id}": retrieval date ${claim.retrievedAt.slice(0, 10)} does not match manifest source date ${source.retrievedAt.slice(0, 10)}`,
+      )
+    }
+  }
+
+  const currentIds = new Set(claims.map((claim) => claim.id))
+  for (const baseline of baselineClaims) {
+    if (!currentIds.has(baseline.id)) errors.push(`claims: missing required baseline claim id "${baseline.id}"`)
+  }
+
+  return errors.length > 0 ? { ok: false, errors } : { ok: true, value: claims }
 }
 
 /**

@@ -1,5 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'fs'
+import { mkdtempSync, rmSync } from 'fs'
+import { tmpdir } from 'os'
 import { dirname, join } from 'path'
 import { fileURLToPath } from 'url'
 import { fetchSources, markdownUrlFor, newRunDir, resolveRunDir, snapshotRoot } from '../scripts/lib/fetch.ts'
@@ -59,6 +61,13 @@ describe('retrieval', () => {
     await expect(fetchSources(loaded, { allowNetwork: true, providers: ['copilto'] })).rejects.toThrow('Unknown provider id')
   })
 
+  test('fails closed when tracked-only retrieval explicitly names a candidate', async () => {
+    const fixture = loadRegistry(join(skillRoot, 'fixtures/registry.json'))
+    await expect(fetchSources(fixture, { allowNetwork: true, providers: ['otherprov'], trackedOnly: true })).rejects.toThrow(
+      'Candidate provider cannot be fetched with --tracked-only',
+    )
+  })
+
   test('gives every run its own snapshot directory', () => {
     const first = newRunDir(new Date('2026-08-26T00:00:00Z'))
     const second = newRunDir(new Date('2026-08-26T00:00:01Z'))
@@ -71,6 +80,90 @@ describe('retrieval', () => {
     const first = newRunDir(now)
     const second = newRunDir(now)
     expect(first).not.toBe(second)
+  })
+
+  test('excludes candidate providers from tracked-only retrieval', async () => {
+    const fixture = loadRegistry(join(skillRoot, 'fixtures/registry.json'))
+    const originalFetch = globalThis.fetch
+    const out = mkdtempSync(join(tmpdir(), 'provider-docs-test-'))
+    globalThis.fetch = (() =>
+      Promise.resolve(
+        new Response('# docs', {
+          status: 200,
+          headers: { 'content-type': 'text/markdown' },
+        }),
+      )) as typeof fetch
+    try {
+      const results = await fetchSources(fixture, { allowNetwork: true, runDir: out, trackedOnly: true })
+      expect(results.every((result) => result.provider === 'testprov')).toBe(true)
+    } finally {
+      globalThis.fetch = originalFetch
+      rmSync(out, { recursive: true })
+    }
+  })
+
+  test('fails oversized responses closed', async () => {
+    const fixture = loadRegistry(join(skillRoot, 'fixtures/registry.json'))
+    const originalFetch = globalThis.fetch
+    const out = mkdtempSync(join(tmpdir(), 'provider-docs-test-'))
+    globalThis.fetch = (() =>
+      Promise.resolve(
+        new Response('x'.repeat(11), {
+          status: 200,
+          headers: { 'content-type': 'text/plain' },
+        }),
+      )) as typeof fetch
+    try {
+      const results = await fetchSources(fixture, { allowNetwork: true, runDir: out, providers: ['testprov'], maxBytes: 10 })
+      expect(results.every((result) => !result.ok && result.error?.includes('exceeds'))).toBe(true)
+    } finally {
+      globalThis.fetch = originalFetch
+      rmSync(out, { recursive: true })
+    }
+  })
+
+  test('records expected final URLs and rejects unexpected redirects', async () => {
+    const fixture = loadRegistry(join(skillRoot, 'fixtures/registry.json'))
+    const originalFetch = globalThis.fetch
+    const out = mkdtempSync(join(tmpdir(), 'provider-docs-test-'))
+    globalThis.fetch = ((input) =>
+      Promise.resolve(
+        Object.defineProperty(
+          new Response('# docs', {
+            status: 200,
+            headers: { 'content-type': 'text/markdown' },
+          }),
+          'url',
+          { value: String(input) },
+        ),
+      )) as typeof fetch
+    try {
+      const results = await fetchSources(fixture, { allowNetwork: true, runDir: out, providers: ['testprov'] })
+      expect(results.every((result) => result.ok && result.finalUrl === result.requestedUrl)).toBe(true)
+    } finally {
+      globalThis.fetch = originalFetch
+      rmSync(out, { recursive: true })
+    }
+
+    const redirected = mkdtempSync(join(tmpdir(), 'provider-docs-test-'))
+    globalThis.fetch = (() =>
+      Promise.resolve(
+        Object.defineProperty(
+          new Response('# docs', {
+            status: 200,
+            headers: { 'content-type': 'text/markdown' },
+          }),
+          'url',
+          { value: 'https://attacker.example/unexpected' },
+        ),
+      )) as typeof fetch
+    try {
+      const results = await fetchSources(fixture, { allowNetwork: true, runDir: redirected, providers: ['testprov'] })
+      expect(results.every((result) => !result.ok && result.error?.includes('Unexpected final URL'))).toBe(true)
+    } finally {
+      globalThis.fetch = originalFetch
+      rmSync(redirected, { recursive: true })
+    }
   })
 })
 

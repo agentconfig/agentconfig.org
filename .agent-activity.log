@@ -1,0 +1,55 @@
+2026-08-25T01:16:18Z LOCK copilot-16021df8 phase-1-published-content correcting stale provider claims
+2026-08-25T01:36:05Z RELEASE copilot-16021df8 phase-1-published-content PR https://github.com/agentconfig/agentconfig.org/pull/35
+2026-08-25T05:16:38Z LOCK copilot-16021df8 phase-2-agent-harness aligning canonical AGENTS.md compatibility
+2026-08-25T05:29:43Z COMMIT_START copilot-16021df8 git-staging phase 2 harness commit
+2026-08-25T05:30:53Z COMMIT_END copilot-16021df8 git-staging phase 2 harness commit
+2026-08-25T05:30:53Z UNLOCK copilot-16021df8 phase-2-agent-harness
+2026-08-25T05:55:31Z LOCK copilot-16021df8 phase-3-provider-docs-skill building provider documentation skill
+2026-08-25T06:15:28Z UNLOCK copilot-16021df8 phase-3-provider-docs-skill draft PR 37 open for review
+2026-08-25T20:05:42Z LOCK copilot-16021df8 phase-5-hooks-guide building hooks guide
+2026-08-25T20:05:42Z WORKING copilot-16021df8 site/src/data/hooksTutorial.ts planning hooks content
+2026-08-25T20:24:08Z UNLOCK copilot-16021df8 phase-5-hooks-guide draft PR open for review
+2026-08-25T22:43:40Z LOCK copilot-e7655e74 site/src/data/hooksTutorial.ts addressing PR 40 review feedback
+2026-08-25T22:48:00Z COMMIT_START copilot-e7655e74 git-staging PR 40 review fix
+2026-08-25T22:50:00Z COMMIT_END copilot-e7655e74 git-staging PR 40 review fix
+2026-08-25T22:50:00Z UNLOCK copilot-e7655e74 site/src/data/hooksTutorial.ts review fix pushed in 639d567
+2026-08-26T15:58:30Z WORKING copilot-e7655e74 hooks-home-ux addressing post-phase-7 visual and content feedback
+2026-08-26T16:44:17Z COMMIT_START copilot-michelle git-staging committing Hooks examples-first UX
+2026-08-26T16:44:18Z COMMIT_END copilot-michelle git-staging
+2026-08-26T16:57:12Z LOCK copilot-michelle site/src/components/HooksPage/HooksSections.tsx refining Lifecycle Events
+2026-08-26T16:57:12Z LOCK copilot-michelle .github/skills/generate-llms/scripts/generate-llms-full.ts refining Lifecycle Events
+2026-08-26T16:57:12Z LOCK copilot-michelle site/tests/e2e/hooks-page.spec.ts refining Lifecycle Events
+2026-08-26T16:57:12Z LOCK copilot-michelle site/public refining Lifecycle Events
+2026-08-26T16:58:21Z WORKING agent-automation repo-generation
+2026-08-26T17:17:56Z COMMIT_START copilot-michelle git-staging committing Lifecycle Events refinement
+2026-08-26T17:18:11Z COMMIT_END copilot-michelle git-staging
+2026-08-26T17:18:11Z UNLOCK copilot-michelle site/src/components/HooksPage/HooksSections.tsx refining Lifecycle Events
+2026-08-26T17:18:11Z UNLOCK copilot-michelle .github/skills/generate-llms/scripts/generate-llms-full.ts refining Lifecycle Events
+2026-08-26T17:18:11Z UNLOCK copilot-michelle site/tests/e2e/hooks-page.spec.ts refining Lifecycle Events
+2026-08-26T17:18:11Z UNLOCK copilot-michelle site/public refining Lifecycle Events
+2026-08-26T18:22:27Z LOCK copilot-michelle site/src/data/hooksTutorial.ts adding Cursor to Hooks guide
+2026-08-26T18:22:27Z LOCK copilot-michelle site/src/components/HooksPage adding Cursor to Hooks guide
+2026-08-26T18:22:27Z LOCK copilot-michelle site/tests/e2e/hooks-page.spec.ts adding Cursor to Hooks guide
+2026-08-26T18:22:27Z LOCK copilot-michelle .github/skills/generate-llms/scripts/generate-llms-full.ts adding Cursor to Hooks guide
+2026-08-26T18:22:27Z LOCK copilot-michelle site/public adding Cursor to Hooks guide
+2026-08-26T18:52:31Z COMMIT_START copilot-michelle git-staging committing Cursor Hooks support
+2026-08-26T18:52:32Z COMMIT_END copilot-michelle git-staging
+2026-08-26T18:52:32Z UNLOCK copilot-michelle site/src/data/hooksTutorial.ts
+2026-08-26T18:52:32Z UNLOCK copilot-michelle site/src/components/HooksPage
+2026-08-26T18:52:32Z UNLOCK copilot-michelle site/tests/e2e/hooks-page.spec.ts
+2026-08-26T18:52:32Z UNLOCK copilot-michelle .github/skills/generate-llms/scripts/generate-llms-full.ts
+2026-08-26T18:52:32Z UNLOCK copilot-michelle site/public
+2026-08-26T18:59:18Z LOCK copilot-e7655e74 site/src/components/Navigation/ global provider chooser
+2026-08-26T18:59:18Z LOCK copilot-e7655e74 site/src/components/HooksPage/ global provider chooser
+2026-08-26T18:59:18Z LOCK copilot-e7655e74 site/tests/e2e/ global provider chooser
+2026-08-26T18:59:54Z LOCK copilot-e7655e74 site/src/lib/providerSelection.ts global provider chooser
+2026-08-26T19:24:07Z COMMIT_START copilot-e7655e74 git-staging global provider chooser
+2026-08-26T19:28:09Z COMMIT_END copilot-e7655e74 git-staging global provider chooser
+2026-08-26T19:28:09Z UNLOCK copilot-e7655e74 site/src/components/Navigation/ global provider chooser
+2026-08-26T19:28:09Z UNLOCK copilot-e7655e74 site/src/components/HooksPage/ global provider chooser
+2026-08-26T19:28:09Z UNLOCK copilot-e7655e74 site/tests/e2e/ global provider chooser
+2026-08-26T19:28:09Z UNLOCK copilot-e7655e74 site/src/lib/providerSelection.ts global provider chooser
+2026-08-26T20:31:30Z LOCK copilot-e7655e74 .github/skills/refresh-provider-docs phase8 weekly provider refresh
+2026-08-26T20:31:30Z LOCK copilot-e7655e74 .github/workflows phase8 weekly provider refresh
+2026-08-26T22:17:43Z UNLOCK copilot-e7655e74 .github/skills/refresh-provider-docs phase8 weekly provider refresh
+2026-08-26T22:17:43Z UNLOCK copilot-e7655e74 .github/workflows phase8 weekly provider refresh

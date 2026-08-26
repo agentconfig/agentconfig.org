@@ -44,7 +44,7 @@ bun .github/skills/refresh-provider-docs/scripts/provider-docs.ts fetch --allow-
 
 Retrieval requires `--allow-network` every time. Nothing in this skill runs during an ordinary site build, and the site never depends on network access to render.
 
-Snapshots and a `manifest.json` are written to a fresh run-specific directory outside the repository, printed at the end of the run. Each run gets its own directory so a partial or provider-scoped retrieval can never leave older snapshots beside the new manifest, where they would be read back as current evidence. Each snapshot carries its source id, canonical URL, authority, and retrieval timestamp in a header comment. An unknown `--provider` value fails closed rather than reporting an empty run as a success. If any source fails, the command exits non-zero: fix or retire the registry entry rather than publishing a claim you could not retrieve.
+Snapshots and a `manifest.json` are written to a fresh run-specific directory outside the repository, printed at the end of the run. Each run gets its own directory so a partial or provider-scoped retrieval can never leave older snapshots beside the new manifest, where they would be read back as current evidence. Each snapshot carries its source id, canonical URL, requested URL, final URL, content type, authority, and retrieval timestamp in a header comment. Responses are limited to 512 KB, non-document content types fail closed, and unexpected redirect targets are rejected. An unknown `--provider` value fails closed rather than reporting an empty run as a success. Scheduled runs add `--tracked-only` so candidate providers cannot silently enter the compatibility refresh. If any source fails, the command exits non-zero: fix or retire the registry entry rather than publishing a claim you could not retrieve.
 
 ### 2. Read the snapshots and write claims
 
@@ -79,10 +79,12 @@ See `references/NORMALIZATION.md` for the aspect vocabulary and worked examples.
 
 ```bash
 S=.github/skills/refresh-provider-docs
-bun $S/scripts/provider-docs.ts validate claims.json
-bun $S/scripts/provider-docs.ts compare claims.json --json findings.json
-bun $S/scripts/provider-docs.ts report claims.json --out report.md
+bun $S/scripts/provider-docs.ts validate claims.json --manifest manifest.json --baseline baseline-claims.json
+bun $S/scripts/provider-docs.ts compare claims.json --manifest manifest.json --baseline baseline-claims.json --json findings.json
+bun $S/scripts/provider-docs.ts report claims.json --manifest manifest.json --baseline baseline-claims.json --out report.md
 ```
+
+The manifest and baseline flags are blocking evidence gates. Every claim source must be present and successful in the exact fetch manifest, its retrieval date must match that manifest entry, and every committed baseline claim ID must remain in the new claim set. Missing or truncated evidence exits `1`; it can never look like a clean refresh.
 
 Each finding carries one of four statuses:
 
@@ -103,6 +105,8 @@ Treat `extend-site-model` findings as content design rather than a data edit. Th
 
 Re-run the comparison after editing so the report reflects the change.
 
+The scheduled workflow is evidence-only. It may update only the weekly claims, findings, and report files and may open only a draft pull request. It cannot edit `primitives.ts`, generated content, the registry, skills, or workflows. A person reviews the evidence and applies factual site changes in a separate change.
+
 ## Fail-Closed Rules
 
 The comparison refuses to guess. It returns `ambiguous` and asks for a person when:
@@ -113,7 +117,7 @@ The comparison refuses to guess. It returns `ambiguous` and asks for a person wh
 - The evidence is older than the registry's freshness limit.
 - The site contradicts itself between what it publishes and any other indexed site data source (a defense against drift, even though `comparison.ts` is now derived from `primitives.ts` and should not diverge in normal operation).
 
-An empty claim set is treated as a failed retrieval, not a clean run.
+An empty claim set, a missing baseline claim ID, a claim not bound to the exact successful manifest entry, or a mismatched retrieval date is treated as a failed retrieval, not a clean run.
 
 ## The Source Registry
 
