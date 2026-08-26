@@ -227,7 +227,7 @@ Both providers support multiple configuration scopes:
 
 | Feature | Claude Code | VS Code/Copilot |
 |---------|-------------|-----------------|
-| Transports | stdio, http, sse | stdio, http, sse |
+| Transports | stdio, http, sse, websocket | stdio, http, sse |
 | Tools | ✓ | ✓ |
 | Resources | ✓ | ✓ |
 | Prompts | ✓ (/mcp) | ✓ (/mcp.*) |

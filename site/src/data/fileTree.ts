@@ -374,6 +374,41 @@ Review this PR for:
       ],
     },
     {
+      id: 'copilot-vscode',
+      name: '.vscode',
+      type: 'folder',
+      children: [
+        {
+          id: 'copilot-vscode-mcp',
+          name: 'mcp.json',
+          type: 'file',
+          details: {
+            label: 'MCP Servers',
+            description: 'Configures MCP servers available to Copilot Chat in VS Code. Can also be set in workspace settings.json.',
+            whatGoesHere: [
+              'MCP server command and args, or a remote server URL',
+              'Input variables for secrets (API keys, tokens)',
+              'Server-specific environment variables',
+            ],
+            whenLoaded: 'Loaded when the workspace opens. Servers appear as available tools in Copilot Chat.',
+            loadOrder: 7,
+            example: `{
+  "servers": {
+    "github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/"
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@microsoft/mcp-server-playwright"]
+    }
+  }
+}`,
+          },
+        },
+      ],
+    },
+    {
       id: 'copilot-agents-md',
       name: 'AGENTS.md',
       type: 'file',
@@ -1816,86 +1851,25 @@ export const codexTree: FileNode = {
       type: 'folder',
       children: [
         {
-          id: 'codex-skills-folder',
-          name: 'skills',
-          type: 'folder',
-          children: [
-            {
-              id: 'codex-skill-debug-ci',
-              name: 'debug-ci',
-              type: 'folder',
-              children: [
-                {
-                  id: 'codex-skill-debug-ci-file',
-                  name: 'SKILL.md',
-                  type: 'file',
-                  details: {
-                    label: 'Skill',
-                    description: 'A reusable, multi-step workflow that Codex can invoke automatically based on task description.',
-                    whatGoesHere: [
-                      'Skill metadata (name, description in frontmatter)',
-                      'When to use this skill',
-                      'Step-by-step instructions',
-                      'Best practices and patterns',
-                    ],
-                    whenLoaded: 'Auto-selected based on task. The description is matched against user requests.',
-                    loadOrder: 6,
-                    example: `---
-name: debug-ci
-description: Diagnose and fix failing CI runs. Use when continuous integration tests fail.
----
+          id: 'codex-config-toml',
+          name: 'config.toml',
+          type: 'file',
+          details: {
+            label: 'Project Config',
+            description: 'Project-scoped Codex settings, including MCP server configurations. Merged with the global ~/.codex/config.toml.',
+            whatGoesHere: [
+              'Project-specific model preferences',
+              'Project-scoped MCP server configurations',
+              'Sandbox and approval overrides for this project',
+            ],
+            whenLoaded: 'Loaded for this project, merged with the global config (project values take precedence).',
+            loadOrder: 1,
+            example: `# .codex/config.toml
 
-# Debug CI Failures
-
-## When to Use
-- Use when CI/CD pipeline fails
-- When tests pass locally but fail in CI
-
-## Steps
-1. Check CI logs for error message
-2. Identify environment differences
-3. Reproduce locally with same environment
-4. Fix and verify in CI`,
-                  },
-                },
-              ],
-            },
-            {
-              id: 'codex-skill-refactor',
-              name: 'refactor',
-              type: 'folder',
-              children: [
-                {
-                  id: 'codex-skill-refactor-file',
-                  name: 'SKILL.md',
-                  type: 'file',
-                  details: {
-                    label: 'Skill',
-                    description: 'A reusable workflow for safe code refactoring.',
-                    whatGoesHere: [
-                      'Skill metadata (name, description)',
-                      'Refactoring guidelines',
-                      'Test-driven approach',
-                    ],
-                    whenLoaded: 'Auto-selected when refactoring tasks are detected.',
-                    loadOrder: 6,
-                    example: `---
-name: refactor
-description: Refactor code while maintaining tests and functionality.
----
-
-# Safe Refactoring
-
-## Instructions
-1. Run existing tests first
-2. Make incremental changes
-3. Run tests after each change
-4. Commit working states`,
-                  },
-                },
-              ],
-            },
-          ],
+[mcp_servers.internal-docs]
+command = "npx"
+args = ["-y", "@acme/mcp-server-docs"]`,
+          },
         },
         {
           id: 'codex-agents-folder',
@@ -1962,6 +1936,95 @@ You are a code reviewer. When invoked:
   }
 }`,
           },
+        },
+      ],
+    },
+    {
+      id: 'codex-agents-skills',
+      name: '.agents',
+      type: 'folder',
+      children: [
+        {
+          id: 'codex-agents-skills-folder',
+          name: 'skills',
+          type: 'folder',
+          children: [
+            {
+              id: 'codex-skill-debug-ci',
+              name: 'debug-ci',
+              type: 'folder',
+              children: [
+                {
+                  id: 'codex-skill-debug-ci-file',
+                  name: 'SKILL.md',
+                  type: 'file',
+                  details: {
+                    label: 'Skill',
+                    description: 'A reusable, multi-step workflow that Codex can invoke automatically based on task description. Discovered from .agents/skills, walked from the working directory up to the repository root.',
+                    whatGoesHere: [
+                      'Skill metadata (name, description in frontmatter)',
+                      'When to use this skill',
+                      'Step-by-step instructions',
+                      'Best practices and patterns',
+                    ],
+                    whenLoaded: 'Auto-selected based on task. The description is matched against user requests.',
+                    loadOrder: 6,
+                    example: `---
+name: debug-ci
+description: Diagnose and fix failing CI runs. Use when continuous integration tests fail.
+---
+
+# Debug CI Failures
+
+## When to Use
+- Use when CI/CD pipeline fails
+- When tests pass locally but fail in CI
+
+## Steps
+1. Check CI logs for error message
+2. Identify environment differences
+3. Reproduce locally with same environment
+4. Fix and verify in CI`,
+                  },
+                },
+              ],
+            },
+            {
+              id: 'codex-skill-refactor',
+              name: 'refactor',
+              type: 'folder',
+              children: [
+                {
+                  id: 'codex-skill-refactor-file',
+                  name: 'SKILL.md',
+                  type: 'file',
+                  details: {
+                    label: 'Skill',
+                    description: 'A reusable workflow for safe code refactoring.',
+                    whatGoesHere: [
+                      'Skill metadata (name, description)',
+                      'Refactoring guidelines',
+                      'Test-driven approach',
+                    ],
+                    whenLoaded: 'Auto-selected when refactoring tasks are detected.',
+                    loadOrder: 6,
+                    example: `---
+name: refactor
+description: Refactor code while maintaining tests and functionality.
+---
+
+# Safe Refactoring
+
+## Instructions
+1. Run existing tests first
+2. Make incremental changes
+3. Run tests after each change
+4. Commit working states`,
+                  },
+                },
+              ],
+            },
+          ],
         },
       ],
     },
@@ -2190,52 +2253,6 @@ prefix_rule(
           ],
         },
         {
-          id: 'codex-global-skills',
-          name: 'skills',
-          type: 'folder',
-          children: [
-            {
-              id: 'codex-global-skill-pr',
-              name: 'git-pr-workflow',
-              type: 'folder',
-              children: [
-                {
-                  id: 'codex-global-skill-pr-file',
-                  name: 'SKILL.md',
-                  type: 'file',
-                  details: {
-                    label: 'Global Skill',
-                    description: 'A personal skill available across all your projects.',
-                    whatGoesHere: [
-                      'Skill metadata (name, description)',
-                      'Step-by-step instructions',
-                      'Common workflows you repeat across repos',
-                    ],
-                    whenLoaded: 'Auto-selected based on task. Available globally.',
-                    loadOrder: 4,
-                    example: `---
-name: git-pr-workflow
-description: Create well-formed PRs with conventional commits and proper descriptions.
----
-
-# Git PR Workflow
-
-## Before Creating PR
-1. Ensure commits follow conventional format
-2. Rebase on latest main if needed
-3. Run tests locally
-
-## PR Description
-- Summary of changes
-- Link to related issue(s)
-- Testing done`,
-                  },
-                },
-              ],
-            },
-          ],
-        },
-        {
           id: 'codex-global-agents-folder',
           name: 'agents',
           type: 'folder',
@@ -2292,6 +2309,59 @@ Summarize the staged diff as a conventional commit message
   }
 }`,
           },
+        },
+      ],
+    },
+    {
+      id: 'codex-global-agents-skills',
+      name: '.agents',
+      type: 'folder',
+      children: [
+        {
+          id: 'codex-global-agents-skills-folder',
+          name: 'skills',
+          type: 'folder',
+          children: [
+            {
+              id: 'codex-global-skill-pr',
+              name: 'git-pr-workflow',
+              type: 'folder',
+              children: [
+                {
+                  id: 'codex-global-skill-pr-file',
+                  name: 'SKILL.md',
+                  type: 'file',
+                  details: {
+                    label: 'Global Skill',
+                    description: 'A personal skill available across all your projects. Discovered from ~/.agents/skills.',
+                    whatGoesHere: [
+                      'Skill metadata (name, description)',
+                      'Step-by-step instructions',
+                      'Common workflows you repeat across repos',
+                    ],
+                    whenLoaded: 'Auto-selected based on task. Available globally.',
+                    loadOrder: 4,
+                    example: `---
+name: git-pr-workflow
+description: Create well-formed PRs with conventional commits and proper descriptions.
+---
+
+# Git PR Workflow
+
+## Before Creating PR
+1. Ensure commits follow conventional format
+2. Rebase on latest main if needed
+3. Run tests locally
+
+## PR Description
+- Summary of changes
+- Link to related issue(s)
+- Testing done`,
+                  },
+                },
+              ],
+            },
+          ],
         },
       ],
     },
