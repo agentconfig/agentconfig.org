@@ -400,7 +400,7 @@ Review this PR for:
     },
     "playwright": {
       "command": "npx",
-      "args": ["-y", "@microsoft/mcp-server-playwright"]
+      "args": ["-y", "@playwright/mcp"]
     }
   }
 }`,
@@ -1856,13 +1856,13 @@ export const codexTree: FileNode = {
           type: 'file',
           details: {
             label: 'Project Config',
-            description: 'Project-scoped Codex settings, including MCP server configurations. Merged with the global ~/.codex/config.toml.',
+            description: 'Project-scoped Codex settings, including MCP server configurations. Merged with the global ~/.codex/config.toml — but only once the project directory is marked trusted.',
             whatGoesHere: [
               'Project-specific model preferences',
               'Project-scoped MCP server configurations',
               'Sandbox and approval overrides for this project',
             ],
-            whenLoaded: 'Loaded for this project, merged with the global config (project values take precedence).',
+            whenLoaded: 'Loaded for this project and merged with the global config (project values take precedence), but only when the directory has been marked trusted. In untrusted directories this file is ignored, so project MCP servers and overrides silently have no effect until trust is granted.',
             loadOrder: 1,
             example: `# .codex/config.toml
 

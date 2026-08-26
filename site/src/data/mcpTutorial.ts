@@ -323,7 +323,7 @@ Commands:
         "servers": {
           "playwright": {
             "command": "npx",
-            "args": ["-y", "@microsoft/mcp-server-playwright"]
+            "args": ["-y", "@playwright/mcp"]
           },
           "database": {
             "command": "npx",
