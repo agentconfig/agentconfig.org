@@ -28,7 +28,7 @@ export const furtherReadingLinks: readonly FurtherReadingLink[] = [
   },
   {
     title: 'Claude Code MCP Documentation',
-    url: 'https://docs.anthropic.com/en/docs/claude-code/mcp',
+    url: 'https://code.claude.com/docs/en/mcp',
     source: 'Anthropic',
     description: 'Complete guide to using MCP servers with Claude Code, including installation and configuration.',
   },
@@ -320,7 +320,7 @@ Commands:
 │ Feature            │ Claude Code     │ VS Code/Copilot │
 ├────────────────────┼─────────────────┼─────────────────┤
 │ Transports         │ stdio, http,    │ stdio, http,    │
-│                    │ sse             │ sse             │
+│                    │ sse, websocket  │ sse             │
 ├────────────────────┼─────────────────┼─────────────────┤
 │ Tools              │ ✓               │ ✓               │
 ├────────────────────┼─────────────────┼─────────────────┤

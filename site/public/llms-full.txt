@@ -139,10 +139,10 @@ Reusable multi-step procedures for common tasks.
 
 | Provider | Implementation | Location | Support | Source |
 |----------|---------------|----------|---------|--------|
-| GitHub Copilot | Skill modules in skills directory | .github/skills/*/SKILL.md | full | — |
-| Claude Code | Skill modules in .claude directory | .claude/skills/*/SKILL.md | full | — |
-| Cursor | Skill modules as portable, reusable packages | .cursor/skills/*/SKILL.md | full | — |
-| OpenAI Codex | Skill modules following agentskills.io specification | .codex/skills/*/SKILL.md | full | — |
+| GitHub Copilot | Skill modules in skills directory | .github/skills/<name>/SKILL.md (also .claude/skills, .agents/skills; personal: ~/.copilot/skills, ~/.agents/skills) | full | [Provider documentation](https://docs.github.com/en/copilot/concepts/agents/about-agent-skills) |
+| Claude Code | Skill modules in .claude directory | .claude/skills/<name>/SKILL.md (also ~/.claude/skills/<name>/SKILL.md for personal skills) | full | [Provider documentation](https://code.claude.com/docs/en/skills) |
+| Cursor | Skill modules as portable, reusable packages | .cursor/skills/<name>/SKILL.md (also discovers .agents/skills, .claude/skills, .codex/skills, and their ~/ personal equivalents) | full | [Provider documentation](https://cursor.com/docs/skills) |
+| OpenAI Codex | Skill modules following agentskills.io specification | .agents/skills/<name>/SKILL.md (repo scope, up to repo root); personal: ~/.agents/skills; admin: /etc/codex/skills | full | [Provider documentation](https://developers.openai.com/codex/build-skills) |
 
 ---
 
@@ -193,10 +193,10 @@ External tools for retrieving facts and taking actions.
 
 | Provider | Implementation | Location | Support | Source |
 |----------|---------------|----------|---------|--------|
-| GitHub Copilot | MCP servers and tool calling | VS Code MCP settings | full | — |
+| GitHub Copilot | MCP servers and tool calling | .vscode/mcp.json, VS Code settings.json (also Visual Studio, JetBrains IDEs, Xcode, Eclipse) | full | [Provider documentation](https://docs.github.com/en/copilot/how-tos/provide-context/use-mcp-in-your-ide/extend-copilot-chat-with-mcp) |
 | Claude Code | MCP servers and tool calling | .mcp.json or ~/.claude.json | full | [Provider documentation](https://code.claude.com/docs/en/mcp) |
-| Cursor | MCP servers with stdio, SSE, and HTTP transports | .cursor/mcp.json | full | — |
-| OpenAI Codex | MCP servers with stdio and HTTP transports | ~/.codex/config.toml | full | — |
+| Cursor | MCP servers with stdio, SSE, and Streamable HTTP transports | .cursor/mcp.json, ~/.cursor/mcp.json | full | [Provider documentation](https://cursor.com/docs/context/mcp) |
+| OpenAI Codex | MCP servers with stdio and Streamable HTTP transports | ~/.codex/config.toml, .codex/config.toml | full | [Provider documentation](https://developers.openai.com/codex/extend/mcp) |
 
 ---
 
@@ -423,7 +423,7 @@ Support matrix comparing GitHub Copilot, Claude Code, Cursor, and OpenAI Codex:
 |-----------|---------|--------|--------|-------|
 | Agent Mode | ✓ Agent mode in Copilot Chat | ✓ Agentic workflows in Claude Code | ✓ Cursor Agent mode for multi-step execution | ✓ Agentic coding with multi-step execution |
 | Skills / Workflows | ✓ Skill modules in skills directory | ✓ Skill modules in .claude directory | ✓ Skill modules as portable, reusable packages | ✓ Skill modules following agentskills.io specification |
-| Tool Integrations (MCP) | ✓ MCP servers and tool calling | ✓ MCP servers and tool calling | ✓ MCP servers with stdio, SSE, and HTTP transports | ✓ MCP servers with stdio and HTTP transports |
+| Tool Integrations (MCP) | ✓ MCP servers and tool calling | ✓ MCP servers and tool calling | ✓ MCP servers with stdio, SSE, and Streamable HTTP transports | ✓ MCP servers with stdio and Streamable HTTP transports |
 | Persistent Instructions | ✓ AGENTS.md or repository instructions file | ✓ Project memory file with @imports | ✓ Project instructions file | ✓ Project AGENTS.md with hierarchical loading |
 | User Scope Instructions | ✓ User-level settings in VS Code | ✓ User-level memory and config | ✓ User-level settings and preferences | ✓ User-level AGENTS.md and config.toml |
 | Directory / Path Scope Instructions | ✓ Nested AGENTS.md or applyTo instruction files | ✓ Rule files with globs frontmatter | ✓ Rules with path patterns | ✓ Nested AGENTS.md files with hierarchical merge |
@@ -439,8 +439,8 @@ Support matrix comparing GitHub Copilot, Claude Code, Cursor, and OpenAI Codex:
 
 **GitHub Copilot:**
 - Agent Mode: `VS Code Copilot Chat`
-- Skills / Workflows: `.github/skills/*/SKILL.md`
-- Tool Integrations (MCP): `VS Code MCP settings`
+- Skills / Workflows: `.github/skills/<name>/SKILL.md (also .claude/skills, .agents/skills; personal: ~/.copilot/skills, ~/.agents/skills)`
+- Tool Integrations (MCP): `.vscode/mcp.json, VS Code settings.json (also Visual Studio, JetBrains IDEs, Xcode, Eclipse)`
 - Persistent Instructions: `AGENTS.md or .github/copilot-instructions.md`
 - User Scope Instructions: `VS Code settings.json`
 - Directory / Path Scope Instructions: `subdir/AGENTS.md or .github/instructions/*.instructions.md`
@@ -454,7 +454,7 @@ Support matrix comparing GitHub Copilot, Claude Code, Cursor, and OpenAI Codex:
 
 **Claude Code:**
 - Agent Mode: `Claude Code CLI`
-- Skills / Workflows: `.claude/skills/*/SKILL.md`
+- Skills / Workflows: `.claude/skills/<name>/SKILL.md (also ~/.claude/skills/<name>/SKILL.md for personal skills)`
 - Tool Integrations (MCP): `.mcp.json or ~/.claude.json`
 - Persistent Instructions: `CLAUDE.md`
 - User Scope Instructions: `~/.claude/CLAUDE.md`
@@ -469,8 +469,8 @@ Support matrix comparing GitHub Copilot, Claude Code, Cursor, and OpenAI Codex:
 
 **Cursor:**
 - Agent Mode: `Cursor Editor with Agent capabilities`
-- Skills / Workflows: `.cursor/skills/*/SKILL.md`
-- Tool Integrations (MCP): `.cursor/mcp.json`
+- Skills / Workflows: `.cursor/skills/<name>/SKILL.md (also discovers .agents/skills, .claude/skills, .codex/skills, and their ~/ personal equivalents)`
+- Tool Integrations (MCP): `.cursor/mcp.json, ~/.cursor/mcp.json`
 - Persistent Instructions: `.cursor/instructions.md`
 - User Scope Instructions: `~/.cursor/settings.json`
 - Directory / Path Scope Instructions: `.cursor/rules/*.mdc`
@@ -484,8 +484,8 @@ Support matrix comparing GitHub Copilot, Claude Code, Cursor, and OpenAI Codex:
 
 **OpenAI Codex:**
 - Agent Mode: `Codex CLI`
-- Skills / Workflows: `.codex/skills/*/SKILL.md`
-- Tool Integrations (MCP): `~/.codex/config.toml`
+- Skills / Workflows: `.agents/skills/<name>/SKILL.md (repo scope, up to repo root); personal: ~/.agents/skills; admin: /etc/codex/skills`
+- Tool Integrations (MCP): `~/.codex/config.toml, .codex/config.toml`
 - Persistent Instructions: `AGENTS.md`
 - User Scope Instructions: `~/.codex/AGENTS.md`
 - Directory / Path Scope Instructions: `subdir/AGENTS.md`
@@ -2452,7 +2452,7 @@ claude mcp add --transport http sentry https://mcp.sentry.dev/mcp
 ## Further Reading
 
 - [Model Context Protocol Introduction](https://modelcontextprotocol.io/introduction): The official introduction to MCP—an open standard for connecting AI to external tools.
-- [Claude Code MCP Documentation](https://docs.anthropic.com/en/docs/claude-code/mcp): Complete guide to using MCP servers with Claude Code, including installation and configuration.
+- [Claude Code MCP Documentation](https://code.claude.com/docs/en/mcp): Complete guide to using MCP servers with Claude Code, including installation and configuration.
 - [VS Code MCP Servers](https://code.visualstudio.com/docs/copilot/chat/mcp-servers): How to configure and use MCP servers with GitHub Copilot in VS Code.
 - [MCP Specification](https://modelcontextprotocol.io/specification/latest): The complete technical specification for the Model Context Protocol.
 - [Official MCP Servers](https://github.com/modelcontextprotocol/servers): Repository of official and community-contributed MCP server implementations.
