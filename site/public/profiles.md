@@ -7,15 +7,15 @@ can never drift apart.
 
 ## GitHub Copilot
 
-Coverage: 13 primitives tracked — 12 full, 1 partial, 0 DIY/manual. 7 of 13 cited to provider documentation.
+Coverage: 13 primitives tracked — 12 full, 1 partial, 0 DIY/manual. 12 of 13 cited to provider documentation.
 
 ### Instructions
 
 | Primitive | Support | Implementation | Location | Source |
 |-----------|---------|-----------------|----------|--------|
 | Persistent Instructions | full | AGENTS.md or repository instructions file | `AGENTS.md or .github/copilot-instructions.md` | [Provider documentation](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions) |
-| User Scope Instructions | full | User-level settings in VS Code | `VS Code settings.json` | — |
-| Directory / Path Scope Instructions | full | Nested AGENTS.md or applyTo instruction files | `subdir/AGENTS.md or .github/instructions/*.instructions.md` | [Provider documentation](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions) |
+| User Scope Instructions | full | User-level settings in VS Code | `$HOME/.copilot/copilot-instructions.md, $HOME/.copilot/instructions/**/*.instructions.md` | [Provider documentation](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-custom-instructions) |
+| Directory / Path Scope Instructions | full | Nested AGENTS.md or applyTo instruction files | `subdir/AGENTS.md, .github/instructions/**/*.instructions.md` | [Provider documentation](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions) |
 
 ### Procedures
 
@@ -34,40 +34,40 @@ Coverage: 13 primitives tracked — 12 full, 1 partial, 0 DIY/manual. 7 of 13 ci
 
 | Primitive | Support | Implementation | Location | Source |
 |-----------|---------|-----------------|----------|--------|
-| Agent Mode | full | Agent mode in Copilot Chat | `VS Code Copilot Chat` | — |
-| Custom Agents | full | Agent definition files | `.github/agents/*.agent.md` | — |
+| Agent Mode | full | Agent mode in Copilot Chat | `agent mode in your IDE` | [Provider documentation](https://docs.github.com/en/copilot/concepts/agents/cloud-agent/about-cloud-agent) |
+| Custom Agents | full | Agent definition files | `.github/agents/*.agent.md` | [Provider documentation](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/cloud-agent/create-custom-agents-in-your-ide) |
 
 ### Control & Approval
 
 | Primitive | Support | Implementation | Location | Source |
 |-----------|---------|-----------------|----------|--------|
-| Permissions & Guardrails | full | Org policies and tool permissions | `VS Code settings + org policies` | — |
+| Permissions & Guardrails | full | Org policies and tool permissions | `Organization or repository Settings > Copilot > Internet access` | [Provider documentation](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-the-firewall) |
 | Lifecycle Hooks | full | Lifecycle hooks for Copilot CLI and cloud agent | `.github/hooks/*.json, ~/.copilot/hooks/*.json` | [Provider documentation](https://docs.github.com/en/copilot/reference/hooks-reference) |
-| Runtime Sandbox | partial | Policy and execution constraints in agent runtime and org settings | `Copilot policy/settings surfaces` | [Provider documentation](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-the-firewall) |
+| Runtime Sandbox | partial | Policy and execution constraints in agent runtime and org settings | `Organization or repository Settings > Copilot > Internet access` | [Provider documentation](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-the-firewall) |
 
 ### Distribution
 
 | Primitive | Support | Implementation | Location | Source |
 |-----------|---------|-----------------|----------|--------|
-| Configuration Distribution | full | Repository plus nested AGENTS.md with optional .instructions.md files | `AGENTS.md and .github/instructions/*.instructions.md` | [Provider documentation](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions) |
+| Configuration Distribution | full | Repository plus nested AGENTS.md with optional .instructions.md files | `AGENTS.md, .github/copilot-instructions.md, .github/instructions/**/*.instructions.md` | [Provider documentation](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions) |
 
 ### Verification & Observability
 
 | Primitive | Support | Implementation | Location | Source |
 |-----------|---------|-----------------|----------|--------|
-| Verification / Evals | full | Run tests/lint via terminal tools | `Terminal tools in agent mode` | — |
+| Verification / Evals | full | Run tests/lint via terminal tools | `Copilot cloud agent Bash tool` | [Provider documentation](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-the-firewall) |
 
 ## Claude Code
 
-Coverage: 13 primitives tracked — 13 full, 0 partial, 0 DIY/manual. 5 of 13 cited to provider documentation.
+Coverage: 13 primitives tracked — 13 full, 0 partial, 0 DIY/manual. 12 of 13 cited to provider documentation.
 
 ### Instructions
 
 | Primitive | Support | Implementation | Location | Source |
 |-----------|---------|-----------------|----------|--------|
-| Persistent Instructions | full | Project memory file with @imports | `CLAUDE.md` | — |
-| User Scope Instructions | full | User-level memory and config | `~/.claude/CLAUDE.md` | — |
-| Directory / Path Scope Instructions | full | Rule files with globs frontmatter | `.claude/rules/*.md` | — |
+| Persistent Instructions | full | Project memory file with @imports | `./CLAUDE.md, ./.claude/CLAUDE.md` | [Provider documentation](https://code.claude.com/docs/en/memory) |
+| User Scope Instructions | full | User-level memory and config | `~/.claude/CLAUDE.md` | [Provider documentation](https://code.claude.com/docs/en/memory) |
+| Directory / Path Scope Instructions | full | Rule files with globs frontmatter | `.claude/rules/*.md` | [Provider documentation](https://code.claude.com/docs/en/memory) |
 
 ### Procedures
 
@@ -86,14 +86,14 @@ Coverage: 13 primitives tracked — 13 full, 0 partial, 0 DIY/manual. 5 of 13 ci
 
 | Primitive | Support | Implementation | Location | Source |
 |-----------|---------|-----------------|----------|--------|
-| Agent Mode | full | Agentic workflows in Claude Code | `Claude Code CLI` | — |
-| Custom Agents | full | Custom subagents with roles and tool permissions | `.claude/agents/*.md` | — |
+| Agent Mode | full | Agentic workflows in Claude Code | `Claude Code` | [Provider documentation](https://code.claude.com/docs/en/sub-agents) |
+| Custom Agents | full | Custom subagents with roles and tool permissions | `.claude/agents/*.md, ~/.claude/agents/*.md` | [Provider documentation](https://code.claude.com/docs/en/sub-agents) |
 
 ### Control & Approval
 
 | Primitive | Support | Implementation | Location | Source |
 |-----------|---------|-----------------|----------|--------|
-| Permissions & Guardrails | full | Allow/deny lists with pattern matching and sandbox | `.claude/settings.json` | — |
+| Permissions & Guardrails | full | Allow/deny lists with pattern matching and sandbox | `.claude/settings.json, .claude/settings.local.json, ~/.claude/settings.json` | [Provider documentation](https://code.claude.com/docs/en/settings) |
 | Lifecycle Hooks | full | Lifecycle hooks configured in shared project settings | `.claude/settings.json, ~/.claude/settings.json, .claude/settings.local.json` | [Provider documentation](https://code.claude.com/docs/en/hooks) |
 | Runtime Sandbox | full | Sandboxing and command allow/deny controls | `.claude/settings.json` | [Provider documentation](https://code.claude.com/docs/en/settings) |
 
@@ -101,24 +101,24 @@ Coverage: 13 primitives tracked — 13 full, 0 partial, 0 DIY/manual. 5 of 13 ci
 
 | Primitive | Support | Implementation | Location | Source |
 |-----------|---------|-----------------|----------|--------|
-| Configuration Distribution | full | Shared AGENTS.md imported into CLAUDE.md plus scoped rules files | `AGENTS.md, CLAUDE.md, .claude/rules/*.md` | [Provider documentation](https://code.claude.com/docs/en/memory) |
+| Configuration Distribution | full | Shared AGENTS.md imported into CLAUDE.md plus scoped rules files | `~/.claude/CLAUDE.md, ./CLAUDE.md, ./.claude/CLAUDE.md, ./CLAUDE.local.md, .claude/rules/*.md` | [Provider documentation](https://code.claude.com/docs/en/memory) |
 
 ### Verification & Observability
 
 | Primitive | Support | Implementation | Location | Source |
 |-----------|---------|-----------------|----------|--------|
-| Verification / Evals | full | Run tests/lint via Bash tool with hooks | `Bash tool + hooks` | — |
+| Verification / Evals | full | Run tests/lint via Bash tool with hooks | `Bash tool + hooks` | [Provider documentation](https://code.claude.com/docs/en/hooks) |
 
 ## Cursor
 
-Coverage: 13 primitives tracked — 13 full, 0 partial, 0 DIY/manual. 5 of 13 cited to provider documentation.
+Coverage: 13 primitives tracked — 13 full, 0 partial, 0 DIY/manual. 11 of 13 cited to provider documentation.
 
 ### Instructions
 
 | Primitive | Support | Implementation | Location | Source |
 |-----------|---------|-----------------|----------|--------|
-| Persistent Instructions | full | Project instructions file | `.cursor/instructions.md` | — |
-| User Scope Instructions | full | User-level settings and preferences | `~/.cursor/settings.json` | — |
+| Persistent Instructions | full | Project instructions file | `AGENTS.md` | [Provider documentation](https://cursor.com/docs/context/rules) |
+| User Scope Instructions | full | User-level settings and preferences | `User Rules (global to your Cursor environment; not stored on the file system)` | [Provider documentation](https://cursor.com/docs/skills) |
 | Directory / Path Scope Instructions | full | Rules with path patterns | `.cursor/rules/*.mdc` | [Provider documentation](https://cursor.com/docs/context/rules) |
 
 ### Procedures
@@ -126,7 +126,7 @@ Coverage: 13 primitives tracked — 13 full, 0 partial, 0 DIY/manual. 5 of 13 ci
 | Primitive | Support | Implementation | Location | Source |
 |-----------|---------|-----------------|----------|--------|
 | Skills / Workflows | full | Skill modules as portable, reusable packages | `.cursor/skills/<name>/SKILL.md (also discovers .agents/skills, .claude/skills, .codex/skills, and their ~/ personal equivalents)` | [Provider documentation](https://cursor.com/docs/skills) |
-| Slash Commands | full | Custom commands with parameters and reusable workflows | `.cursor/commands/*.md` | — |
+| Slash Commands | full | Custom commands with parameters and reusable workflows | `.cursor/rules/*.mdc` | — |
 
 ### Tools & Context
 
@@ -138,47 +138,47 @@ Coverage: 13 primitives tracked — 13 full, 0 partial, 0 DIY/manual. 5 of 13 ci
 
 | Primitive | Support | Implementation | Location | Source |
 |-----------|---------|-----------------|----------|--------|
-| Agent Mode | full | Cursor Agent mode for multi-step execution | `Cursor Editor with Agent capabilities` | — |
+| Agent Mode | full | Cursor Agent mode for multi-step execution | `Agent (Chat) and Cloud Agents` | [Provider documentation](https://cursor.com/docs/agent/hooks) |
 | Custom Agents | full | Subagents with model selection and context isolation | `.cursor/agents/*.md` | — |
 
 ### Control & Approval
 
 | Primitive | Support | Implementation | Location | Source |
 |-----------|---------|-----------------|----------|--------|
-| Permissions & Guardrails | full | Approvals, .cursorignore, LLM safety controls, and security hooks | `.cursor/settings.json + .cursorignore` | — |
-| Lifecycle Hooks | full | Session, execution, and file operation hooks | `.cursor/hooks.json` | — |
-| Runtime Sandbox | full | Run modes with sandboxing, plus allow/deny permissions | `Settings > Agents > Approvals & Execution + ~/.cursor/cli-config.json (global), .cursor/cli.json (project permissions override)` | [Provider documentation](https://cursor.com/docs/agent/security/run-modes) |
+| Permissions & Guardrails | full | Approvals, .cursorignore, LLM safety controls, and security hooks | `Settings > Agents > Approvals & Execution, .cursorignore, permissions.json, sandbox.json` | [Provider documentation](https://cursor.com/docs/agent/security/run-modes) |
+| Lifecycle Hooks | full | Session, execution, and file operation hooks | `.cursor/hooks.json` | [Provider documentation](https://cursor.com/docs/agent/hooks) |
+| Runtime Sandbox | full | Run modes with sandboxing, plus allow/deny permissions | `Settings > Agents > Approvals & Execution, permissions.json, sandbox.json` | [Provider documentation](https://cursor.com/docs/agent/security/run-modes) |
 
 ### Distribution
 
 | Primitive | Support | Implementation | Location | Source |
 |-----------|---------|-----------------|----------|--------|
-| Configuration Distribution | full | Project instructions, rules, and reusable skills packages | `.cursor/instructions.md, .cursor/rules/*.mdc, .cursor/skills/*/SKILL.md` | [Provider documentation](https://cursor.com/docs/skills) |
+| Configuration Distribution | full | Project instructions, rules, and reusable skills packages | `AGENTS.md, .cursor/rules/*.mdc` | [Provider documentation](https://cursor.com/docs/context/rules) |
 
 ### Verification & Observability
 
 | Primitive | Support | Implementation | Location | Source |
 |-----------|---------|-----------------|----------|--------|
-| Verification / Evals | full | Integrated terminal for test execution | `Cursor Editor integrated terminal` | — |
+| Verification / Evals | full | Integrated terminal for test execution | `.cursor/hooks.json` | [Provider documentation](https://cursor.com/docs/agent/hooks) |
 
 ## OpenAI Codex
 
-Coverage: 13 primitives tracked — 13 full, 0 partial, 0 DIY/manual. 6 of 13 cited to provider documentation.
+Coverage: 13 primitives tracked — 13 full, 0 partial, 0 DIY/manual. 13 of 13 cited to provider documentation.
 
 ### Instructions
 
 | Primitive | Support | Implementation | Location | Source |
 |-----------|---------|-----------------|----------|--------|
-| Persistent Instructions | full | Project AGENTS.md file with hierarchical loading | `AGENTS.md` | — |
-| User Scope Instructions | full | User-level AGENTS.md and config.toml | `~/.codex/AGENTS.md` | — |
-| Directory / Path Scope Instructions | full | Nested AGENTS.md files with hierarchical merge | `subdir/AGENTS.md` | — |
+| Persistent Instructions | full | Project AGENTS.md file with hierarchical loading | `AGENTS.md, AGENTS.override.md` | [Provider documentation](https://developers.openai.com/codex/agent-configuration/agents-md) |
+| User Scope Instructions | full | User-level AGENTS.md and config.toml | `~/.codex/AGENTS.md, ~/.codex/AGENTS.override.md` | [Provider documentation](https://developers.openai.com/codex/agent-configuration/agents-md) |
+| Directory / Path Scope Instructions | full | Nested AGENTS.md files with hierarchical merge | `subdir/AGENTS.md, subdir/AGENTS.override.md` | [Provider documentation](https://developers.openai.com/codex/agent-configuration/agents-md) |
 
 ### Procedures
 
 | Primitive | Support | Implementation | Location | Source |
 |-----------|---------|-----------------|----------|--------|
 | Skills / Workflows | full | Skill modules following agentskills.io specification | `.agents/skills/<name>/SKILL.md (repo scope, up to repo root); personal: ~/.agents/skills; admin: /etc/codex/skills` | [Provider documentation](https://developers.openai.com/codex/build-skills) |
-| Slash Commands | full | Built-in / commands for session control | `Codex CLI / commands` | — |
+| Slash Commands | full | Built-in / commands for session control | `Codex CLI /permissions command` | [Provider documentation](https://developers.openai.com/codex/cli) |
 
 ### Tools & Context
 
@@ -190,26 +190,26 @@ Coverage: 13 primitives tracked — 13 full, 0 partial, 0 DIY/manual. 6 of 13 ci
 
 | Primitive | Support | Implementation | Location | Source |
 |-----------|---------|-----------------|----------|--------|
-| Agent Mode | full | Agentic coding with multi-step execution | `Codex CLI` | — |
-| Custom Agents | full | Subagent definitions with model selection and delegation | `.codex/agents/*.toml, ~/.codex/agents` | [Provider documentation](https://developers.openai.com/codex/agent-configuration/subagents) |
+| Agent Mode | full | Agentic coding with multi-step execution | `Codex CLI` | [Provider documentation](https://developers.openai.com/codex/cli) |
+| Custom Agents | full | Subagent definitions with model selection and delegation | `.codex/agents/*.toml, ~/.codex/agents/*.toml` | [Provider documentation](https://developers.openai.com/codex/agent-configuration/subagents) |
 
 ### Control & Approval
 
 | Primitive | Support | Implementation | Location | Source |
 |-----------|---------|-----------------|----------|--------|
-| Permissions & Guardrails | full | Sandbox modes, approval policies, and .rules files | `~/.codex/config.toml + ~/.codex/rules/*.rules` | — |
-| Lifecycle Hooks | full | Lifecycle hooks (session, subagent, prompt, tool, compaction events) via hooks.json or config.toml | `~/.codex/hooks.json, <repo>/.codex/hooks.json, ~/.codex/config.toml, <repo>/.codex/config.toml` | [Provider documentation](https://developers.openai.com/codex/hooks) |
-| Runtime Sandbox | full | Sandbox modes plus approval policies | `~/.codex/config.toml` | [Provider documentation](https://developers.openai.com/codex/config-file/config-reference) |
+| Permissions & Guardrails | full | Sandbox modes, approval policies, and .rules files | `~/.codex/config.toml, .codex/config.toml, requirements.toml` | [Provider documentation](https://developers.openai.com/codex/config-file/config-reference) |
+| Lifecycle Hooks | full | Lifecycle hooks (session, subagent, prompt, tool, compaction events) via hooks.json or config.toml | `~/.codex/hooks.json, .codex/hooks.json, ~/.codex/config.toml, .codex/config.toml` | [Provider documentation](https://developers.openai.com/codex/hooks) |
+| Runtime Sandbox | full | Sandbox modes plus approval policies | `~/.codex/config.toml, .codex/config.toml, requirements.toml` | [Provider documentation](https://developers.openai.com/codex/config-file/config-reference) |
 
 ### Distribution
 
 | Primitive | Support | Implementation | Location | Source |
 |-----------|---------|-----------------|----------|--------|
-| Configuration Distribution | full | Hierarchical AGENTS.md with user+repo layering | `AGENTS.md, subdir/AGENTS.md, ~/.codex/AGENTS.md` | [Provider documentation](https://developers.openai.com/codex/agent-configuration/agents-md) |
+| Configuration Distribution | full | Hierarchical AGENTS.md with user+repo layering | `~/.codex/AGENTS.md, ~/.codex/AGENTS.override.md, AGENTS.md, AGENTS.override.md, subdir/AGENTS.md, subdir/AGENTS.override.md` | [Provider documentation](https://developers.openai.com/codex/agent-configuration/agents-md) |
 
 ### Verification & Observability
 
 | Primitive | Support | Implementation | Location | Source |
 |-----------|---------|-----------------|----------|--------|
-| Verification / Evals | full | Shell tool for running tests/lint in agent mode | `Codex CLI shell tool` | — |
+| Verification / Evals | full | Shell tool for running tests/lint in agent mode | `Codex CLI` | [Provider documentation](https://developers.openai.com/codex/cli) |
 

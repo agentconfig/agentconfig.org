@@ -73,9 +73,9 @@ test.describe('Provider Comparison', () => {
 
     // Should show file locations for all 4 providers
     await expect(page.getByText('AGENTS.md or .github/copilot-instructions.md')).toBeVisible()
-    await expect(page.getByText('CLAUDE.md').first()).toBeVisible()
-    await expect(page.getByText('.cursor/instructions.md')).toBeVisible()
-    // Codex also uses AGENTS.md - check the expanded row shows the Codex section header
+    await expect(page.getByText('./CLAUDE.md, ./.claude/CLAUDE.md')).toBeVisible()
+    // Cursor and Codex also use AGENTS.md - check the expanded row shows both section headers
+    await expect(page.getByRole('heading', { name: 'Cursor' })).toBeVisible()
     await expect(page.getByRole('heading', { name: 'OpenAI Codex' })).toBeVisible()
   })
 

@@ -112,7 +112,7 @@ test.describe('Primitive Cards', () => {
 
     // Should show file location
     await expect(page.getByText('AGENTS.md or .github/copilot-instructions.md').first()).toBeVisible()
-    await expect(page.getByText('.cursor/instructions.md').first()).toBeVisible()
+    await expect(page.getByText('./CLAUDE.md, ./.claude/CLAUDE.md').first()).toBeVisible()
   })
 
   test('should collapse expanded card on second click', async ({ page }) => {
