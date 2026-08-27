@@ -92,15 +92,15 @@ function parseMarkdown(text: string): string {
     if (!isSeparator) return tableBlock
 
     const headerCells = (rows[0] ?? '').split('|').slice(1, -1).map(c => c.trim())
-    const headerHtml = headerCells.map(c => `<th class="border border-border px-3 py-2 text-left font-semibold">${c}</th>`).join('')
+    const headerHtml = headerCells.map(c => `<th class="break-words border border-border px-3 py-2 text-left font-semibold">${c}</th>`).join('')
 
     const bodyRows = rows.slice(2).map(row => {
       const cells = row.split('|').slice(1, -1).map(c => c.trim())
-      const cellsHtml = cells.map(c => `<td class="border border-border px-3 py-2">${c}</td>`).join('')
+      const cellsHtml = cells.map(c => `<td class="break-words border border-border px-3 py-2">${c}</td>`).join('')
       return `<tr>${cellsHtml}</tr>`
     }).join('')
 
-    return `<table class="w-full border-collapse mb-4"><thead><tr>${headerHtml}</tr></thead><tbody>${bodyRows}</tbody></table>`
+    return `<div class="max-w-full overflow-x-auto"><table class="w-full table-fixed border-collapse mb-4"><thead><tr>${headerHtml}</tr></thead><tbody>${bodyRows}</tbody></table></div>`
   })
 
   // Unordered lists
@@ -120,8 +120,8 @@ function parseMarkdown(text: string): string {
   html = html.replace(/<p class="mb-4"><\/p>/g, '')
   html = html.replace(/<p class="mb-4">(<h[23])/g, '$1')
   html = html.replace(/(<\/h[23]>)<\/p>/g, '$1')
-  html = html.replace(/<p class="mb-4">(<ul|<ol|<table)/g, '$1')
-  html = html.replace(/(<\/ul>|<\/ol>|<\/table>)<\/p>/g, '$1')
+  html = html.replace(/<p class="mb-4">(<ul|<ol|<table|<div class="max-w-full overflow-x-auto")/g, '$1')
+  html = html.replace(/(<\/ul>|<\/ol>|<\/table>|<\/div>)<\/p>/g, '$1')
 
   return html
 }
