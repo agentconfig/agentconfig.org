@@ -53,3 +53,15 @@
 2026-08-26T20:31:30Z LOCK copilot-e7655e74 .github/workflows phase8 weekly provider refresh
 2026-08-26T22:17:43Z UNLOCK copilot-e7655e74 .github/skills/refresh-provider-docs phase8 weekly provider refresh
 2026-08-26T22:17:43Z UNLOCK copilot-e7655e74 .github/workflows phase8 weekly provider refresh
+2026-08-27T14:35:48Z LOCK copilot-michelle site/src/components/ScopeModel/ScopeModelSection.tsx redesigning scope ladder
+2026-08-27T14:35:48Z LOCK copilot-michelle site/src/data/primitives.ts redesigning scope ladder
+2026-08-27T14:35:48Z LOCK copilot-michelle site/tests/e2e/scopeModel.spec.ts redesigning scope ladder
+2026-08-27T14:35:48Z LOCK copilot-michelle .github/skills/generate-llms/scripts/generate-llms-full.ts redesigning scope ladder
+2026-08-27T14:35:48Z LOCK copilot-michelle site/public/llms-full.txt redesigning scope ladder
+2026-08-27T15:33:53Z COMMIT_START copilot-michelle redesigning scope ladder
+2026-08-27T15:34:18Z COMMIT_END copilot-michelle 43b4e7d0cdd10d22bafbea9980c753d13ad85589 redesigning scope ladder
+2026-08-27T15:34:18Z UNLOCK copilot-michelle site/src/components/ScopeModel/ScopeModelSection.tsx redesigning scope ladder
+2026-08-27T15:34:18Z UNLOCK copilot-michelle site/src/data/primitives.ts redesigning scope ladder
+2026-08-27T15:34:18Z UNLOCK copilot-michelle site/tests/e2e/scopeModel.spec.ts redesigning scope ladder
+2026-08-27T15:34:18Z UNLOCK copilot-michelle .github/skills/generate-llms/scripts/generate-llms-full.ts redesigning scope ladder
+2026-08-27T15:34:18Z UNLOCK copilot-michelle site/public/llms-full.txt redesigning scope ladder
