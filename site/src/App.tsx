@@ -7,6 +7,7 @@ import { PrimitiveCardsSection } from '@/components/PrimitiveCards'
 import { ProviderComparisonSection } from '@/components/ProviderComparison'
 import { ScopeModelSection } from '@/components/ScopeModel'
 import { ProviderStarter } from '@/components/GuidePage'
+import { ExploreGuidesSection } from '@/components/ExploreGuides'
 import { instructionStarterExamples } from '@/data/starterExamples'
 
 export function App(): VNode {
@@ -60,6 +61,8 @@ export function App(): VNode {
       >
         <ScopeModelSection />
       </Section>
+
+      <ExploreGuidesSection />
     </PageLayout>
   )
 }
