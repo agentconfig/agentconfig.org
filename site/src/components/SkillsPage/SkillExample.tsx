@@ -32,8 +32,8 @@ export function SkillExample({ example, className }: SkillExampleProps): VNode {
     >
       {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
-        <div>
-          <div className="flex items-center gap-3 mb-2">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-3 mb-2">
             <h2
               id={`${example.id}-title`}
               className="text-2xl md:text-3xl font-bold"
