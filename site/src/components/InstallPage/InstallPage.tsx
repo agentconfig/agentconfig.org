@@ -1,5 +1,19 @@
 import type { VNode } from 'preact'
-import { ExternalLink } from 'lucide-preact'
+import {
+  ArrowRight,
+  Bot,
+  Building2,
+  Download,
+  ExternalLink,
+  FileCheck2,
+  FolderGit2,
+  Laptop,
+  Package,
+  SearchCheck,
+  ShieldCheck,
+  Store,
+  User,
+} from 'lucide-preact'
 import { CodeBlock } from '@/components/CodeBlock'
 import { GuideHero, GuideLayout } from '@/components/GuidePage'
 import { PageLayout } from '@/layouts'
@@ -17,6 +31,60 @@ import {
 } from '@/data/installTutorial'
 
 const inlineCodeClass = 'rounded bg-background px-1.5 py-0.5 font-mono text-[0.95em] text-foreground'
+
+const layerVisuals = [
+  { Icon: FileCheck2, panel: 'border-emerald-200 bg-emerald-50/70 dark:border-emerald-900 dark:bg-emerald-950/25', icon: 'bg-emerald-500 text-white' },
+  { Icon: Package, panel: 'border-sky-200 bg-sky-50/70 dark:border-sky-900 dark:bg-sky-950/25', icon: 'bg-sky-500 text-white' },
+  { Icon: Store, panel: 'border-violet-200 bg-violet-50/70 dark:border-violet-900 dark:bg-violet-950/25', icon: 'bg-violet-500 text-white' },
+  { Icon: Download, panel: 'border-amber-200 bg-amber-50/70 dark:border-amber-900 dark:bg-amber-950/25', icon: 'bg-amber-500 text-white' },
+  { Icon: Bot, panel: 'border-rose-200 bg-rose-50/70 dark:border-rose-900 dark:bg-rose-950/25', icon: 'bg-rose-500 text-white' },
+] as const
+
+const installScopes = [
+  {
+    name: 'User',
+    description: 'Personal tools and workflows used across projects. Keep credentials and machine-specific values out of repositories.',
+    Icon: User,
+    accent: 'border-cyan-200 bg-cyan-50/60 text-cyan-700 dark:border-cyan-900 dark:bg-cyan-950/20 dark:text-cyan-300',
+  },
+  {
+    name: 'Repository',
+    description: 'Shared packages every contributor should be able to restore from version-controlled manifests or settings.',
+    Icon: FolderGit2,
+    accent: 'border-emerald-200 bg-emerald-50/60 text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950/20 dark:text-emerald-300',
+  },
+  {
+    name: 'Local repository',
+    description: 'Machine-specific or experimental configuration that should not be committed.',
+    Icon: Laptop,
+    accent: 'border-amber-200 bg-amber-50/60 text-amber-700 dark:border-amber-900 dark:bg-amber-950/20 dark:text-amber-300',
+  },
+  {
+    name: 'Organization or managed',
+    description: 'Approved marketplaces, required plugins, allowlists, policy, and centrally governed defaults.',
+    Icon: Building2,
+    accent: 'border-violet-200 bg-violet-50/60 text-violet-700 dark:border-violet-900 dark:bg-violet-950/20 dark:text-violet-300',
+  },
+] as const
+
+const lifecycleGroups = [
+  {
+    label: 'Adopt safely',
+    description: 'Understand and establish the dependency.',
+    steps: lifecycleSteps.slice(0, 4),
+    accent: 'text-cyan-700 dark:text-cyan-300',
+    badge: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-950 dark:text-cyan-200',
+    border: 'border-cyan-200/80 dark:border-cyan-900/80',
+  },
+  {
+    label: 'Operate safely',
+    description: 'Keep the dependency healthy and reversible.',
+    steps: lifecycleSteps.slice(4),
+    accent: 'text-violet-700 dark:text-violet-300',
+    badge: 'bg-violet-100 text-violet-800 dark:bg-violet-950 dark:text-violet-200',
+    border: 'border-violet-200/80 dark:border-violet-900/80',
+  },
+] as const
 
 export function InstallPage(): VNode {
   return (
@@ -51,21 +119,33 @@ export function InstallPage(): VNode {
           <p className="mb-6 text-lg text-muted-foreground">
             Package formats, marketplaces, installers, and runtimes solve different problems. Keeping them separate makes the ecosystem easier to reason about.
           </p>
-          <div className="not-prose space-y-3">
-            {installLayers.map((layer, index) => (
-              <div key={layer.name} className="rounded-xl border border-border bg-card p-5">
-                <div className="flex items-start gap-4">
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
-                    {index + 1}
-                  </span>
-                  <div>
-                    <h3 className="font-semibold text-foreground">{layer.name}</h3>
-                    <p className="mt-1 text-sm text-muted-foreground">{layer.job}</p>
-                    <p className="mt-2 text-sm"><span className="font-medium">Examples:</span> {layer.examples}</p>
+          <div className="not-prose relative my-8">
+            <div className="pointer-events-none absolute left-[10%] right-[10%] top-6 hidden h-px bg-gradient-to-r from-emerald-400 via-violet-400 to-rose-400 md:block" />
+            <ol className="grid gap-4 sm:grid-cols-2 md:grid-cols-5">
+            {installLayers.map((layer, index) => {
+              const visual = layerVisuals[index] ?? layerVisuals[0]
+              const Icon = visual.Icon
+
+              return (
+                <li key={layer.name} className={`relative rounded-2xl border p-4 shadow-sm ${visual.panel}`}>
+                  <div className="relative z-10 mb-5 flex items-center justify-between">
+                    <span className={`flex h-11 w-11 items-center justify-center rounded-xl shadow-sm ${visual.icon}`}>
+                      <Icon className="h-5 w-5" aria-hidden="true" />
+                    </span>
+                    <span className="text-xs font-bold text-muted-foreground">0{index + 1}</span>
                   </div>
-                </div>
-              </div>
-            ))}
+                  <h3 className="text-sm font-bold leading-tight text-foreground">{layer.name}</h3>
+                  <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{layer.job}</p>
+                  <p className="mt-4 rounded-lg bg-background/75 px-2.5 py-2 text-[11px] leading-relaxed text-foreground/80">
+                    {layer.examples}
+                  </p>
+                  {index < installLayers.length - 1 && (
+                    <ArrowRight className="absolute -right-3 top-5 z-20 hidden h-5 w-5 rounded-full bg-background text-muted-foreground md:block" aria-hidden="true" />
+                  )}
+                </li>
+              )
+            })}
+            </ol>
           </div>
         </section>
 
@@ -74,25 +154,26 @@ export function InstallPage(): VNode {
           <p className="mb-6 text-lg text-muted-foreground">
             Choose the smallest thing that solves the sharing problem.
           </p>
-          <div className="not-prose overflow-x-auto rounded-xl border border-border">
-            <table className="w-full min-w-[680px] text-sm">
-              <thead className="bg-muted/60">
-                <tr>
-                  <th className="px-4 py-3 text-left">Need</th>
-                  <th className="px-4 py-3 text-left">Choose</th>
-                  <th className="px-4 py-3 text-left">Why</th>
-                </tr>
-              </thead>
-              <tbody>
-                {installUnits.map((unit) => (
-                  <tr key={unit.need} className="border-t border-border">
-                    <td className="px-4 py-3">{unit.need}</td>
-                    <td className="px-4 py-3 font-semibold">{unit.choose}</td>
-                    <td className="px-4 py-3 text-muted-foreground">{unit.reason}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="not-prose grid gap-4 md:grid-cols-2">
+            {installUnits.map((unit, index) => (
+              <article
+                key={unit.need}
+                className={`group relative overflow-hidden rounded-2xl border border-border bg-card p-5 transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md ${index === installUnits.length - 1 ? 'md:col-span-2' : ''}`}
+              >
+                <span className="absolute -right-1 -top-5 text-7xl font-black text-muted/60 transition-colors group-hover:text-primary/10" aria-hidden="true">
+                  {index + 1}
+                </span>
+                <p className="relative pr-12 text-xs font-semibold uppercase tracking-wider text-muted-foreground">When this is true</p>
+                <p className="relative mt-2 max-w-xl font-medium text-foreground">{unit.need}</p>
+                <div className="relative my-4 flex items-center gap-3">
+                  <span className="h-px flex-1 bg-border" />
+                  <ArrowRight className="h-4 w-4 text-primary" aria-hidden="true" />
+                  <span className="h-px flex-1 bg-border" />
+                </div>
+                <p className="relative text-lg font-bold text-primary">{unit.choose}</p>
+                <p className="relative mt-2 text-sm text-muted-foreground">{unit.reason}</p>
+              </article>
+            ))}
           </div>
         </section>
 
@@ -178,14 +259,15 @@ export function InstallPage(): VNode {
             Install at the narrowest scope that reaches the intended audience.
           </p>
           <div className="not-prose grid gap-4 sm:grid-cols-2">
-            {[
-              ['User', 'Personal tools and workflows used across projects. Keep credentials and machine-specific values out of repositories.'],
-              ['Repository', 'Shared packages every contributor should be able to restore from version-controlled manifests or settings.'],
-              ['Local repository', 'Machine-specific or experimental configuration that should not be committed.'],
-              ['Organization or managed', 'Approved marketplaces, required plugins, allowlists, policy, and centrally governed defaults.'],
-            ].map(([scope, description]) => (
-              <div key={scope} className="rounded-xl border border-border bg-card p-5">
-                <h3 className="font-semibold">{scope}</h3>
+            {installScopes.map(({ name, description, Icon, accent }, index) => (
+              <div key={name} className={`relative overflow-hidden rounded-2xl border p-5 ${accent}`}>
+                <div className="mb-5 flex items-center justify-between">
+                  <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-background/80 shadow-sm">
+                    <Icon className="h-5 w-5" aria-hidden="true" />
+                  </span>
+                  <span className="text-xs font-bold uppercase tracking-widest text-foreground">Scope 0{index + 1}</span>
+                </div>
+                <h3 className="font-bold text-foreground">{name}</h3>
                 <p className="mt-2 text-sm text-muted-foreground">{description}</p>
               </div>
             ))}
@@ -197,12 +279,26 @@ export function InstallPage(): VNode {
           <p className="mb-6 text-lg text-muted-foreground">
             Agent configuration can influence model behavior, execute local code, connect to remote systems, and request credentials. Treat it like a software dependency.
           </p>
-          <div className="not-prose grid gap-3 sm:grid-cols-2">
-            {trustItems.map((item) => (
-              <div key={item} className="rounded-lg border border-border bg-card px-4 py-3 font-medium">
-                {item}
+          <div className="not-prose overflow-hidden rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 via-background to-rose-50 p-5 shadow-sm dark:border-amber-900 dark:from-amber-950/30 dark:via-background dark:to-rose-950/20 sm:p-7">
+            <div className="mb-6 flex items-start gap-4">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-amber-500 text-white shadow-sm">
+                <ShieldCheck className="h-6 w-6" aria-hidden="true" />
+              </span>
+              <div>
+                <h3 className="text-lg font-bold text-foreground">The installation trust boundary</h3>
+                <p className="mt-1 text-sm text-muted-foreground">Know who published it, what can execute, where data goes, and how to reverse the change.</p>
               </div>
-            ))}
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {trustItems.map((item, index) => (
+                <div key={item} className="flex items-center gap-3 rounded-xl border border-amber-200/70 bg-background/80 px-4 py-3 shadow-sm dark:border-amber-900/70">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-amber-100 text-xs font-bold text-amber-800 dark:bg-amber-950 dark:text-amber-200">
+                    {index + 1}
+                  </span>
+                  <span className="text-sm font-medium text-foreground">{item}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
@@ -211,14 +307,34 @@ export function InstallPage(): VNode {
           <p className="mb-6 text-lg text-muted-foreground">
             Installation is the beginning of dependency ownership, not the end.
           </p>
-          <div className="not-prose space-y-3">
-            {lifecycleSteps.map(([step, description], index) => (
-              <div key={step} className="flex gap-4 rounded-xl border border-border bg-card p-4">
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-bold">{index + 1}</span>
-                <div>
-                  <h3 className="font-semibold">{step}</h3>
-                  <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+          <div className="not-prose grid gap-5 md:grid-cols-2">
+            {lifecycleGroups.map((group, groupIndex) => (
+              <div key={group.label} className={`rounded-2xl border bg-card p-5 ${group.border}`}>
+                <div className="mb-5 flex items-start gap-3">
+                  <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${group.badge}`}>
+                    {groupIndex === 0
+                      ? <SearchCheck className="h-5 w-5" aria-hidden="true" />
+                      : <ShieldCheck className="h-5 w-5" aria-hidden="true" />}
+                  </span>
+                  <div>
+                    <h3 className={`font-bold ${group.accent}`}>{group.label}</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">{group.description}</p>
+                  </div>
                 </div>
+                <ol className="space-y-3">
+                  {group.steps.map(([step, description], index) => {
+                    const stepNumber = groupIndex * 4 + index + 1
+                    return (
+                      <li key={step} className="relative flex gap-3 rounded-xl border border-border/80 bg-background/70 p-4">
+                        <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold ${group.badge}`}>{stepNumber}</span>
+                        <div>
+                          <h4 className="font-semibold text-foreground">{step}</h4>
+                          <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+                        </div>
+                      </li>
+                    )
+                  })}
+                </ol>
               </div>
             ))}
           </div>
