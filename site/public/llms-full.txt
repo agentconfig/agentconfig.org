@@ -486,17 +486,17 @@ Support matrix comparing GitHub Copilot, Claude Code, Cursor, and OpenAI Codex:
 Once you know which primitive you need, decide where its configuration should live and take
 effect. Scopes describe *where* configuration applies, not a new kind of primitive.
 
-| Scope | Example |
-|-------|---------|
-| Managed / organization | Org-level Copilot policies or centrally managed CLAUDE.md |
-| User | ~/.codex/AGENTS.md, ~/.claude/CLAUDE.md, personal Copilot settings |
-| Repository | AGENTS.md, CLAUDE.md, .github/copilot-instructions.md |
-| Local repository | CLAUDE.local.md or workstation-only repo settings |
-| Directory / path | Nested AGENTS.md, .claude/rules/*.md, .instructions.md with applyTo |
-| Agent | .github/agents/*.agent.md or .claude/agents/*.md |
-| Session | Temporary mode selections and live conversation context |
-| Turn | One-off user prompt constraints for the current request |
-| Tool invocation | Per-hook/per-tool policy checks and approval gates |
+| Scope | Applies to | Common usage | Example location |
+|-------|------------|--------------|------------------|
+| Managed / organization | Everyone in an organization | Set centrally governed policy and shared defaults. | `Organization policy or managed CLAUDE.md` |
+| User | You, across projects | Keep personal preferences out of shared repositories. | `~/.claude/CLAUDE.md` |
+| Repository | Everyone in one repository | Share build commands, conventions, and safety boundaries. | `AGENTS.md` |
+| Local repository | You, in one checkout | Add workstation-specific settings without committing them. | `CLAUDE.local.md` |
+| Directory / path | Work under one path | Narrow instructions where languages, owners, or risks differ. | `.claude/rules/*.md` |
+| Agent | One specialized agent | Give a delegated role its own tools and operating rules. | `.github/agents/*.agent.md` |
+| Session | One conversation | Choose a temporary mode or preserve live context. | — |
+| Turn | One request | State a constraint that only applies to the current prompt. | — |
+| Tool invocation | One action | Apply a hook check or approval gate immediately before execution. | — |
 
 ---
 

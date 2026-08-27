@@ -820,9 +820,9 @@ Support matrix comparing GitHub Copilot, Claude Code, Cursor, and OpenAI Codex:
 Once you know which primitive you need, decide where its configuration should live and take
 effect. Scopes describe *where* configuration applies, not a new kind of primitive.
 
-| Scope | Example |
-|-------|---------|
-${scopeModel.map((s: { name: string; example: string }) => `| ${s.name} | ${s.example} |`).join('\n')}
+| Scope | Applies to | Common usage | Example location |
+|-------|------------|--------------|------------------|
+${scopeModel.map((s: { name: string; audience: string; example: string; location?: string }) => `| ${s.name} | ${s.audience} | ${s.example} | ${s.location != null ? `\`${s.location}\`` : '—'} |`).join('\n')}
 
 `
 

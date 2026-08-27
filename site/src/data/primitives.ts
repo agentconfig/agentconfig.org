@@ -659,17 +659,20 @@ export type CategoryId = (typeof categories)[number]['id']
 export interface ScopeModelEntry {
   id: string
   name: string
+  tier: 'defaults' | 'project' | 'runtime'
+  audience: string
   example: string
+  location?: string
 }
 
 export const scopeModel: ScopeModelEntry[] = [
-  { id: 'managed', name: 'Managed / organization', example: 'Org-level Copilot policies or centrally managed CLAUDE.md' },
-  { id: 'user', name: 'User', example: '~/.codex/AGENTS.md, ~/.claude/CLAUDE.md, personal Copilot settings' },
-  { id: 'repository', name: 'Repository', example: 'AGENTS.md, CLAUDE.md, .github/copilot-instructions.md' },
-  { id: 'local-repository', name: 'Local repository', example: 'CLAUDE.local.md or workstation-only repo settings' },
-  { id: 'directory', name: 'Directory / path', example: 'Nested AGENTS.md, .claude/rules/*.md, .instructions.md with applyTo' },
-  { id: 'agent', name: 'Agent', example: '.github/agents/*.agent.md or .claude/agents/*.md' },
-  { id: 'session', name: 'Session', example: 'Temporary mode selections and live conversation context' },
-  { id: 'turn', name: 'Turn', example: 'One-off user prompt constraints for the current request' },
-  { id: 'tool-invocation', name: 'Tool invocation', example: 'Per-hook/per-tool policy checks and approval gates' },
+  { id: 'managed', name: 'Managed / organization', tier: 'defaults', audience: 'Everyone in an organization', example: 'Set centrally governed policy and shared defaults.', location: 'Organization policy or managed CLAUDE.md' },
+  { id: 'user', name: 'User', tier: 'defaults', audience: 'You, across projects', example: 'Keep personal preferences out of shared repositories.', location: '~/.claude/CLAUDE.md' },
+  { id: 'repository', name: 'Repository', tier: 'project', audience: 'Everyone in one repository', example: 'Share build commands, conventions, and safety boundaries.', location: 'AGENTS.md' },
+  { id: 'local-repository', name: 'Local repository', tier: 'project', audience: 'You, in one checkout', example: 'Add workstation-specific settings without committing them.', location: 'CLAUDE.local.md' },
+  { id: 'directory', name: 'Directory / path', tier: 'project', audience: 'Work under one path', example: 'Narrow instructions where languages, owners, or risks differ.', location: '.claude/rules/*.md' },
+  { id: 'agent', name: 'Agent', tier: 'project', audience: 'One specialized agent', example: 'Give a delegated role its own tools and operating rules.', location: '.github/agents/*.agent.md' },
+  { id: 'session', name: 'Session', tier: 'runtime', audience: 'One conversation', example: 'Choose a temporary mode or preserve live context.' },
+  { id: 'turn', name: 'Turn', tier: 'runtime', audience: 'One request', example: 'State a constraint that only applies to the current prompt.' },
+  { id: 'tool-invocation', name: 'Tool invocation', tier: 'runtime', audience: 'One action', example: 'Apply a hook check or approval gate immediately before execution.' },
 ]
