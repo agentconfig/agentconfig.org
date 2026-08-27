@@ -50,36 +50,46 @@ export function CategorySection({ category }: { category: ProfileCategory }): VN
   return (
     <div className="mb-8">
       <h2 className="text-lg font-semibold mb-3 text-foreground">{category.name}</h2>
-      <div className="rounded-xl border border-border overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="bg-secondary/50">
-                <th className="px-4 py-2 text-left font-semibold text-foreground">Primitive</th>
-                <th className="px-4 py-2 text-left font-semibold text-foreground">Support</th>
-                <th className="px-4 py-2 text-left font-semibold text-foreground">Implementation</th>
-                <th className="px-4 py-2 text-left font-semibold text-foreground">Location</th>
-                <th className="px-4 py-2 text-left font-semibold text-foreground">Source</th>
+      <div className="md:overflow-hidden md:rounded-xl md:border md:border-border">
+          <table role="table" className="block w-full text-sm md:table">
+            <thead role="rowgroup" className="hidden md:table-header-group">
+              <tr role="row" className="bg-secondary/50">
+                <th role="columnheader" className="px-4 py-2 text-left font-semibold text-foreground">Primitive</th>
+                <th role="columnheader" className="px-4 py-2 text-left font-semibold text-foreground">Support</th>
+                <th role="columnheader" className="px-4 py-2 text-left font-semibold text-foreground">Implementation</th>
+                <th role="columnheader" className="px-4 py-2 text-left font-semibold text-foreground">Location</th>
+                <th role="columnheader" className="px-4 py-2 text-left font-semibold text-foreground">Source</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border">
+            <tbody role="rowgroup" className="grid gap-3 md:table-row-group md:divide-y md:divide-border">
               {category.entries.map((entry) => (
-                <tr key={entry.id} className="hover:bg-muted/30 align-top">
-                  <td className="px-4 py-3 font-medium text-foreground whitespace-nowrap">{entry.name}</td>
-                  <td className="px-4 py-3"><SupportBadge level={entry.support} /></td>
-                  <td className="px-4 py-3 text-muted-foreground">{entry.implementation}</td>
-                  <td className="px-4 py-3">
-                    <code className="text-xs bg-background px-2 py-1 rounded font-mono text-foreground border border-border whitespace-nowrap">
+                <tr role="row" key={entry.id} className="grid grid-cols-2 gap-4 rounded-xl border border-border bg-background/60 p-4 align-top hover:bg-muted/30 md:table-row md:border-0 md:bg-transparent md:p-0">
+                  <td role="cell" className="col-span-2 font-medium text-foreground md:px-4 md:py-3 md:whitespace-nowrap">
+                    <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-foreground md:hidden">Primitive</span>
+                    {entry.name}
+                  </td>
+                  <td role="cell" className="col-span-2 md:table-cell md:px-4 md:py-3">
+                    <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-foreground md:hidden">Support</span>
+                    <SupportBadge level={entry.support} />
+                  </td>
+                  <td role="cell" className="col-span-2 text-muted-foreground md:table-cell md:px-4 md:py-3">
+                    <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-foreground md:hidden">Implementation</span>
+                    {entry.implementation}
+                  </td>
+                  <td role="cell" className="col-span-2 min-w-0 md:table-cell md:px-4 md:py-3">
+                    <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-foreground md:hidden">Location</span>
+                    <code className="block max-w-full break-words rounded border border-border bg-background px-2 py-1 font-mono text-xs text-foreground">
                       {entry.location}
                     </code>
                   </td>
-                  <td className="px-4 py-3">
+                  <td role="cell" className="col-span-2 md:table-cell md:px-4 md:py-3">
+                    <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-foreground md:hidden">Source</span>
                     {entry.sourceUrl != null ? (
                       <a
                         href={entry.sourceUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-xs text-primary hover:underline whitespace-nowrap"
+                        className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
                       >
                         Docs
                         <ExternalLink className="h-3 w-3" aria-hidden="true" />
@@ -92,7 +102,6 @@ export function CategorySection({ category }: { category: ProfileCategory }): VN
               ))}
             </tbody>
           </table>
-        </div>
       </div>
     </div>
   )

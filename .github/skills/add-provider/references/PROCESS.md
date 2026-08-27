@@ -92,7 +92,7 @@ You'll see errors about missing provider data - this is expected. Continue to St
 
 2. **For each of the 13 primitives, research and document:**
    - Does the provider support this feature natively?
-   - What are the official file locations? (e.g., `.cursor/instructions.md`, not guesses)
+   - What are the official file locations? (e.g., `AGENTS.md` and `.cursor/rules/*.mdc`, not guesses)
    - Are there any limitations or workarounds?
    - What version/channel is it available in? (e.g., nightly vs stable)
    - What does the provider call this feature in their docs?
@@ -265,7 +265,7 @@ export const globalTrees: Record<Provider, FileNode> = {
    - Global examples show workflows users can reuse across all projects
 
 3. **Add nested directory examples**
-   - Show `frontend/.cursor/instructions.md` and `backend/.cursor/instructions.md`
+   - Show `frontend/AGENTS.md` and `backend/.cursor/rules/backend.mdc`
    - Demonstrates path-scoped configuration
    - Makes file tree feel realistic and practical
 
@@ -434,7 +434,7 @@ test('should expand row on click to show details', async ({ page }) => {
 
 test('should show file locations when expanded', async ({ page }) => {
   // ...
-  await expect(page.getByText('.cursor/instructions.md')).toBeVisible()
+  await expect(page.getByText('AGENTS.md')).toBeVisible()
 })
 
 test('should have copy buttons in expanded row', async ({ page }) => {
@@ -483,7 +483,7 @@ Edit `README.md`:
 
 Update primitive count:
 ```markdown
-- **AI Primitives** — The 11 core configuration primitives...
+- **AI Primitives** — The 13 core configuration primitives...
 ```
 
 Update provider comparison description:
@@ -497,9 +497,9 @@ Add provider section:
 
 | Type | Path |
 |------|------|
-| Global settings | `~/.cursor/settings.json` |
-| Project instructions | `.cursor/instructions.md` |
-| Project rules | `.cursor/rules/*.md` |
+| Global instructions | Cursor User Rules in Settings → Rules |
+| Project instructions | `AGENTS.md` |
+| Project rules | `.cursor/rules/*.mdc` |
 ```
 
 ---

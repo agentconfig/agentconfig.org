@@ -6,20 +6,21 @@ test.describe('Agents Page', () => {
   })
 
   test('should load the agents page with hero section', async ({ page }) => {
-    await expect(page.getByRole('heading', { name: 'Agent Definitions', exact: true })).toBeVisible()
-    await expect(page.getByText('Learn how to configure AI coding assistants')).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Agent Instructions', exact: true })).toBeVisible()
+    await expect(page.getByText(/Start with one small project file/)).toBeVisible()
   })
 
   test('should display level badges in hero', async ({ page }) => {
-    await expect(page.getByText('Beginner friendly')).toBeVisible()
-    await expect(page.getByText('Provider comparison')).toBeVisible()
-    await expect(page.getByText('Advanced patterns')).toBeVisible()
+    const hero = page.locator('header.guide-hero')
+    await expect(hero.getByText('One useful file', { exact: true })).toBeVisible()
+    await expect(hero.getByText('Provider locations', { exact: true })).toBeVisible()
+    await expect(hero.getByText('Advanced layouts', { exact: true })).toBeVisible()
   })
 
   test('should display table of contents', async ({ page }) => {
     await expect(page.getByRole('navigation', { name: 'Table of contents' })).toBeVisible()
-    await expect(page.getByRole('link', { name: /What Are Agent Definitions/ })).toBeVisible()
-    await expect(page.getByRole('link', { name: /Your First Definition/ })).toBeVisible()
+    await expect(page.getByRole('link', { name: /Create One Useful File/ })).toBeVisible()
+    await expect(page.getByRole('link', { name: /What Instructions Do/ })).toBeVisible()
     await expect(page.getByRole('link', { name: /Six Core Sections/ })).toBeVisible()
   })
 

@@ -21,6 +21,14 @@ export interface ProviderImplementation {
   support: SupportLevel
   /** Primary provider documentation */
   sourceUrl?: string
+  /** Documented configuration scopes when the primitive supports them */
+  scopes?: ProviderScope[]
+}
+
+export interface ProviderScope {
+  scope: string
+  location: string
+  visibility: string
 }
 
 export interface Primitive {
@@ -153,6 +161,11 @@ export const primitives: Primitive[] = [
         location: '.vscode/mcp.json, VS Code settings.json (also Visual Studio, JetBrains IDEs, Xcode, Eclipse)',
         support: 'full',
         sourceUrl: 'https://docs.github.com/en/copilot/how-tos/provide-context/use-mcp-in-your-ide/extend-copilot-chat-with-mcp',
+        scopes: [
+          { scope: 'Workspace', location: '.vscode/mcp.json', visibility: 'Team (shared)' },
+          { scope: 'User Profile', location: 'VS Code profile settings', visibility: 'You only (profile)' },
+          { scope: 'Dev Container', location: 'devcontainer.json customizations.vscode', visibility: 'Container (shared)' },
+        ],
       },
       {
         provider: 'claude',
@@ -160,6 +173,11 @@ export const primitives: Primitive[] = [
         location: '.mcp.json or ~/.claude.json',
         support: 'full',
         sourceUrl: 'https://code.claude.com/docs/en/mcp',
+        scopes: [
+          { scope: 'Local (default)', location: '~/.claude.json (per-project path)', visibility: 'You only (1 project)' },
+          { scope: 'Project', location: '.mcp.json (project root)', visibility: 'Team (shared)' },
+          { scope: 'User', location: '~/.claude.json (global section)', visibility: 'You only (all projects)' },
+        ],
       },
       {
         provider: 'cursor',
@@ -167,6 +185,10 @@ export const primitives: Primitive[] = [
         location: '.cursor/mcp.json, ~/.cursor/mcp.json',
         support: 'full',
         sourceUrl: 'https://cursor.com/docs/context/mcp',
+        scopes: [
+          { scope: 'Project', location: '.cursor/mcp.json', visibility: 'Team (shared)' },
+          { scope: 'User', location: '~/.cursor/mcp.json', visibility: 'You only (all projects)' },
+        ],
       },
       {
         provider: 'codex',
@@ -174,6 +196,10 @@ export const primitives: Primitive[] = [
         location: '~/.codex/config.toml, .codex/config.toml',
         support: 'full',
         sourceUrl: 'https://developers.openai.com/codex/extend/mcp',
+        scopes: [
+          { scope: 'Project', location: '.codex/config.toml', visibility: 'Team (shared)' },
+          { scope: 'User', location: '~/.codex/config.toml', visibility: 'You only (all projects)' },
+        ],
       },
     ],
     category: 'tools-context',

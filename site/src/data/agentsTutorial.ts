@@ -8,10 +8,10 @@ export interface FurtherReadingLink {
 }
 
 export const tocItems: readonly TocItem[] = [
-  { id: 'what-are-definitions', label: '1. What Are Agent Definitions?', level: 'beginner' },
-  { id: 'first-definition', label: '2. Your First Definition', level: 'beginner' },
+  { id: 'first-definition', label: '1. Create One Useful File', level: 'beginner' },
+  { id: 'what-are-definitions', label: '2. What Instructions Do', level: 'beginner' },
   { id: 'six-sections', label: '3. The Six Core Sections', level: 'beginner' },
-  { id: 'provider-formats', label: '4. Provider-Specific Formats', level: 'intermediate' },
+  { id: 'provider-formats', label: '4. Add Your User Preferences', level: 'intermediate' },
   { id: 'path-scoped', label: '5. Path-Scoped Instructions', level: 'intermediate' },
   { id: 'agent-personas', label: '6. Custom Agent Personas', level: 'intermediate' },
   { id: 'file-hierarchy', label: '7. File Hierarchy', level: 'advanced' },

@@ -1,30 +1,11 @@
 import type { VNode } from 'preact'
-
-interface ScopeRow {
-  scope: string
-  location: string
-  visibility: string
-}
-
-const claudeCodeScopes: ScopeRow[] = [
-  { scope: 'Local (default)', location: '~/.claude.json (per-project path)', visibility: 'You only (1 project)' },
-  { scope: 'Project', location: '.mcp.json (project root)', visibility: 'Team (shared)' },
-  { scope: 'User', location: '~/.claude.json (global section)', visibility: 'You only (all projects)' },
-]
-
-const vsCodeScopes: ScopeRow[] = [
-  { scope: 'Workspace', location: '.vscode/mcp.json', visibility: 'Team (shared)' },
-  { scope: 'User Profile', location: '(VS Code profile)', visibility: 'You only (profile)' },
-  { scope: 'Dev Container', location: 'devcontainer.json customizations.vscode', visibility: 'Container (shared)' },
-]
+import type { ProviderScope } from '@/data/primitives'
 
 interface ScopesTableProps {
-  provider: 'claude' | 'vscode'
+  scopes: readonly ProviderScope[]
 }
 
-export function ScopesTable({ provider }: ScopesTableProps): VNode {
-  const scopes = provider === 'claude' ? claudeCodeScopes : vsCodeScopes
-
+export function ScopesTable({ scopes }: ScopesTableProps): VNode {
   return (
     <div className="my-6 rounded-xl border border-border overflow-hidden">
       <div className="overflow-x-auto">

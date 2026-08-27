@@ -1,11 +1,24 @@
-import { useState } from 'preact/hooks'
+import { useEffect, useState } from 'preact/hooks'
 import type { VNode } from 'preact'
 import { type FileNode } from '@/data/fileTree'
 import { FileTree } from './FileTree'
 import { FileDetail } from './FileDetail'
+import { useSelectedProvider } from '@/components/Navigation/useSelectedProvider'
+import { writeProviderSelection } from '@/lib/providerSelection'
+import type { Provider } from '@/data/primitives'
 
 export function FileTreeSection(): VNode {
   const [selectedFile, setSelectedFile] = useState<FileNode | null>(null)
+  const selectedProvider = useSelectedProvider()
+  const [activeProvider, setActiveProvider] = useState<Provider>(
+    selectedProvider === '' ? 'copilot' : selectedProvider
+  )
+
+  useEffect(() => {
+    if (selectedProvider === '') return
+    setActiveProvider(selectedProvider)
+    setSelectedFile(null)
+  }, [selectedProvider])
 
   const handleFileClick = (node: FileNode) => {
     // Only select files with details
@@ -24,6 +37,12 @@ export function FileTreeSection(): VNode {
         <FileTree
           selectedId={selectedFile?.id}
           onFileClick={handleFileClick}
+          activeProvider={activeProvider}
+          onProviderChange={(provider) => {
+            setActiveProvider(provider)
+            setSelectedFile(null)
+            writeProviderSelection(provider)
+          }}
         />
       </div>
 

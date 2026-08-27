@@ -40,7 +40,9 @@ async function loadData() {
   const agentsTutorial = await import(join(dataDir, 'agentsTutorial.ts'))
   const hooksTutorial = await import(join(dataDir, 'hooksTutorial.ts'))
   const mcpTutorial = await import(join(dataDir, 'mcpTutorial.ts'))
+  const mcpScopes = await import(join(dataDir, 'mcpScopes.ts'))
   const providerProfiles = await import(join(dataDir, 'providerProfiles.ts'))
+  const starterExamples = await import(join(dataDir, 'starterExamples.ts'))
   const pagesRegistry = await import(join(dataDir, 'pages.ts'))
   
   return {
@@ -68,10 +70,21 @@ async function loadData() {
     mcpTocItems: mcpTutorial.tocItems,
     mcpCodeSamples: mcpTutorial.codeSamples,
     mcpFurtherReadingLinks: mcpTutorial.furtherReadingLinks,
-    mcpFeatureComparison: mcpTutorial.mcpFeatureComparison,
-    // Provider compatibility profiles
+    mcpScopeProfiles: mcpScopes.mcpScopeProfiles,
+    instructionStarterExamples: starterExamples.instructionStarterExamples,
+    skillStarterExamples: starterExamples.skillStarterExamples,
+    mcpStarterExamples: starterExamples.mcpStarterExamples,
+    // Provider profiles
     providerProfiles: providerProfiles.providerProfiles,
   }
+}
+
+function markdownCell(value: string): string {
+  return value.replaceAll('|', '\\|').replaceAll('\n', ' ')
+}
+
+function withoutTopMatter(content: string): string {
+  return content.replace(/^# [^\n]+\n+/, '')
 }
 
 function generateLlmsTxt(pages: readonly PageMeta[], primitiveCount: number): string {
@@ -91,7 +104,7 @@ function generateLlmsTxt(pages: readonly PageMeta[], primitiveCount: number): st
 
 > A reference site for configuring AI coding assistants like GitHub Copilot, Claude Code, Cursor, and OpenAI Codex.
 > Covers ${primitiveCount} AI primitives, a scope model, provider comparison, config file locations, and tutorials for
-> skills, agent definitions, lifecycle hooks, and MCP tool integrations.
+> skills, agent instructions, lifecycle hooks, and MCP tool integrations.
 
 This file provides a table of contents. For complete content, see /llms-full.txt.
 
@@ -114,7 +127,11 @@ ${docsList}
 }
 
 function generateSkillsMd(data: Awaited<ReturnType<typeof loadData>>): string {
-  const { tutorialSections, skillExamples } = data
+  const { tutorialSections, skillExamples, skillStarterExamples, providerProfiles } = data
+  const skillLocations = providerProfiles.map((profile: any) => {
+    const entry = profile.categories.flatMap((category: any) => category.entries).find((candidate: any) => candidate.id === 'skills')
+    return `| ${profile.name} | ${markdownCell(entry?.location ?? 'Not documented')} | ${entry?.sourceUrl != null ? `[Provider documentation](${entry.sourceUrl})` : '—'} |`
+  }).join('\n')
   
   let content = `# Skills Tutorial
 
@@ -124,10 +141,27 @@ from minimal to sophisticated.
 
 ## Tutorial Sections
 
+1. Create One Small Skill
+${tutorialSections.map((section: any, index: number) => `${index + 2}. ${section.title}`).join('\n')}
+
+## Section Details
+
+### 1. Create One Small Skill
+
+Start with one focused job and an explicit trigger:
+
+\`\`\`markdown
+${skillStarterExamples.copilot.code}
+\`\`\`
+
+| Provider | Documented location | Source |
+|----------|---------------------|--------|
+${skillLocations}
+
 `
 
-  for (const section of tutorialSections) {
-    content += `### ${section.title}
+  for (const [index, section] of tutorialSections.entries()) {
+    content += `### ${index + 2}. ${section.title}
 
 ${section.description}
 
@@ -175,13 +209,26 @@ ${example.keyTakeaways.map(t => `- ${t}`).join('\n')}
 }
 
 function generateAgentsMd(data: Awaited<ReturnType<typeof loadData>>): string {
-  const { agentsTocItems: tocItems, agentsCodeSamples: codeSamples, agentsFurtherReadingLinks: furtherReadingLinks } = data
+  const {
+    agentsTocItems: tocItems,
+    agentsCodeSamples: codeSamples,
+    agentsFurtherReadingLinks: furtherReadingLinks,
+    instructionStarterExamples,
+    providerProfiles,
+  } = data
+  const instructionRows = providerProfiles.map((profile: any) => {
+    const entry = profile.categories.flatMap((category: any) => category.entries).find((candidate: any) => candidate.id === 'persistent-instructions')
+    return `| ${profile.name} | ${markdownCell(entry?.implementation ?? 'Not documented')} | ${markdownCell(entry?.location ?? 'Not documented')} | ${entry?.sourceUrl != null ? `[Provider documentation](${entry.sourceUrl})` : '—'} |`
+  }).join('\n')
+  const globalInstructionRows = providerProfiles.map((profile: any) => {
+    const entry = profile.categories.flatMap((category: any) => category.entries).find((candidate: any) => candidate.id === 'global-instructions')
+    return `| ${profile.name} | ${markdownCell(entry?.implementation ?? 'Not documented')} | ${markdownCell(entry?.location ?? 'Not documented')} | ${entry?.sourceUrl != null ? `[Provider documentation](${entry.sourceUrl})` : '—'} |`
+  }).join('\n')
   
-  let content = `# Agent Definitions Tutorial
+  let content = `# Agent Instructions
 
-Tutorial for creating agent definition files (AGENTS.md, CLAUDE.md, copilot-instructions.md).
-Covers provider-specific formats, path-scoped rules, agent personas, file hierarchy,
-and monorepo strategies.
+Start with one useful project instruction file, then add provider-specific formats,
+path-scoped rules, agent personas, file hierarchy, and monorepo strategies as needed.
 
 ## Tutorial Sections
 
@@ -189,31 +236,32 @@ ${tocItems.map(item => `- ${item.label}${item.level ? ` (${item.level})` : ''}`)
 
 ## Section Details
 
-### 1. What Are Agent Definitions?
+### 1. Create One Useful Instruction File
 
-Agent definitions are markdown files that teach AI coding assistants about your project.
+Give your agent the commands and conventions it needs for the repository:
+
+\`\`\`markdown
+${instructionStarterExamples.copilot.code}
+\`\`\`
+
+| Provider | Implementation | Documented location | Source |
+|----------|----------------|---------------------|--------|
+${instructionRows}
+
+### 2. What Agent Instructions Do
+
+Agent instructions are markdown files that teach AI coding assistants about your project.
 They provide context about how to build, what conventions to follow, and where things live.
 
 **Why Markdown?**
 - Human readable: Team members can review and update easily
 - Version controlled: Instructions evolve with your codebase
-- Tool agnostic: Many AI tools read the same formats
+- Tool agnostic: Many AI tools read compatible formats
 - No application runtime dependency: Instructions are documentation consumed by supporting agents
-
-### 2. Your First Agent Definition
-
-Minimal example for assistants that support AGENTS.md:
-
-\`\`\`markdown
-${codeSamples.minimalAgent}
-\`\`\`
-
-Claude Code reads CLAUDE.md rather than AGENTS.md directly. Add a CLAUDE.md containing
-\`@AGENTS.md\` to reuse these shared instructions with Claude Code.
 
 ### 3. The Six Sections That Matter
 
-Analysis of 2,500+ repositories shows effective agent definitions cover:
+[GitHub's analysis of more than 2,500 repositories](https://github.blog/ai-and-ml/github-copilot/how-to-write-a-great-agents-md-lessons-from-over-2500-repositories/) found that effective agent instructions cover:
 
 1. **Commands**: Build, test, lint with full flags
 2. **Testing**: Framework, locations, how to run
@@ -226,34 +274,17 @@ Analysis of 2,500+ repositories shows effective agent definitions cover:
 ${codeSamples.sixSections}
 \`\`\`
 
-### 4. Provider-Specific Formats
+### 4. Add Your User Preferences
 
-**AGENTS.md** (open format):
-\`\`\`markdown
-${codeSamples.agentsMdFormat}
-\`\`\`
+Keep personal preferences separate from the project instructions shared with your team.
 
-**CLAUDE.md** (Claude Code):
-\`\`\`markdown
-${codeSamples.claudeMdFormat}
-\`\`\`
+| Provider | Implementation | Documented location | Source |
+|----------|----------------|---------------------|--------|
+${globalInstructionRows}
 
-**copilot-instructions.md** (GitHub Copilot):
-\`\`\`markdown
-${codeSamples.copilotInstructions}
-\`\`\`
-
-| Feature | AGENTS.md | CLAUDE.md | copilot-instructions |
-|---------|-----------|-----------|---------------------|
-| Location | Project root | Root or .claude/ | .github/ |
-| Path rules | ✓ nested AGENTS.md | ✓ .claude/rules/ | ✓ .instructions.md |
-| File imports | ✗ | ✓ @file syntax | ✗ |
-| Agent personas | ✗ | ✗ | ✓ .agent.md |
-| Cross-tool support | Wide | Claude only | Copilot only |
-
-Recommendation: If your assistants support AGENTS.md, start there for shared team
-instructions. Add provider-specific files only when you need unique capabilities like Claude
-imports, Copilot agents, or dedicated path-scoped rule formats.
+**Recommendation:** If your assistants support \`AGENTS.md\`, start there for shared team instructions.
+Add provider-specific files only when you need unique capabilities such as Claude imports,
+Copilot agents, or dedicated path-scoped rule formats.
 
 ### 5. Path-Scoped Rules
 
@@ -317,12 +348,29 @@ ${furtherReadingLinks.map(link => `- [${link.title}](${link.url}): ${link.descri
 }
 
 function generateMcpMd(data: Awaited<ReturnType<typeof loadData>>): string {
-  const { mcpTocItems, mcpCodeSamples, mcpFurtherReadingLinks, mcpFeatureComparison } = data
+  const { mcpTocItems, mcpCodeSamples, mcpFurtherReadingLinks, mcpStarterExamples, mcpScopeProfiles, providerProfiles } = data
+  const mcpRows = providerProfiles.map((profile: any) => {
+    const entry = profile.categories.flatMap((category: any) => category.entries).find((candidate: any) => candidate.id === 'tool-integrations')
+    return `| ${profile.name} | ${markdownCell(entry?.implementation ?? 'Not documented')} | ${markdownCell(entry?.location ?? 'Not documented')} | ${entry?.support ?? 'none'} | ${entry?.sourceUrl != null ? `[Provider documentation](${entry.sourceUrl})` : '—'} |`
+  }).join('\n')
+  const providerNames = Object.fromEntries(providerProfiles.map((profile: any) => [profile.provider, profile.name]))
+  const starterBlocks = Object.entries(mcpStarterExamples).map(([provider, example]: [string, any]) => `**${providerNames[provider] ?? provider} — \`${example.filename}\`:**
+
+\`\`\`${example.language}
+${example.code}
+\`\`\``).join('\n\n')
+  const scopeBlocks = mcpScopeProfiles.map((profile: any) => `**${profile.label}:**
+
+| Scope | Location | Visibility |
+|-------|----------|------------|
+${profile.scopes.map((scope: any) => `| ${markdownCell(scope.scope)} | \`${markdownCell(scope.location)}\` | ${markdownCell(scope.visibility)} |`).join('\n')}
+
+${profile.sourceUrl != null ? `[Official ${profile.label} documentation](${profile.sourceUrl})` : ''}`).join('\n\n')
   
   let content = `# MCP Tool Integrations Tutorial
 
 Tutorial for connecting AI coding assistants to external tools using the Model Context Protocol (MCP).
-Covers core primitives, server installation, configuration scopes, and provider comparison.
+Covers a first server connection, core primitives, installation, configuration scopes, provider details, and security.
 
 ## Tutorial Sections
 
@@ -330,7 +378,13 @@ ${mcpTocItems.map((item: any) => `- ${item.label}${item.level ? ` (${item.level}
 
 ## Section Details
 
-### 1. What is MCP?
+### 1. Connect One Server
+
+Start with the GitHub MCP server and confirm a read-only operation such as listing pull requests:
+
+${starterBlocks}
+
+### 2. What is MCP?
 
 The Model Context Protocol (MCP) is an open standard that connects AI applications
 to external tools, databases, and APIs. Think of it like a USB-C port for AI—one
@@ -346,7 +400,7 @@ MCP follows a client-server architecture:
 ${mcpCodeSamples.mcpArchitecture}
 \`\`\`
 
-### 2. Why MCP Matters
+### 3. Why MCP Matters
 
 With MCP servers connected, AI assistants can:
 - Query databases naturally
@@ -354,7 +408,7 @@ With MCP servers connected, AI assistants can:
 - Analyze monitoring data from Sentry
 - Access files outside the current workspace
 
-### 3. Core Primitives
+### 4. Core Primitives
 
 MCP servers expose three types of capabilities:
 
@@ -373,41 +427,27 @@ ${mcpCodeSamples.resourcePrimitive}
 ${mcpCodeSamples.promptPrimitive}
 \`\`\`
 
-### 4. Installing MCP Servers
+### 5. Installing MCP Servers
 
-**Claude Code (HTTP):**
-\`\`\`bash
-${mcpCodeSamples.claudeHttpServer}
-\`\`\`
+Providers support different combinations of local and remote transports and use different
+configuration methods. Add the server with the documented file or command, then restart or
+reload the provider if it does not discover the server immediately.
 
-**Claude Code (stdio):**
-\`\`\`bash
-${mcpCodeSamples.claudeStdioServer}
-\`\`\`
+${starterBlocks}
 
-**VS Code + Copilot:**
-\`\`\`json
-${mcpCodeSamples.vscodeMcpJson}
-\`\`\`
+### 6. Configuration Scopes
 
-### 5. Configuration Scopes
+MCP servers can be configured at different levels—personal, project, or organization-wide.
 
-Both providers support multiple configuration scopes:
+${scopeBlocks}
 
-| Scope | Claude Code | VS Code |
-|-------|-------------|---------|
-| Local/Workspace | ~/.claude.json | .vscode/mcp.json |
-| Project | .mcp.json | .vscode/mcp.json |
-| User | ~/.claude.json | User profile |
-| Enterprise | managed-mcp.json | Settings + MDM |
+### 7. Check Your Provider Details
 
-### 6. Provider Comparison
+| Provider | Implementation | Documented location | Support | Source |
+|----------|----------------|---------------------|---------|--------|
+${mcpRows}
 
-| Feature | Claude Code | VS Code/Copilot |
-|---------|-------------|-----------------|
-${mcpFeatureComparison.map((row: { feature: string; claudeCode: string; vsCodeCopilot: string }) => `| ${row.feature} | ${row.claudeCode} | ${row.vsCodeCopilot} |`).join('\n')}
-
-### 7. Security Considerations
+### 8. Security Considerations
 
 \`\`\`
 ${mcpCodeSamples.securityTrust}
@@ -418,7 +458,7 @@ Enterprise management with allowlists:
 ${mcpCodeSamples.allowDenyLists}
 \`\`\`
 
-### 8. Practical Examples
+### 9. Practical Examples
 
 **GitHub Integration:**
 \`\`\`bash
@@ -435,7 +475,7 @@ ${mcpCodeSamples.exampleDatabase}
 ${mcpCodeSamples.exampleSentry}
 \`\`\`
 
-## Further Reading
+### 10. Further Reading
 
 ${mcpFurtherReadingLinks.map((link: any) => `- [${link.title}](${link.url}): ${link.description}`).join('\n')}
 `
@@ -446,7 +486,7 @@ ${mcpFurtherReadingLinks.map((link: any) => `- [${link.title}](${link.url}): ${l
 function generateProfilesMd(data: Awaited<ReturnType<typeof loadData>>): string {
   const { providerProfiles } = data
 
-  let content = `# Provider Compatibility Profiles
+  let content = `# Provider Profiles
 
 Per-provider view of every primitive tracked on agentconfig.org: support level, implementation,
 file location, and a citation to the provider's own documentation where one exists. Generated
@@ -686,7 +726,7 @@ function generateLlmsFullTxt(data: Awaited<ReturnType<typeof loadData>>): string
 
 > This file contains the complete content of agentconfig.org for AI agents.
 > It includes all AI primitives, the scope model, provider comparisons, config file locations,
-> and tutorials for skills, agent definitions, lifecycle hooks, and MCP tool integrations.
+> and tutorials for skills, agent instructions, lifecycle hooks, and MCP tool integrations.
 
 ## Site Overview
 
@@ -791,16 +831,16 @@ ${scopeModel.map((s: { name: string; example: string }) => `| ${s.name} | ${s.ex
 # Part ${pages.find(p => p.slug === 'skills')?.partNumber ?? 4}: Skills Tutorial
 `
 
-  content += generateSkillsMd(data).replace(/^# Skills Tutorial\n\n[^\n]+\n[^\n]+\n[^\n]+\n\n/, '')
+  content += withoutTopMatter(generateSkillsMd(data))
 
   content += `
 ---
 
-# Part ${pages.find(p => p.slug === 'agents')?.partNumber ?? 5}: Agent Definitions Tutorial
+# Part ${pages.find(p => p.slug === 'agents')?.partNumber ?? 5}: Agent Instructions
 
 `
 
-  content += generateAgentsMd(data).replace(/^# Agent Definitions Tutorial\n\n[^\n]+\n[^\n]+\n[^\n]+\n\n/, '')
+  content += withoutTopMatter(generateAgentsMd(data))
 
   content += `
 ---
@@ -809,7 +849,7 @@ ${scopeModel.map((s: { name: string; example: string }) => `| ${s.name} | ${s.ex
 
 `
 
-  content += generateHooksMd(data).replace(/^# Hooks Tutorial\n\n[^\n]+\n[^\n]+\n[^\n]+\n\n/, '')
+  content += withoutTopMatter(generateHooksMd(data))
 
   content += `
 ---
@@ -818,16 +858,16 @@ ${scopeModel.map((s: { name: string; example: string }) => `| ${s.name} | ${s.ex
 
 `
 
-  content += generateMcpMd(data).replace(/^# MCP Tool Integrations Tutorial\n\n[^\n]+\n[^\n]+\n[^\n]+\n\n/, '')
+  content += withoutTopMatter(generateMcpMd(data))
 
   content += `
 ---
 
-# Part ${pages.find(p => p.slug === 'profiles')?.partNumber ?? 8}: Provider Compatibility Profiles
+# Part ${pages.find(p => p.slug === 'profiles')?.partNumber ?? 8}: Provider Profiles
 
 `
 
-  content += generateProfilesMd(data).replace(/^# Provider Compatibility Profiles\n\n[^\n]+\n[^\n]+\n[^\n]+\n[^\n]+\n\n/, '')
+  content += withoutTopMatter(generateProfilesMd(data))
 
   return content
 }

@@ -29,7 +29,7 @@ test.describe('Navigation', () => {
 
       // Should navigate to /skills/
       await expect(page).toHaveURL(/\/skills\/?/)
-      await expect(page.getByRole('heading', { name: 'Building Agent Skills' })).toBeVisible()
+      await expect(page.getByRole('heading', { name: 'Agent Skills' })).toBeVisible()
     })
 
     test('should navigate to Agents page', async ({ page }) => {
@@ -38,7 +38,7 @@ test.describe('Navigation', () => {
 
       // Should navigate to /agents/
       await expect(page).toHaveURL(/\/agents\/?/)
-      await expect(page.getByRole('heading', { name: 'Agent Definitions', exact: true })).toBeVisible()
+      await expect(page.getByRole('heading', { name: 'Agent Instructions', exact: true })).toBeVisible()
     })
 
     test('should navigate to Hooks page', async ({ page }) => {
@@ -58,6 +58,16 @@ test.describe('Navigation', () => {
       await nav.getByRole('link', { name: 'Hooks' }).click()
       await expect(page).toHaveURL(/\/hooks\/\?provider=cursor/)
       await expect(page.locator('#first-provider-hook').getByRole('tab', { name: 'Cursor', exact: true })).toHaveAttribute('aria-selected', 'true')
+    })
+
+    test('should persist a provider when opening a page without a query parameter', async ({ page }) => {
+      const nav = page.getByLabel('Main navigation')
+      await nav.getByRole('combobox', { name: 'Provider' }).selectOption('codex')
+
+      await page.goto('/skills/')
+
+      await expect(page.getByLabel('Main navigation').getByRole('combobox', { name: 'Provider' })).toHaveValue('codex')
+      await expect(page.locator('#first-skill').getByRole('tab', { name: 'OpenAI Codex' })).toHaveAttribute('aria-selected', 'true')
     })
 
     test('should navigate back to Overview from Skills', async ({ page }) => {
@@ -87,7 +97,7 @@ test.describe('Navigation', () => {
       await expect(page.getByRole('link', { name: 'Skills' })).toBeVisible()
       await expect(page.getByRole('link', { name: 'Agents' })).toBeVisible()
       await expect(page.getByRole('link', { name: 'Hooks' })).toBeVisible()
-      await expect(page.getByRole('link', { name: 'Profiles' })).toHaveCount(0)
+      await expect(page.getByRole('link', { name: 'Profiles' })).toHaveCount(1)
       await expect(page.getByRole('combobox', { name: 'Provider' })).toHaveValue('')
       await expect(page.getByRole('button', { name: 'Close menu' })).toBeVisible()
     })

@@ -59,10 +59,10 @@ test.describe('Provider Comparison', () => {
     await row.click()
 
     // Should show expanded details with implementation info for all 4 providers
-    await expect(page.getByText('AGENTS.md or repository instructions file')).toBeVisible()
-    await expect(page.getByText('Project memory file with @imports')).toBeVisible()
-    await expect(page.getByText('Project instructions file')).toBeVisible()
-    await expect(page.getByText('Project AGENTS.md file with hierarchical loading')).toBeVisible()
+    await expect(table.getByText('AGENTS.md or repository instructions file')).toBeVisible()
+    await expect(table.getByText('Project memory file with @imports')).toBeVisible()
+    await expect(table.getByText('Project instructions file')).toBeVisible()
+    await expect(table.getByText('Project AGENTS.md file with hierarchical loading')).toBeVisible()
   })
 
   test('should show file locations when expanded', async ({ page }) => {
@@ -75,11 +75,11 @@ test.describe('Provider Comparison', () => {
     // publish AGENTS.md, so scope each assertion to its own provider card
     // (identified by its heading) instead of a page-wide text search, which
     // would otherwise pass even if one provider's location text went stale.
-    await expect(page.getByText('AGENTS.md or .github/copilot-instructions.md')).toBeVisible()
-    await expect(page.getByText('./CLAUDE.md, ./.claude/CLAUDE.md')).toBeVisible()
-    const cursorCard = page.getByRole('heading', { name: 'Cursor', exact: true }).locator('..')
+    await expect(table.getByText('AGENTS.md or .github/copilot-instructions.md')).toBeVisible()
+    await expect(table.getByText('./CLAUDE.md, ./.claude/CLAUDE.md')).toBeVisible()
+    const cursorCard = table.getByRole('heading', { name: 'Cursor', exact: true }).locator('..')
     await expect(cursorCard.locator('code')).toHaveText('AGENTS.md')
-    const codexCard = page.getByRole('heading', { name: 'OpenAI Codex', exact: true }).locator('..')
+    const codexCard = table.getByRole('heading', { name: 'OpenAI Codex', exact: true }).locator('..')
     await expect(codexCard.locator('code')).toHaveText('AGENTS.md, AGENTS.override.md')
   })
 
@@ -91,13 +91,14 @@ test.describe('Provider Comparison', () => {
     await row.click()
 
     // Verify expanded
-    await expect(page.getByText('AGENTS.md or repository instructions file')).toBeVisible()
+    const expandedDetails = table.getByText('AGENTS.md or repository instructions file')
+    await expect(expandedDetails).toBeVisible()
 
     // Click to collapse
     await row.click()
 
     // Should no longer show expanded content
-    await expect(page.getByText('AGENTS.md or repository instructions file')).not.toBeVisible()
+    await expect(expandedDetails).not.toBeVisible()
   })
 
   test('should display legend', async ({ page }) => {
@@ -118,7 +119,7 @@ test.describe('Provider Comparison', () => {
     await row.click()
 
     // Should have copy buttons for all 4 providers
-    const copyButtons = page.getByRole('button', { name: /Copy location/i })
+    const copyButtons = table.getByRole('button', { name: /Copy location/i })
     await expect(copyButtons.nth(0)).toBeVisible()
     await expect(copyButtons.nth(1)).toBeVisible()
     await expect(copyButtons.nth(2)).toBeVisible()
@@ -131,15 +132,15 @@ test.describe('Provider Comparison', () => {
     // Click first row
     const firstRow = table.getByRole('row').filter({ hasText: 'Persistent Instructions' }).first()
     await firstRow.click()
-    await expect(page.getByText('AGENTS.md or repository instructions file')).toBeVisible()
+    await expect(table.getByText('AGENTS.md or repository instructions file')).toBeVisible()
 
     // Click second row
     const secondRow = table.getByRole('row').filter({ hasText: 'Agent Mode' }).first()
     await secondRow.click()
 
     // First row should collapse
-    await expect(page.getByText('AGENTS.md or repository instructions file')).not.toBeVisible()
+    await expect(table.getByText('AGENTS.md or repository instructions file')).not.toBeVisible()
     // Second row should be expanded
-    await expect(page.getByText('Agent mode in Copilot Chat')).toBeVisible()
+    await expect(table.getByText('Agent mode in Copilot Chat')).toBeVisible()
   })
 })

@@ -1,4 +1,3 @@
-import { useState } from 'preact/hooks'
 import type { VNode } from 'preact'
 import { cn } from '@/lib/utils'
 import { trees, globalTrees, type Provider, type FileNode } from '@/data/fileTree'
@@ -12,14 +11,19 @@ export interface FileTreeProps {
   onFileClick?: ((node: FileNode) => void) | undefined
   /** Additional CSS classes */
   className?: string | undefined
+  /** Provider selected by the site-wide chooser */
+  activeProvider: Provider
+  /** Keep local tabs and the site-wide chooser synchronized */
+  onProviderChange: (provider: Provider) => void
 }
 
 export function FileTree({
   selectedId,
   onFileClick,
   className,
+  activeProvider,
+  onProviderChange,
 }: FileTreeProps): VNode {
-  const [activeProvider, setActiveProvider] = useState<Provider>('copilot')
   const tree = trees[activeProvider]
   const globalTree = globalTrees[activeProvider]
 
@@ -29,7 +33,7 @@ export function FileTree({
       <div
         role="tablist"
         aria-label="Select AI provider"
-        className="flex gap-2 mb-4"
+        className="mb-4 grid grid-cols-2 gap-2 sm:flex"
       >
         {providers.map((provider) => (
           <button
@@ -37,7 +41,7 @@ export function FileTree({
             role="tab"
             aria-selected={activeProvider === provider.id}
             aria-controls={`tree-panel-${provider.id}`}
-            onClick={() => { setActiveProvider(provider.id) }}
+            onClick={() => { onProviderChange(provider.id) }}
             className={cn(
               'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium',
               'transition-colors duration-150',

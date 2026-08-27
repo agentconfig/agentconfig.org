@@ -32,7 +32,7 @@ Project-level config:
 - [ ] Where do custom agents go?
 
 Global/User-level config:
-- [ ] What files/folders in home directory? (e.g., ~/.cursor/settings.json)
+- [ ] What files/folders or product settings exist at user scope? (e.g., Cursor User Rules)
 - [ ] Where do global settings go?
 - [ ] Where do global instructions go?
 - [ ] Where do global commands go?
@@ -61,7 +61,7 @@ Configuration format:
 - Available in: [e.g., "Stable" / "Nightly only" / "Beta"]
 
 **Configuration location:**
-- File path: [e.g., ~/.cursor/settings.json]
+- File path or product setting: [e.g., Cursor User Rules in Settings → Rules]
 - Property/section: [e.g., agent.enabled = true]
 - Example config: [paste snippet from official docs]
 
@@ -156,8 +156,8 @@ References:
 
 ### ❌ "I forgot to check both project and global config"
 - Every primitive needs TWO location entries
-- One for project-level (.cursor/instructions.md)
-- One for global/user-level (~/.cursor/config.toml)
+- One for project-level (`AGENTS.md` or `.cursor/rules/*.mdc`)
+- One for global/user-level (Cursor User Rules)
 - Look for both in provider docs
 
 ## Support Level Decision Tree
@@ -206,7 +206,7 @@ Here's what the actual research looked like for Codex:
 - Native support: ✓ documented
 
 **Skills/Workflows**: full support
-- Official docs: `.codex/skills/*/SKILL.md` (agentskills.io specification)
+- Official docs: `.agents/skills/*/SKILL.md` (agentskills.io specification)
 - Native support: ✓ documented as a first-class primitive
 
 ## Validation Checklist

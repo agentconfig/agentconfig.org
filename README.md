@@ -6,9 +6,11 @@ A reference guide for configuring AI coding assistants. Learn where config files
 
 ## What's Here
 
-- **AI Primitives** — The 11 core configuration primitives (instructions, skills, agents, commands, etc.) that power AI coding assistants
+- **AI Primitives** — The 13 core configuration primitives for instructions, procedures, tools, delegation, guardrails, distribution, and verification
 - **Interactive File Tree** — Visual guide to where config files live, for both global (user home) and project-level configuration
 - **Provider Comparison** — Side-by-side comparison of GitHub Copilot, Claude Code, Cursor, and OpenAI Codex support for each primitive
+- **Progressive Guides** — Practical tutorials for skills, agent definitions, lifecycle hooks, and MCP integrations
+- **Provider Profiles** — Source-backed implementation paths and support details for each provider
 
 ## Key Paths
 
@@ -36,9 +38,11 @@ A reference guide for configuring AI coding assistants. Learn where config files
 
 | Type | Path |
 |------|------|
-| Global settings | `~/.cursor/settings.json` |
-| Project instructions | `.cursor/instructions.md` |
-| Project rules | `.cursor/rules/<name>.md` |
+| Global instructions | Cursor User Rules |
+| Project instructions | `AGENTS.md` |
+| Project rules | `.cursor/rules/<name>.mdc` |
+| Project skills | `.cursor/skills/<skill-name>/SKILL.md` |
+| Project hooks | `.cursor/hooks.json` |
 
 ### OpenAI Codex
 
@@ -47,8 +51,9 @@ A reference guide for configuring AI coding assistants. Learn where config files
 | Global config | `~/.codex/config.toml` |
 | Global instructions | `~/.codex/AGENTS.md` |
 | Project instructions | `AGENTS.md` |
-| Project skills | `.codex/skills/<skill-name>/SKILL.md` |
-| Command rules | `~/.codex/rules/*.rules` |
+| Project skills | `.agents/skills/<skill-name>/SKILL.md` |
+| Project agents | `.codex/agents/<name>.toml` |
+| Project hooks | `.codex/hooks.json` |
 
 ## Repository Agent Harness
 

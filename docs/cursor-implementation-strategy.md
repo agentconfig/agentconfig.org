@@ -14,18 +14,18 @@ Add Cursor as a third provider to the agentconfig.org provider comparison system
 ### What Needs to Change
 
 **Files that must be modified**:
-1. `site/src/data/primitives.ts` - Add Cursor to Provider type, add implementations to 11 primitives
-2. `site/src/data/comparison.ts` - Add Cursor field to ComparisonRow interface and 11 data rows
+1. `site/src/data/primitives.ts` - Add Cursor to Provider type, add implementations across the tracked primitives
+2. `site/src/data/comparison.ts` - Add Cursor field to ComparisonRow interface and matching data rows
 3. `site/src/data/fileTree.ts` - Add Cursor to Provider type, add file tree nodes
 4. `site/src/components/ProviderComparison/ComparisonTable.tsx` - Add Cursor column to table
 5. `site/tests/e2e/comparison.spec.ts` - Add tests for 3-provider layout
 
 **Data needed**:
-- Cursor implementation of 11 primitives
+- Cursor implementation of each tracked primitive
 - File paths/locations for each implementation
 - Support levels (full/partial/none/diy)
 
-### 11 Primitives to Cover
+### Tracked Primitives to Cover
 
 | Category | Primitive |
 |----------|-----------|
@@ -49,7 +49,7 @@ Add Cursor as a third provider to the agentconfig.org provider comparison system
 **Dependencies**: None (can start immediately)
 
 **Tasks**:
-1. Research Cursor's implementation of each 11 primitives
+1. Research Cursor's implementation of each tracked primitives
 2. Verify support level (full/partial/none/diy) for each
 3. Document implementation details and file locations
 4. Create structured JSON and markdown deliverables
@@ -221,7 +221,7 @@ Add Cursor as a third provider to the agentconfig.org provider comparison system
 
 **Verification checklist**:
 - [ ] 3 providers display correctly in comparison
-- [ ] All 11 primitives have Cursor data
+- [ ] All tracked primitives have Cursor data
 - [ ] No TypeScript errors
 - [ ] E2E tests pass
 - [ ] Responsive design works
@@ -303,7 +303,7 @@ Start
 ## Success Metrics
 
 ✅ Cursor added to Provider type
-✅ All 11 primitives have Cursor implementation data
+✅ All tracked primitives have Cursor implementation data
 ✅ ComparisonTable renders 3 providers correctly
 ✅ All E2E tests pass with 3 providers
 ✅ No TypeScript errors

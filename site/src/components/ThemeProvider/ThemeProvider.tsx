@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'preact/hooks'
 import type { VNode, ComponentChildren } from 'preact'
 import { ThemeContext } from './ThemeContext'
+import { readLocalStorage, writeLocalStorage } from '@/lib/storage'
 
 type Theme = 'light' | 'dark' | 'system'
 
@@ -11,7 +12,7 @@ function getSystemTheme(): 'light' | 'dark' {
 
 function getStoredTheme(): Theme {
   if (typeof window === 'undefined') return 'system'
-  const stored = localStorage.getItem('theme')
+  const stored = readLocalStorage('theme')
   if (stored === 'light' || stored === 'dark' || stored === 'system') {
     return stored
   }
@@ -62,7 +63,7 @@ export function ThemeProvider({ children, defaultTheme = 'system' }: ThemeProvid
   }, [theme])
 
   const setTheme = (newTheme: Theme): void => {
-    localStorage.setItem('theme', newTheme)
+    writeLocalStorage('theme', newTheme)
     setThemeState(newTheme)
   }
 

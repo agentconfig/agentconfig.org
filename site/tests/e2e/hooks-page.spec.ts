@@ -35,17 +35,17 @@ test.describe('Hooks Page', () => {
     await expect(lifecycleSection.getByRole('heading', { name: 'Act', exact: true })).toBeVisible()
     await expect(lifecycleSection.getByRole('heading', { name: 'Finish', exact: true })).toBeVisible()
     await expect(lifecycleSection.getByRole('tablist', { name: 'Lifecycle provider event names' })).toBeVisible()
-    await expect(lifecycleSection.locator('[role="tabpanel"]:visible').getByText('preToolUse', { exact: true })).toHaveCSS('font-family', /mono/i)
+    await expect(lifecycleSection.getByRole('tabpanel').getByText('preToolUse', { exact: true })).toHaveCSS('font-family', /mono/i)
 
     await lifecycleSection.getByRole('tab', { name: 'Claude Code', exact: true }).click()
-    await expect(lifecycleSection.locator('[role="tabpanel"]:visible').getByText('PreToolUse', { exact: true })).toBeVisible()
+    await expect(lifecycleSection.getByRole('tabpanel').getByText('PreToolUse', { exact: true })).toBeVisible()
 
     await lifecycleSection.getByRole('tab', { name: 'Cursor', exact: true }).click()
-    await expect(lifecycleSection.locator('[role="tabpanel"]:visible').getByText('beforeSubmitPrompt', { exact: true })).toBeVisible()
-    await expect(lifecycleSection.locator('[role="tabpanel"]:visible').getByText('preCompact', { exact: true })).toBeVisible()
+    await expect(lifecycleSection.getByRole('tabpanel').getByText('beforeSubmitPrompt', { exact: true })).toBeVisible()
+    await expect(lifecycleSection.getByRole('tabpanel').getByText('preCompact', { exact: true })).toBeVisible()
 
     await lifecycleSection.getByRole('tab', { name: 'OpenAI Codex', exact: true }).click()
-    await expect(lifecycleSection.locator('[role="tabpanel"]:visible').getByText('PreCompact, PostCompact', { exact: true })).toBeVisible()
+    await expect(lifecycleSection.getByRole('tabpanel').getByText('PreCompact, PostCompact', { exact: true })).toBeVisible()
   })
 
   test('shows provider details as tabs with code-styled paths', async ({ page }) => {
@@ -61,7 +61,7 @@ test.describe('Hooks Page', () => {
 
     await providerSection.getByRole('tab', { name: 'Cursor', exact: true }).click()
     await expect(providerSection.getByRole('heading', { name: 'Cursor', exact: true })).toBeVisible()
-    await expect(providerSection.locator('[role="tabpanel"]:visible').getByText('.cursor/hooks.json', { exact: true })).toHaveCSS('font-family', /mono/i)
+    await expect(providerSection.getByRole('tabpanel').getByText('.cursor/hooks.json', { exact: true })).toHaveCSS('font-family', /mono/i)
 
     await providerSection.getByRole('tab', { name: 'OpenAI Codex', exact: true }).click()
     await expect(providerSection.getByRole('heading', { name: 'OpenAI Codex', exact: true })).toBeVisible()

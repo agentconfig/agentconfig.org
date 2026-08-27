@@ -1,15 +1,14 @@
-# Agent Definitions Tutorial
+# Agent Instructions
 
-Tutorial for creating agent definition files (AGENTS.md, CLAUDE.md, copilot-instructions.md).
-Covers provider-specific formats, path-scoped rules, agent personas, file hierarchy,
-and monorepo strategies.
+Start with one useful project instruction file, then add provider-specific formats,
+path-scoped rules, agent personas, file hierarchy, and monorepo strategies as needed.
 
 ## Tutorial Sections
 
-- 1. What Are Agent Definitions? (beginner)
-- 2. Your First Definition (beginner)
+- 1. Create One Useful File (beginner)
+- 2. What Instructions Do (beginner)
 - 3. The Six Core Sections (beginner)
-- 4. Provider-Specific Formats (intermediate)
+- 4. Add Your User Preferences (intermediate)
 - 5. Path-Scoped Instructions (intermediate)
 - 6. Custom Agent Personas (intermediate)
 - 7. File Hierarchy (advanced)
@@ -18,41 +17,44 @@ and monorepo strategies.
 
 ## Section Details
 
-### 1. What Are Agent Definitions?
+### 1. Create One Useful Instruction File
 
-Agent definitions are markdown files that teach AI coding assistants about your project.
+Give your agent the commands and conventions it needs for the repository:
+
+```markdown
+# Project instructions
+
+## Commands
+- Install: `bun install`
+- Test: `bun test`
+- Build: `bun run build`
+
+## Conventions
+- Use TypeScript strict mode
+- Run tests before committing
+```
+
+| Provider | Implementation | Documented location | Source |
+|----------|----------------|---------------------|--------|
+| GitHub Copilot | AGENTS.md or repository instructions file | AGENTS.md or .github/copilot-instructions.md | [Provider documentation](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions) |
+| Claude Code | Project memory file with @imports | ./CLAUDE.md, ./.claude/CLAUDE.md | [Provider documentation](https://code.claude.com/docs/en/memory) |
+| Cursor | Project instructions file | AGENTS.md | [Provider documentation](https://cursor.com/docs/context/rules) |
+| OpenAI Codex | Project AGENTS.md file with hierarchical loading | AGENTS.md, AGENTS.override.md | [Provider documentation](https://developers.openai.com/codex/agent-configuration/agents-md) |
+
+### 2. What Agent Instructions Do
+
+Agent instructions are markdown files that teach AI coding assistants about your project.
 They provide context about how to build, what conventions to follow, and where things live.
 
 **Why Markdown?**
 - Human readable: Team members can review and update easily
 - Version controlled: Instructions evolve with your codebase
-- Tool agnostic: Many AI tools read the same formats
+- Tool agnostic: Many AI tools read compatible formats
 - No application runtime dependency: Instructions are documentation consumed by supporting agents
-
-### 2. Your First Agent Definition
-
-Minimal example for assistants that support AGENTS.md:
-
-```markdown
-# AGENTS.md
-
-## Setup
-- Install dependencies: `npm install`
-- Start dev server: `npm run dev`
-- Run tests: `npm test`
-
-## Code Style
-- TypeScript strict mode
-- Use functional components
-- Single quotes, no semicolons
-```
-
-Claude Code reads CLAUDE.md rather than AGENTS.md directly. Add a CLAUDE.md containing
-`@AGENTS.md` to reuse these shared instructions with Claude Code.
 
 ### 3. The Six Sections That Matter
 
-Analysis of 2,500+ repositories shows effective agent definitions cover:
+[GitHub's analysis of more than 2,500 repositories](https://github.blog/ai-and-ml/github-copilot/how-to-write-a-great-agents-md-lessons-from-over-2500-repositories/) found that effective agent instructions cover:
 
 1. **Commands**: Build, test, lint with full flags
 2. **Testing**: Framework, locations, how to run
@@ -108,64 +110,20 @@ Analysis of 2,500+ repositories shows effective agent definitions cover:
 - 🚫 Never: Commit secrets, modify node_modules, skip tests
 ```
 
-### 4. Provider-Specific Formats
+### 4. Add Your User Preferences
 
-**AGENTS.md** (open format):
-```markdown
-# AGENTS.md
+Keep personal preferences separate from the project instructions shared with your team.
 
-## Commands
-- Build: `npm run build`
-- Test: `npm test`
+| Provider | Implementation | Documented location | Source |
+|----------|----------------|---------------------|--------|
+| GitHub Copilot | User-level Copilot CLI instruction files | $HOME/.copilot/copilot-instructions.md, $HOME/.copilot/instructions/**/*.instructions.md | [Provider documentation](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-custom-instructions) |
+| Claude Code | User-level memory and config | ~/.claude/CLAUDE.md | [Provider documentation](https://code.claude.com/docs/en/memory) |
+| Cursor | User-level settings and preferences | User Rules (global to your Cursor environment; not stored on the file system) | [Provider documentation](https://cursor.com/docs/skills) |
+| OpenAI Codex | User-level AGENTS.md with override precedence | ~/.codex/AGENTS.md, ~/.codex/AGENTS.override.md | [Provider documentation](https://developers.openai.com/codex/agent-configuration/agents-md) |
 
-## Code Style
-- TypeScript strict mode
-- Use Prettier for formatting
-
-## Testing
-- Framework: Vitest
-- Run: `npm test`
-```
-
-**CLAUDE.md** (Claude Code):
-```markdown
-@AGENTS.md
-
-## Claude Code
-
-Add only Claude-specific instructions here. Shared project instructions
-belong in AGENTS.md.
-```
-
-**copilot-instructions.md** (GitHub Copilot):
-```markdown
-# .github/copilot-instructions.md
-
-This is a React 18 project using TypeScript and Vite.
-
-When writing components:
-- Use functional components with hooks
-- Export named functions, not default exports
-- Place tests in __tests__ directories
-- Use Tailwind CSS for styling
-
-When writing tests:
-- Use Vitest and React Testing Library
-- Test behavior, not implementation
-- Include accessibility checks
-```
-
-| Feature | AGENTS.md | CLAUDE.md | copilot-instructions |
-|---------|-----------|-----------|---------------------|
-| Location | Project root | Root or .claude/ | .github/ |
-| Path rules | ✓ nested AGENTS.md | ✓ .claude/rules/ | ✓ .instructions.md |
-| File imports | ✗ | ✓ @file syntax | ✗ |
-| Agent personas | ✗ | ✗ | ✓ .agent.md |
-| Cross-tool support | Wide | Claude only | Copilot only |
-
-Recommendation: If your assistants support AGENTS.md, start there for shared team
-instructions. Add provider-specific files only when you need unique capabilities like Claude
-imports, Copilot agents, or dedicated path-scoped rule formats.
+**Recommendation:** If your assistants support `AGENTS.md`, start there for shared team instructions.
+Add provider-specific files only when you need unique capabilities such as Claude imports,
+Copilot agents, or dedicated path-scoped rule formats.
 
 ### 5. Path-Scoped Rules
 

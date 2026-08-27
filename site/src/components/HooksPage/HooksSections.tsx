@@ -3,7 +3,7 @@ import { Lightbulb, TriangleAlert } from 'lucide-preact'
 import { CodeBlock } from '@/components/CodeBlock'
 import { CodeTabs } from '@/components/CodeBlock/CodeTabs'
 import { codeSamples, furtherReadingLinks, normalizedEvents, providerPanels } from '@/data/hooksTutorial'
-import { ProviderTabs, type ProviderTone } from './ProviderTabs'
+import { ProviderTabs, type ProviderTone } from '@/components/ProviderTabs'
 
 const lifecycleStages = [
   {

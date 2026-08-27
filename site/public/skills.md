@@ -6,7 +6,41 @@ from minimal to sophisticated.
 
 ## Tutorial Sections
 
-### Understanding the Spec
+1. Create One Small Skill
+2. Understanding the Spec
+3. Progressive Disclosure
+4. Composability
+5. When to Use What
+6. Keeping Skills Lean
+
+## Section Details
+
+### 1. Create One Small Skill
+
+Start with one focused job and an explicit trigger:
+
+```markdown
+---
+name: explain-failure
+description: Explain a failing test and suggest the smallest fix. Use when a test fails.
+---
+
+# Explain Failure
+
+1. Read the failing test and its output.
+2. Identify the first incorrect assumption.
+3. Suggest the smallest safe fix.
+4. Name the command that verifies the fix.
+```
+
+| Provider | Documented location | Source |
+|----------|---------------------|--------|
+| GitHub Copilot | .github/skills/<name>/SKILL.md (also .claude/skills, .agents/skills; personal: ~/.copilot/skills, ~/.agents/skills) | [Provider documentation](https://docs.github.com/en/copilot/concepts/agents/about-agent-skills) |
+| Claude Code | .claude/skills/<name>/SKILL.md (also ~/.claude/skills/<name>/SKILL.md for personal skills) | [Provider documentation](https://code.claude.com/docs/en/skills) |
+| Cursor | .cursor/skills/<name>/SKILL.md (also discovers .agents/skills, .claude/skills, .codex/skills, and their ~/ personal equivalents) | [Provider documentation](https://cursor.com/docs/skills) |
+| OpenAI Codex | .agents/skills/<name>/SKILL.md (repo scope, up to repo root); personal: ~/.agents/skills; admin: /etc/codex/skills | [Provider documentation](https://developers.openai.com/codex/build-skills) |
+
+### 2. Understanding the Spec
 
 The structure and constraints of a SKILL.md file.
 
@@ -36,7 +70,7 @@ The frontmatter tells the agent *when* to use this skill. The body tells it *how
 
 ---
 
-### Progressive Disclosure
+### 3. Progressive Disclosure
 
 Load information only when needed.
 
@@ -64,7 +98,7 @@ The good description tells the agent exactly when to load this skill.
 
 ---
 
-### Composability
+### 4. Composability
 
 Skills that reference other skills.
 
@@ -95,7 +129,7 @@ For writing style guidelines, see the voice-and-tone skill at:
 
 ---
 
-### When to Use What
+### 5. When to Use What
 
 Scripts vs references vs assets—a decision tree.
 
@@ -136,7 +170,7 @@ The agent loads these progressively—only when the SKILL.md body references the
 
 ---
 
-### Keeping Skills Lean
+### 6. Keeping Skills Lean
 
 Under 500 lines and why it matters.
 

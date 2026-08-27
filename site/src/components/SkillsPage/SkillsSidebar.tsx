@@ -86,6 +86,14 @@ export function SkillsSidebar({ activeSection, className }: SkillsSidebarProps):
       aria-label="Tutorial navigation"
       className={cn('space-y-2', className)}
     >
+      <SidebarSection title="Start Here">
+        <SidebarLink
+          href="#first-skill"
+          label="Create One Small Skill"
+          isActive={activeSection === 'first-skill'}
+        />
+      </SidebarSection>
+
       <SidebarSection title="Concepts">
         {tutorialSections.map((section) => (
           <SidebarLink

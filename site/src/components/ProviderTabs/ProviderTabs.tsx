@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'preact/hooks'
 import { cn } from '@/lib/utils'
 import {
   providerSelectionEvent,
+  readProviderSelection,
   writeProviderSelection,
 } from '@/lib/providerSelection'
 
@@ -14,7 +15,7 @@ export interface ProviderTab {
   readonly tone: ProviderTone
 }
 
-interface ProviderTabsProps<T extends ProviderTab> {
+export interface ProviderTabsProps<T extends ProviderTab> {
   readonly tabs: readonly T[]
   readonly idPrefix: string
   readonly ariaLabel: string
@@ -50,15 +51,23 @@ function findProviderIndex<T extends ProviderTab>(
   if (typeof window === 'undefined') return 0
 
   if (queryParam != null) {
-    const providerId = new URLSearchParams(window.location.search).get(queryParam)
-    const queryIndex = tabs.findIndex((tab) => tab.id === providerId)
-    if (queryIndex >= 0) return queryIndex
+    const queryProviderId = new URLSearchParams(window.location.search).get(queryParam)
+    if (queryProviderId != null) {
+      return tabs.findIndex((tab) => tab.id === queryProviderId)
+    }
   }
 
   if (legacyFragments != null) {
     const targetId = legacyFragments[window.location.hash.replace('#', '')]
     const legacyIndex = tabs.findIndex((tab) => tab.id === targetId)
     if (legacyIndex >= 0) return legacyIndex
+  }
+
+  if (queryParam != null) {
+    const storedProviderId = readProviderSelection(queryParam)
+    if (storedProviderId != null) {
+      return tabs.findIndex((tab) => tab.id === storedProviderId)
+    }
   }
 
   return 0
@@ -149,7 +158,7 @@ function ProviderTabButtons<T extends ProviderTab>({
           role="tab"
           aria-selected={index === activeIndex}
           aria-controls={`${idPrefix}-${tab.id}-panel`}
-          tabIndex={index === activeIndex ? 0 : -1}
+          tabIndex={index === activeIndex || (activeIndex < 0 && index === 0) ? 0 : -1}
           onClick={() => { selectTab(index, false) }}
           onKeyDown={(event) => { handleKeyDown(event, index) }}
           className={cn(
@@ -186,6 +195,11 @@ export function ProviderTabs<T extends ProviderTab>({
   return (
     <div className="not-prose my-6">
       <ProviderTabButtons tabs={tabs} idPrefix={idPrefix} ariaLabel={ariaLabel} {...selection} />
+      {activeIndex < 0 && (
+        <p role="status" className="mt-4 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-950 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-100">
+          Choose a supported provider to see this example.
+        </p>
+      )}
       {tabs.map((tab, index) => (
         <div
           key={tab.id}
@@ -196,7 +210,7 @@ export function ProviderTabs<T extends ProviderTab>({
           hidden={index !== activeIndex}
           className={cn('mt-4 rounded-xl border p-5 md:p-6', toneClasses[tab.tone].panel)}
         >
-          {renderPanel(tab)}
+          {index === activeIndex ? renderPanel(tab) : null}
         </div>
       ))}
     </div>

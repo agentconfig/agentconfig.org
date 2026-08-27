@@ -36,7 +36,7 @@ export interface ProviderProfile {
 }
 
 /**
- * Per-provider compatibility profiles, generated entirely from the
+ * Per-provider profiles, generated entirely from the
  * primitives.ts typed model (the same source primitives/comparison.ts
  * both read from). Adding or correcting a primitive automatically flows
  * through to every provider's profile with no separate data entry.

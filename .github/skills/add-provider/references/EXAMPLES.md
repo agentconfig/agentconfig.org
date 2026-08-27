@@ -440,7 +440,7 @@ test('should show file locations when expanded', async ({ page }) => {
 
   await expect(page.getByText('.github/copilot-instructions.md')).toBeVisible()
   await expect(page.getByText('CLAUDE.md').first()).toBeVisible()
-  await expect(page.getByText('.cursor/instructions.md')).toBeVisible()
+  await expect(page.getByText('AGENTS.md')).toBeVisible()
 })
 
 test('should have copy buttons in expanded row', async ({ page }) => {
@@ -523,9 +523,9 @@ test('should have copy buttons in expanded row', async ({ page }) => {
 
 | Type | Path |
 |------|------|
-| Global settings | `~/.cursor/settings.json` |
-| Project instructions | `.cursor/instructions.md` |
-| Project rules | `.cursor/rules/<name>.md` |
+| Global instructions | Cursor User Rules in Settings → Rules |
+| Project instructions | `AGENTS.md` |
+| Project rules | `.cursor/rules/<name>.mdc` |
 ```
 
 ---

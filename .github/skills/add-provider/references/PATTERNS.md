@@ -112,28 +112,29 @@ Uses `.claude/` directory with JSON + markdown:
 ~/.claude/commands/                   # Global commands
 ```
 
-### Cursor (New Pattern)
+### Cursor
 
-Follows Claude's `.claude/` pattern with `.cursor/` directory:
+Use only locations documented by Cursor:
 
 ```
+AGENTS.md                             # Project instructions
 .cursor/
-├── instructions.md                  # Project instructions
-├── settings.json                    # Configuration
-├── agents/
-│   └── specialized-agent.md         # Custom agents
 ├── rules/
-│   ├── api-guidelines.md            # Path-scoped rules
-│   └── frontend.md
-└── extensions/                      # Tool integrations
-    └── custom-tools/
+│   ├── api-guidelines.mdc           # Path-scoped rules
+│   └── frontend.mdc
+├── skills/
+│   └── specialized-task/
+│       └── SKILL.md                  # Reusable skill
+├── agents/
+│   └── specialized-agent.md         # Custom agent
+├── hooks.json                        # Lifecycle hooks
+└── mcp.json                          # Project MCP servers
 ```
 
 **Global** (user-level):
-```
-~/.cursor/                            # Cursor global config
-~/.cursor/settings.json               # Global settings
-```
+- Cursor User Rules in Settings → Rules
+- `~/.cursor/mcp.json` for global MCP servers
+- Personal skill directories documented by Cursor
 
 ---
 

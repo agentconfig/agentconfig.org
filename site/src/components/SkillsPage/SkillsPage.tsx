@@ -11,12 +11,15 @@ import { SkillsSidebar } from './SkillsSidebar'
 import { TutorialSection } from './TutorialSection'
 import { SkillExample } from './SkillExample'
 import { FurtherReading } from './FurtherReading'
+import { ProviderStarter } from '@/components/GuidePage'
+import { skillStarterExamples } from '@/data/starterExamples'
 
 export function SkillsPage(): VNode {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
 
   // Combine all section IDs for the active section tracker
   const allSectionIds = useMemo(() => [
+    'first-skill',
     ...conceptsSectionIds,
     ...exampleSectionIds,
     'further-reading',
@@ -76,6 +79,14 @@ export function SkillsPage(): VNode {
 
           {/* Tutorial content */}
           <div className="min-w-0 max-w-3xl">
+            <ProviderStarter
+              id="first-skill"
+              title="Create one small skill"
+              description="Begin with a focused job and an explicit trigger. Put this file in your selected provider's documented skill directory, then ask the agent to explain a failing test."
+              primitiveId="skills"
+              examples={skillStarterExamples}
+            />
+
             {/* Concepts sections */}
             <div className="mb-16">
               <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-8">

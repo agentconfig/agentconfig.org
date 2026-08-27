@@ -13,7 +13,7 @@ test.describe('Accessibility', () => {
 
   test('agents page should have no accessibility violations', async ({ page }) => {
     await page.goto('/agents/')
-    await expect(page.getByRole('heading', { name: 'AGENTS.md Specification' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Agent Instructions', exact: true })).toBeVisible()
 
     const results = await new AxeBuilder({ page }).analyze()
 
@@ -22,7 +22,7 @@ test.describe('Accessibility', () => {
 
   test('skills page should have no accessibility violations', async ({ page }) => {
     await page.goto('/skills/')
-    await expect(page.getByRole('heading', { name: 'Building Agent Skills' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Agent Skills' })).toBeVisible()
 
     const results = await new AxeBuilder({ page }).analyze()
 
@@ -49,7 +49,7 @@ test.describe('Accessibility', () => {
 
   test('profiles page should have no accessibility violations', async ({ page }) => {
     await page.goto('/profiles/')
-    await expect(page.getByRole('heading', { name: 'Provider Compatibility Profiles' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Provider Profiles' })).toBeVisible()
 
     const results = await new AxeBuilder({ page }).analyze()
 

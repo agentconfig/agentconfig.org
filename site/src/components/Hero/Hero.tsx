@@ -8,6 +8,11 @@ export interface HeroProps {
 
 const navItems = [
   {
+    href: '#start-here',
+    label: 'Start Here',
+    className: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
+  },
+  {
     href: '#primitives',
     label: 'Layers',
     className: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
@@ -41,14 +46,13 @@ export function Hero({ className }: HeroProps): VNode {
   }
 
   return (
-    <header className={cn('border-b border-border bg-muted/30', className)}>
+    <header className={cn('guide-hero border-b border-border', className)}>
       <div className="container mx-auto px-4 py-12 md:py-16">
         <h1 className="text-4xl md:text-5xl font-bold mb-4">
           Configure AI Coding Assistants
         </h1>
         <p className="text-xl text-muted-foreground max-w-2xl mb-6">
-          See the files, settings, and reusable patterns that shape how GitHub Copilot, Claude Code,
-          Cursor, and OpenAI Codex work in your projects.
+          Start with one useful project file, then explore the layers, locations, and provider-specific options behind it.
         </p>
         <div className="flex gap-2 flex-wrap">
           {navItems.map((item) => (

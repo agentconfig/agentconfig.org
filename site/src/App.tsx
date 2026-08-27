@@ -6,16 +6,32 @@ import { FileTreeSection } from '@/components/FileTree'
 import { PrimitiveCardsSection } from '@/components/PrimitiveCards'
 import { ProviderComparisonSection } from '@/components/ProviderComparison'
 import { ScopeModelSection } from '@/components/ScopeModel'
+import { ProviderStarter } from '@/components/GuidePage'
+import { instructionStarterExamples } from '@/data/starterExamples'
 
 export function App(): VNode {
   return (
     <PageLayout>
       <Hero />
 
+      <div className="border-b border-border bg-card/40">
+        <div className="container mx-auto px-4 py-16 md:py-20">
+          <div className="max-w-3xl">
+            <ProviderStarter
+              id="start-here"
+              title="Give your agent one useful project file"
+              description="Choose your provider, copy the smallest useful example, and put it in the documented location. Add more only after you see what the agent still gets wrong."
+              primitiveId="persistent-instructions"
+              examples={instructionStarterExamples}
+            />
+          </div>
+        </div>
+      </div>
+
       <Section
         id="primitives"
         title="Configuration Layers"
-        description="Explore the primitives grouped by layer: instructions, procedures, tools/context, delegation, control/approval, memory/state, distribution, and verification/observability."
+        description="Now that you have one working file, see the other configuration layers you can add when a real need appears."
       >
         <PrimitiveCardsSection />
       </Section>

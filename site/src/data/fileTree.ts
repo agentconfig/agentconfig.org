@@ -2437,50 +2437,6 @@ allow_managed_hooks_only = true`,
           },
         },
         {
-          id: 'codex-global-rules',
-          name: 'rules',
-          type: 'folder',
-          children: [
-            {
-              id: 'codex-global-rules-default',
-              name: 'default.rules',
-              type: 'file',
-              details: {
-                label: 'Command Rules',
-                description: 'Starlark rules that control which commands Codex can run outside the sandbox.',
-                whatGoesHere: [
-                  'prefix_rule() definitions with patterns',
-                  'Allow/prompt/forbidden decisions',
-                  'Justifications for security rules',
-                ],
-                whenLoaded: 'Loaded at startup. Applied before command execution.',
-                loadOrder: 0,
-                example: `# ~/.codex/rules/default.rules
-
-# Allow git commands
-prefix_rule(
-  pattern=["git"],
-  decision="allow"
-)
-
-# Prompt before npm publish
-prefix_rule(
-  pattern=["npm", "publish"],
-  decision="prompt",
-  justification="Publishing requires confirmation"
-)
-
-# Block dangerous commands
-prefix_rule(
-  pattern=["rm", "-rf", "/"],
-  decision="forbidden",
-  justification="Prevents accidental system damage"
-)`,
-              },
-            },
-          ],
-        },
-        {
           id: 'codex-global-agents-folder',
           name: 'agents',
           type: 'folder',

@@ -5,6 +5,7 @@ import { ThemeToggle } from '@/components/ThemeToggle'
 import { cn } from '@/lib/utils'
 import { ProviderChooser } from './ProviderChooser'
 import { useSelectedProvider } from './useSelectedProvider'
+import { providerAwareHref } from '@/lib/providerSelection'
 
 // Page-based navigation items
 const navItems = [
@@ -25,14 +26,6 @@ export function Navigation({ className }: NavigationProps): VNode {
 
   const toggleMenu = (): void => {
     setIsMenuOpen(!isMenuOpen)
-  }
-
-  const providerAwareHref = (href: string): string => {
-    if (selectedProvider === '') return href
-
-    const url = new URL(href, window.location.origin)
-    url.searchParams.set('provider', selectedProvider)
-    return `${url.pathname}${url.search}`
   }
 
   return (
@@ -56,7 +49,7 @@ export function Navigation({ className }: NavigationProps): VNode {
           {navItems.map((item) => (
             <a
               key={item.href}
-              href={providerAwareHref(item.href)}
+              href={providerAwareHref(item.href, selectedProvider)}
               className={cn(
                 'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
                 'hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
@@ -121,7 +114,7 @@ export function Navigation({ className }: NavigationProps): VNode {
             {navItems.map((item) => (
               <a
                 key={item.href}
-                href={providerAwareHref(item.href)}
+                href={providerAwareHref(item.href, selectedProvider)}
                 onClick={() => { setIsMenuOpen(false) }}
                 className={cn(
                   'px-4 py-3 rounded-lg text-left font-medium transition-colors',

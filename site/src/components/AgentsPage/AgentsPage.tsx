@@ -2,61 +2,42 @@ import type { VNode } from 'preact'
 import { PageLayout } from '@/layouts'
 import { CodeBlock } from '@/components/CodeBlock'
 import { CodeTabs } from '@/components/CodeBlock/CodeTabs'
-import { TableOfContents } from '@/components/TableOfContents'
+import { GuideHero, GuideLayout, ProviderPrimitiveTabs, ProviderStarter } from '@/components/GuidePage'
 import { tocItems, furtherReadingLinks, codeSamples } from '@/data/agentsTutorial'
+import { instructionStarterExamples } from '@/data/starterExamples'
 
 export function AgentsPage(): VNode {
   return (
     <PageLayout llmsPath="/agents.md">
-      {/* Hero Section */}
-      <header className="border-b border-border bg-muted/30">
-        <div className="container mx-auto px-4 py-12 md:py-16">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            Agent Definitions
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl">
-            Learn how to configure AI coding assistants like Claude Code and GitHub Copilot
-            with markdown files. From simple project instructions to advanced multi-agent setups.
-          </p>
-          <div className="flex gap-2 mt-6 flex-wrap">
-            <span className="px-3 py-1 rounded-full text-sm bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
-              Beginner friendly
-            </span>
-            <span className="px-3 py-1 rounded-full text-sm bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400">
-              Provider comparison
-            </span>
-            <span className="px-3 py-1 rounded-full text-sm bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400">
-              Advanced patterns
-            </span>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content with Sidebar */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
-          {/* Sidebar - Table of Contents */}
-          <aside className="lg:w-[260px] flex-shrink-0">
-            <div className="lg:sticky lg:top-24">
-              <TableOfContents items={tocItems} />
-            </div>
-          </aside>
-
-          {/* Main Content */}
-          <div className="flex-1 min-w-0 max-w-3xl">
-            <article className="prose prose-neutral dark:prose-invert max-w-none">
+      <GuideHero
+        title="Agent Instructions"
+        description="Start with one small project file that teaches your coding agent how to build, test, and work safely. Add provider-specific files and advanced layouts only when the shared instructions are not enough."
+        badges={[
+          { label: 'One useful file', tone: 'green' },
+          { label: 'Provider locations', tone: 'yellow' },
+          { label: 'Advanced layouts', tone: 'red' },
+        ]}
+      />
+      <GuideLayout tocItems={tocItems}>
+              <ProviderStarter
+                id="first-definition"
+                title="Create one useful instruction file"
+                description="Give your agent the commands and conventions it needs for this repository. This small example is enough to test whether the file is being discovered."
+                primitiveId="persistent-instructions"
+                examples={instructionStarterExamples}
+              />
               
-              {/* Section 1: What Are Agent Definitions? */}
+              {/* Section 2: What Agent Instructions Do */}
               <section id="what-are-definitions" className="scroll-mt-24 mb-16">
-                <h2 className="text-3xl font-bold mb-4">1. What Are Agent Definitions?</h2>
+                <h2 className="text-3xl font-bold mb-4">2. What Agent Instructions Do</h2>
                 <p className="text-lg text-muted-foreground mb-6">
-                  Agent definitions are markdown files that teach AI coding assistants about your project.
+                  Agent instructions are markdown files that teach AI coding assistants about your project.
                 </p>
                 
                 <p>
                   When you use an AI coding assistant like Claude Code or GitHub Copilot, it needs context
                   about your project—how to build it, what conventions you follow, where things live.
-                  Agent definitions provide this context in structured markdown files that the AI reads
+                  Agent instructions provide this context in structured markdown files that the AI reads
                   automatically.
                 </p>
 
@@ -79,46 +60,16 @@ export function AgentsPage(): VNode {
                 </p>
               </section>
 
-              {/* Section 2: Your First Agent Definition */}
-              <section id="first-definition" className="scroll-mt-24 mb-16">
-                <h2 className="text-3xl font-bold mb-4">2. Your First Agent Definition</h2>
-                <p className="text-lg text-muted-foreground mb-6">
-                  Start with a single file in your project root. Here's a minimal example for assistants
-                  that support <code>AGENTS.md</code>.
-                </p>
-
-                <CodeBlock 
-                  code={codeSamples.minimalAgent ?? ''}
-                  language="markdown"
-                  filename="AGENTS.md"
-                  className="my-6"
-                />
-
-                <p>
-                  Place this file in your project root and supporting assistants will discover it. For
-                  Claude Code, add a <code>CLAUDE.md</code> containing <code>@AGENTS.md</code>. This keeps
-                  essential build, test, and contribution guidance in one shared file.
-                </p>
-
-                <div className="my-8 p-6 bg-blue-50 dark:bg-blue-950/30 rounded-lg border border-blue-200 dark:border-blue-800">
-                  <h3 className="text-lg font-semibold mb-3">💡 Start Simple</h3>
-                  <p>
-                    Begin with just the commands section. Add more as you notice the AI making mistakes
-                    or asking repetitive questions. The best agent definitions evolve organically.
-                  </p>
-                </div>
-              </section>
-
               {/* Section 3: The Six Sections That Matter */}
               <section id="six-sections" className="scroll-mt-24 mb-16">
                 <h2 className="text-3xl font-bold mb-4">3. The Six Sections That Matter</h2>
                 <p className="text-lg text-muted-foreground mb-6">
-                  Analysis of 2,500+ repositories shows that effective agent definitions cover six key areas.
+                  A <a href="https://github.blog/ai-and-ml/github-copilot/how-to-write-a-great-agents-md-lessons-from-over-2500-repositories/" target="_blank" rel="noopener noreferrer">GitHub analysis of more than 2,500 repositories</a> found that effective agent instructions cover six key areas.
                 </p>
 
                 <p>
                   Based on GitHub's analysis of repositories with <code>AGENTS.md</code> files, the most
-                  effective definitions include these sections:
+                  effective instruction files include these sections:
                 </p>
 
                 <CodeBlock 
@@ -165,79 +116,18 @@ export function AgentsPage(): VNode {
                 </div>
               </section>
 
-              {/* Section 4: Provider-Specific Formats */}
+              {/* Section 4: User Scope Instructions */}
               <section id="provider-formats" className="scroll-mt-24 mb-16">
-                <h2 className="text-3xl font-bold mb-4">4. Provider-Specific Formats</h2>
+                <h2 className="text-3xl font-bold mb-4">4. Add Your User Preferences</h2>
                 <p className="text-lg text-muted-foreground mb-6">
-                  Each AI provider has their own file format with unique features. Here's how they compare.
+                  Keep personal preferences separate from the project instructions shared with your team.
                 </p>
 
-                <CodeTabs
-                  files={[
-                    {
-                      path: 'AGENTS.md',
-                      content: codeSamples.agentsMdFormat ?? '',
-                      language: 'markdown',
-                    },
-                    {
-                      path: 'CLAUDE.md',
-                      content: codeSamples.claudeMdFormat ?? '',
-                      language: 'markdown',
-                    },
-                    {
-                      path: '.github/copilot-instructions.md',
-                      content: codeSamples.copilotInstructions ?? '',
-                      language: 'markdown',
-                    },
-                  ]}
-                  className="my-6"
+                <ProviderPrimitiveTabs
+                  primitiveId="global-instructions"
+                  idPrefix="agent-provider-formats"
+                  ariaLabel="User instruction provider formats"
                 />
-
-                <h3 className="text-xl font-semibold mt-8 mb-4">Key Differences</h3>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="border-b">
-                        <th className="text-left py-2 pr-4">Feature</th>
-                        <th className="text-left py-2 pr-4">AGENTS.md</th>
-                        <th className="text-left py-2 pr-4">CLAUDE.md</th>
-                        <th className="text-left py-2">copilot-instructions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr className="border-b">
-                        <td className="py-2 pr-4">Location</td>
-                        <td className="py-2 pr-4">Project root</td>
-                        <td className="py-2 pr-4">Root or .claude/</td>
-                        <td className="py-2">.github/</td>
-                      </tr>
-                      <tr className="border-b">
-                        <td className="py-2 pr-4">Path rules</td>
-                        <td className="py-2 pr-4">✓ nested AGENTS.md</td>
-                        <td className="py-2 pr-4">✓ .claude/rules/</td>
-                        <td className="py-2">✓ .instructions.md</td>
-                      </tr>
-                      <tr className="border-b">
-                        <td className="py-2 pr-4">File imports</td>
-                        <td className="py-2 pr-4">✗</td>
-                        <td className="py-2 pr-4">✓ @file syntax</td>
-                        <td className="py-2">✗</td>
-                      </tr>
-                      <tr className="border-b">
-                        <td className="py-2 pr-4">Agent personas</td>
-                        <td className="py-2 pr-4">✗</td>
-                        <td className="py-2 pr-4">✗</td>
-                        <td className="py-2">✓ .agent.md</td>
-                      </tr>
-                      <tr>
-                        <td className="py-2 pr-4">Cross-tool support</td>
-                        <td className="py-2 pr-4">Wide</td>
-                        <td className="py-2 pr-4">Claude only</td>
-                        <td className="py-2">Copilot only</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
 
                 <div className="my-8 p-6 bg-blue-50 dark:bg-blue-950/30 rounded-lg border border-blue-200 dark:border-blue-800">
                   <h3 className="text-lg font-semibold mb-3">💡 Recommendation</h3>
@@ -257,24 +147,26 @@ export function AgentsPage(): VNode {
                 </p>
 
                 <p>
-                  Large projects need different rules for different areas. Both Claude and Copilot
-                  support path-scoped instructions, though with different syntax.
+                  Large projects need different rules for different areas. The provider profile for
+                  your selected tool lists its documented path-scoped instruction format.
                 </p>
 
-                <CodeTabs
-                  files={[
-                    {
-                      path: '.claude/rules/api.md',
-                      content: codeSamples.claudeRules ?? '',
+                <ProviderPrimitiveTabs
+                  primitiveId="scope-specific-instructions"
+                  idPrefix="agent-path-rules"
+                  ariaLabel="Path-scoped instruction provider formats"
+                  examples={{
+                    copilot: {
+                      filename: '.github/instructions/api.instructions.md',
                       language: 'markdown',
+                      code: codeSamples.copilotPathRules ?? '',
                     },
-                    {
-                      path: '.github/instructions/api.instructions.md',
-                      content: codeSamples.copilotPathRules ?? '',
+                    claude: {
+                      filename: '.claude/rules/api.md',
                       language: 'markdown',
+                      code: codeSamples.claudeRules ?? '',
                     },
-                  ]}
-                  className="my-6"
+                  }}
                 />
 
                 <h3 className="text-xl font-semibold mt-8 mb-4">When to Use Path Rules</h3>
@@ -353,13 +245,12 @@ export function AgentsPage(): VNode {
               <section id="file-hierarchy" className="scroll-mt-24 mb-16">
                 <h2 className="text-3xl font-bold mb-4">7. File Hierarchy & Precedence</h2>
                 <p className="text-lg text-muted-foreground mb-6">
-                  When multiple definition files exist, they combine in specific ways.
+                  When multiple instruction files exist, they combine in specific ways.
                 </p>
 
                 <p>
-                  Both Claude and Copilot read instructions from multiple levels, but they combine and
-                  prioritize those sources differently. Understanding each provider's behavior helps you
-                  put instructions in the right place.
+                  Providers read instructions from multiple levels, but combine and prioritize those
+                  sources differently. Check the provider documentation before relying on precedence.
                 </p>
                 <p>
                   A common usage pattern is hierarchical <code>AGENTS.md</code>: keep broad repo defaults
@@ -419,7 +310,7 @@ export function AgentsPage(): VNode {
 
                 <p>
                   Monorepos present unique challenges: shared tooling, package-specific conventions,
-                  and cross-cutting concerns. Here's how to structure your agent definitions.
+                  and cross-cutting concerns. Here's how to structure your agent instructions.
                 </p>
 
                 <CodeBlock 
@@ -429,7 +320,7 @@ export function AgentsPage(): VNode {
                   className="my-6"
                 />
 
-                <h3 className="text-xl font-semibold mt-8 mb-4">Root vs. Package Definitions</h3>
+                <h3 className="text-xl font-semibold mt-8 mb-4">Root vs. Package Instructions</h3>
                 <CodeTabs
                   files={[
                     {
@@ -492,10 +383,7 @@ export function AgentsPage(): VNode {
                 </div>
               </section>
 
-            </article>
-          </div>
-        </div>
-      </div>
+      </GuideLayout>
     </PageLayout>
   )
 }

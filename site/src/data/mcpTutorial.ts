@@ -8,15 +8,16 @@ export interface FurtherReadingLink {
 }
 
 export const tocItems: readonly TocItem[] = [
-  { id: 'what-is-mcp', label: '1. What is MCP?', level: 'beginner' },
-  { id: 'why-mcp-matters', label: '2. Why MCP Matters', level: 'beginner' },
-  { id: 'core-primitives', label: '3. Core Primitives', level: 'beginner' },
-  { id: 'installing-servers', label: '4. Installing MCP Servers', level: 'intermediate' },
-  { id: 'configuration-scopes', label: '5. Configuration Scopes', level: 'intermediate' },
-  { id: 'provider-comparison', label: '6. Provider Comparison', level: 'intermediate' },
-  { id: 'security-considerations', label: '7. Security Considerations', level: 'advanced' },
-  { id: 'practical-examples', label: '8. Practical Examples', level: 'advanced' },
-  { id: 'further-reading', label: '9. Further Reading' },
+  { id: 'quick-start', label: '1. Connect One Server', level: 'beginner' },
+  { id: 'what-is-mcp', label: '2. What is MCP?', level: 'beginner' },
+  { id: 'why-mcp-matters', label: '3. Why MCP Matters', level: 'beginner' },
+  { id: 'core-primitives', label: '4. Core Primitives', level: 'beginner' },
+  { id: 'installing-servers', label: '5. Installing MCP Servers', level: 'intermediate' },
+  { id: 'configuration-scopes', label: '6. Configuration Scopes', level: 'intermediate' },
+  { id: 'provider-comparison', label: '7. Check Your Provider Details', level: 'intermediate' },
+  { id: 'security-considerations', label: '8. Security Considerations', level: 'advanced' },
+  { id: 'practical-examples', label: '9. Practical Examples', level: 'advanced' },
+  { id: 'further-reading', label: '10. Further Reading' },
 ] as const
 
 export const furtherReadingLinks: readonly FurtherReadingLink[] = [
@@ -56,28 +57,6 @@ export const furtherReadingLinks: readonly FurtherReadingLink[] = [
     source: 'GitHub',
     description: 'Browse and discover MCP servers from the official GitHub registry.',
   },
-] as const
-
-export interface McpFeatureRow {
-  feature: string
-  claudeCode: string
-  vsCodeCopilot: string
-}
-
-/**
- * Single source of truth for the Claude Code / VS Code+Copilot MCP feature
- * comparison. Consumed by both the rendered MCPFeatureTable component and
- * the llms.txt/mcp.md generator so the two never drift out of sync.
- */
-export const mcpFeatureComparison: readonly McpFeatureRow[] = [
-  { feature: 'Transports', claudeCode: 'stdio, http, sse, websocket', vsCodeCopilot: 'stdio, http, sse' },
-  { feature: 'Tools', claudeCode: '✓', vsCodeCopilot: '✓' },
-  { feature: 'Resources', claudeCode: '✓', vsCodeCopilot: '✓' },
-  { feature: 'Prompts', claudeCode: '✓ (/mcp)', vsCodeCopilot: '✓ (/mcp.*)' },
-  { feature: 'Configuration', claudeCode: 'CLI + JSON', vsCodeCopilot: 'JSON + UI' },
-  { feature: 'Server Discovery', claudeCode: 'Manual', vsCodeCopilot: 'Gallery + Auto' },
-  { feature: 'Tool Search', claudeCode: '✓ (auto 10%+)', vsCodeCopilot: 'Via tool picker' },
-  { feature: 'Enterprise Control', claudeCode: 'managed-mcp.json', vsCodeCopilot: 'Settings + MDM' },
 ] as const
 
 export const codeSamples: Record<string, string> = {

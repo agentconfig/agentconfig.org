@@ -1,13 +1,13 @@
 import { test, expect } from '@playwright/test'
 
-test.describe('Provider Compatibility Profiles Page', () => {
+test.describe('Provider Profiles Page', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/profiles/')
   })
 
   test('should load the profiles page with hero section', async ({ page }) => {
-    await expect(page.getByRole('heading', { name: 'Provider Compatibility Profiles' })).toBeVisible()
-    await expect(page.getByText(/per-provider view of every primitive/i)).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Provider Profiles' })).toBeVisible()
+    await expect(page.getByText(/Choose a provider to see the files/i)).toBeVisible()
   })
 
   test('should show a tab per provider', async ({ page }) => {
@@ -57,9 +57,11 @@ test.describe('Provider Compatibility Profiles Page', () => {
     await page.setViewportSize({ width: 375, height: 667 })
     await page.goto('/profiles/')
 
-    await expect(page.getByRole('heading', { name: 'Provider Compatibility Profiles' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Provider Profiles' })).toBeVisible()
     await expect(page.getByRole('tab', { name: /GitHub Copilot/ })).toBeVisible()
     await expect(page.getByRole('tab', { name: /OpenAI Codex/ })).toBeVisible()
+    await expect(page.getByRole('table').first()).toBeVisible()
+    await expect(page.getByRole('row').first()).toBeVisible()
 
     const documentWidth = await page.evaluate(() => document.documentElement.scrollWidth)
     const viewportWidth = await page.evaluate(() => window.innerWidth)
@@ -71,7 +73,7 @@ test.describe('Provider Compatibility Profiles Page', () => {
     await page.reload()
 
     await expect(page.locator('html')).toHaveClass(/dark/)
-    await expect(page.getByRole('heading', { name: 'Provider Compatibility Profiles' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Provider Profiles' })).toBeVisible()
     await expect(page.getByRole('tab', { name: /GitHub Copilot/ })).toBeVisible()
   })
 })

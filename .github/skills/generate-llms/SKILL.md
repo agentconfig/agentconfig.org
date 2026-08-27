@@ -50,11 +50,11 @@ The llms files are generated from these TypeScript data files:
 |------|---------|
 | `site/src/data/pages.ts` | **Page registry** - lists all pages for llms generation |
 | `site/src/data/primitives.ts` | 13 AI primitives with descriptions, use cases, and provider implementations |
-| `site/src/data/comparison.ts` | Provider comparison matrix (Copilot vs Claude) |
-| `site/src/data/providerProfiles.ts` | Per-provider compatibility profiles (derived from `primitives.ts`) |
+| `site/src/data/comparison.ts` | Four-provider comparison matrix derived from `primitives.ts` |
+| `site/src/data/providerProfiles.ts` | Per-provider profiles derived from `primitives.ts` |
 | `site/src/data/skillsTutorial.ts` | Skills tutorial sections and concepts |
 | `site/src/data/skillExamples.ts` | 5 example skills with full code |
-| `site/src/data/agentsTutorial.ts` | Agent definitions tutorial with code samples |
+| `site/src/data/agentsTutorial.ts` | Agent instructions guide with code samples |
 | `site/src/data/hooksTutorial.ts` | Hooks tutorial with provider tabs, lifecycle events, and reusable policy logic |
 | `site/src/data/mcpTutorial.ts` | MCP tutorial sections and code samples |
 
@@ -68,7 +68,7 @@ site/public/
 ├── agents.md          # Agents page content (rich markdown)
 ├── hooks.md           # Hooks page content (rich markdown)
 ├── mcp.md             # MCP page content (rich markdown)
-└── profiles.md        # Provider compatibility profiles content (rich markdown)
+└── profiles.md        # Provider profiles content (rich markdown)
 ```
 
 ## Generation Process
@@ -85,14 +85,14 @@ The homepage llms.txt follows the strict llmstxt.org format:
 # agentconfig.org
 
 > A reference site for configuring AI coding assistants. Covers 13 AI primitives,
-> provider comparison (GitHub Copilot vs Claude Code), and tutorials for skills
-> and agent definitions.
+> provider comparison across GitHub Copilot, Claude Code, Cursor, and OpenAI Codex,
+> and progressive tutorials for skills, instructions, hooks, and MCP.
 
 ## Pages
 
 - [Homepage](https://agentconfig.org/): AI primitives reference, file tree, provider comparison
 - [Skills Tutorial](https://agentconfig.org/skills): How to create agent skills following agentskills.io
-- [Agents Tutorial](https://agentconfig.org/agents): Agent definition files for Copilot and Claude
+- [Agent Instructions](https://agentconfig.org/agents): Project instructions across GitHub Copilot, Claude Code, Cursor, and OpenAI Codex
 
 ## Docs
 
@@ -123,9 +123,9 @@ This reads all data files and generates comprehensive markdown including:
    - When to use it
    - What it prevents
    - What to combine it with
-   - Provider implementations (Copilot and Claude)
+   - Provider implementations (GitHub Copilot, Claude Code, Cursor, and OpenAI Codex)
 3. **Provider comparison table** showing support levels
-4. **Config file locations** for both providers
+4. **Config file locations** for all four providers
 5. **Skills tutorial** with all concepts and 5 example skills
 6. **Agents tutorial** with all sections and code samples
 

@@ -1,6 +1,6 @@
 # Contributing to agentconfig.org
 
-Thanks for your interest in contributing! This project tracks configuration paths and primitives for AI coding assistants like GitHub Copilot and Claude Code.
+Thanks for your interest in contributing! This project tracks configuration paths and primitives for GitHub Copilot, Claude Code, Cursor, and OpenAI Codex.
 
 ## Pull Requests Only
 
@@ -17,7 +17,7 @@ This project does not use GitHub Issues. If you find something incorrect or outd
 
 ### Lower Priority
 
-- Visual/styling changes (unless fixing accessibility issues)
+- Visual/styling changes that do not improve usability, consistency, or accessibility
 - Refactoring without functional changes
 
 ## Development Setup
@@ -42,13 +42,14 @@ bun run lint
 ## Project Structure
 
 ```
-src/
+site/src/
 ├── data/
 │   ├── fileTree.ts      # Global and project config paths
-│   ├── primitives.ts    # The 9 AI primitives definitions
+│   ├── primitives.ts    # The 13 primitive definitions and provider implementations
 │   └── comparison.ts    # Provider comparison data
 ├── components/          # React components
-└── App.tsx              # Main app layout
+├── pages/               # Tutorial and profile page entry points
+└── App.tsx              # Homepage layout
 ```
 
 ## Making Changes

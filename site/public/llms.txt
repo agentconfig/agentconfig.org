@@ -2,7 +2,7 @@
 
 > A reference site for configuring AI coding assistants like GitHub Copilot, Claude Code, Cursor, and OpenAI Codex.
 > Covers 13 AI primitives, a scope model, provider comparison, config file locations, and tutorials for
-> skills, agent definitions, lifecycle hooks, and MCP tool integrations.
+> skills, agent instructions, lifecycle hooks, and MCP tool integrations.
 
 This file provides a table of contents. For complete content, see /llms-full.txt.
 
@@ -10,19 +10,19 @@ This file provides a table of contents. For complete content, see /llms-full.txt
 
 - [Homepage](https://agentconfig.org/): AI primitives reference, interactive file tree, provider comparison matrix
 - [Skills Tutorial](https://agentconfig.org/skills): How to create agent skills following the agentskills.io specification
-- [Agents Tutorial](https://agentconfig.org/agents): Agent definition files (AGENTS.md, CLAUDE.md, copilot-instructions.md)
+- [Agent Instructions](https://agentconfig.org/agents): Project instruction files and provider-specific locations for GitHub Copilot, Claude Code, Cursor, and OpenAI Codex
 - [Hooks Tutorial](https://agentconfig.org/hooks): Design, test, and map lifecycle hooks across provider runtimes
 - [MCP Tool Integrations](https://agentconfig.org/mcp): Connect AI assistants to external tools via Model Context Protocol
-- [Provider Compatibility Profiles](https://agentconfig.org/profiles): Per-provider view of every primitive: support level, implementation, location, and source documentation
+- [Provider Profiles](https://agentconfig.org/profiles): Per-provider view of every primitive: support level, implementation, location, and source documentation
 
 ## Docs
 
 - [Full site content](/llms-full.txt): Complete content for deep context (recommended for agents)
 - [Skills Tutorial content](/skills.md): Skills tutorial with 5 example skills
-- [Agents Tutorial content](/agents.md): Agents tutorial with code samples
+- [Agent Instructions content](/agents.md): Progressive agent instruction guide with provider-aware examples
 - [Hooks Tutorial content](/hooks.md): Hooks tutorial with provider tabs, reusable policy logic, and fixture tests
 - [MCP Tool Integrations content](/mcp.md): MCP tutorial with configuration examples
-- [Provider Compatibility Profiles content](/profiles.md): Provider compatibility profiles generated from the typed primitives model
+- [Provider Profiles content](/profiles.md): Provider profiles generated from the typed primitives model
 
 ## Optional
 

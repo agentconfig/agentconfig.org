@@ -1,4 +1,4 @@
-# Provider Compatibility Profiles
+# Provider Profiles
 
 Per-provider view of every primitive tracked on agentconfig.org: support level, implementation,
 file location, and a citation to the provider's own documentation where one exists. Generated

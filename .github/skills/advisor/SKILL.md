@@ -46,7 +46,7 @@ Ask 2-3 clarifying questions to understand their workflow:
 2. **What's your setup?**
    - Role: solo developer, team lead, platform team, etc.
    - Team size: solo, small team (2-10), large org (10+)
-   - Primary tool: GitHub Copilot, Claude Code, or both
+   - Primary tool: GitHub Copilot, Claude Code, Cursor, OpenAI Codex, or a combination
    - Skill level: beginner (new to AI tools), intermediate (use daily), advanced (configured custom workflows)
 
 ### Optional Follow-Up Questions
@@ -192,14 +192,13 @@ Help the user understand *order of implementation*.
 For every recommended primitive, provide direct links to:
 - The primitive definition on agentconfig.org
 - The relevant tutorial section (Skills, Agents, or MCP)
-- Provider-specific implementation guide (Copilot vs Claude)
+- Provider-specific implementation guide for the selected provider
 
 **Example:**
 > **Persistent Instructions**
 > - Primitive overview: https://agentconfig.org/#primitives
 > - Tutorial: https://agentconfig.org/agents#your-first-agent-definition
-> - Copilot implementation: https://agentconfig.org/agents#provider-specific-formats
-> - Claude implementation: https://agentconfig.org/agents#provider-specific-formats
+> - Provider implementation: https://agentconfig.org/profiles/
 
 ## Output Format
 
@@ -323,5 +322,5 @@ This skill works well with:
 The advisor skill references content from:
 - https://agentconfig.org/llms-full.txt (complete primitive reference)
 - https://agentconfig.org/skills (Skills tutorial)
-- https://agentconfig.org/agents (Agent Definitions tutorial)
+- https://agentconfig.org/agents (Agent Instructions guide)
 - https://agentconfig.org/mcp (MCP Tool Integrations tutorial)

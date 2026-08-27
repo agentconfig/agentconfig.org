@@ -319,8 +319,8 @@ Find the "Config File Locations" section (~line 516) and add your provider:
 
 ```markdown
 **Cursor:**
-- Project Instructions: `.cursor/instructions.md`
-- Global Config: `~/.cursor/settings.json`
+- Project Instructions: `AGENTS.md`
+- Global Instructions: Cursor User Rules in Settings → Rules
 - MCP Servers: `~/.cursor/mcp.json`
 ```
 

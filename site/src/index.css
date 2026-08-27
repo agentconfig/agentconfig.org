@@ -98,6 +98,20 @@
   }
 }
 
+.guide-hero {
+  background:
+    radial-gradient(circle at 85% 15%, oklch(0.82 0.08 195 / 0.24), transparent 28rem),
+    radial-gradient(circle at 15% 110%, oklch(0.84 0.08 70 / 0.22), transparent 30rem),
+    var(--muted);
+}
+
+.dark .guide-hero {
+  background:
+    radial-gradient(circle at 85% 15%, oklch(0.55 0.12 195 / 0.18), transparent 28rem),
+    radial-gradient(circle at 15% 110%, oklch(0.55 0.12 330 / 0.14), transparent 30rem),
+    var(--muted);
+}
+
 /*
  * Shiki dual-theme syntax highlighting. Shiki emits `--shiki-light` and
  * `--shiki-dark` CSS variables on every span; toggle between them with the

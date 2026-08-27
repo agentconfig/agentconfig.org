@@ -5,7 +5,7 @@ GitHub Copilot and other agents with `AGENTS.md` support read it directly. Claud
 
 ## Project Overview
 
-A single-page educational website (agentconfig.org) explaining AI primitives—the configuration files and patterns developers use to customize AI coding assistants like GitHub Copilot and Claude Code.
+A multi-page reference and tutorial site explaining the configuration files and patterns developers use to customize GitHub Copilot, Claude Code, Cursor, and OpenAI Codex.
 
 ### Target Audience
 
@@ -14,13 +14,13 @@ Developers who want to:
 - Know where to place these files in their projects
 - Learn which primitives to use for different tasks
 
-### The Four Visualizations
+### Site Structure
 
-The site presents information in 4 different ways:
-1. **Interactive File Tree** - Shows file locations visually
-2. **Primitive Cards** - Concept-first view of the 11 core primitives
-3. **Work Type Recipes** - Task-oriented recommendations
-4. **Provider Matrix** - Side-by-side Copilot vs Claude comparison
+The site presents the same source-backed model in several ways:
+1. **Homepage reference** - A practical starting example, 13 primitive cards, an interactive file tree, a four-provider comparison, and the scope model
+2. **Progressive tutorials** - Skills, agent definitions, lifecycle hooks, and MCP guides that begin with a small working example before concepts and advanced cases
+3. **Provider profiles** - Per-provider implementation, support, location, and primary-source documentation for every tracked primitive
+4. **Machine-readable docs** - `llms.txt`, `llms-full.txt`, and page-specific Markdown generated from the same typed content
 
 ## Tech Stack
 
@@ -185,6 +185,10 @@ Follow semantic commit conventions. See [semantic-commit skill](.github/skills/s
 - Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
 - Keep commits atomic—one logical change per commit
 
+## Planning and Estimates
+
+Do not estimate project duration, staffing, or delivery timelines unless @jonmagic explicitly asks. Prefer sequencing, dependencies, risks, decision gates, and assumptions.
+
 ## Contributors
 
 See [co-author skill](.github/skills/co-author/SKILL.md) for contributor list and co-author formatting rules.
@@ -228,8 +232,9 @@ Before considering any task complete:
 
 ## Key Files
 
-- `site/src/App.tsx` - Main application component
-- `site/src/data/` - Content data (primitives, file trees, comparison)
+- `site/src/App.tsx` - Homepage application component
+- `site/src/pages/` - Entry points for tutorial and profile pages
+- `site/src/data/` - Typed content model for primitives, providers, tutorials, file trees, and comparison
 - `site/tests/e2e/` - Playwright test files
 - `site/src/index.css` - Tailwind CSS 4 theme configuration
 

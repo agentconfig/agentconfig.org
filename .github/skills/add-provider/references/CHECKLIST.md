@@ -109,12 +109,12 @@ Complete verification steps for all 6 work streams, plus pre-implementation rese
 - [ ] Demonstrates ALL primitives with full/partial support (not just 1-2)
 - [ ] Has 2-3 examples per primitive type (agents, skills, commands, etc.)
 - [ ] Includes both project-level AND global-level examples
-- [ ] Shows nested directory examples (e.g., `frontend/.cursor/instructions.md`)
+- [ ] Shows nested directory examples (e.g., `frontend/AGENTS.md` or `frontend/.cursor/rules/frontend.mdc`)
 - [ ] Parity check: Compare line counts with other providers
   - Run: `wc -l site/src/data/fileTree.ts`
   - Compare demonstrated primitive types across providers
   - If your tree has <100 lines and others have 300+, investigate why
-  - Sparse trees make providers look incomplete even with 11/11 support
+  - Sparse trees make providers look incomplete even with 13/13 support
 
 ### Data Consistency
 - [ ] All 13 primitives have implementations for the new provider in primitives.ts (comparison.ts and providerProfiles.ts inherit these automatically)

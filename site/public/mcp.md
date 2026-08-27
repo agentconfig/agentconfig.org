@@ -1,23 +1,67 @@
 # MCP Tool Integrations Tutorial
 
 Tutorial for connecting AI coding assistants to external tools using the Model Context Protocol (MCP).
-Covers core primitives, server installation, configuration scopes, and provider comparison.
+Covers a first server connection, core primitives, installation, configuration scopes, provider details, and security.
 
 ## Tutorial Sections
 
-- 1. What is MCP? (beginner)
-- 2. Why MCP Matters (beginner)
-- 3. Core Primitives (beginner)
-- 4. Installing MCP Servers (intermediate)
-- 5. Configuration Scopes (intermediate)
-- 6. Provider Comparison (intermediate)
-- 7. Security Considerations (advanced)
-- 8. Practical Examples (advanced)
-- 9. Further Reading
+- 1. Connect One Server (beginner)
+- 2. What is MCP? (beginner)
+- 3. Why MCP Matters (beginner)
+- 4. Core Primitives (beginner)
+- 5. Installing MCP Servers (intermediate)
+- 6. Configuration Scopes (intermediate)
+- 7. Check Your Provider Details (intermediate)
+- 8. Security Considerations (advanced)
+- 9. Practical Examples (advanced)
+- 10. Further Reading
 
 ## Section Details
 
-### 1. What is MCP?
+### 1. Connect One Server
+
+Start with the GitHub MCP server and confirm a read-only operation such as listing pull requests:
+
+**GitHub Copilot — `.vscode/mcp.json`:**
+
+```json
+{
+  "servers": {
+    "github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/"
+    }
+  }
+}
+```
+
+**Claude Code — `Terminal`:**
+
+```bash
+claude mcp add --transport http github https://api.githubcopilot.com/mcp/
+claude mcp list
+```
+
+**Cursor — `.cursor/mcp.json`:**
+
+```json
+{
+  "mcpServers": {
+    "github": {
+      "url": "https://api.githubcopilot.com/mcp/"
+    }
+  }
+}
+```
+
+**OpenAI Codex — `.codex/config.toml`:**
+
+```toml
+[mcp_servers.github]
+url = "https://api.githubcopilot.com/mcp/"
+```
+
+### 2. What is MCP?
 
 The Model Context Protocol (MCP) is an open standard that connects AI applications
 to external tools, databases, and APIs. Think of it like a USB-C port for AI—one
@@ -67,7 +111,7 @@ MCP Architecture:
     └───────────┘    └───────────┘
 ```
 
-### 2. Why MCP Matters
+### 3. Why MCP Matters
 
 With MCP servers connected, AI assistants can:
 - Query databases naturally
@@ -75,7 +119,7 @@ With MCP servers connected, AI assistants can:
 - Analyze monitoring data from Sentry
 - Access files outside the current workspace
 
-### 3. Core Primitives
+### 4. Core Primitives
 
 MCP servers expose three types of capabilities:
 
@@ -151,92 +195,103 @@ MCP servers expose three types of capabilities:
 }
 ```
 
-### 4. Installing MCP Servers
+### 5. Installing MCP Servers
 
-**Claude Code (HTTP):**
-```bash
-# Add a remote HTTP server
-claude mcp add --transport http <name> <url>
+Providers support different combinations of local and remote transports and use different
+configuration methods. Add the server with the documented file or command, then restart or
+reload the provider if it does not discover the server immediately.
 
-# Example: Connect to GitHub
-claude mcp add --transport http github https://api.githubcopilot.com/mcp/
+**GitHub Copilot — `.vscode/mcp.json`:**
 
-# Example: Connect to Sentry with authentication
-claude mcp add --transport http sentry https://mcp.sentry.dev/mcp
-```
-
-**Claude Code (stdio):**
-```bash
-# Add a local stdio server
-claude mcp add [options] <name> -- <command> [args...]
-
-# Example: Add a database server
-claude mcp add --transport stdio db \
-  -- npx -y @bytebase/dbhub \
-  --dsn "postgresql://user:pass@localhost:5432/mydb"
-
-# Example: With environment variable for API key
-claude mcp add --transport stdio --env AIRTABLE_API_KEY=YOUR_KEY \
-  airtable -- npx -y airtable-mcp-server
-```
-
-**VS Code + Copilot:**
 ```json
-// .vscode/mcp.json
 {
   "servers": {
-    "github-mcp": {
+    "github": {
       "type": "http",
-      "url": "https://api.githubcopilot.com/mcp"
-    },
-    "memory": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-memory"]
-    },
-    "database": {
-      "command": "npx",
-      "args": ["-y", "@bytebase/dbhub"],
-      "env": {
-        "DB_URL": "${input:database-url}"
-      }
+      "url": "https://api.githubcopilot.com/mcp/"
     }
-  },
-  "inputs": [
-    {
-      "id": "database-url",
-      "type": "promptString",
-      "description": "Database connection URL",
-      "password": true
-    }
-  ]
+  }
 }
 ```
 
-### 5. Configuration Scopes
+**Claude Code — `Terminal`:**
 
-Both providers support multiple configuration scopes:
+```bash
+claude mcp add --transport http github https://api.githubcopilot.com/mcp/
+claude mcp list
+```
 
-| Scope | Claude Code | VS Code |
-|-------|-------------|---------|
-| Local/Workspace | ~/.claude.json | .vscode/mcp.json |
-| Project | .mcp.json | .vscode/mcp.json |
-| User | ~/.claude.json | User profile |
-| Enterprise | managed-mcp.json | Settings + MDM |
+**Cursor — `.cursor/mcp.json`:**
 
-### 6. Provider Comparison
+```json
+{
+  "mcpServers": {
+    "github": {
+      "url": "https://api.githubcopilot.com/mcp/"
+    }
+  }
+}
+```
 
-| Feature | Claude Code | VS Code/Copilot |
-|---------|-------------|-----------------|
-| Transports | stdio, http, sse, websocket | stdio, http, sse |
-| Tools | ✓ | ✓ |
-| Resources | ✓ | ✓ |
-| Prompts | ✓ (/mcp) | ✓ (/mcp.*) |
-| Configuration | CLI + JSON | JSON + UI |
-| Server Discovery | Manual | Gallery + Auto |
-| Tool Search | ✓ (auto 10%+) | Via tool picker |
-| Enterprise Control | managed-mcp.json | Settings + MDM |
+**OpenAI Codex — `.codex/config.toml`:**
 
-### 7. Security Considerations
+```toml
+[mcp_servers.github]
+url = "https://api.githubcopilot.com/mcp/"
+```
+
+### 6. Configuration Scopes
+
+MCP servers can be configured at different levels—personal, project, or organization-wide.
+
+**GitHub Copilot:**
+
+| Scope | Location | Visibility |
+|-------|----------|------------|
+| Workspace | `.vscode/mcp.json` | Team (shared) |
+| User Profile | `VS Code profile settings` | You only (profile) |
+| Dev Container | `devcontainer.json customizations.vscode` | Container (shared) |
+
+[Official GitHub Copilot documentation](https://docs.github.com/en/copilot/how-tos/provide-context/use-mcp-in-your-ide/extend-copilot-chat-with-mcp)
+
+**Claude Code:**
+
+| Scope | Location | Visibility |
+|-------|----------|------------|
+| Local (default) | `~/.claude.json (per-project path)` | You only (1 project) |
+| Project | `.mcp.json (project root)` | Team (shared) |
+| User | `~/.claude.json (global section)` | You only (all projects) |
+
+[Official Claude Code documentation](https://code.claude.com/docs/en/mcp)
+
+**Cursor:**
+
+| Scope | Location | Visibility |
+|-------|----------|------------|
+| Project | `.cursor/mcp.json` | Team (shared) |
+| User | `~/.cursor/mcp.json` | You only (all projects) |
+
+[Official Cursor documentation](https://cursor.com/docs/context/mcp)
+
+**OpenAI Codex:**
+
+| Scope | Location | Visibility |
+|-------|----------|------------|
+| Project | `.codex/config.toml` | Team (shared) |
+| User | `~/.codex/config.toml` | You only (all projects) |
+
+[Official OpenAI Codex documentation](https://developers.openai.com/codex/extend/mcp)
+
+### 7. Check Your Provider Details
+
+| Provider | Implementation | Documented location | Support | Source |
+|----------|----------------|---------------------|---------|--------|
+| GitHub Copilot | MCP servers and tool calling | .vscode/mcp.json, VS Code settings.json (also Visual Studio, JetBrains IDEs, Xcode, Eclipse) | full | [Provider documentation](https://docs.github.com/en/copilot/how-tos/provide-context/use-mcp-in-your-ide/extend-copilot-chat-with-mcp) |
+| Claude Code | MCP servers and tool calling | .mcp.json or ~/.claude.json | full | [Provider documentation](https://code.claude.com/docs/en/mcp) |
+| Cursor | MCP servers with stdio, SSE, and Streamable HTTP transports | .cursor/mcp.json, ~/.cursor/mcp.json | full | [Provider documentation](https://cursor.com/docs/context/mcp) |
+| OpenAI Codex | MCP servers with stdio and Streamable HTTP transports | ~/.codex/config.toml, .codex/config.toml | full | [Provider documentation](https://developers.openai.com/codex/extend/mcp) |
+
+### 8. Security Considerations
 
 ```
 Security Checklist:
@@ -271,7 +326,7 @@ Enterprise management with allowlists:
 }
 ```
 
-### 8. Practical Examples
+### 9. Practical Examples
 
 **GitHub Integration:**
 ```bash
@@ -355,7 +410,7 @@ claude mcp add --transport http sentry https://mcp.sentry.dev/mcp
 > "Which deployment introduced these new errors?"
 ```
 
-## Further Reading
+### 10. Further Reading
 
 - [Model Context Protocol Introduction](https://modelcontextprotocol.io/introduction): The official introduction to MCP—an open standard for connecting AI to external tools.
 - [Claude Code MCP Documentation](https://code.claude.com/docs/en/mcp): Complete guide to using MCP servers with Claude Code, including installation and configuration.

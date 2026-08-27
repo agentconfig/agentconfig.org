@@ -325,7 +325,7 @@ Document any questions that arise during research:
 ## Timeline Considerations
 
 **Estimated research time per primitive**: 30-60 minutes
-**Total research time**: 6-11 hours (for 11 primitives)
+**Total research time**: 6-11 hours (for the tracked primitives)
 **Verification and documentation**: 2-4 hours
 **Total**: 1-2 days for thorough research
 

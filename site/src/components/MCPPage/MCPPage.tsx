@@ -2,54 +2,37 @@ import type { VNode } from 'preact'
 import { PageLayout } from '@/layouts'
 import { CodeBlock } from '@/components/CodeBlock'
 import { CodeTabs } from '@/components/CodeBlock/CodeTabs'
-import { TableOfContents } from '@/components/TableOfContents'
+import { GuideHero, GuideLayout, ProviderPrimitiveTabs, ProviderStarter } from '@/components/GuidePage'
+import { ProviderTabs } from '@/components/ProviderTabs'
 import { tocItems, furtherReadingLinks, codeSamples } from '@/data/mcpTutorial'
-import { MCPFeatureTable, ScopesTable } from './tables'
+import { ScopesTable } from './tables'
+import { mcpStarterExamples } from '@/data/starterExamples'
+import { mcpScopeProfiles } from '@/data/mcpScopes'
 
 export function MCPPage(): VNode {
   return (
-    <PageLayout>
-      {/* Hero Section */}
-      <header className="border-b border-border bg-muted/30">
-        <div className="container mx-auto px-4 py-12 md:py-16">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            MCP Tool Integrations
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl">
-            Connect AI coding assistants to external tools, databases, and APIs using
-            the Model Context Protocol. One standard interface for unlimited capabilities.
-          </p>
-          <div className="flex gap-2 mt-6 flex-wrap">
-            <span className="px-3 py-1 rounded-full text-sm bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
-              Beginner friendly
-            </span>
-            <span className="px-3 py-1 rounded-full text-sm bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400">
-              Both providers
-            </span>
-            <span className="px-3 py-1 rounded-full text-sm bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400">
-              Security focused
-            </span>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content with Sidebar */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
-          {/* Sidebar - Table of Contents */}
-          <aside className="lg:w-[260px] flex-shrink-0">
-            <div className="lg:sticky lg:top-24">
-              <TableOfContents items={tocItems} />
-            </div>
-          </aside>
-
-          {/* Main Content */}
-          <div className="flex-1 min-w-0 max-w-3xl">
-            <article className="prose prose-neutral dark:prose-invert max-w-none">
+    <PageLayout llmsPath="/mcp.md">
+      <GuideHero
+        title="MCP Tool Integrations"
+        description="Connect one useful server first, then learn how MCP transports, capabilities, scopes, and security controls work."
+        badges={[
+          { label: 'One useful server', tone: 'green' },
+          { label: 'Provider setup', tone: 'yellow' },
+          { label: 'Security controls', tone: 'red' },
+        ]}
+      />
+      <GuideLayout tocItems={tocItems}>
+              <ProviderStarter
+                id="quick-start"
+                title="Connect one server"
+                description="Start with the GitHub MCP server, confirm that your selected provider can discover it, and ask for a read-only operation such as listing pull requests."
+                primitiveId="tool-integrations"
+                examples={mcpStarterExamples}
+              />
               
               {/* Section 1: What is MCP? */}
               <section id="what-is-mcp" className="scroll-mt-24 mb-16">
-                <h2 className="text-3xl font-bold mb-4">1. What is MCP?</h2>
+                <h2 className="text-3xl font-bold mb-4">2. What is MCP?</h2>
                 <p className="text-lg text-muted-foreground mb-6">
                   The Model Context Protocol (MCP) is an open standard that connects AI applications
                   to external tools, databases, and APIs.
@@ -96,7 +79,7 @@ export function MCPPage(): VNode {
 
               {/* Section 2: Why MCP Matters */}
               <section id="why-mcp-matters" className="scroll-mt-24 mb-16">
-                <h2 className="text-3xl font-bold mb-4">2. Why MCP Matters</h2>
+                <h2 className="text-3xl font-bold mb-4">3. Why MCP Matters</h2>
                 <p className="text-lg text-muted-foreground mb-6">
                   MCP transforms AI assistants from chat interfaces into powerful automation tools.
                 </p>
@@ -141,7 +124,7 @@ export function MCPPage(): VNode {
 
               {/* Section 3: Core Primitives */}
               <section id="core-primitives" className="scroll-mt-24 mb-16">
-                <h2 className="text-3xl font-bold mb-4">3. Core Primitives</h2>
+                <h2 className="text-3xl font-bold mb-4">4. Core Primitives</h2>
                 <p className="text-lg text-muted-foreground mb-6">
                   MCP servers expose three types of capabilities: Tools, Resources, and Prompts.
                 </p>
@@ -221,49 +204,32 @@ export function MCPPage(): VNode {
 
               {/* Section 4: Installing MCP Servers */}
               <section id="installing-servers" className="scroll-mt-24 mb-16">
-                <h2 className="text-3xl font-bold mb-4">4. Installing MCP Servers</h2>
+                <h2 className="text-3xl font-bold mb-4">5. Installing MCP Servers</h2>
                 <p className="text-lg text-muted-foreground mb-6">
-                  Both providers support local (stdio) and remote (HTTP) servers, but with different configuration methods.
+                  Providers support different combinations of local and remote transports and use different configuration methods.
                 </p>
 
-                <h3 className="text-xl font-semibold mt-8 mb-4">Claude Code</h3>
-                <p>
-                  Claude Code uses CLI commands to manage MCP servers. Servers can communicate via
-                  HTTP (for remote services) or stdio (for local processes).
-                </p>
-
-                <CodeBlock 
-                  code={codeSamples.claudeHttpServer ?? ''}
-                  language="bash"
-                  filename="Remote HTTP Servers"
-                  className="my-6"
-                />
-
-                <CodeBlock 
-                  code={codeSamples.claudeStdioServer ?? ''}
-                  language="bash"
-                  filename="Local Stdio Servers"
-                  className="my-6"
-                />
-
-                <CodeBlock 
-                  code={codeSamples.claudeManageServers ?? ''}
-                  language="bash"
-                  filename="Managing Servers"
-                  className="my-6"
-                />
-
-                <h3 className="text-xl font-semibold mt-8 mb-4">VS Code + GitHub Copilot</h3>
-                <p>
-                  VS Code configures MCP servers through JSON files, with support for input variables
-                  to handle sensitive data like API keys.
-                </p>
-
-                <CodeBlock 
-                  code={codeSamples.vscodeMcpJson ?? ''}
-                  language="json"
-                  filename=".vscode/mcp.json"
-                  className="my-6"
+                <ProviderTabs
+                  tabs={mcpScopeProfiles}
+                  idPrefix="mcp-installation"
+                  ariaLabel="MCP installation examples"
+                  queryParam="provider"
+                  renderPanel={(profile) => {
+                    const example = mcpStarterExamples[profile.id]
+                    return (
+                      <>
+                        <h3 className="text-xl font-semibold mb-3">{profile.label}</h3>
+                        <p className="mb-4">
+                          Add the server with the documented configuration file or command, then restart or reload the provider if it does not discover the server immediately.
+                        </p>
+                        <CodeBlock
+                          code={example.code}
+                          language={example.language}
+                          filename={example.filename}
+                        />
+                      </>
+                    )
+                  }}
                 />
 
                 <div className="my-8 p-6 bg-yellow-50 dark:bg-yellow-950/30 rounded-lg border border-yellow-200 dark:border-yellow-800">
@@ -277,84 +243,49 @@ export function MCPPage(): VNode {
 
               {/* Section 5: Configuration Scopes */}
               <section id="configuration-scopes" className="scroll-mt-24 mb-16">
-                <h2 className="text-3xl font-bold mb-4">5. Configuration Scopes</h2>
+                <h2 className="text-3xl font-bold mb-4">6. Configuration Scopes</h2>
                 <p className="text-lg text-muted-foreground mb-6">
                   MCP servers can be configured at different levels—personal, project, or organization-wide.
                 </p>
 
-                <h3 className="text-xl font-semibold mt-8 mb-4">Claude Code Scopes</h3>
-                <ScopesTable provider="claude" />
-
-                <p>
-                  Project-scoped servers are stored in <code>.mcp.json</code> at your project root and can be
-                  checked into version control. Claude Code prompts for approval before using project-scoped
-                  servers from other contributors.
-                </p>
-
-                <CodeBlock 
-                  code={codeSamples.projectMcpJson ?? ''}
-                  language="json"
-                  filename="Project-scoped Configuration"
-                  className="my-6"
-                />
-
-                <h3 className="text-xl font-semibold mt-8 mb-4">VS Code + Copilot Scopes</h3>
-                <ScopesTable provider="vscode" />
-
-                <p>
-                  VS Code also supports MCP configuration in Dev Containers, ensuring consistent server
-                  availability across containerized development environments.
-                </p>
-
-                <CodeBlock 
-                  code={codeSamples.devcontainerMcp ?? ''}
-                  language="json"
-                  filename="devcontainer.json"
-                  className="my-6"
+                <ProviderTabs
+                  tabs={mcpScopeProfiles}
+                  idPrefix="mcp-scopes"
+                  ariaLabel="MCP configuration scopes"
+                  queryParam="provider"
+                  renderPanel={(profile) => (
+                    <>
+                      <h3 className="text-xl font-semibold mb-3">{profile.label} Scopes</h3>
+                      <ScopesTable scopes={profile.scopes} />
+                      {profile.sourceUrl != null && (
+                        <p>
+                          <a href={profile.sourceUrl} target="_blank" rel="noopener noreferrer">
+                            Check the official {profile.label} documentation
+                          </a>{' '}
+                          before committing a shared configuration.
+                        </p>
+                      )}
+                    </>
+                  )}
                 />
               </section>
 
-              {/* Section 6: Provider Comparison */}
+              {/* Section 7: Provider Details */}
               <section id="provider-comparison" className="scroll-mt-24 mb-16">
-                <h2 className="text-3xl font-bold mb-4">6. Provider Comparison</h2>
+                <h2 className="text-3xl font-bold mb-4">7. Check Your Provider Details</h2>
                 <p className="text-lg text-muted-foreground mb-6">
-                  Both Claude Code and VS Code + Copilot support MCP, but with different feature sets.
+                  GitHub Copilot, Claude Code, Cursor, and Codex all support MCP, but their configuration files, transports, discovery, and approval controls differ.
                 </p>
-
-                <MCPFeatureTable />
-
-                <h3 className="text-xl font-semibold mt-8 mb-4">Key Differences</h3>
-                <ul className="my-6 space-y-3">
-                  <li>
-                    <strong>Configuration method:</strong> Claude Code uses CLI commands; VS Code uses JSON
-                    files and a UI gallery.
-                  </li>
-                  <li>
-                    <strong>Server discovery:</strong> VS Code offers a server gallery and auto-discovery from
-                    other apps (like Claude Desktop); Claude Code requires manual configuration.
-                  </li>
-                  <li>
-                    <strong>Tool search:</strong> Claude Code automatically enables tool search when MCP tools
-                    exceed 10% of context; VS Code uses a tool picker UI.
-                  </li>
-                  <li>
-                    <strong>Enterprise control:</strong> Both support managed configurations, but with different
-                    file locations and formats.
-                  </li>
-                </ul>
-
-                <div className="my-8 p-6 bg-blue-50 dark:bg-blue-950/30 rounded-lg border border-blue-200 dark:border-blue-800">
-                  <h3 className="text-lg font-semibold mb-3">💡 Cross-Compatibility</h3>
-                  <p>
-                    MCP servers themselves are cross-compatible—a server built for Claude Code works with
-                    VS Code + Copilot. Only the <em>configuration</em> differs between providers.
-                  </p>
-                </div>
+                <ProviderPrimitiveTabs
+                  primitiveId="tool-integrations"
+                  idPrefix="mcp-provider-details"
+                  ariaLabel="MCP provider details"
+                />
               </section>
 
               {/* Section 7: Security Considerations */}
               <section id="security-considerations" className="scroll-mt-24 mb-16">
-                <h2 className="text-3xl font-bold mb-4">7. Security Considerations</h2>
+                <h2 className="text-3xl font-bold mb-4">8. Security Considerations</h2>
                 <p className="text-lg text-muted-foreground mb-6">
                   MCP servers can execute code and access sensitive data. Understanding the security
                   implications is critical.
@@ -406,7 +337,7 @@ export function MCPPage(): VNode {
 
               {/* Section 8: Practical Examples */}
               <section id="practical-examples" className="scroll-mt-24 mb-16">
-                <h2 className="text-3xl font-bold mb-4">8. Practical Examples</h2>
+                <h2 className="text-3xl font-bold mb-4">9. Practical Examples</h2>
                 <p className="text-lg text-muted-foreground mb-6">
                   Real-world configurations for common MCP use cases.
                 </p>
@@ -458,7 +389,7 @@ export function MCPPage(): VNode {
 
               {/* Section 9: Further Reading */}
               <section id="further-reading" className="scroll-mt-24 mb-16">
-                <h2 className="text-3xl font-bold mb-4">9. Further Reading</h2>
+                <h2 className="text-3xl font-bold mb-4">10. Further Reading</h2>
                 <p className="text-lg text-muted-foreground mb-6">
                   Official documentation, specifications, and community resources.
                 </p>
@@ -490,10 +421,7 @@ export function MCPPage(): VNode {
                 </div>
               </section>
 
-            </article>
-          </div>
-        </div>
-      </div>
+      </GuideLayout>
     </PageLayout>
   )
 }

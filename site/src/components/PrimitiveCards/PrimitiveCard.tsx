@@ -4,6 +4,7 @@ import { ChevronDown, Copy, Check, ExternalLink, Shield, Wrench, FileText, GitBr
 import { cn } from '@/lib/utils'
 import { type Primitive, type Provider } from '@/data/primitives'
 import { providers } from '@/data/providers'
+import { useSelectedProvider } from '@/components/Navigation/useSelectedProvider'
 
 export interface PrimitiveCardProps {
   /** The primitive to display */
@@ -45,6 +46,10 @@ const providerMap = Object.fromEntries(providers.map(p => [p.id, p]))
 export function PrimitiveCard({ primitive, className }: PrimitiveCardProps): VNode {
   const [isExpanded, setIsExpanded] = useState(false)
   const [copiedProvider, setCopiedProvider] = useState<Provider | null>(null)
+  const selectedProvider = useSelectedProvider()
+  const visibleImplementations = selectedProvider === ''
+    ? primitive.implementations
+    : primitive.implementations.filter((implementation) => implementation.provider === selectedProvider)
 
   const CategoryIcon = categoryIcons[primitive.category]
 
@@ -169,7 +174,7 @@ export function PrimitiveCard({ primitive, className }: PrimitiveCardProps): VNo
               Implementation by provider
             </h4>
             <div className="space-y-3">
-              {primitive.implementations.map((impl) => (
+              {visibleImplementations.map((impl) => (
                 <div
                   key={impl.provider}
                   className="rounded-lg bg-secondary/50 p-3"

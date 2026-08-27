@@ -13,6 +13,7 @@ import {
 } from '@/data/comparison'
 import { providers } from '@/data/providers'
 import type { Provider } from '@/data/primitives'
+import { useSelectedProvider } from '@/components/Navigation/useSelectedProvider'
 
 function SupportBadge({ level }: { level: SupportLevel }): VNode {
   return (
@@ -34,6 +35,10 @@ interface ExpandedRowProps {
 
 function ExpandedRow({ row }: ExpandedRowProps): VNode {
   const [copiedLocation, setCopiedLocation] = useState<Provider | null>(null)
+  const selectedProvider = useSelectedProvider()
+  const visibleProviders = selectedProvider === ''
+    ? providers
+    : providers.filter((provider) => provider.id === selectedProvider)
 
   const handleCopy = async (provider: Provider, location: string) => {
     try {
@@ -49,7 +54,7 @@ function ExpandedRow({ row }: ExpandedRowProps): VNode {
     <tr className="bg-secondary/30">
       <td colSpan={providers.length + 1} className="px-4 py-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          {providers.map((provider) => {
+          {visibleProviders.map((provider) => {
             const support = getProviderSupport(row, provider.id)
             return (
               <div key={provider.id} className="flex flex-col gap-2">
@@ -99,6 +104,7 @@ function ExpandedRow({ row }: ExpandedRowProps): VNode {
 
 export function ComparisonTable(): VNode {
   const [expandedRow, setExpandedRow] = useState<string | null>(null)
+  const selectedProvider = useSelectedProvider()
 
   const toggleRow = (primitiveId: string) => {
     setExpandedRow(expandedRow === primitiveId ? null : primitiveId)
@@ -114,7 +120,13 @@ export function ComparisonTable(): VNode {
                 Primitive
               </th>
               {providers.map((provider) => (
-                <th key={provider.id} className="px-4 py-3 text-center text-sm font-semibold text-foreground">
+                <th
+                  key={provider.id}
+                  className={cn(
+                    'px-4 py-3 text-center text-sm font-semibold text-foreground',
+                    selectedProvider === provider.id && 'bg-primary/10'
+                  )}
+                >
                   <span className="inline-flex items-center gap-2">
                     <span aria-hidden="true">{provider.icon}</span>
                     {provider.name}
@@ -153,7 +165,13 @@ export function ComparisonTable(): VNode {
                     </button>
                   </td>
                   {providers.map((provider) => (
-                    <td key={provider.id} className="px-4 py-3 text-center">
+                    <td
+                      key={provider.id}
+                      className={cn(
+                        'px-4 py-3 text-center',
+                        selectedProvider === provider.id && 'bg-primary/5'
+                      )}
+                    >
                       <SupportBadge level={getProviderSupport(row, provider.id).level} />
                     </td>
                   ))}
