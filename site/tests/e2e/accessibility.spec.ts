@@ -55,4 +55,13 @@ test.describe('Accessibility', () => {
 
     expect(results.violations).toEqual([])
   })
+
+  test('install page should have no accessibility violations', async ({ page }) => {
+    await page.goto('/install/')
+    await expect(page.getByRole('heading', { name: 'Packaging, Installing, and Sharing Agent Configuration' })).toBeVisible()
+
+    const results = await new AxeBuilder({ page }).analyze()
+
+    expect(results.violations).toEqual([])
+  })
 })

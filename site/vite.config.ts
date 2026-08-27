@@ -21,6 +21,7 @@ export default defineConfig({
         agents: path.resolve(__dirname, 'agents/index.html'),
         hooks: path.resolve(__dirname, 'hooks/index.html'),
         mcp: path.resolve(__dirname, 'mcp/index.html'),
+        install: path.resolve(__dirname, 'install/index.html'),
         profiles: path.resolve(__dirname, 'profiles/index.html'),
       },
     },

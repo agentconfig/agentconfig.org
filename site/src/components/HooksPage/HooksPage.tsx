@@ -1,6 +1,6 @@
 import type { VNode } from 'preact'
 import { PageLayout } from '@/layouts'
-import { GuideHero, GuideLayout } from '@/components/GuidePage'
+import { GuideHero, GuideLayout, RelatedGuide } from '@/components/GuidePage'
 import { tocItems } from '@/data/hooksTutorial'
 import {
   ContractModelSection,
@@ -37,6 +37,11 @@ export function HooksPage(): VNode {
         <SafeIntegrationsSection />
         <TestingHooksSection />
         <WhenNotHooksSection />
+        <RelatedGuide
+          title="Installing a hook changes the trust boundary"
+          description="Review plugin provenance, scripts, scopes, update behavior, and rollback before loading executable lifecycle automation."
+          href="/install/"
+        />
         <FurtherReadingSection />
       </GuideLayout>
     </PageLayout>

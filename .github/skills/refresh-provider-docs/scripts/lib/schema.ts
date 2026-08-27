@@ -17,6 +17,8 @@ export const TOPICS = [
   'precedence',
   'cli',
   'cloud-agent',
+  'plugins',
+  'distribution',
   'standard',
 ] as const
 

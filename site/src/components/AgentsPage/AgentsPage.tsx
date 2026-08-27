@@ -2,7 +2,7 @@ import type { VNode } from 'preact'
 import { PageLayout } from '@/layouts'
 import { CodeBlock } from '@/components/CodeBlock'
 import { CodeTabs } from '@/components/CodeBlock/CodeTabs'
-import { GuideHero, GuideLayout, ProviderPrimitiveTabs, ProviderStarter } from '@/components/GuidePage'
+import { GuideHero, GuideLayout, ProviderPrimitiveTabs, ProviderStarter, RelatedGuide } from '@/components/GuidePage'
 import { tocItems, furtherReadingLinks, codeSamples } from '@/data/agentsTutorial'
 import { instructionStarterExamples } from '@/data/starterExamples'
 
@@ -348,6 +348,12 @@ export function AgentsPage(): VNode {
                   className="my-6"
                 />
               </section>
+
+              <RelatedGuide
+                title="Distributing provider-specific agent definitions?"
+                description="Package portable components separately, use a client namespace for provider-specific agents, and choose an installation scope deliberately."
+                href="/install/"
+              />
 
               {/* Section 9: Further Reading */}
               <section id="further-reading" className="scroll-mt-24 mb-16">

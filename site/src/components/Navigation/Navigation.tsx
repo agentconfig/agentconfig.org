@@ -14,6 +14,7 @@ const navItems = [
   { href: '/agents/', label: 'Agents' },
   { href: '/hooks/', label: 'Hooks' },
   { href: '/mcp/', label: 'MCP' },
+  { href: '/install/', label: 'Install & Share' },
 ] as const
 
 export interface NavigationProps {

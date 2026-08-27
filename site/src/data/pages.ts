@@ -68,12 +68,21 @@ export const pages: readonly PageMeta[] = [
     partNumber: 7,
   },
   {
+    slug: 'install',
+    title: 'Install & Share',
+    description: 'Package, review, install, pin, update, audit, and remove agent configuration',
+    features: 'Agent Plugins, provider marketplaces, APM, installation scope, trust, and lifecycle guidance',
+    dataFile: 'installTutorial.ts',
+    mdFile: 'install.md',
+    partNumber: 8,
+  },
+  {
     slug: 'profiles',
     title: 'Provider Profiles',
     description: 'Per-provider view of every primitive: support level, implementation, location, and source documentation',
     features: 'Provider profiles generated from the typed primitives model',
     dataFile: 'providerProfiles.ts',
     mdFile: 'profiles.md',
-    partNumber: 8,
+    partNumber: 9,
   },
 ] as const

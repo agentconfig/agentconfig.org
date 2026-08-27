@@ -19,6 +19,7 @@ test.describe('Navigation', () => {
       await expect(nav.getByRole('link', { name: 'Agents' })).toBeVisible()
       await expect(nav.getByRole('link', { name: 'Hooks' })).toBeVisible()
       await expect(nav.getByRole('link', { name: 'MCP' })).toBeVisible()
+      await expect(nav.getByRole('link', { name: 'Install & Share' })).toBeVisible()
       await expect(nav.getByRole('link', { name: 'Profiles' })).toHaveCount(0)
       await expect(nav.getByRole('combobox', { name: 'Provider' })).toHaveValue('')
     })
@@ -39,6 +40,14 @@ test.describe('Navigation', () => {
       // Should navigate to /agents/
       await expect(page).toHaveURL(/\/agents\/?/)
       await expect(page.getByRole('heading', { name: 'Agent Instructions', exact: true })).toBeVisible()
+    })
+
+    test('should navigate to Install and Share page', async ({ page }) => {
+      const navLink = page.getByLabel('Main navigation').getByRole('link', { name: 'Install & Share' })
+      await navLink.click()
+
+      await expect(page).toHaveURL(/\/install\/?/)
+      await expect(page.getByRole('heading', { name: 'Packaging, Installing, and Sharing Agent Configuration' })).toBeVisible()
     })
 
     test('should navigate to Hooks page', async ({ page }) => {
@@ -97,6 +106,7 @@ test.describe('Navigation', () => {
       await expect(page.getByRole('link', { name: 'Skills' })).toBeVisible()
       await expect(page.getByRole('link', { name: 'Agents' })).toBeVisible()
       await expect(page.getByRole('link', { name: 'Hooks' })).toBeVisible()
+      await expect(page.getByRole('link', { name: 'Install & Share' })).toBeVisible()
       await expect(page.getByRole('link', { name: 'Profiles' })).toHaveCount(1)
       await expect(page.getByRole('combobox', { name: 'Provider' })).toHaveValue('')
       await expect(page.getByRole('button', { name: 'Close menu' })).toBeVisible()

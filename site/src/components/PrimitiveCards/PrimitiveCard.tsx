@@ -1,10 +1,11 @@
 import { useState } from 'preact/hooks'
 import type { VNode } from 'preact'
-import { ChevronDown, Copy, Check, ExternalLink, Shield, Wrench, FileText, GitBranch, Boxes, BookOpenCheck } from 'lucide-preact'
+import { ChevronDown, Copy, Check, ExternalLink, ArrowRight, Shield, Wrench, FileText, GitBranch, Boxes, BookOpenCheck } from 'lucide-preact'
 import { cn } from '@/lib/utils'
 import { type Primitive, type Provider } from '@/data/primitives'
 import { providers } from '@/data/providers'
 import { useSelectedProvider } from '@/components/Navigation/useSelectedProvider'
+import { providerAwareHref } from '@/lib/providerSelection'
 
 export interface PrimitiveCardProps {
   /** The primitive to display */
@@ -167,6 +168,16 @@ export function PrimitiveCard({ primitive, className }: PrimitiveCardProps): VNo
               ))}
             </div>
           </div>
+
+          {primitive.id === 'distribution' && (
+            <a
+              href={providerAwareHref('/install/', selectedProvider)}
+              className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline"
+            >
+              Open the Install & Share guide
+              <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+            </a>
+          )}
 
           {/* Provider implementations */}
           <div>

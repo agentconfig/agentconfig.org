@@ -49,7 +49,7 @@ Coverage: 13 primitives tracked — 12 full, 1 partial, 0 DIY/manual. 12 of 13 c
 
 | Primitive | Support | Implementation | Location | Source |
 |-----------|---------|-----------------|----------|--------|
-| Configuration Distribution | full | Repository plus nested AGENTS.md with optional .instructions.md files | `AGENTS.md, .github/copilot-instructions.md, .github/instructions/**/*.instructions.md` | [Provider documentation](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions) |
+| Configuration Distribution | full | Plugins and marketplaces with Agent Plugins support | `copilot plugin ..., /plugin` | [Provider documentation](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/plugins-finding-installing) |
 
 ### Verification & Observability
 
@@ -101,7 +101,7 @@ Coverage: 13 primitives tracked — 13 full, 0 partial, 0 DIY/manual. 12 of 13 c
 
 | Primitive | Support | Implementation | Location | Source |
 |-----------|---------|-----------------|----------|--------|
-| Configuration Distribution | full | Shared AGENTS.md imported into CLAUDE.md plus scoped rules files | `~/.claude/CLAUDE.md, ./CLAUDE.md, ./.claude/CLAUDE.md, ./CLAUDE.local.md, .claude/rules/*.md` | [Provider documentation](https://code.claude.com/docs/en/memory) |
+| Configuration Distribution | full | Plugins and marketplaces with user, project, and local installation scopes | `/plugin, enabledPlugins in Claude settings` | [Provider documentation](https://code.claude.com/docs/en/discover-plugins) |
 
 ### Verification & Observability
 
@@ -111,7 +111,7 @@ Coverage: 13 primitives tracked — 13 full, 0 partial, 0 DIY/manual. 12 of 13 c
 
 ## Cursor
 
-Coverage: 13 primitives tracked — 13 full, 0 partial, 0 DIY/manual. 9 of 13 cited to provider documentation.
+Coverage: 13 primitives tracked — 13 full, 0 partial, 0 DIY/manual. 10 of 13 cited to provider documentation.
 
 ### Instructions
 
@@ -153,7 +153,7 @@ Coverage: 13 primitives tracked — 13 full, 0 partial, 0 DIY/manual. 9 of 13 ci
 
 | Primitive | Support | Implementation | Location | Source |
 |-----------|---------|-----------------|----------|--------|
-| Configuration Distribution | full | Project instructions, rules, and reusable skills packages | `AGENTS.md, .cursor/rules/*.mdc, .cursor/skills/*/SKILL.md` | — |
+| Configuration Distribution | full | Agent Plugins and Cursor Plugins installed from marketplaces | `Customize -> Plugins` | [Provider documentation](https://cursor.com/docs/plugins) |
 
 ### Verification & Observability
 
@@ -205,7 +205,7 @@ Coverage: 13 primitives tracked — 13 full, 0 partial, 0 DIY/manual. 13 of 13 c
 
 | Primitive | Support | Implementation | Location | Source |
 |-----------|---------|-----------------|----------|--------|
-| Configuration Distribution | full | Hierarchical AGENTS.md with user+repo layering | `~/.codex/AGENTS.md, ~/.codex/AGENTS.override.md, AGENTS.md, AGENTS.override.md, subdir/AGENTS.md, subdir/AGENTS.override.md` | [Provider documentation](https://developers.openai.com/codex/agent-configuration/agents-md) |
+| Configuration Distribution | full | Plugins and repo or personal marketplace sources shared with ChatGPT | `codex plugin marketplace ..., .agents/plugins/marketplace.json` | [Provider documentation](https://developers.openai.com/plugins/build/plugins) |
 
 ### Verification & Observability
 

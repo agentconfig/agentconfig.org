@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 
-const pages = ['/', '/skills/', '/agents/', '/hooks/', '/mcp/', '/profiles/']
+const pages = ['/', '/skills/', '/agents/', '/hooks/', '/mcp/', '/install/', '/profiles/']
 
 test.describe('Site consistency', () => {
   for (const path of pages) {
@@ -22,6 +22,7 @@ test.describe('Site consistency', () => {
       '/skills.md': ['### 1. Create One Small Skill', '### 2. Understanding the Spec'],
       '/agents.md': ['### 1. Create One Useful Instruction File', '### 2. What Agent Instructions Do'],
       '/mcp.md': ['### 1. Connect One Server', '### 2. What is MCP?', '### 10. Further Reading'],
+      '/install.md': ['## 1. Install One Reviewed Package', '## 2. Understand the Layers', '## 11. Further Reading'],
     }
 
     for (const [path, headings] of Object.entries(expectedOrder)) {

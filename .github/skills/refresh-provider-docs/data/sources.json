@@ -21,6 +21,8 @@
         { "id": "copilot.about-hooks", "topic": "hooks", "url": "https://docs.github.com/en/copilot/concepts/agents/hooks", "authority": "primary" },
         { "id": "copilot.hooks-reference", "topic": "hooks", "url": "https://docs.github.com/en/copilot/reference/hooks-reference", "authority": "primary" },
         { "id": "copilot.cli-hooks", "topic": "hooks", "url": "https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/use-hooks", "authority": "primary" },
+        { "id": "copilot.about-plugins", "topic": "plugins", "url": "https://docs.github.com/en/copilot/concepts/agents/about-plugins", "authority": "primary" },
+        { "id": "copilot.cli-install-plugins", "topic": "distribution", "url": "https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/plugins-finding-installing", "authority": "primary" },
         { "id": "copilot.mcp", "topic": "mcp", "url": "https://docs.github.com/en/copilot/how-tos/provide-context/use-mcp-in-your-ide/extend-copilot-chat-with-mcp", "authority": "primary" },
         { "id": "copilot.custom-agents", "topic": "custom-agents", "url": "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/cloud-agent/create-custom-agents-in-your-ide", "authority": "primary" },
         { "id": "copilot.cloud-agent", "topic": "cloud-agent", "url": "https://docs.github.com/en/copilot/concepts/agents/cloud-agent/about-cloud-agent", "authority": "primary" },
@@ -40,6 +42,8 @@
         { "id": "claude.memory", "topic": "instructions", "url": "https://code.claude.com/docs/en/memory", "authority": "primary" },
         { "id": "claude.skills", "topic": "skills", "url": "https://code.claude.com/docs/en/skills", "authority": "primary" },
         { "id": "claude.hooks", "topic": "hooks", "url": "https://code.claude.com/docs/en/hooks", "authority": "primary" },
+        { "id": "claude.plugins", "topic": "plugins", "url": "https://code.claude.com/docs/en/plugins", "authority": "primary" },
+        { "id": "claude.install-plugins", "topic": "distribution", "url": "https://code.claude.com/docs/en/discover-plugins", "authority": "primary" },
         { "id": "claude.mcp", "topic": "mcp", "url": "https://code.claude.com/docs/en/mcp", "authority": "primary" },
         { "id": "claude.sub-agents", "topic": "custom-agents", "url": "https://code.claude.com/docs/en/sub-agents", "authority": "primary" },
         { "id": "claude.settings", "topic": "permissions", "url": "https://code.claude.com/docs/en/settings", "authority": "primary" },
@@ -56,14 +60,16 @@
         "note": "The Codex documentation site is client-rendered, so HTML snapshots are unusable. Always retrieve the .md variant, which the site publishes for every page."
       },
       "sources": [
-        { "id": "codex.agents-md", "topic": "instructions", "url": "https://developers.openai.com/codex/agent-configuration/agents-md", "authority": "primary" },
-        { "id": "codex.config-reference", "topic": "permissions", "url": "https://developers.openai.com/codex/config-file/config-reference", "authority": "primary" },
-        { "id": "codex.local-config", "topic": "permissions", "url": "https://developers.openai.com/codex/local-config", "authority": "primary" },
-        { "id": "codex.hooks", "topic": "hooks", "url": "https://developers.openai.com/codex/hooks", "authority": "primary" },
-        { "id": "codex.subagents", "topic": "custom-agents", "url": "https://developers.openai.com/codex/agent-configuration/subagents", "authority": "primary" },
-        { "id": "codex.skills", "topic": "skills", "url": "https://developers.openai.com/codex/build-skills", "authority": "primary" },
-        { "id": "codex.mcp", "topic": "mcp", "url": "https://developers.openai.com/codex/extend/mcp", "authority": "primary" },
-        { "id": "codex.cli", "topic": "cli", "url": "https://developers.openai.com/codex/cli", "authority": "primary" }
+        { "id": "codex.agents-md", "topic": "instructions", "url": "https://learn.chatgpt.com/docs/agent-configuration/agents-md", "authority": "primary" },
+        { "id": "codex.config-reference", "topic": "permissions", "url": "https://learn.chatgpt.com/docs/config-file/config-reference", "authority": "primary" },
+        { "id": "codex.local-config", "topic": "permissions", "url": "https://learn.chatgpt.com/docs/config-file/config-basic", "authority": "primary" },
+        { "id": "codex.hooks", "topic": "hooks", "url": "https://learn.chatgpt.com/docs/hooks", "authority": "primary" },
+        { "id": "codex.subagents", "topic": "custom-agents", "url": "https://learn.chatgpt.com/docs/agent-configuration/subagents", "authority": "primary" },
+        { "id": "codex.skills", "topic": "skills", "url": "https://learn.chatgpt.com/docs/build-skills", "authority": "primary" },
+        { "id": "codex.mcp", "topic": "mcp", "url": "https://learn.chatgpt.com/docs/extend/mcp", "authority": "primary" },
+        { "id": "codex.plugins", "topic": "plugins", "url": "https://developers.openai.com/plugins/concepts/plugins", "authority": "primary" },
+        { "id": "codex.package-plugins", "topic": "distribution", "url": "https://developers.openai.com/plugins/build/plugins", "authority": "primary" },
+        { "id": "codex.cli", "topic": "cli", "url": "https://learn.chatgpt.com/docs/codex/cli", "authority": "primary" }
       ]
     },
     {
@@ -74,9 +80,10 @@
         "note": "Cursor documentation is served as HTML only; a .md suffix returns 404. Read retrieved snapshots carefully rather than assuming markdown structure."
       },
       "sources": [
-        { "id": "cursor.rules", "topic": "instructions", "url": "https://cursor.com/docs/context/rules", "authority": "primary" },
-        { "id": "cursor.mcp", "topic": "mcp", "url": "https://cursor.com/docs/context/mcp", "authority": "primary" },
-        { "id": "cursor.hooks", "topic": "hooks", "url": "https://cursor.com/docs/agent/hooks", "authority": "primary" },
+        { "id": "cursor.rules", "topic": "instructions", "url": "https://cursor.com/docs/rules.md", "authority": "primary" },
+        { "id": "cursor.mcp", "topic": "mcp", "url": "https://cursor.com/docs/mcp.md", "authority": "primary" },
+        { "id": "cursor.hooks", "topic": "hooks", "url": "https://cursor.com/docs/hooks.md", "authority": "primary" },
+        { "id": "cursor.plugins", "topic": "plugins", "url": "https://cursor.com/docs/plugins", "authority": "primary" },
         { "id": "cursor.run-modes", "topic": "permissions", "url": "https://cursor.com/docs/agent/security/run-modes", "authority": "primary" },
         { "id": "cursor.skills", "topic": "skills", "url": "https://cursor.com/docs/skills", "authority": "primary" }
       ]
@@ -104,8 +111,8 @@
         "note": "A .md suffix returns HTML for this site, so snapshots are HTML. Use the llms.txt index to confirm page identity."
       },
       "sources": [
-        { "id": "windsurf.memories", "topic": "memory", "url": "https://docs.windsurf.com/windsurf/cascade/memories", "authority": "primary" },
-        { "id": "windsurf.mcp", "topic": "mcp", "url": "https://docs.windsurf.com/windsurf/cascade/mcp", "authority": "primary" }
+        { "id": "windsurf.memories", "topic": "memory", "url": "https://docs.devin.ai/desktop/cascade/memories", "authority": "primary" },
+        { "id": "windsurf.mcp", "topic": "mcp", "url": "https://docs.devin.ai/desktop/cascade/mcp.md", "authority": "primary" }
       ]
     },
     {
@@ -115,7 +122,7 @@
       "index": { "url": "https://docs.cline.bot/llms.txt", "kind": "llms-txt" },
       "retrieval": { "markdown": "{url}.md" },
       "sources": [
-        { "id": "cline.rules", "topic": "instructions", "url": "https://docs.cline.bot/features/cline-rules", "authority": "primary" },
+        { "id": "cline.rules", "topic": "instructions", "url": "https://docs.cline.bot/customization/cline-rules", "authority": "primary" },
         { "id": "cline.mcp", "topic": "mcp", "url": "https://docs.cline.bot/mcp/mcp-overview", "authority": "primary" }
       ]
     },
@@ -136,7 +143,14 @@
       "coverage": "tracked",
       "sources": [
         { "id": "standards.agents-md", "topic": "standard", "url": "https://agents.md/", "authority": "primary" },
-        { "id": "standards.mcp", "topic": "standard", "url": "https://modelcontextprotocol.io/", "authority": "primary" },
+        { "id": "standards.agent-skills", "topic": "skills", "url": "https://agentskills.io/specification", "authority": "primary" },
+        { "id": "standards.agent-plugins", "topic": "plugins", "url": "https://agent-plugins.org/specification", "authority": "primary" },
+        { "id": "standards.mcp", "topic": "standard", "url": "https://modelcontextprotocol.io/docs/2026-07-28/getting-started/intro", "authority": "primary" },
+        { "id": "standards.mcp-registry", "topic": "distribution", "url": "https://registry.modelcontextprotocol.io/", "authority": "primary" },
+        { "id": "standards.skills-sh", "topic": "distribution", "url": "https://www.skills.sh/docs", "authority": "primary" },
+        { "id": "standards.apm", "topic": "distribution", "url": "https://microsoft.github.io/apm/", "authority": "primary" },
+        { "id": "standards.apm-concepts", "topic": "distribution", "url": "https://microsoft.github.io/apm/concepts/what-is-apm/", "authority": "primary" },
+        { "id": "standards.apm-targets", "topic": "distribution", "url": "https://microsoft.github.io/apm/reference/targets-matrix/", "authority": "primary" },
         { "id": "standards.llms-txt", "topic": "standard", "url": "https://llmstxt.org/", "authority": "primary" }
       ]
     }

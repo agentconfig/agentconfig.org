@@ -11,7 +11,7 @@ import { SkillsSidebar } from './SkillsSidebar'
 import { TutorialSection } from './TutorialSection'
 import { SkillExample } from './SkillExample'
 import { FurtherReading } from './FurtherReading'
-import { ProviderStarter } from '@/components/GuidePage'
+import { ProviderStarter, RelatedGuide } from '@/components/GuidePage'
 import { skillStarterExamples } from '@/data/starterExamples'
 
 export function SkillsPage(): VNode {
@@ -114,6 +114,12 @@ export function SkillsPage(): VNode {
                 ))}
               </div>
             </div>
+
+            <RelatedGuide
+              title="Ready to share or install this skill?"
+              description="Compare standalone skill installers, provider marketplaces, Agent Plugins, and APM before choosing a distribution path."
+              href="/install/"
+            />
 
             {/* Further reading */}
             <FurtherReading />

@@ -10,6 +10,7 @@ A reference guide for configuring AI coding assistants. Learn where config files
 - **Interactive File Tree** — Visual guide to where config files live, for both global (user home) and project-level configuration
 - **Provider Comparison** — Side-by-side comparison of GitHub Copilot, Claude Code, Cursor, and OpenAI Codex support for each primitive
 - **Progressive Guides** — Practical tutorials for skills, agent definitions, lifecycle hooks, and MCP integrations
+- **Install & Share** — Standards-first guidance for plugins, marketplaces, APM, trust, versioning, and lifecycle management
 - **Provider Profiles** — Source-backed implementation paths and support details for each provider
 
 ## Key Paths

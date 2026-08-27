@@ -40,6 +40,7 @@ async function loadData() {
   const agentsTutorial = await import(join(dataDir, 'agentsTutorial.ts'))
   const hooksTutorial = await import(join(dataDir, 'hooksTutorial.ts'))
   const mcpTutorial = await import(join(dataDir, 'mcpTutorial.ts'))
+  const installTutorial = await import(join(dataDir, 'installTutorial.ts'))
   const mcpScopes = await import(join(dataDir, 'mcpScopes.ts'))
   const providerProfiles = await import(join(dataDir, 'providerProfiles.ts'))
   const starterExamples = await import(join(dataDir, 'starterExamples.ts'))
@@ -71,6 +72,15 @@ async function loadData() {
     mcpCodeSamples: mcpTutorial.codeSamples,
     mcpFurtherReadingLinks: mcpTutorial.furtherReadingLinks,
     mcpScopeProfiles: mcpScopes.mcpScopeProfiles,
+    installTocItems: installTutorial.tocItems,
+    installLayers: installTutorial.installLayers,
+    installUnits: installTutorial.installUnits,
+    nativeInstallProfiles: installTutorial.nativeInstallProfiles,
+    trustItems: installTutorial.trustItems,
+    lifecycleSteps: installTutorial.lifecycleSteps,
+    installPaths: installTutorial.installPaths,
+    installCodeSamples: installTutorial.codeSamples,
+    installFurtherReadingLinks: installTutorial.furtherReadingLinks,
     instructionStarterExamples: starterExamples.instructionStarterExamples,
     skillStarterExamples: starterExamples.skillStarterExamples,
     mcpStarterExamples: starterExamples.mcpStarterExamples,
@@ -514,6 +524,115 @@ can never drift apart.
   return content
 }
 
+function generateInstallMd(data: Awaited<ReturnType<typeof loadData>>): string {
+  const {
+    installTocItems,
+    installLayers,
+    installUnits,
+    nativeInstallProfiles,
+    trustItems,
+    lifecycleSteps,
+    installPaths,
+    installCodeSamples,
+    installFurtherReadingLinks,
+  } = data
+
+  const providerNames: Record<string, string> = {
+    copilot: 'GitHub Copilot',
+    claude: 'Claude Code',
+    cursor: 'Cursor',
+    codex: 'OpenAI Codex',
+  }
+
+  return `# Packaging, Installing, and Sharing Agent Configuration
+
+Use the smallest install unit that solves the problem, review executable and network-capable components before installing them, and keep enough version and provenance information to update or remove the configuration safely.
+
+## Guide Sections
+
+${installTocItems.map((item: any) => `- ${item.label}`).join('\n')}
+
+## 1. Install One Reviewed Package
+
+Before running an installer, open the source, inspect the package contents, identify scripts, hooks, MCP executables, and remote endpoints, then confirm the destination and scope.
+
+\`\`\`bash
+${installCodeSamples.reviewChecklist}
+\`\`\`
+
+## 2. Understand the Layers
+
+| Layer | Job | Examples |
+|-------|-----|----------|
+${installLayers.map((layer: any) => `| ${markdownCell(layer.name)} | ${markdownCell(layer.job)} | ${markdownCell(layer.examples)} |`).join('\n')}
+
+## 3. Choose the Smallest Install Unit
+
+| Need | Install unit | Why |
+|------|--------------|-----|
+${installUnits.map((row: any) => `| ${markdownCell(row.need)} | ${markdownCell(row.choose)} | ${markdownCell(row.reason)} |`).join('\n')}
+
+## 4. Package Portable Components
+
+Agent Plugins 1.0 defines a root \`plugin.json\`, portable skills under \`skills/\`, and portable MCP configuration in \`mcp.json\`. Client-specific components belong in reverse-domain namespaces rather than being mistaken for portable core behavior.
+
+\`\`\`text
+${installCodeSamples.pluginLayout}
+\`\`\`
+
+## 5. Use Native Provider Installation
+
+${nativeInstallProfiles.map((panel: any) => `### ${providerNames[panel.id] ?? panel.label}
+
+${panel.summary}
+
+\`\`\`${panel.language}
+${panel.code}
+\`\`\`
+
+[Primary documentation](${panel.sourceUrl})`).join('\n\n')}
+
+## 6. Make Project Setup Reproducible with APM
+
+APM resolves dependencies, writes \`apm.lock.yaml\`, deploys configuration to supported targets, and provides integrity and policy checks. It manages the installation plane; the provider runtime still controls permissions, sandboxing, tool approval, and model behavior.
+
+\`\`\`yaml
+${installCodeSamples.apmManifest}
+\`\`\`
+
+\`\`\`bash
+${installCodeSamples.apmCommands}
+\`\`\`
+
+## 7. Choose Installation Scope
+
+| Scope | Use it for | Commit? |
+|-------|------------|---------|
+| User | Personal tools and workflows used across projects | No credentials or machine-specific values |
+| Repository | Shared packages every contributor should be able to restore | Commit reviewed manifests, lockfiles, or settings |
+| Local repository | Machine-specific or experimental configuration | No |
+| Organization or managed | Approved marketplaces, required plugins, allowlists, policy, and governed defaults | Commit only the organization-approved declaration |
+
+## 8. Review Trust and Provenance
+
+${trustItems.map((item: string) => `- ${item}`).join('\n')}
+
+## 9. Manage the Lifecycle
+
+${lifecycleSteps.map(([step, description]: readonly [string, string], index: number) => `${index + 1}. **${step}:** ${description}`).join('\n')}
+
+## 10. Choose an Installation Path
+
+| Path | Best for | Watch for |
+|------|----------|-----------|
+${installPaths.map((row: any) => `| ${markdownCell(row.path)} | ${markdownCell(row.useWhen)} | ${markdownCell(row.tradeoff)} |`).join('\n')}
+
+## 11. Further Reading
+
+${installFurtherReadingLinks.map((source: any) => `- [${source.title}](${source.url}): ${source.description}`).join('\n')}
+`
+}
+
 function generateHooksMd(data: Awaited<ReturnType<typeof loadData>>): string {
   const {
     hooksTocItems,
@@ -863,7 +982,16 @@ ${scopeModel.map((s: { name: string; audience: string; example: string; location
   content += `
 ---
 
-# Part ${pages.find(p => p.slug === 'profiles')?.partNumber ?? 8}: Provider Profiles
+# Part ${pages.find(p => p.slug === 'install')?.partNumber ?? 8}: Install & Share
+
+`
+
+  content += withoutTopMatter(generateInstallMd(data))
+
+  content += `
+---
+
+# Part ${pages.find(p => p.slug === 'profiles')?.partNumber ?? 9}: Provider Profiles
 
 `
 
@@ -929,6 +1057,10 @@ async function main() {
   console.log('Generating mcp.md...')
   const mcpMd = generateMcpMd(data)
   writeFileSync(join(publicDir, 'mcp.md'), mcpMd)
+
+  console.log('Generating install.md...')
+  const installMd = generateInstallMd(data)
+  writeFileSync(join(publicDir, 'install.md'), installMd)
 
   console.log('Generating profiles.md...')
   const profilesMd = generateProfilesMd(data)
