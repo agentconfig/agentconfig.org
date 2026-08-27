@@ -19,7 +19,9 @@ test.describe('Install and Share guide', () => {
     await expect(page.getByRole('heading', { name: '4. Package portable components' })).toBeVisible()
     await expect(page.getByText('Agent Plugins 1.0 standardizes the portable package layout.')).toBeVisible()
     await expect(page.getByRole('heading', { name: '6. Make project setup reproducible with APM' })).toBeVisible()
-    await expect(page.getByText('APM manages installation and integrity; it does not control the agent at runtime.')).toBeVisible()
+    const apmLink = page.locator('#apm').getByRole('link', { name: 'Agent Package Manager (APM)' })
+    await expect(apmLink).toHaveAttribute('href', 'https://microsoft.github.io/apm/')
+    await expect(page.locator('#apm')).toContainText('manages installation and integrity; it does not control the agent at runtime.')
   })
 
   test('shows provider-specific installation guidance from the provider query', async ({ page }) => {
@@ -44,7 +46,7 @@ test.describe('Install and Share guide', () => {
     await page.goto('/install/')
 
     await expect(page.getByRole('link', { name: 'Agent Plugins specification' })).toHaveAttribute('href', 'https://agent-plugins.org/specification')
-    await expect(page.getByRole('link', { name: 'Agent Package Manager' })).toHaveAttribute('href', 'https://microsoft.github.io/apm/')
+    await expect(page.locator('#further-reading').getByRole('link', { name: /Agent Package Manager/ })).toHaveAttribute('href', 'https://microsoft.github.io/apm/')
     await expect(page.getByRole('link', { name: 'Agent Skills specification' })).toHaveAttribute('href', 'https://agentskills.io/specification')
   })
 })

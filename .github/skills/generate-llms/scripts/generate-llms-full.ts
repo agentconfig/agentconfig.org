@@ -594,7 +594,7 @@ ${panel.code}
 
 ## 6. Make Project Setup Reproducible with APM
 
-APM resolves dependencies, writes \`apm.lock.yaml\`, deploys configuration to supported targets, and provides integrity and policy checks. It manages the installation plane; the provider runtime still controls permissions, sandboxing, tool approval, and model behavior.
+The [Agent Package Manager (APM)](https://microsoft.github.io/apm/) resolves dependencies, writes \`apm.lock.yaml\`, deploys configuration to supported targets, and provides integrity and policy checks. It manages the installation plane; the provider runtime still controls permissions, sandboxing, tool approval, and model behavior.
 
 \`\`\`yaml
 ${installCodeSamples.apmManifest}

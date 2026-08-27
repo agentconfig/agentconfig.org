@@ -147,7 +147,11 @@ export function InstallPage(): VNode {
         <section id="apm" className="scroll-mt-24 mb-16">
           <h2 className="mb-4 text-3xl font-bold">6. Make project setup reproducible with APM</h2>
           <p className="mb-6 text-lg text-muted-foreground">
-            APM manages installation and integrity; it does not control the agent at runtime.
+            The{' '}
+            <a href="https://microsoft.github.io/apm/" target="_blank" rel="noopener noreferrer">
+              Agent Package Manager (APM)
+            </a>{' '}
+            manages installation and integrity; it does not control the agent at runtime.
           </p>
           <p>
             APM uses an <code className={inlineCodeClass}>apm.yml</code> manifest and <code className={inlineCodeClass}>apm.lock.yaml</code> lockfile to resolve agent configuration and deploy each supported primitive into the directories a selected harness already understands.
